@@ -258,9 +258,9 @@ class AttendanceController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             
-            \Log::error('Check-in error: ' . $e->getMessage(), [
-    'trace' => $e->getTraceAsString()
-]);
+//             \Log::error('Check-in error: ' . $e->getMessage(), [
+//     'trace' => $e->getTraceAsString()
+// ]);
 
             return response()->json([
                 'success' => false,
