@@ -26,11 +26,11 @@
                     <a class="nav-link" href="{{ url('home') }}"><i class="fas fa-fire"></i><span>Dashboard</span></a>
                 </li>
                 @if (Auth::user()->hasRole('superadmin'))
-                    <li class="menu-header">Companies</li>
+                    <!-- <li class="menu-header">Companies</li>
                     <li class="{{ Request::is('hakakses') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('hakakses') }}"><i class="fas fa-user-shield"></i> <span>All
                                 Users</span></a>
-                    </li>
+                    </li> -->
                     <li class="{{ Request::is('superadmin/companies') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('superadmin.companies.index') }}"><i class="fas fa-building"></i>
                             <span>Manage Companies</span></a>
