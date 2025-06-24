@@ -1,5 +1,5 @@
 # laravel 12 with Stisla Template
-
+## PayNinja-HRM
 Welcome to the repository for laravel 12 integrated with Stisla Bootstrap 5 template!
 
 ## Overview
