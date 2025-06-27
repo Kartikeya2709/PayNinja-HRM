@@ -109,5 +109,16 @@
             console.error('SweetAlert2 is not loaded!');
         }
     </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const activeItem = document.querySelector('.sidebar-menu .active');
+        const sidebarWrapper = document.querySelector('.main-sidebar');
+
+        if (activeItem && sidebarWrapper) {
+            const itemOffsetTop = activeItem.offsetTop;
+            sidebarWrapper.scrollTop = itemOffsetTop - 100;
+        }
+    });
+</script>
 </body>
 </html>

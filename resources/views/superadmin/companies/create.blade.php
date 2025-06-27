@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-    <div class="main-content main-contant-01">
+    <div class="main-content-01">
         <section class="section">
             <div class="section-header">
                 <h1>Create New Company</h1>

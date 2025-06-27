@@ -128,7 +128,8 @@
 @endsection
 
 @section('content')
-<section class="section">
+<div class="container">
+<section class="section leave-calender">
     <div class="section-header">
         <h1>Leave Calendar</h1>
     </div>
@@ -167,22 +168,22 @@
                             </div>
                         </div>
 
-                        <div class="legend">
+                        <div class="legend d-flex align-item-center gap-2">
                             <div class="legend-item">
-                                <div class="legend-color" style="background-color: #ffc107;"></div>
-                                <span>Pending</span>
+                                <div class="legend-color"></div>
+                                <span style="background-color: #ffc107;">Pending</span>
                             </div>
                             <div class="legend-item">
-                                <div class="legend-color" style="background-color: #28a745;"></div>
-                                <span>Approved</span>
+                                <div class="legend-color"></div>
+                                <span style="background-color: #28a745;">Approved</span>
                             </div>
                             <div class="legend-item">
-                                <div class="legend-color" style="background-color: #dc3545;"></div>
-                                <span>Rejected</span>
+                                <div class="legend-color"></div>
+                                <span style="background-color: #dc3545;">Rejected</span>
                             </div>
                             <div class="legend-item">
-                                <div class="legend-color" style="background-color: #6c757d;"></div>
-                                <span>Cancelled</span>
+                                <div class="legend-color"></div>
+                                <span style="background-color: #6c757d;">Cancelled</span>
                             </div>
                         </div>
 
@@ -262,6 +263,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

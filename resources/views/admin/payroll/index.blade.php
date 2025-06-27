@@ -3,6 +3,7 @@
 @section('title', 'Payroll Records')
 
 @section('content_header')
+<div class="container">
     <div class="row mb-2">
         <div class="col-sm-6">
             <h1>Payroll Records</h1>
@@ -83,6 +84,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

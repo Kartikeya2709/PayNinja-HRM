@@ -3,6 +3,7 @@
 @section('title', 'Leave Requests')
 
 @section('content')
+<div class="container">
 <section class="section">
     <div class="section-header">
         <h1>Leave Requests</h1>
@@ -152,6 +153,7 @@
             </div>
         </div>
     </div>
+</div>
 </section>
 @endsection
 

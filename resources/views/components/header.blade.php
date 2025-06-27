@@ -6,6 +6,7 @@
 <nav class="navbar navbar-expand-lg main-navbar">
     <div class="container-fluid px-3 px-lg-4">
         <!-- Left Side -->
+        
         <div class="d-flex align-items-center">
             <!-- Sidebar Toggle Button -->
       
@@ -16,9 +17,9 @@
 
 
             <!-- Brand for Mobile -->
-            <a href="{{ url('/') }}" class="navbar-brand d-lg-none">
-                <span class="brand-text">PayNinja</span>
-            </a>
+           <div class="mobile-logo logo"> 
+            <a href="#"><img alt="image" src="{{ asset('images\logo (1).png') }}" width="100px"></a> 
+        </div>
         </div>
 
         <!-- Mobile Toggle Button -->
@@ -29,7 +30,10 @@
         <!-- Collapsible Content -->
         <div class="collapse navbar-collapse" id="navbarContent">
             <!-- Quick Actions - Shows on larger screens inline, on mobile in collapse -->
-            <div class="quick-actions my-3 my-lg-0 mx-lg-4">
+             <div class="sidebar-brand logo">
+                <a href="#"><img alt="image" src="{{ asset('images\logo (1).png') }}" width="150px"></a>
+            </div>
+            <div class="quick-actions quick-actions-header my-3 my-lg-0 mx-lg-4">
                 <div class="d-grid d-lg-flex gap-2">
                     @if(!Auth::user()->hasRole(['superadmin']))
                     <a href="{{ route('attendance.check-in') }}" class="btn btn-light">
@@ -93,6 +97,6 @@
                 </ul>
             </li>
         </ul>
-    </div>
+
 </nav>
 @endauth

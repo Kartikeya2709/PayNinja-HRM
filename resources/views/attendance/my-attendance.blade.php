@@ -3,9 +3,10 @@
 @section('title', 'My Attendance History')
 
 @section('content')
+<div class="container">
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card my-attendance">
             <div class="card-header py-3 d-flex flex-wrap justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">My Attendance</h6>
                 <div class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
@@ -130,8 +131,13 @@
             </div>
             <div class="card-body">
                 <div class="row text-center">
+<<<<<<< Updated upstream
                     <!-- <div class="col-md-3 mb-3">
                         <div class="card bg-primary text-white">
+=======
+                    <div class="col-md-3 mb-3">
+                        <div class="card action-icon month-sum text-white">
+>>>>>>> Stashed changes
                             <div class="card-body">
                                 <h6 class="card-title">Working Days</h6>
                                 <h2>{{ $monthlySummary['total_working_days'] ?? 0 }}</h2>
@@ -147,7 +153,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-success text-white">
+                        <div class="card action-icon month-sum text-white">
                             <div class="card-body">
                                 <h6 class="card-title">Present</h6>
                                 <h2>{{ $monthlySummary['present'] ?? 0 }}</h2>
@@ -155,7 +161,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-danger text-white">
+                        <div class="card action-icon month-sum text-white">
                             <div class="card-body">
                                 <h6 class="card-title">Absent</h6>
                                 <h2>{{ $monthlySummary['absent'] ?? 0 }}</h2>
@@ -163,7 +169,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-warning text-dark">
+                        <div class="card action-icon month-sum text-dark">
                             <div class="card-body">
                                 <h6 class="card-title">Late</h6>
                                 <h2>{{ $monthlySummary['late'] ?? 0 }}</h2>
@@ -171,9 +177,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="row text-center mt-3">
+                <div class="row text-center">
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-info text-white">
+                        <div class="card action-icon month-sum text-white">
                             <div class="card-body">
                                 <h6 class="card-title">On Leave</h6>
                                 <h2>{{ $monthlySummary['on_leave'] ?? 0 }}</h2>
@@ -181,7 +187,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-secondary text-white">
+                        <div class="card action-icon month-sum text-white">
                             <div class="card-body">
                                 <h6 class="card-title">Half Day</h6>
                                 <h2>{{ $monthlySummary['half_day'] ?? 0 }}</h2>
@@ -221,6 +227,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 
