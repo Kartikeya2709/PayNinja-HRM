@@ -3,12 +3,8 @@
 @section('content')
     <div class="container">
         <h2>Employees in {{ $company->name }}</h2>
-<<<<<<< Updated upstream
         {{-- <a href="{{ route('company.employees.create', $company->id) }}" class="btn btn-primary">Create New Employee</a> --}}
-        <a href="{{ route('company-admin.employees.create') }}" class="btn btn-primary">Create New Employee</a>
-=======
-        <a href="{{ route('company.employees.create', $company->id) }}" class="btn button">Create New Employee</a>
->>>>>>> Stashed changes
+        <a href="{{ route('company-admin.employees.create') }}" class="btn button">Create New Employee</a>
 
         <table class="table mt-4">
             <thead>

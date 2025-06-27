@@ -836,7 +836,9 @@ select.form-control:not([size]):not([multiple]) {
   opacity: 0;
   transition: 0.3s opacity;
 }
-
+.card-title{
+  color:#000;
+}
 .imagecheck-input:checked ~ .imagecheck-figure:before {
   opacity: 1;
 }
@@ -1680,7 +1682,8 @@ table tr:hover .table-links {
   color: #6777ef;
 }
 .nav-tabs .nav-item .nav-link.active {
-  color: #000;
+  color: #fff;
+  background: #6777ef;
 }
 
 .tab-content > .tab-pane {
@@ -2503,7 +2506,9 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
   width: 22px;
   background-size: cover;
 }
-
+.nav-link.active{
+  background-color: #394eea!important;
+}
 .remove-caret:after {
   display: none;
 }
@@ -2566,13 +2571,14 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
   }
 }
 @media (max-width: 1024px) {
-  .nav-collapse {
-    position: relative;
-    .mobile-logo img{
-
-    }
-
-  }
+  
+.card.card-statistic-1 .card-icon, .card.card-statistic-2 .card-icon {
+    width: 60px;
+    height: 60px;
+  display: flex;
+        justify-content: center;
+        align-items: center;}
+  
   .nav-collapse .navbar-nav {
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.03);
     position: absolute;
