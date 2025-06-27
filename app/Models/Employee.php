@@ -302,4 +302,19 @@ class Employee extends Model
         
         return ($balance->total_days - $balance->used_days) >= $days;
     }
+
+    public function reportingManager()
+    {
+        return $this->belongsTo(Employee::class, 'reporting_manager_id');
+    }
+
+    public function subordinates()
+    {
+        return $this->hasMany(Employee::class, 'reporting_manager_id');
+    }
+
+    public function attendanceRegularizations()
+    {
+        return $this->hasMany(AttendanceRegularization::class);
+    }
 }
