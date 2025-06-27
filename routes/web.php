@@ -64,6 +64,13 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Attendance Management
+    // Attendance Regularization
+    Route::prefix('regularization')->name('regularization.')->group(function () {
+        Route::resource('requests', App\Http\Controllers\Employee\AttendanceRegularizationController::class);
+        Route::put('requests/{id}/approve', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
+        Route::post('requests/bulk-update', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
+    });
+
     Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::get('/', [EmployeeAttendanceController::class, 'dashboard'])->name('dashboard');
         Route::get('/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in');
