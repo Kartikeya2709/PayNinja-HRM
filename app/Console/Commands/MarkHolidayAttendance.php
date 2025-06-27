@@ -66,7 +66,7 @@ class MarkHolidayAttendance extends Command
             
             // Get all active employees for this company
             $employees = Employee::where('company_id', $company->id)
-                ->where('status', 'active')
+                // ->where('status', 'active')
                 ->get();
                 
             $logMessage = "Marking " . $employees->count() . " employees as Holiday";
