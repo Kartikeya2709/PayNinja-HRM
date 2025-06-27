@@ -127,6 +127,15 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'attendance' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/attendance.log'),
+            'level' => 'debug',
+            'days' => 30,
+            'replace_placeholders' => true,
+            'permission' => 0664,
+        ],
+
     ],
 
 ];

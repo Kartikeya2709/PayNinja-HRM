@@ -12,7 +12,7 @@
     </div>
 @endif
 
-    <div class="container">
+    <div class="container card-emp">
         <h2>Create Employee for {{ $company->name }}</h2>
         
         <form action="{{ route('company.employees.store', $company->id) }}" method="POST">

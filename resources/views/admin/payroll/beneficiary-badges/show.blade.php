@@ -129,14 +129,14 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        @if($beneficiaryBadge->is_company_wide && $beneficiaryBadge->is_active)
-                            <button type="button" class="btn btn-info mb-2" id="applyToAllBtn">
-                                <i class="fa-solid fa-users me-2"></i> Apply to All Employees
+                        <!-- @if($beneficiaryBadge->is_company_wide && $beneficiaryBadge->is_active)
+                            <button type="button" class="btn btn-info mb-2" id="applyToAllBtn"> -->
+                                <!-- <i class="fa-solid fa-users me-2"></i> Apply to All Employees
                             </button>
-                            <div class="alert alert-info">
-                                <i class="fa-solid fa-info-circle me-2"></i>
+                            <div class="alert alert-info"> -->
+                                <!-- <i class="fa-solid fa-info-circle me-2"></i>
                                 This is a company-wide badge and will be automatically applied to all employees.
-                            </div>
+                            </div> -->
                         @elseif($beneficiaryBadge->is_active)
                             <button type="button" class="btn btn-outline-info mb-2" id="applyToAllBtn">
                                 <i class="fa-solid fa-users me-2"></i> Apply to All Employees

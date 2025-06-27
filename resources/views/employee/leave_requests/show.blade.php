@@ -35,8 +35,53 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Total Days</label>
-                                    <p class="form-control-static">{{ $leaveRequest->total_days }}</p>
+                                    <label>Total Calendar Days</label>
+                                    <p class="form-control-static">{{ $totalCalendarDays }} days</p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Working Days ({{ count($workingDays) }})</label>
+                                    <p class="form-control-static">
+                                        @if(count($workingDays) > 0)
+                                            @foreach($workingDays as $date)
+                                                <span class="badge badge-primary mr-1 mb-1">
+                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            No working days in this period
+                                        @endif
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Weekend Days ({{ count($weekendDays) }})</label>
+                                    <p class="form-control-static">
+                                        @if(count($weekendDays) > 0)
+                                            @foreach($weekendDays as $date)
+                                                <span class="badge badge-secondary mr-1 mb-1">
+                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            No weekend days in this period
+                                        @endif
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Holiday Days ({{ count($holidayDates) }})</label>
+                                    <p class="form-control-static">
+                                        @if(count($holidayDates) > 0)
+                                            @foreach($holidayDates as $date)
+                                                <span class="badge badge-success mr-1 mb-1">
+                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            No holidays in this period
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
 
@@ -86,6 +131,43 @@
                                 @endif
                             </div>
                         </div>
+
+                        @if(isset($holidays) && $holidays->isNotEmpty())
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <h5>Holidays During Leave Period</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th>Holiday Name</th>
+                                                <th>Date Range</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($holidays as $holiday)
+                                            @php
+                                                $fromDate = \Carbon\Carbon::parse($holiday->from_date);
+                                                $toDate = \Carbon\Carbon::parse($holiday->to_date);
+                                            @endphp
+                                            <tr>
+                                                <td>{{ $holiday->name }}</td>
+                                                <td>
+                                                    {{ $fromDate->format('M d, Y') }}
+                                                    @if(!$fromDate->isSameDay($toDate))
+                                                        to {{ $toDate->format('M d, Y') }}
+                                                    @endif
+                                                </td>
+                                                <td>{{ $holiday->description ?? 'No description' }}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
 
                         <div class="row mt-4">
                             <div class="col-12">

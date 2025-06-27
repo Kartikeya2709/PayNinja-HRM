@@ -3,6 +3,7 @@
 @section('title', 'Payroll Details - ID: {{ $payroll->id }}')
 
 @section('content_header')
+<div class="container">
     <div class="row mb-2">
         <div class="col-sm-6">
             <h1>Payroll Details <small class="text-muted">#{{ $payroll->id }}</small></h1>
@@ -159,4 +160,5 @@
                 </div>
             </div>
         </div>
+    </div>
     @endsection

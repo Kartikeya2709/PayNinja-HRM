@@ -82,10 +82,6 @@
             <span>{{ $monthlySummary['total_working_days'] ?? 0 }}</span>
         </div>
         <div class="summary-row">
-            <span class="summary-label">Days Worked:</span>
-            <span>{{ $monthlySummary['days_worked'] ?? 0 }}</span>
-        </div>
-        <div class="summary-row">
             <span class="summary-label">Present:</span>
             <span>{{ $monthlySummary['present'] ?? 0 }}</span>
         </div>
@@ -104,6 +100,10 @@
         <div class="summary-row">
             <span class="summary-label">Half Day:</span>
             <span>{{ $monthlySummary['half_day'] ?? 0 }}</span>
+        </div>
+        <div class="summary-row">
+            <span class="summary-label">Holidays:</span>
+            <span>{{ $monthlySummary['holiday'] ?? 0 }}</span>
         </div>
     </div>
 

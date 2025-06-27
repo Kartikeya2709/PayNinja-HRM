@@ -52,7 +52,7 @@
                             @enderror
                         </div>
 
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-start">
                             <a href="{{ route('reimbursements.index') }}" class="btn btn-secondary me-2">Cancel</a>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>

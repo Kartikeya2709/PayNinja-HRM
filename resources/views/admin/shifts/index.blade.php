@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 manage-shift">
         <h1 class="h3 mb-0 text-gray-800">Manage Shifts</h1>
         <a href="{{ route('admin.shifts.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add New Shift

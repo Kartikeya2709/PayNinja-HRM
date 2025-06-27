@@ -42,13 +42,13 @@
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body p-3">
                             <form id="filterForm" method="GET">
-                                <div class="row g-2 align-items-end">
-                                    <div class="col-md-3">
+                                <div class="row g-2 align-items-end justify-content-space-between">
+                                    <div class="col-md-4">
                                         <label for="date_range" class="form-label small mb-1">Date Range</label>
                                         <input type="text" class="form-control form-control-sm daterange" id="date_range" name="date_range" 
                                             value="{{ request('date_range') }}" autocomplete="off" placeholder="Select date range">
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <label for="employee_id" class="form-label small mb-1">Employee</label>
                                         <select class="form-select form-select-sm" id="employee_id" name="employee_id">
                                             <option value="">All Employees</option>
@@ -59,7 +59,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label for="department_id" class="form-label small mb-1">Department</label>
                                         <select class="form-select form-select-sm" id="department_id" name="department_id">
                                             <option value="">All Departments</option>
@@ -70,7 +70,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-4">
                                         <label for="status" class="form-label small mb-1">Status</label>
                                         <select class="form-select form-select-sm" id="status" name="status">
                                             <option value="">All Status</option>
@@ -81,8 +81,8 @@
                                             <option value="Half Day" {{ request('status') == 'Half Day' ? 'selected' : '' }}>Half Day</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-2 d-flex">
-                                        <button type="submit" class="btn btn-primary btn-sm me-2 flex-grow-1">
+                                    <div class="col-md-4 d-flex">
+                                        <button type="submit" class="btn btn-primary btn-md me-2 flex-grow-1">
                                             <i class="bi bi-funnel me-1"></i> Filter
                                         </button>
                                         <a href="{{ route('admin.attendance.index') }}" class="btn btn-outline-secondary btn-sm d-flex align-items-center" title="Reset filters" style="min-width: 36px;">
@@ -159,7 +159,8 @@
                                                 $attendance->status === 'Present' ? 'success' : 
                                                 ($attendance->status === 'Absent' ? 'danger' : 
                                                 ($attendance->status === 'Late' ? 'warning' : 
-                                                ($attendance->status === 'On Leave' ? 'info' : 'secondary'))) 
+                                                ($attendance->status === 'On Leave' ? 'info' : 
+                                                ($attendance->status === 'Holiday' ? 'primary' : 'secondary')))) 
                                             }}">
                                                 {{ $attendance->status }}
                                             </span>

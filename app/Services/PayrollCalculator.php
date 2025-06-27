@@ -162,11 +162,16 @@ class PayrollCalculator
         // Get working days (excluding weekends and holidays)
         $workingDays = $this->getWorkingDays($startDate, $endDate);
         
-        // Get present days from attendance records
-        $presentDays = Attendance::where('employee_id', $employee->id)
+        // Get all attendance records for the period
+        $attendances = Attendance::where('employee_id', $employee->id)
             ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
-            ->where('status', 'present')
-            ->count();
+            ->get();
+            
+        // Count present days (including holidays marked as present)
+        $presentDays = $attendances->where('status', 'present')->count();
+        
+        // Count holidays (exclude them from absent days)
+        $holidayDays = $attendances->where('status', 'Holiday')->count();
         
         // Get approved leave days
         $leaveDays = LeaveRequest::where('employee_id', $employee->id)
@@ -176,6 +181,9 @@ class PayrollCalculator
                     ->orWhereBetween('end_date', [$startDate, $endDate]);
             })
             ->sum('days');
+            
+        // Adjust working days by subtracting holidays
+        $workingDays -= $holidayDays;
         
         return [
             'total_days' => $totalDays,

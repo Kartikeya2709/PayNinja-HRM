@@ -5,7 +5,7 @@
 @section('content')
 <div class="row justify-content-center">
     <div class="col-md-8">
-        <div class="card">
+        <div class="card check-in-text">
             <div class="card-body text-center">
                 <h3 class="mb-4">
                     @if(!$todayAttendance || !$todayAttendance->check_in)
@@ -25,9 +25,9 @@
                 
                 <!-- Office Timings -->
                 <div class="office-timings mb-4">
-                    <div class="row justify-content-center">
+                    <div class="row justify-content-center check-in">
                         <div class="col-md-10">
-                            <div class="card bg-light">
+                            <div class="card check-in-bg">
                                 <div class="card-body p-3">
                                     <div class="row text-center">
                                         <div class="col-4">
@@ -76,7 +76,7 @@
                 
                 <!-- Location Button (if geolocation is enabled) -->
                 <div class="d-grid gap-3 col-md-8 mx-auto mb-4">
-                    <button id="getLocationBtn" class="btn btn-outline-primary btn-lg">
+                    <button id="getLocationBtn" class="btn button btn-lg">
                         <i class="bi bi-geo-alt-fill me-2"></i> Update Location
                     </button>
                 </div>
@@ -86,9 +86,9 @@
                 @endif
                 
                 <!-- Check In/Out Buttons -->
-                <div class="d-grid gap-3 col-md-8 mx-auto">
+                <div class="d-grid gap-3 alert-info col-md-8 mx-auto">
                     @if($isWeekend)
-                        <div class="alert alert-info">
+                        <div class="alert alert-info mb-0">
                             <strong>Today is a weekend. Enjoy your day off!</strong>
                         </div>
                     @elseif(!$todayAttendance || !$todayAttendance->check_in)

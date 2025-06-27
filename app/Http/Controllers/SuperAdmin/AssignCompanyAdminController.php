@@ -94,7 +94,7 @@ class AssignCompanyAdminController extends Controller
                     'dob' => $validated['dob'] ?? null,
                     'gender' => $validated['gender'] ?? null,
                     'emergency_contact' => $validated['emergency_contact'] ?? null,
-                    'address' => $validated['address'] ?? null,
+                    'current_address' => $validated['address'] ?? null,
                     'joining_date' => now(),
                     'employee_type' => 'Permanent',
                     'created_by' => auth()->user()->id,

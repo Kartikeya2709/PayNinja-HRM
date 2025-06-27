@@ -17,6 +17,7 @@ class LeaveRequest extends Model
         'start_date',
         'end_date',
         'total_days',
+        'working_days',
         'reason',
         'attachment_path',
         'status',
@@ -28,6 +29,9 @@ class LeaveRequest extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
+        'working_days' => 'array',
+        'weekend_days' => 'array',
+        'holiday_days' => 'array',
         'approved_at' => 'datetime',
     ];
     

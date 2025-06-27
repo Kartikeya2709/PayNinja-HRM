@@ -521,15 +521,16 @@ class EmployeePayrollConfigController extends Controller
                 ]);
             }
             
-            return response()->json([
-                'success' => true,
-                'message' => 'Salary updated successfully',
-                'ctc' => $ctc,
-                'basic_salary' => $basicSalary,
-                'hra' => $hra,
-                'da' => $da,
-                'other_allowances' => $otherAllowances
-            ]);
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Salary updated successfully',
+            //     'ctc' => $ctc,
+            //     'basic_salary' => $basicSalary,
+            //     'hra' => $hra,
+            //     'da' => $da,
+            //     'other_allowances' => $otherAllowances
+            // ]);
+            return redirect()->back()->with('success', 'Salary updated successfully');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('❌ Validation failed', [
@@ -538,11 +539,12 @@ class EmployeePayrollConfigController extends Controller
                 'user_id' => Auth::id()
             ]);
             
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation failed',
-                'errors' => $e->errors()
-            ], 422);
+            // return response()->json([
+            //     'success' => false,
+            //     'message' => 'Validation failed',
+            //     'errors' => $e->errors()
+            // ], 422);
+            return redirect()->back()->with('error', 'Validation failed: ' . $e->getMessage());
             
         } catch (\Exception $e) {
             \Log::error('❌ Error updating salary', [

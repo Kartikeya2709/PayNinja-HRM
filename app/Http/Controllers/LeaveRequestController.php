@@ -7,10 +7,13 @@ use App\Models\Employee;
 use App\Models\LeaveType;
 use App\Models\LeaveBalance;
 use App\Models\Department;
+use App\Models\Holiday;
+use App\Models\AcademicHoliday;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class LeaveRequestController extends Controller
 {
@@ -166,7 +169,20 @@ class LeaveRequestController extends Controller
             $query->where('end_date', '<=', $request->date_to);
         }
 
-        $leaveRequests = $query->latest()->get();
+        $leaveRequests = $query->latest()->get()->map(function ($request) {
+            // Ensure working_days is properly cast to an array
+            if (is_string($request->working_days)) {
+                $request->working_days = json_decode($request->working_days, true) ?? [];
+            } elseif (is_null($request->working_days)) {
+                $request->working_days = [];
+            }
+            
+            // Add working_days_count for the view
+            $request->working_days_count = is_array($request->working_days) ? count($request->working_days) : 0;
+            
+            return $request;
+        });
+        
         $departments = Department::where('company_id', $companyId)->get();
         
         return view('company.leave_requests.index', compact('leaveRequests', 'departments'));
@@ -179,16 +195,26 @@ class LeaveRequestController extends Controller
      */
     public function employeeIndex()
     {
-        $employee = Employee::where('user_id', Auth::id())->first();
-        
-        if (!$employee) {
-            abort(404, 'Employee record not found.');
-        }
-        
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
         $leaveRequests = LeaveRequest::where('employee_id', $employee->id)
-            ->with(['leaveType', 'approver'])
+            ->with(['leaveType'])
             ->latest()
-            ->get();
+            ->get()
+            ->each(function ($request) {
+                // Ensure working_days is properly cast to an array
+                if (is_string($request->working_days)) {
+                    $request->working_days = json_decode($request->working_days, true) ?? [];
+                } elseif (is_null($request->working_days)) {
+                    $request->working_days = [];
+                }
+                
+                // Calculate working days count for display
+                $request->working_days_count = is_array($request->working_days) ? count($request->working_days) : 0;
+                
+                return $request;
+            });
 
         $currentYear = Carbon::now()->year;
         $leaveBalances = LeaveBalance::where('employee_id', $employee->id)
@@ -233,6 +259,54 @@ class LeaveRequestController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    /**
+     * Check if a date is a weekend
+     *
+     * @param Carbon $date
+     * @return bool
+     */
+    protected function isWeekend($date)
+    {
+        return $date->isWeekend();
+    }
+
+    /**
+     * Check if a date is a holiday
+     * 
+     * @param Carbon $date
+     * @param int $companyId
+     * @return bool
+     */
+    protected function isHoliday($date, $companyId)
+    {
+        return AcademicHoliday::where('company_id', $companyId)
+            ->whereDate('from_date', '<=', $date->format('Y-m-d'))
+            ->whereDate('to_date', '>=', $date->format('Y-m-d'))
+            ->exists();
+    }
+
+    /**
+     * Calculate working days between two dates, excluding weekends and holidays
+     * 
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param int $companyId
+     * @return int
+     */
+    protected function calculateWorkingDays($startDate, $endDate, $companyId)
+    {
+        $workingDays = 0;
+        $period = CarbonPeriod::create($startDate, $endDate);
+        
+        foreach ($period as $date) {
+            if (!$this->isWeekend($date) && !$this->isHoliday($date, $companyId)) {
+                $workingDays++;
+            }
+        }
+        
+        return $workingDays;
+    }
+
     public function store(Request $request)
     {
         $employee = Employee::where('user_id', Auth::id())->first();
@@ -255,10 +329,36 @@ class LeaveRequestController extends Controller
             abort(403, 'Unauthorized action.');
         }
         
-        // Calculate total days
+        // Parse dates
         $startDate = Carbon::parse($validated['start_date']);
         $endDate = Carbon::parse($validated['end_date']);
-        $totalDays = $startDate->diffInDays($endDate) + 1;
+        
+        // Get all dates in the leave period
+        $period = CarbonPeriod::create($startDate, $endDate);
+        
+        $workingDays = [];
+        $weekendDays = [];
+        $holidayDates = [];
+        
+        // Categorize each day in the period
+        foreach ($period as $date) {
+            if ($this->isHoliday($date, $employee->company_id)) {
+                $holidayDates[] = $date->format('Y-m-d');
+            } elseif ($this->isWeekend($date)) {
+                $weekendDays[] = $date->format('Y-m-d');
+            } else {
+                $workingDays[] = $date->format('Y-m-d');
+            }
+        }
+        
+        $totalWorkingDays = count($workingDays);
+        $totalCalendarDays = $startDate->diffInDays($endDate) + 1;
+        
+        if ($totalWorkingDays <= 0) {
+            return redirect()->back()
+                ->with('error', 'The selected date range only includes weekends and/or holidays. No leave days will be deducted.')
+                ->withInput();
+        }
         
         // Check for overlapping approved or pending leaves
         if ($this->hasOverlappingLeaves($employee->id, $validated['start_date'], $validated['end_date'])) {
@@ -273,13 +373,17 @@ class LeaveRequestController extends Controller
             ->first();
             
         if (!$leaveBalance) {
-            return redirect()->back()->with('error', 'No leave balance found for this leave type.');
+            return redirect()->back()
+                ->with('error', 'No leave balance found for this leave type.')
+                ->withInput();
         }
         
         $remainingDays = $leaveBalance->total_days - $leaveBalance->used_days;
         
-        if ($totalDays > $remainingDays) {
-            return redirect()->back()->with('error', "Insufficient leave balance. You have only {$remainingDays} days remaining.");
+        if ($totalWorkingDays > $remainingDays) {
+            return redirect()->back()
+                ->with('error', "Insufficient leave balance. You have only {$remainingDays} days remaining.")
+                ->withInput();
         }
         
         // Handle attachment upload
@@ -288,13 +392,14 @@ class LeaveRequestController extends Controller
             $attachmentPath = $request->file('attachment')->store('leave-attachments', 'public');
         }
         
-        // Create leave request
+        // Create the leave request with the calculated values
         $leaveRequest = LeaveRequest::create([
             'employee_id' => $employee->id,
             'leave_type_id' => $validated['leave_type_id'],
             'start_date' => $validated['start_date'],
             'end_date' => $validated['end_date'],
-            'total_days' => $totalDays,
+            'total_days' => $totalCalendarDays,
+            'working_days' => $workingDays,
             'reason' => $validated['reason'],
             'attachment_path' => $attachmentPath,
             'status' => 'pending',
@@ -321,18 +426,81 @@ class LeaveRequestController extends Controller
             if ($leaveRequest->employee->company_id !== $user->company_id) {
                 abort(403, 'Unauthorized action.');
             }
-        } elseif ($employee && $leaveRequest->employee_id !== $employee->id) {
+        } elseif ($leaveRequest->employee_id !== $employee->id) {
             // Employee can only view their own leave requests
             abort(403, 'Unauthorized action.');
         }
         
         // Load the leave request with its relationships
         $leaveRequest->load(['employee', 'leaveType', 'approver']);
+        
+        // Get holidays during the leave period
+        $holidays = $this->getHolidaysInPeriod(
+            $leaveRequest->start_date, 
+            $leaveRequest->end_date, 
+            $leaveRequest->employee->company_id
+        );
+        
+        // Get all dates in the leave period
+        $period = CarbonPeriod::create($leaveRequest->start_date, $leaveRequest->end_date);
+        
+        $workingDays = [];
+        $weekendDays = [];
+        $holidayDates = [];
+        
+        // Categorize each day in the period
+        foreach ($period as $date) {
+            if ($this->isHoliday($date, $leaveRequest->employee->company_id)) {
+                $holidayDates[] = $date->format('Y-m-d');
+            } elseif ($this->isWeekend($date)) {
+                $weekendDays[] = $date->format('Y-m-d');
+            } else {
+                $workingDays[] = $date->format('Y-m-d');
+            }
+        }
+        
+        $totalCalendarDays = $leaveRequest->start_date->diffInDays($leaveRequest->end_date) + 1;
+        
+        // Get approved working days from the leave request
+        $approvedWorkingDays = is_array($leaveRequest->working_days) ? $leaveRequest->working_days : [];
 
         // Return appropriate view based on user role
         $viewPath = $user->role === 'admin' ? 'company.leave_requests.show' : 'employee.leave_requests.show';
-        return view($viewPath, compact('leaveRequest'));
+        return view($viewPath, [
+            'leaveRequest' => $leaveRequest,
+            'holidays' => $holidays,
+            'workingDays' => $workingDays,
+            'totalCalendarDays' => $totalCalendarDays,
+            'weekendDays' => $weekendDays,
+            'holidayDates' => $holidayDates,
+            'approvedWorkingDays' => $approvedWorkingDays
+        ]);
     }
+    
+    /**
+     * Get holidays within a date range
+     * 
+     * @param Carbon $startDate
+     * @param Carbon $endDate
+     * @param int $companyId
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function getHolidaysInPeriod($startDate, $endDate, $companyId)
+    {
+        return AcademicHoliday::where('company_id', $companyId)
+            ->where(function($query) use ($startDate, $endDate) {
+                $query->whereBetween('from_date', [$startDate, $endDate])
+                    ->orWhereBetween('to_date', [$startDate, $endDate])
+                    ->orWhere(function($q) use ($startDate, $endDate) {
+                        $q->where('from_date', '<=', $startDate)
+                            ->where('to_date', '>=', $endDate);
+                    });
+            })
+            ->orderBy('from_date')
+            ->get();
+    }
+    
+
 
     /**
      * Show the form for editing the specified leave request.
@@ -530,7 +698,9 @@ class LeaveRequestController extends Controller
             'admin_remarks' => 'nullable|string',
         ]);
         
-        // Update leave balance
+        // Update leave balance with working days count instead of total days
+        $workingDaysCount = is_array($leaveRequest->working_days) ? count($leaveRequest->working_days) : 0;
+        
         $leaveBalance = LeaveBalance::where('employee_id', $leaveRequest->employee_id)
             ->where('leave_type_id', $leaveRequest->leave_type_id)
             ->where('year', Carbon::parse($leaveRequest->start_date)->year)
@@ -538,7 +708,7 @@ class LeaveRequestController extends Controller
             
         if ($leaveBalance) {
             $leaveBalance->update([
-                'used_days' => $leaveBalance->used_days + $leaveRequest->total_days,
+                'used_days' => $leaveBalance->used_days + $workingDaysCount,
             ]);
         }
         
@@ -682,7 +852,44 @@ class LeaveRequestController extends Controller
             ->where('leave_type_id', $leaveRequest->leave_type_id)
             ->where('year', Carbon::parse($leaveRequest->start_date)->year)
             ->first();
-
-        return view('company.leave_requests.show', compact('leaveRequest', 'leaveBalance'));
+            
+        // Get holidays during the leave period
+        $holidays = $this->getHolidaysInPeriod(
+            $leaveRequest->start_date, 
+            $leaveRequest->end_date, 
+            $leaveRequest->employee->company_id
+        );
+        
+        // Get all dates in the leave period
+        $period = CarbonPeriod::create($leaveRequest->start_date, $leaveRequest->end_date);
+        
+        $workingDays = [];
+        $weekendDays = [];
+        $holidayDates = [];
+        
+        // Categorize each day in the period
+        foreach ($period as $date) {
+            if ($this->isHoliday($date, $leaveRequest->employee->company_id)) {
+                $holidayDates[] = $date->format('Y-m-d');
+            } elseif ($this->isWeekend($date)) {
+                $weekendDays[] = $date->format('Y-m-d');
+            } else {
+                $workingDays[] = $date->format('Y-m-d');
+            }
+        }
+        
+        // Get approved working days from the leave request
+        $approvedWorkingDays = is_array($leaveRequest->working_days) ? $leaveRequest->working_days : [];
+        
+        return view('company.leave_requests.show', [
+            'leaveRequest' => $leaveRequest,
+            'leaveBalance' => $leaveBalance,
+            'holidays' => $holidays,
+            'workingDays' => $workingDays,
+            'weekendDays' => $weekendDays,
+            'holidayDates' => $holidayDates,
+            'approvedWorkingDays' => $approvedWorkingDays,
+            'totalCalendarDays' => $leaveRequest->start_date->diffInDays($leaveRequest->end_date) + 1
+        ]);
     }
 }

@@ -32,7 +32,7 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card">
+            <div class="card attendance">
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">Attendance Summary</h4>
@@ -93,8 +93,8 @@
                                                             <thead class="table-light">
                                                                 <tr>
                                                                     <th style="width: 5%">#</th>
-                                                                    <th style="width: 30%">Employee</th>
-                                                                    <th style="width: 25%">Designation</th>
+                                                                    <th style="width: 22%">Employee</th>
+                                                                    <th style="width: 22%">Designation</th>
                                                                     <th class="text-center">Status</th>
                                                                     <th class="text-center">Check In</th>
                                                                     <th class="text-center">Check Out</th>

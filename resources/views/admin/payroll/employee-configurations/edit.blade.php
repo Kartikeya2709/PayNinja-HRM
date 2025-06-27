@@ -265,16 +265,18 @@
                                 @php
                                     $assignedBadge = $assignedBadgesMap->get($badge->id);
                                     $isApplicable = $assignedBadge ? $assignedBadge->is_applicable : false;
-                                    $customValue = $assignedBadge ? $assignedBadge->custom_value : '';
-                                    $calculationType = $assignedBadge ? $assignedBadge->custom_calculation_type : 'flat';
-                                    $basedOn = $assignedBadge ? $assignedBadge->custom_based_on : '';
+                                    
+                                    // Get values from assigned badge or fall back to default badge values
+                                    $value = $assignedBadge->custom_value ?? $assignedBadge->beneficiaryBadge->value ?? 0;
+                                    $calculationType = $assignedBadge->custom_calculation_type ?? $assignedBadge->beneficiaryBadge->calculation_type ?? 'flat';
+                                    $basedOn = $assignedBadge->custom_based_on ?? $assignedBadge->beneficiaryBadge->based_on ?? '';
                                     
                                     // Format the value for display
                                     $displayValue = '';
-                                    if ($isApplicable && $customValue !== '') {
+                                    if ($isApplicable) {
                                         $displayValue = $calculationType === 'percentage' 
-                                            ? number_format($customValue, 2) . '% of ' . ucfirst($basedOn ?: 'basic')
-                                            : number_format($customValue, 2);
+                                            ? number_format($value, 2) . '% of ' . ucfirst(str_replace('_', ' ', $basedOn))
+                                            : number_format($value, 2);
                                     }
                                 @endphp
                                 @if($isApplicable)
@@ -288,7 +290,7 @@
                                                     <span class="text-muted">Status:</span>
                                                     <span class="badge bg-success">Active</span>
                                                 </div>
-                                                @if($displayValue)
+                                                @if($isApplicable && $displayValue)
                                                     <div class="d-flex justify-content-between mb-2">
                                                         <span class="text-muted">Value:</span>
                                                         <span class="fw-bold">{{ $displayValue }}</span>
@@ -304,16 +306,15 @@
                                         </div>
                                     </div>
                                 @endif
-                                </div>
                             @endforeach
                         </div>
                     @endif
                 </div>
 
-                <div class="card-footer text-right">
+                <!-- <div class="card-footer text-right">
                     <button type="submit" class="btn btn-primary">Save Configuration</button>
                     <a href="{{ route('admin.employee-payroll-configurations.index') }}" class="btn btn-secondary">Cancel</a>
-                </div>
+                </div> -->
             </form>
         </div>
     </div>

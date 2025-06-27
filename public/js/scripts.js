@@ -127,6 +127,15 @@ $(function() {
   }
   sidebar_dropdown();
 
+  // Scroll sidebar to active menu item on page load
+  var $sidebar = $(".main-sidebar");
+  var $activeMenu = $sidebar.find(".sidebar-menu li.active");
+  if ($activeMenu.length && $sidebar.getNiceScroll) {
+    // Calculate offset and scroll
+    var offset = $activeMenu.position().top + $sidebar.scrollTop() - 100;
+    $sidebar.getNiceScroll(0).doScrollTop(offset, 500);
+  }
+
   if($("#top-5-scroll").length) {
     $("#top-5-scroll").css({
       height: 315
