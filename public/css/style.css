@@ -154,9 +154,7 @@ background-color: #4361ee36 !important;
 .my-attendance .card-header .form-control{
   border: 1px solid #000!important;
 }
-.logo img{
-  filter: brightness(0) invert(1);
-}
+
 #office-timings .check-in-bg{
   background-color: #4361ee29 !important;
 }
@@ -196,7 +194,7 @@ background-color: #4361ee36 !important;
 }
 .emp-dash-h4 h4{
   line-height: normal!important;
-  padding-bottom: 20px;
+  padding-bottom: 10px;
 }
 .month-sum h2{
   color: #000;
@@ -281,11 +279,11 @@ background-color: #4361ee36 !important;
       color: #000;
 }
 .quick-actions .action-icon i{
-         color: #4361ee;
+         color: rgb(255, 148, 8);
     font-size: 30px;
     transition: 0.9s;
     border-radius: 10px;
-    background: #6777ef3b;
+    background: rgb(255 148 8 / 11%);
     padding: 5px;
     width: 70px;
     height: 70px;
@@ -294,7 +292,7 @@ background-color: #4361ee36 !important;
 ;
     justify-content: center;}
     .quick-actions .action-icon:hover i{
-      background: #4361ee!important;
+      background: rgb(255, 148, 8)!important;
       color:#fff!important;
       transition: 0.9s;
     }
@@ -324,7 +322,7 @@ background-color: #4361ee36 !important;
   top: 0;
   height: 100%;
   width: 4px;
-  background-color:#4361ee;
+  background-color:rgb(255, 148, 8);
   transform: scaleY(0);
   transform-origin: bottom;
   transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
@@ -461,7 +459,15 @@ a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fab {
 .font-weight-normal {
   font-weight: 500 !important;
 }
-
+.check-in-text #currentTime{
+  background: linear-gradient(#3abaf4, #4361ee);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 600;
+}
+.check-in-text{
+  padding: 40px!important;
+}
 .lead {
   line-height: 34px;
 }
@@ -485,7 +491,10 @@ p, ul:not(.list-unstyled), ol {
   color: #98a6ad !important;
   line-height: normal;
 }
-
+.my-attendance .btn{
+  display: grid;
+  margin-bottom: 5px;
+}
 /* 3.2 Form */
 .form-control,
 .input-group-text,
@@ -1066,7 +1075,7 @@ select.form-control:not([size]):not([multiple]) {
   margin: 0px!important;
 }
 .dropdown-toggle .text-muted{
-      color: #fff !important;
+      color: #000!important;
 }
 /* input[type="date"] {
         position: relative;
@@ -1114,6 +1123,10 @@ select.form-control:not([size]):not([multiple]) {
 }
 .card-hover .card-title{
   margin: 0px;
+}
+.card-hover:hover .card-title{
+
+  color:#fff;
 }
 .card-hover h2{
   margin-bottom: 0px;
@@ -1215,11 +1228,11 @@ position: relative;
   z-index: 9;
   position: relative;
 }
-.card-hover:hover i{
+/* .card-hover:hover i{
   color: #000!important;
   transition: 0.9s;
    z-index: 9;
-}
+} */
 .card-hover i{
   transition: 0.9s;
 }
@@ -1427,12 +1440,12 @@ font-weight: 700;
 }
 .card.card-statistic-1 .card-icon .ion, .card.card-statistic-1 .card-icon .fas, .card.card-statistic-1 .card-icon .far, .card.card-statistic-1 .card-icon .fab, .card.card-statistic-1 .card-icon .fal, .card.card-statistic-2 .card-icon .ion, .card.card-statistic-2 .card-icon .fas, .card.card-statistic-2 .card-icon .far, .card.card-statistic-2 .card-icon .fab, .card.card-statistic-2 .card-icon .fal {
  font-size: 30px;
-    color: #4361ee;
+    color: rgb(255, 148, 8);
 }
 .card.card-statistic-1 .card-icon {
   line-height: 90px;
       background: #fff;
-    border: 2px solid #4361ee;
+    border: 2px solid rgb(255, 148, 8);
     border-radius: 10px;
 
 }
@@ -1709,6 +1722,10 @@ table tr:hover .table-links {
 .nav-pills .nav-item .nav-link:hover {
   background-color: #f6f7fe;
 }
+#app .card-header{
+  padding-bottom: 10px!important;
+  justify-content: space-between;
+}
 .nav-pills .nav-item .nav-link.active {
   box-shadow: 0 2px 6px #acb5f6;
   color: #fff;
@@ -1933,7 +1950,7 @@ h6 .badge {
     gap: 10px;
 }
 .btn.btn-sm {
-  padding: 2px;
+  padding: 5px;
       /* display: flex;
     align-items: center;
     gap: 6px; */
@@ -2034,9 +2051,9 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
   color: #191d21;
 }
 .quick-actions-header a{
-   background-color: #fff;
-  border-color: #fff;
-  color: #191d21;
+  background-color: rgb(6, 58, 125);
+    border-color: rgb(6, 58, 125);
+    color: #fff;
 }
 /* .btn-light:hover, .btn-light:focus, .btn-light:active, .btn-light.disabled:hover, .btn-light.disabled:focus, .btn-light.disabled:active {
   background-color: #c3d2dc !important;
@@ -2484,7 +2501,7 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
   line-height: 32px;
 }
 .navbar .nav-link.nav-link-user {
-  color: #fff;
+  color: #000;
   padding-top: 4px;
   padding-bottom: 4px;
   font-weight: 700;
@@ -3042,6 +3059,9 @@ blockquote .blockquote-footer {
 }
 
 .fas, .far, .fab, .fal {
+  font-size:14px;
+}
+.sidebar-menu .fas, .far, .fab, .fal {
   font-size:20px;
 }
 
@@ -3375,7 +3395,10 @@ pre {
     position: relative;
 }
 .quick-actions-header{
-      padding-left: 100px;
+          width: 100%;
+    justify-content: end;
+    display: flex
+;
 }
 .section .section-header h1 {
   font-weight: 700;
@@ -3419,7 +3442,7 @@ pre {
   border-radius: 5px;
   height: 8px;
   width: 30px;
-  background-color: #6777ef;
+  background-color: rgb(6, 58, 125);
   display: inline-block;
   float: left;
   margin-top: 6px;
@@ -3459,9 +3482,7 @@ pre {
     margin-top: 15px;
   }
   .section .section-header .section-header-breadcrumb {
-    flex-basis: 100%;
-    margin-top: 10px;
-  }
+    flex-basis: 100%;}
 }
 /* 4.3 Page */
 .page-error {
@@ -3699,7 +3720,7 @@ body.layout-2 .main-sidebar .sidebar-menu li a.has-dropdown:after {
   right: 0;
 }
 body.layout-2 .main-sidebar .sidebar-menu li a:hover {
-  color: #6777ef;
+  color: rgb(6, 58, 125);
   background-color: transparent;
 }
 body.layout-2 .main-sidebar .sidebar-menu li ul.dropdown-menu li a {
@@ -3936,7 +3957,7 @@ html,body{
 }
 .main-sidebar .sidebar-menu li a:hover {
   background-color: #f4f4f4;
-   color: #6777ef!important;
+   color: rgb(6, 58, 125)!important;
 }
 .main-sidebar .sidebar-menu li.active a {
   color: #6777ef;
@@ -4041,7 +4062,7 @@ html,body{
   color: #fff;
    display: inline-block;
   width: 100%;
-  background: #4361ee;
+  background: rgb(6, 58, 125);
     width: 100%;
     z-index: 9999;
    
@@ -4255,6 +4276,8 @@ body.layout-3 .main-wrapper {
 .section-body .col-lg-3{
   margin-bottom: 30px;
 }
+.form-group .control-label, .form-group > label {
+    font-size: 12px;}
 .profile-form {
     padding: 40px;
 }
@@ -4277,6 +4300,12 @@ body.layout-3 .main-wrapper {
     height: auto;
     flex-wrap: wrap;
     
+  }
+  .check-in-text .office-timings .text-center{
+display: block;
+  }
+  .check-in-text .office-timings .text-center .col-4{
+    width: 100%;
   }
   .profile-form .card-header {
     font-size: 20px;}
@@ -4442,6 +4471,7 @@ margin-left: 0px!important;
   }
   .btn{
     font-size: 9px!important;
+    padding: 5px!important;
   }
   .table-responsive{
     padding: 10px;
@@ -4458,9 +4488,7 @@ margin: 0px!important;
 }
   .form-group .control-label, .form-group > label {
     font-size: 10px;}
-  .section-header-button{
-    margin-top: 15px;
-  }
+ 
   .section-header h1{
     text-align: center;
   }

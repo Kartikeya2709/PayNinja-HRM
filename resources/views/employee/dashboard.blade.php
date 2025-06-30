@@ -2,7 +2,7 @@
 @section('title', 'Employee Dashboard')
 
 @section('content')
-<div class="main-content-01">
+<div class="main-content-01 container">
     <section class="section">
         <div class="section-header">
             <h1>Employee Dashboard</h1>

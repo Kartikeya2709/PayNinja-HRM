@@ -18,7 +18,7 @@
 
             <!-- Brand for Mobile -->
            <div class="mobile-logo logo"> 
-            <a href="#"><img alt="image" src="{{ asset('images\logo (1).png') }}" width="100px"></a> 
+            <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="100px"></a> 
         </div>
         </div>
 
@@ -31,17 +31,17 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <!-- Quick Actions - Shows on larger screens inline, on mobile in collapse -->
              <div class="sidebar-brand logo">
-                <a href="#"><img alt="image" src="{{ asset('images\logo (1).png') }}" width="150px"></a>
+                <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="150px"></a>
             </div>
-            <div class="quick-actions quick-actions-header my-3 my-lg-0 mx-lg-4">
+            <div class="quick-actions quick-actions-header">
                 <div class="d-grid d-lg-flex gap-2">
                     @if(!Auth::user()->hasRole(['superadmin']))
-                    <a href="{{ route('attendance.check-in') }}" class="btn btn-light">
+                    <a href="{{ route('attendance.check-in') }}" class="btn button">
                         <i class="fas fa-clock me-2"></i> Quick Attendance
                     </a>
                     @endif
                     @if(Auth::user()->hasRole(['user', 'employee']))
-                    <a href="{{ route('reimbursements.create') }}" class="btn btn-light">
+                    <a href="{{ route('reimbursements.create') }}" class="btn button">
                         <i class="fas fa-receipt me-2"></i> New Reimbursement
                     </a>
                     @endif
