@@ -95,17 +95,21 @@
 @endpush
 
 @section('content')
-<div class="main-content main-contant-01">
+<div class="main-content-01 container">
     <section class="section">
         <div class="section-header">
             <h1>Dashboard Overview</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
+                <div class="breadcrumb-item">Companies &amp; Users</div>
+            </div>
         </div>
 
         <div class="row">
             <!-- Employees Card -->
             <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon bg-primary">
+                <div class="card card-statistic-1 card-hover">
+                    <div class="card-icon">
                         <i class="fas fa-users"></i>
                     </div>
                     <div class="card-wrap">
@@ -121,8 +125,8 @@
 
             <!-- Departments Card -->
             <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon bg-success">
+                <div class="card card-statistic-1 card-hover">
+                    <div class="card-icon">
                         <i class="fas fa-building"></i>
                     </div>
                     <div class="card-wrap">
@@ -138,8 +142,8 @@
 
             <!-- Today's Attendance -->
             <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon bg-warning">
+                <div class="card card-statistic-1 card-hover">
+                    <div class="card-icon">
                         <i class="fas fa-calendar-check"></i>
                     </div>
                     <div class="card-wrap">
@@ -162,10 +166,10 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
                     <a href="{{ route('attendance.dashboard') }}" class="action-card h-100">
                         <div class="card-body p-3">
-                            <div class="action-icon bg-primary">
+                            <div class="action-icon">
                                 <i class="fas fa-calendar-check"></i>
-                            </div>
                             <h6>Attendance</h6>
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -174,10 +178,11 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
                     <a href="{{ route('company.departments.index') }}" class="action-card h-100">
                         <div class="card-body p-3">
-                            <div class="action-icon bg-success">
+                            <div class="action-icon">
                                 <i class="fas fa-building"></i>
-                            </div>
+                            
                             <h6>Departments</h6>
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -186,10 +191,11 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
                     <a href="{{ route('company.leave-requests.index') }}" class="action-card h-100">
                         <div class="card-body p-3">
-                            <div class="action-icon bg-warning">
+                            <div class="action-icon">
                                 <i class="fas fa-calendar-minus"></i>
-                            </div>
+                            
                             <h6>Leave Requests</h6>
+                            </div>
                         </div>
                     </a>
                 </div>
@@ -198,10 +204,11 @@
                 <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
                     <a href="{{ route('company.employees.index', ['companyId' => auth()->user()->company_id]) }}" class="action-card h-100">
                         <div class="card-body p-3">
-                            <div class="action-icon bg-info">
+                            <div class="action-icon">
                                 <i class="fas fa-users"></i>
-                            </div>
+                           
                             <h6>Employees</h6>
+                             </div>
                         </div>
                     </a>
                 </div>

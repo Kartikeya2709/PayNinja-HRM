@@ -32,7 +32,7 @@
                 
                 <div class="d-grid gap-2">
                     @if(!$todayAttendance || !$todayAttendance->check_in)
-                        <button class="btn btn-primary btn-lg" id="checkInBtn">
+                        <button class="btn button btn-lg" id="checkInBtn">
                             <i class="bi bi-box-arrow-in-right me-2"></i> Check In
                         </button>
                     @elseif(!$todayAttendance->check_out)
@@ -105,12 +105,12 @@
 <!-- Monthly Summary -->
 <div class="row">
     <div class="col-12">
-        <div class="card">
+        <div class="card attendance-card">
             <div class="card-body">
                 <h5 class="card-title">Monthly Summary - {{ now()->format('F Y') }}</h5>
-                <div class="row text-center">
+                <div class="row text-center mt-4">
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-primary text-white">
+                        <div class="card card-hover">
                             <div class="card-body">
                                 <h6 class="card-title">Present</h6>
                                 <h2>{{ $monthlySummary['present'] ?? 0 }}</h2>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-danger text-white">
+                        <div class="card card-hover">
                             <div class="card-body">
                                 <h6 class="card-title">Absent</h6>
                                 <h2>{{ $monthlySummary['absent'] ?? 0 }}</h2>
@@ -126,7 +126,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-warning text-dark">
+                        <div class="card card-hover">
                             <div class="card-body">
                                 <h6 class="card-title">Late</h6>
                                 <h2>{{ $monthlySummary['late'] ?? 0 }}</h2>
@@ -134,7 +134,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-info text-white">
+                        <div class="card card-hover">
                             <div class="card-body">
                                 <h6 class="card-title">On Leave</h6>
                                 <h2>{{ $monthlySummary['on_leave'] ?? 0 }}</h2>

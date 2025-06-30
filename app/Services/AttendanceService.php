@@ -13,6 +13,18 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceService
 {
+    protected $companyId;
+
+    /**
+     * Set the company ID for the service
+     *
+     * @param int $companyId
+     * @return void
+     */
+    public function setCompanyId($companyId)
+    {
+        $this->companyId = $companyId;
+    }
     /**
      * Record employee check-in
      */
@@ -27,7 +39,11 @@ class AttendanceService
      */
     public function getAttendanceSettings($companyId = null)
     {
-        // If no company ID provided, try to get it from authenticated user
+        // Use stored company ID if set and no company ID provided
+        if (!$companyId && $this->companyId) {
+            $companyId = $this->companyId;
+        }
+        // If still no company ID, try to get it from authenticated user
         if (!$companyId && Auth::check() && Auth::user()) {
             $companyId = Auth::user()->company_id;
         }
@@ -341,6 +357,22 @@ class AttendanceService
             'current_time_check' => $now->format('H:i:s'),
             'office_end_time' => $officeEnd->format('H:i:s')
         ]);
+
+
+        
+        // Check if it's a holiday or academic holiday
+        $isHoliday = $this->isHoliday($today);
+        $isAcademicHoliday = $this->isAcademicHoliday($today, $employee->company_id);
+        
+        if ($isAcademicHoliday) {
+            $holidayName = $this->getHolidayName($today, $employee->company_id);
+            
+            return [
+                'success' => false,
+                'message' => "Check-ins are not allowed on Holiday : $holidayName",
+                'error_type' => 'holiday_checkin'
+            ];
+        }
         
         // Check if it's a weekend
         $todayDay = strtolower($now->format('l'));
@@ -349,28 +381,11 @@ class AttendanceService
             : [];
             
         if (in_array($todayDay, $weekendDays)) {
+            
             return [
                 'success' => false,
                 'message' => 'Check-ins are not allowed on weekends.',
                 'error_type' => 'weekend_checkin'
-            ];
-        }
-        
-        // Check if it's a holiday
-        if ($this->isHoliday($today)) {
-            return [
-                'success' => false,
-                'message' => 'Check-ins are not allowed on holidays.',
-                'error_type' => 'holiday_checkin'
-            ];
-        }
-        
-        // Check if employee is on leave
-        if ($this->isOnLeave($employee, $today)) {
-            return [
-                'success' => false,
-                'message' => 'You are on leave today and cannot check in.',
-                'error_type' => 'on_leave'
             ];
         }
         
@@ -698,6 +713,7 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
             'late' => $attendances->where('status', 'Late')->count(),
             'on_leave' => $attendances->where('status', 'On Leave')->count(),
             'half_day' => $attendances->where('status', 'Half Day')->count(),
+            'holiday' => $attendances->where('status', 'Holiday')->count(),
             'total_working_days' => $workingDays,
             'days_worked' => $attendances->whereIn('status', ['Present', 'Late', 'Half Day'])->count(),
         ];
@@ -709,18 +725,13 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
      * @param string|null $date Date to mark absences for (Y-m-d)
      * @return int Number of employees marked as absent
      */
-    /**
-     * Mark employees as absent if they haven't checked in by the auto-absent time
-     * 
-     * @param string|\Carbon\Carbon|null $date The date to check (defaults to today)
-     * @return int Number of employees marked as absent
-     */
     public function markAbsentEmployees($date = null)
     {
+        $user=auth()->user();
         $now = now();
         $date = $date ? Carbon::parse($date) : $now;
         $dateString = $date->toDateString();
-        
+        // dd($user);
         // Get all unique company IDs that have employees
         $companyIds = Employee::distinct()->pluck('company_id');
         
@@ -760,13 +771,26 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
             }
             
             // Don't mark absences on weekends or holidays for this company
-            if ($this->isWeekend($date) || $this->isHoliday($date)) {
-                \Log::info('Skipping auto-absence marking for weekend or holiday', [
-                    'company_id' => $companyId,
-                    'date' => $dateString,
-                    'is_weekend' => $this->isWeekend($date),
-                    'is_holiday' => $this->isHoliday($date)
-                ]);
+            if ($this->isWeekend($date)) {
+                continue;
+            }
+            
+            if ($this->isHoliday($date)) {
+                // Create or update attendance record with status 'Holiday'
+            //     Attendance::updateOrCreate(
+            //         [
+            //             'employee_id' => $employee->id,
+            //             'date' => $dateString
+            //         ],
+            //         [
+            //             'status' => 'Holiday',
+            //             'check_in_status' => 'Holiday',
+            //             'check_in_remarks' => 'Holiday - ' . $this->getHolidayName($date, $companyId),
+            //             'office_start_time' => $settings->office_start_time,
+            //             'office_end_time' => $settings->office_end_time,
+            //             'grace_period' => $settings->grace_period
+            //         ]
+            //     );
                 continue;
             }
             
@@ -957,6 +981,12 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
         return (int)$gracePeriod;
     }
 
+    /**
+     * Check if a date is a holiday
+     *
+     * @param string|\Carbon\Carbon $date
+     * @return bool
+     */
     public function isHoliday($date)
     {
         // Convert to Carbon instance if it's a string
@@ -965,22 +995,23 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
 
         // Get company ID from authenticated user if available
         $companyId = null;
-        if (\Illuminate\Support\Facades\Auth::check()) {
-            $companyId = \Illuminate\Support\Facades\Auth::user()->company_id;
+        if (Auth::check()) {
+            $companyId = Auth::user()->company_id;
         }
 
-        return \App\Models\AcademicHoliday::where('company_id', $companyId)
+
+        // Check AcademicHoliday (date range based)
+        $isAcademicHoliday = \App\Models\AcademicHoliday::where('company_id', $companyId)
             ->whereDate('from_date', '<=', $dateString)
             ->whereDate('to_date', '>=', $dateString)
             ->exists();
+
+        return $isAcademicHoliday;
     }
 
     /**
      * Check if employee is on leave for a specific date
-     */
-    /**
-     * Check if employee is on leave for a specific date
-     * 
+     *
      * @param \App\Models\Employee $employee
      * @param string|\Carbon\Carbon $date
      * @return bool
@@ -1000,4 +1031,51 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
             ->exists();
          
     }
+
+    /**
+     * Get holiday name for a specific date and company
+     * 
+     * @param string|\Carbon\Carbon $date
+     * @param int $companyId
+     * @return string
+     */
+    protected function getHolidayName($date, $companyId)
+    {
+        $date = is_string($date) ? Carbon::parse($date) : $date;
+        $dateString = $date->toDateString();
+        
+        $holiday = \App\Models\Holiday::where('company_id', $companyId)
+            ->whereDate('date', $dateString)
+            ->first();
+        
+        if ($holiday) {
+            return $holiday->name;
+        }
+        
+        $academicHoliday = \App\Models\AcademicHoliday::where('company_id', $companyId)
+            ->whereDate('from_date', '<=', $dateString)
+            ->whereDate('to_date', '>=', $dateString)
+            ->first();
+        
+        return $academicHoliday ? $academicHoliday->name : 'Holiday';
+         
+    }
+    
+    /**
+     * Check if a date is an academic holiday
+     *
+     * @param string|Carbon $date
+     * @param int $companyId
+     * @return bool
+     */
+    protected function isAcademicHoliday($date, $companyId)
+    {
+        $date = is_string($date) ? Carbon::parse($date) : $date;
+        $dateString = $date->toDateString();
+        
+        return \App\Models\AcademicHoliday::where('company_id', $companyId)
+            ->whereDate('from_date', '<=', $dateString)
+            ->whereDate('to_date', '>=', $dateString)
+            ->exists();
+    }     
 }

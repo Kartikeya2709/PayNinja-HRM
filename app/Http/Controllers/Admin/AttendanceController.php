@@ -249,22 +249,58 @@ class AttendanceController extends Controller
      */
     public function destroy($id)
     {
-        $companyId = auth()->user()->company_id;
-        
-        // Find the attendance record and ensure it belongs to the user's company
-        $attendance = Attendance::whereHas('employee', function($q) use ($companyId) {
-                $q->where('company_id', $companyId);
-            })
-            ->findOrFail($id);
+        try {
+            $companyId = auth()->user()->company_id;
             
-        $attendance->delete();
-
-        // Return JSON response for AJAX requests
-        if (request()->ajax()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Attendance record deleted successfully.'
+            // Find the attendance record and ensure it belongs to the user's company
+            $attendance = Attendance::withTrashed()
+                ->whereHas('employee', function($q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+                })
+                ->findOrFail($id);
+            
+            // Force delete if already soft deleted, otherwise soft delete
+            if ($attendance->trashed()) {
+                $attendance->forceDelete();
+                $message = 'Attendance record permanently deleted successfully.';
+            } else {
+                $attendance->delete();
+                $message = 'Attendance record moved to trash successfully.';
+            }
+            
+            // Log the deletion
+            \Log::info('Attendance deleted', [
+                'attendance_id' => $id,
+                'deleted_by' => auth()->id(),
+                'deleted_at' => now(),
+                'method' => request()->method()
             ]);
+            
+            // Return JSON response for AJAX requests
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message
+                ]);
+            }
+            
+            return redirect()->back()->with('success', $message);
+            
+        } catch (\Exception $e) {
+            \Log::error('Error deleting attendance: ' . $e->getMessage(), [
+                'attendance_id' => $id,
+                'user_id' => auth()->id(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to delete attendance: ' . $e->getMessage()
+                ], 500);
+            }
+            
+            return redirect()->back()->with('error', 'Failed to delete attendance: ' . $e->getMessage());
         }
     }
 

@@ -21,6 +21,8 @@ class Attendance extends Model
         'check_out_location',
         'status',
         'remarks',
+        'approved_by_id',
+        'approved_by_name',
     ];
 
     protected $casts = [

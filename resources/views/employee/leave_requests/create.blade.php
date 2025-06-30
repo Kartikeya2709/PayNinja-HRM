@@ -144,7 +144,7 @@
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Submit Leave Request</button>
-                                <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-link">Cancel</a>
+                                <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-link btn-danger">Cancel</a>
                             </div>
                         </form>
                     </div>

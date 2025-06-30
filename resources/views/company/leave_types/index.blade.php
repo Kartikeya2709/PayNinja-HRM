@@ -3,6 +3,7 @@
 @section('title', 'Leave Types')
 
 @section('content')
+<div class="container">
 <section class="section">
     <div class="section-header">
         <h1>Leave Types</h1>
@@ -96,6 +97,7 @@
             </div>
         </div>
     </div>
+</div>
 </section>
 @endsection
 

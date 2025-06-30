@@ -31,7 +31,7 @@
                             @endif
                         </div>
                     @else
-                        <ul class="nav nav-tabs mb-4" id="payrollTabs" role="tablist">
+                        <ul class="nav nav-tabs mb-4 navbars-payrolls" id="payrollTabs" role="tablist">
                             <li class="nav-item" role="presentation">
                                 <button class="nav-link active" id="single-tab" data-bs-toggle="tab" data-bs-target="#single" type="button" role="tab" aria-controls="single" aria-selected="true">Single Employee</button>
                             </li>
@@ -85,7 +85,7 @@
 
                                     <div class="mt-4">
                                         <button type="submit" class="btn btn-primary">Generate Payroll</button>
-                                        <a href="{{ route('admin.payroll.index') }}" class="btn btn-link">Cancel</a>
+                                        <a href="{{ route('admin.payroll.index') }}" class="btn btn-link btn-danger">Cancel</a>
                                     </div>
                                 </form>
                             </div>
@@ -139,7 +139,7 @@
                                             <span class="spinner-border spinner-border-sm d-none me-1" role="status" aria-hidden="true"></span>
                                             Generate Payroll for All Employees
                                         </button>
-                                        <a href="{{ route('admin.payroll.index') }}" class="btn btn-link">Cancel</a>
+                                        <a href="{{ route('admin.payroll.index') }}" class="btn btn-link btn-danger">Cancel</a>
                                     </div>
                                 </form>
                             </div>

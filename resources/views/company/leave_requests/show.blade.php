@@ -48,7 +48,55 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Total Days</label>
-                                    <p class="form-control-static">{{ $leaveRequest->total_days }}</p>
+                                    <p class="form-control-static">
+                                        {{ $leaveRequest->total_days }} 
+                                        <span class="text-muted">({{ count($approvedWorkingDays) }} working days)</span>
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Working Days ({{ count($approvedWorkingDays) }})</label>
+                                    <p class="form-control-static">
+                                        @if(count($approvedWorkingDays) > 0)
+                                            @foreach($approvedWorkingDays as $date)
+                                                <span class="badge badge-primary mr-1 mb-1">
+                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="text-muted">No working days specified</span>
+                                        @endif
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Weekend Days ({{ count($weekendDays) }})</label>
+                                    <p class="form-control-static">
+                                        @if(count($weekendDays) > 0)
+                                            @foreach($weekendDays as $date)
+                                                <span class="badge badge-secondary mr-1 mb-1">
+                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="text-muted">No weekend days in this period</span>
+                                        @endif
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Holiday Days ({{ count($holidayDates) }})</label>
+                                    <p class="form-control-static">
+                                        @if(count($holidayDates) > 0)
+                                            @foreach($holidayDates as $date)
+                                                <span class="badge badge-success mr-1 mb-1">
+                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
+                                                </span>
+                                            @endforeach
+                                        @else
+                                            <span class="text-muted">No holidays in this period</span>
+                                        @endif
+                                    </p>
                                 </div>
 
                                 <div class="form-group">

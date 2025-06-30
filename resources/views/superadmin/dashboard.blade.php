@@ -147,7 +147,7 @@
 
             <div class="row">
                 <div class="col-md-6">
-                    <div class="card card-hover">
+                    <div class="card">
                         <div class="card-header">
                             <h4>User Roles Distribution</h4>
                         </div>
@@ -157,7 +157,7 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card card-hover">
+                    <div class="card">
                         <div class="card-header">
                             <h4>Companies and Admins</h4>
                         </div>

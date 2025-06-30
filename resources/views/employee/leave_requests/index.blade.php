@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Carbon\Carbon;
+@endphp
+
 @section('title', 'My Leave Requests')
 
 @section('content')
@@ -83,6 +87,7 @@
                                         <th>Start Date</th>
                                         <th>End Date</th>
                                         <th>Days</th>
+                                        <th>Working Days</th>
                                         <th>Status</th>
                                         <th>Action</th>
                                     </tr>
@@ -93,7 +98,21 @@
                                             <td>{{ $request->leaveType->name }}</td>
                                             <td>{{ $request->start_date->format('Y-m-d') }}</td>
                                             <td>{{ $request->end_date->format('Y-m-d') }}</td>
-                                            <td>{{ $request->total_days }}</td>
+                                            <td>{{ $request->working_days_count }}</td>
+                                            <td>
+                                                <div class="text-center">
+                                                    @if(is_array($request->working_days))
+                                                        <span class="badge badge-info">{{ count($request->working_days) }} working days</span>
+                                                        <div class="mt-1 small">
+                                                            @foreach($request->working_days as $date)
+                                                                <span class="badge badge-light text-dark mr-1">{{ \Carbon\Carbon::parse($date)->format('M d') }}</span>
+                                                            @endforeach
+                                                        </div>
+                                                    @else
+                                                        <span class="badge badge-info">0 working days</span>
+                                                    @endif
+                                                </div>
+                                            </td>
                                             <td>
                                                 <span class="badge badge-{{ $request->status_color }}">
                                                     {{ ucfirst($request->status) }}

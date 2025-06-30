@@ -519,13 +519,18 @@ class AttendanceController extends Controller
             ->get();
             
         $monthlySummary = $this->attendanceService->getMonthlySummary($employee->id, $month);
+    
+    // Get holiday count for the month
+    $holidayCount = $attendances->where('status', 'Holiday')->count();
+    $monthlySummary['holiday'] = $holidayCount;
 
-        $pdf = PDF::loadView('attendance.exports.pdf', [
-            'attendances' => $attendances,
-            'month' => $month,
-            'employee' => $employee,
-            'monthlySummary' => $monthlySummary
-        ]);
+    $pdf = PDF::loadView('attendance.exports.pdf', [
+        'attendances' => $attendances,
+        'month' => $month,
+        'employee' => $employee,
+        'monthlySummary' => $monthlySummary,
+        'holidayCount' => $holidayCount
+    ]);
         
         $fileName = 'attendance_' . str_replace('-', '_', $month) . '.pdf';
         

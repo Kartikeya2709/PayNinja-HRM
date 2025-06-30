@@ -3,6 +3,7 @@
 @section('title', 'Leave Requests')
 
 @section('content')
+<div class="container">
 <section class="section">
     <div class="section-header">
         <h1>Leave Requests</h1>
@@ -112,7 +113,7 @@
                                             <td>{{ $request->leaveType->name }}</td>
                                             <td>{{ $request->start_date->format('Y-m-d') }}</td>
                                             <td>{{ $request->end_date->format('Y-m-d') }}</td>
-                                            <td>{{ $request->total_days }}</td>
+                                            <td>{{ $request->working_days_count }}</td>
                                             <td>
                                                 <span class="badge badge-{{ $request->status_color }}">
                                                     {{ ucfirst($request->status) }}
@@ -152,6 +153,7 @@
             </div>
         </div>
     </div>
+</div>
 </section>
 @endsection
 

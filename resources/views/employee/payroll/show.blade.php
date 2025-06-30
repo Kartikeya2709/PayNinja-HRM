@@ -127,8 +127,10 @@
             <td>{{ $payroll->payment_date ? $payroll->payment_date->format('M d, Y') : 'N/A' }}</td>
         </tr>
         <tr>
-            <th>Payslip ID</th>
-            <td>#{{ $payroll->id }}</td>
+            <!-- <th>Payslip ID</th>
+            <td>#{{ $payroll->id }}</td> -->
+            <th>Designation</th>
+            <td>{{ Auth::user()->employee->designation->title ?? 'N/A' }}</td>
             <th>Department</th>
             <td>{{ Auth::user()->employee->department->name ?? 'N/A' }}</td>
         </tr>

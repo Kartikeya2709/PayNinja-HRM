@@ -3,7 +3,7 @@
 @section('title', 'Payroll Settings - ' . $company->name)
 
 @section('content')
-<div class="main-content">
+<div class="main-content container payroll-setting">
     <section class="section">
         <div class="section-header">
             <h1>Payroll Settings</h1>

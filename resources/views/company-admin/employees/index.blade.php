@@ -7,7 +7,11 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Employee Management</h5>
-                    <a href="{{ route('company.employees.create', ['companyId' => auth()->user()->company_id]) }}" class="btn btn-primary">
+                    {{-- <a href="{{ route('company.employees.create', ['companyId' => auth()->user()->company_id]) }}" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Create Employee
+                    </a> --}}
+                    <a href="{{ route('company-admin.employees.create') }}" class="btn btn-primary d-flex align-items-center">
+
                         <i class="fas fa-plus me-1"></i> Create Employee
                     </a>
                 </div>

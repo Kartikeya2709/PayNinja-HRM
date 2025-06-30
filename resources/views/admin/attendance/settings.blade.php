@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="row">
+    <div class="row attendance-setting">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
@@ -12,7 +12,7 @@
                         <h5 class="card-title mb-0">
                             <i class="fas fa-clock me-2"></i>Attendance Settings
                         </h5>
-                        <div>
+                        <div class="attendance-btn">
                             <a href="{{ route('admin.attendance.settings.view') }}" class="btn btn-outline-primary btn-sm me-2">
                                 <i class="fas fa-eye me-1"></i> View Current Settings
                             </a>

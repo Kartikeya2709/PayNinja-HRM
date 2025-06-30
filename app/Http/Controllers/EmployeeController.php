@@ -17,28 +17,8 @@ use Illuminate\Http\Request;
 class EmployeeController extends Controller
 {
     private function generateEmployeeCode($company, $employmentType = null)
-    {
-        // If employment type is not provided, use default format
-        if (!$employmentType) {
-            $prefix = '#' . strtoupper(substr($company->name, 0, 3)) . '000';
-            $lastEmployee = Employee::where('company_id', $company->id)
-                ->whereNotNull('employee_code')
-                ->where('employee_code', 'like', $prefix.'%')
-                ->orderBy('id', 'desc')
-                ->first();
-
-            $nextNumber = 1;
-            if ($lastEmployee) {
-                $numericPart = (int) substr($lastEmployee->employee_code, -3);
-                $nextNumber = $numericPart + 1;
-            }
-            return substr($prefix, 0, -3) . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-        }
-
-        // Get the prefix settings for the company
-        $prefixSettings = EmployeeIdPrefix::where('company_id', $company->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+    {        
+        $prefixSettings = EmployeeIdPrefix::where('company_id', $company->id)->latest()->get();
 
         // If no prefix settings found, use default
         if ($prefixSettings->isEmpty()) {
@@ -67,6 +47,7 @@ class EmployeeController extends Controller
                 return '#' . strtoupper(substr($company->name, 0, 3)) . str_pad('1', 3, '0', STR_PAD_LEFT);
             }
         }
+        // dd( $prefixSetting);
 
         // Get the last employee number for this prefix
         $lastEmployee = Employee::where('company_id', $company->id)
@@ -374,5 +355,24 @@ class EmployeeController extends Controller
             ->get();
             
         return view('company.employees.admins', compact('company', 'admins'));
+    }
+
+    /**
+     * AJAX endpoint to get the next employee code for a company and employment type
+     */
+    public function getNextEmployeeCode(Request $request)
+    {
+        $companyId = $request->input('company_id');
+        $employmentType = $request->input('employment_type');
+        if (!$companyId || !$employmentType) {
+            return response()->json(['code' => null, 'error' => 'Missing parameters.'], 400);
+        }
+        $company = \App\Models\Company::find($companyId);
+        if (!$company) {
+            return response()->json(['code' => null, 'error' => 'Company not found.'], 404);
+        }
+        
+        $code = $this->generateEmployeeCode($company, $employmentType);
+        return response()->json(['code' => $code]);
     }
 }

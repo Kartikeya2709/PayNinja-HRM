@@ -2,7 +2,7 @@
 @section('title', 'Employee Dashboard')
 
 @section('content')
-<div class="main-content main-contant-01">
+<div class="main-content-01">
     <section class="section">
         <div class="section-header">
             <h1>Employee Dashboard</h1>
@@ -18,7 +18,7 @@
                     <a href="{{ route('attendance.check-in') }}" class="card card-link">
                         <div class="card-body text-center">
                             <div class="mb-3">
-                                <i class="fas fa-clock fa-3x text-primary"></i>
+                                <i class="fas fa-clock fa-3x"></i>
                             </div>
                             <h6 class="card-title mb-0">Check In/Out</h6>
                         </div>
@@ -29,7 +29,7 @@
                     <a href="{{ route('attendance.my-attendance') }}" class="card card-link">
                         <div class="card-body text-center">
                             <div class="mb-3">
-                                <i class="fas fa-calendar-check fa-3x text-success"></i>
+                                <i class="fas fa-calendar-check fa-3x"></i>
                             </div>
                             <h6 class="card-title mb-0">My Attendance</h6>
                         </div>
@@ -40,7 +40,7 @@
                     <a href="{{ route('employee.leave-requests.create') }}" class="card card-link">
                         <div class="card-body text-center">
                             <div class="mb-3">
-                                <i class="fas fa-calendar-plus fa-3x text-warning"></i>
+                                <i class="fas fa-calendar-plus fa-3x"></i>
                             </div>
                             <h6 class="card-title mb-0">Apply Leave</h6>
                         </div>
@@ -51,7 +51,7 @@
                     <a href="{{ route('employee.salary.details') }}" class="card card-link">
                         <div class="card-body text-center">
                             <div class="mb-3">
-                                <i class="fas fa-money-bill-wave fa-3x text-info"></i>
+                                <i class="fas fa-money-bill-wave fa-3x"></i>
                             </div>
                             <h6 class="card-title mb-0">Salary Details</h6>
                         </div>
@@ -63,13 +63,13 @@
             <div class="row mt-4">
                 <div class="col-lg-6 col-md-6 col-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header  emp-dash-h4">
                             <h4>Today's Status</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body emp-dashboard">
                             <div class="row align-items-center">
                                 <div class="col-4 text-center">
-                                    <i class="fas fa-user-clock fa-3x text-primary"></i>
+                                    <i class="fas fa-user-clock fa-3x"></i>
                                 </div>
                                 <div class="col-8">
                                     <div class="mb-2">
@@ -124,13 +124,13 @@
 
                 <div class="col-lg-6 col-md-6 col-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header emp-dash-h4">
                             <h4>Leave Balance</h4>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body emp-dashboard">
                             <div class="row align-items-center">
                                 <div class="col-4 text-center">
-                                    <i class="fas fa-calendar-alt fa-3x text-warning"></i>
+                                    <i class="fas fa-calendar-alt fa-3x"></i>
                                 </div>
                                 <div class="col-8">
                                     <div class="mb-2">

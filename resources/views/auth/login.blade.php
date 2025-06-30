@@ -176,6 +176,22 @@
       <h2>Login</h2>
       <form method="POST" action="{{ route('login') }}">
         @csrf
+        @if ($errors->any())
+          <div style="background-color: #ffebee; color: #c62828; padding: 12px; border-radius: 6px; margin-bottom: 20px; width: 100%; box-sizing: border-box;">
+            <strong>Whoops!</strong> There were some problems with your input.
+            <ul style="margin: 8px 0 0 20px; padding: 0;">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+          </div>
+        @endif
+        
+        @if (session('status'))
+          <div style="background-color: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 6px; margin-bottom: 20px; width: 100%; box-sizing: border-box;">
+              {{ session('status') }}
+          </div>
+        @endif
         <label for="email">Email</label>
         <input id="email" type="email" name="email" required autocomplete="email" autofocus placeholder="company@example.com" />
         <label for="password">Password</label>
@@ -194,7 +210,7 @@
     </div>
   </div>
   <div class="footer-text">
-    © 2025 2025 HRMGo
+    © 2025 HRMGo
   </div>
 </body>
 </html>

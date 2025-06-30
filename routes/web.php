@@ -22,9 +22,24 @@ use App\Http\Controllers\Employee\PayrollController as EmployeePayrollController
 use App\Http\Controllers\Admin\AttendanceAdjustmentController;
 use App\Http\Controllers\Admin\BeneficiaryBadgeController;
 use App\Http\Controllers\Admin\EmployeePayrollConfigController;
-
+use Illuminate\Support\Facades\Artisan;
 // Test logging route - can be removed after testing
 require __DIR__ . '/test-logging.php';
+
+
+// Route::get('/migrate-fresh-seed', function () {
+//     Artisan::call('migrate:fresh', [
+//         '--seed' => true,
+//         '--force' => true,
+//     ]);
+
+//     return '✅ Fresh migration with seeding done!';
+// });
+Route::get('/migrate', function () {
+    Artisan::call('migrate');
+
+    return '✅ Migration done!';
+});
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,6 +64,13 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Attendance Management
+    // Attendance Regularization
+    Route::prefix('regularization')->name('regularization.')->group(function () {
+        Route::resource('requests', App\Http\Controllers\Employee\AttendanceRegularizationController::class);
+        Route::put('requests/{id}/approve', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
+        Route::post('requests/bulk-update', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
+    });
+
     Route::prefix('attendance')->name('attendance.')->group(function () {
         Route::get('/', [EmployeeAttendanceController::class, 'dashboard'])->name('dashboard');
         Route::get('/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in');
@@ -405,5 +427,8 @@ Route::middleware(['auth'])->group(function () {
         // Employee ID Prefix Settings Save
         Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
         Route::get('/settings/get-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'getEmployeeIdPrefix'])->name('settings.get-employee-id-prefix');
+
+        // Employee code generation for company-admin (AJAX)
+        Route::get('/employees/next-code', [\App\Http\Controllers\EmployeeController::class, 'getNextEmployeeCode'])->name('employees.next-code');
     });
 }); // End of auth middleware group
