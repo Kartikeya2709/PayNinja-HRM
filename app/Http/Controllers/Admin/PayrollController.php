@@ -125,9 +125,15 @@ class PayrollController extends Controller
                 $payPeriodEnd = Carbon::parse($request->pay_period_end);
 
                 // Get all active employees for the company
-                $query = Employee::with('company')
-                    // ->where('status', 'active')
-                    ->where('company_id', $company->id);
+                // $query = Employee::with('company')
+                //     // ->where('status', 'active')
+                //     ->where('company_id', $company->id);
+
+                $query = Employee::with(['company', 'user'])
+                ->whereHas('user', function($q) {
+                    $q->where('role', '!=', 'company_admin')
+                      ->orWhereNull('role');
+                });
 
                 $employees = $query->get();
 
