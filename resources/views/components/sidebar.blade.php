@@ -128,7 +128,11 @@
                         </a>
                     </li>
 
-
+                    <li class="{{ Request::is('regularization/requests*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('regularization.requests.index') }}"><i
+                                class="fas fa-user-clock"></i> <span>Regularization Requests</span></a>
+                    </li>
+                    
                     <li class="{{ Request::is('company-admin/employees*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company-admin.employees.index') }}"><i
                                 class="fas fa-users"></i> <span>Employee Management</span></a>
