@@ -190,7 +190,7 @@
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <div class="card bg-primary text-white">
+                        <div class="card action-icon month-sum text-white">
                             <div class="card-body">
                                 <h6 class="card-title">Holiday</h6>
                                 <h2>{{ $monthlySummary['holiday'] ?? 0 }}</h2>

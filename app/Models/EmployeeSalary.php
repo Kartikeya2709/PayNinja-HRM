@@ -14,6 +14,7 @@ class EmployeeSalary extends Model
 
     protected $fillable = [
         'ctc',
+        'pan_number',
         'employee_id',
         'basic_salary',
         'hra',
