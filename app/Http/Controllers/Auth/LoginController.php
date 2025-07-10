@@ -41,11 +41,14 @@ class LoginController extends Controller
         ]);
 
         Log::info('Login attempt for email: ' . $request->input('email'));
+        // Log::info('Login attempt Request: ', $request->all());
 
         $credentials = $request->only('email', 'password');
+        $remember = $request->has('remember') ? true : false;
+        Log::info('Remember: '. $remember);
 
         // Attempt login with superadmin guard first
-        if (Auth::guard('superadmin')->attempt($credentials)) {
+        if (Auth::guard('superadmin')->attempt($credentials, $remember)) {
             $user = Auth::guard('superadmin')->user();
             Log::info('Login successful as SuperAdmin for user: ' . $user->email);
             Log::info('Redirecting SuperAdmin to home');
@@ -53,7 +56,7 @@ class LoginController extends Controller
         }
 
         // If superadmin login fails, attempt with default web guard (users)
-        if (Auth::guard('web')->attempt($credentials)) {
+        if (Auth::guard('web')->attempt($credentials, $remember)) {
             $user = Auth::guard('web')->user();
             Log::info('Login successful as User/Admin for user: ' . $user->email . ' with role: ' . $user->role);
 

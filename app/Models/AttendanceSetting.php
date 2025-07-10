@@ -33,7 +33,8 @@ class AttendanceSetting extends Model
         'weekend_days' => 'array',
         'office_start_time' => 'string',
         'office_end_time' => 'string',
-        'work_hours' => 'integer',
+        // 'work_hours' => 'integer',
+        'work_hours' => 'float', // Changed to float for decimal support
         'grace_period' => 'string',
         'enable_geolocation' => 'boolean',
         'office_latitude' => 'float',
