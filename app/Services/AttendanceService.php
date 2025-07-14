@@ -688,26 +688,108 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
      */
     public function getMonthlySummary($employeeId, $month = null)
     {
+        \Log::info('Starting monthly summary calculation', [
+            'employee_id' => $employeeId,
+            'month' => $month,
+            'start_date' => Carbon::parse($month)->startOfMonth()->toDateString(),
+            'end_date' => Carbon::parse($month)->endOfMonth()->toDateString()
+        ]);
+
         $month = $month ?: now()->format('Y-m');
         $startDate = Carbon::parse($month)->startOfMonth();
         $endDate = Carbon::parse($month)->endOfMonth();
+
+        // Get attendance settings that were active during this month
+        $settings = AttendanceSetting::where('company_id', Auth::user()->company_id)
+            ->where('updated_at', '<=', $endDate)
+            ->orderBy('updated_at', 'desc')
+            ->first();
+
+        if (!$settings) {
+            \Log::warning('No attendance settings found for company', [
+                'company_id' => Auth::user()->company_id,
+                'month' => $month
+            ]);
+            $weekendDays = ['Saturday', 'Sunday'];
+        } else {
+            $weekendDays = json_decode($settings->weekend_days, true) ?? ['Saturday', 'Sunday'];
+        }
+
+        \Log::info('Using weekend configuration', [
+            'weekend_days' => $weekendDays,
+            'settings_updated_at' => $settings ? $settings->updated_at->format('Y-m-d H:i:s') : null
+        ]);
 
         $attendances = Attendance::where('employee_id', $employeeId)
             ->whereBetween('date', [$startDate, $endDate])
             ->get();
 
+        \Log::info('Attendance records found', [
+            'count' => $attendances->count(),
+            'status_counts' => [
+                'present' => $attendances->where('status', 'Present')->count(),
+                'absent' => $attendances->where('status', 'Absent')->count(),
+                'late' => $attendances->where('status', 'Late')->count(),
+                'on_leave' => $attendances->where('status', 'On Leave')->count(),
+                'half_day' => $attendances->where('status', 'Half Day')->count(),
+                'holiday' => $attendances->where('status', 'Holiday')->count(),
+                'week_off' => $attendances->where('status', 'Week Off')->count(),
+                'total_days' => $attendances->count(),
+            ]
+        ]);
+
         $workingDays = 0;
+        $weekOffDays = 0;
         $currentDate = $startDate->copy();
+        $dayDetails = [];
         
-        // Calculate working days (excluding weekends and holidays)
+        // Calculate working days and week-offs
         while ($currentDate->lte($endDate)) {
-            if (!$this->isWeekend($currentDate) && !$this->isHoliday($currentDate)) {
+            $dayType = 'working_day';
+            $dayOfWeek = strtolower($currentDate->format('l'));
+            
+            // Check if it's a weekend day
+            $isWeekend = false;
+            
+            // Check regular weekend days first
+            if (in_array(ucfirst($dayOfWeek), $weekendDays)) {
+                $isWeekend = true;
+            }
+            
+            // Check special patterns (saturday_1_3, saturday_2_4, etc.)
+            foreach ($weekendDays as $pattern) {
+                if (strpos($pattern, '_') !== false) {
+                    list($day, $weeks) = explode('_', $pattern);
+                    if ($dayOfWeek === strtolower($day)) {
+                        $weekNumber = (int)ceil($currentDate->day / 7);
+                        $allowedWeeks = explode(',', $weeks);
+                        if (in_array($weekNumber, $allowedWeeks)) {
+                            $isWeekend = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            if ($isWeekend) {
+                $weekOffDays++;
+                $dayType = 'weekend';
+            } elseif ($this->isHoliday($currentDate)) {
+                $dayType = 'holiday';
+            } else {
                 $workingDays++;
             }
+            
+            $dayDetails[] = [
+                'date' => $currentDate->toDateString(),
+                'day_of_week' => ucfirst($dayOfWeek),
+                'type' => $dayType
+            ];
+            
             $currentDate->addDay();
         }
 
-        return [
+        $summary = [
             'present' => $attendances->where('status', 'Present')->count(),
             'absent' => $attendances->where('status', 'Absent')->count(),
             'late' => $attendances->where('status', 'Late')->count(),
@@ -716,7 +798,18 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
             'holiday' => $attendances->where('status', 'Holiday')->count(),
             'total_working_days' => $workingDays,
             'days_worked' => $attendances->whereIn('status', ['Present', 'Late', 'Half Day'])->count(),
+            'week_off' => $weekOffDays,
+            'total_days' => $workingDays + $weekOffDays,
         ];
+
+        \Log::info('Monthly summary calculation complete', [
+            'summary' => $summary,
+            'day_details' => $dayDetails,
+            'working_days' => $workingDays,
+            'week_off_days' => $weekOffDays
+        ]);
+
+        return $summary;
     }
 
     /**

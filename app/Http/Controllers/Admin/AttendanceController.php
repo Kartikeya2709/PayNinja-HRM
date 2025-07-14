@@ -212,7 +212,7 @@ class AttendanceController extends Controller
             'date' => 'required|date',
             'check_in' => 'nullable|date_format:H:i',
             'check_out' => 'nullable|date_format:H:i|after_or_equal:check_in',
-            'status' => 'required|in:Present,Absent,Late,On Leave,Half Day',
+            'status' => 'required|in:Present,Absent,Late,On Leave,Half Day,Holiday,Week-Off',
             'remarks' => 'nullable|string|max:500',
         ]);
 
@@ -439,7 +439,7 @@ class AttendanceController extends Controller
                         'date' => 'required|date',
                         'check_in' => 'nullable|date_format:H:i',
                         'check_out' => 'nullable|date_format:H:i|after_or_equal:check_in',
-                        'status' => 'required|in:Present,Absent,Late,On Leave,Half Day',
+                        'status' => 'required|in:Present,Absent,Late,On Leave,Half Day,Holiday,Week-Off',
                         'remarks' => 'nullable|string|max:500',
                     ]);
                     

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('permanent_address')->nullable();
             $table->string('location')->nullable();
             $table->string('probation_period')->nullable();
-            // $table->string('reporting_manager_id')->nullable();
-            $table->foreign('reporting_manager_id')->references('id')->on('employees')->onDelete('set null');
+            $table->string('reporting_manager_id')->nullable();
+            // $table->foreign('reporting_manager_id')->references('id')->on('employees')->onDelete('set null');
             $table->string('blood_group')->nullable();
             $table->text('nominee_details')->nullable();
             $table->string('emergency_contact_relation')->nullable();
@@ -43,7 +43,7 @@ return new class extends Migration
                 'permanent_address',
                 'location',
                 'probation_period',
-                'reporting_manager',
+                'reporting_manager_id',
                 'blood_group',
                 'nominee_details',
                 'emergency_contact_relation',

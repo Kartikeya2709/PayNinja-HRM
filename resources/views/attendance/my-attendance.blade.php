@@ -135,7 +135,7 @@
                         <div class="card bg-primary text-white">                    
                             <div class="card-body">
                                 <h6 class="card-title">Working Days</h6>
-                                <h2>{{ $monthlySummary['total_working_days'] ?? 0 }}</h2>
+                                <h2>{{ $monthlySummary['total_days'] ?? 0 }}</h2>
                             </div>
                         </div>
                     </div> -->

@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Support\Facades\Log;
+use App\Models\AttendanceSetting;
+
 
 class LeaveRequestController extends Controller
 {
@@ -38,6 +41,40 @@ class LeaveRequestController extends Controller
     public function adminCalendarEvents(Request $request)
     {
         $companyId = Auth::user()->company_id;
+        
+        // Get company's weekend configuration
+        $settings = AttendanceSetting::where('company_id', $companyId)
+            ->latest('updated_at')
+            ->first();
+            
+        $weekendDays = $settings ? json_decode($settings->weekend_days, true) : ['Saturday', 'Sunday'];
+
+        // Helper function to check if a date is a weekend
+        $isWeekend = function($date) use ($weekendDays) {
+            $dayOfWeek = ucfirst($date->format('l')); // Get full day name (e.g., 'Monday')
+            
+            // Check if it's a regular weekend day
+            if (in_array($dayOfWeek, $weekendDays)) {
+                return true;
+            }
+
+            // Handle special weekend patterns (e.g., 'saturday_1_3', 'saturday_2_4')
+            foreach ($weekendDays as $pattern) {
+                if (strpos($pattern, '_') !== false) {
+                    list($day, $weeks) = explode('_', $pattern);
+                    if (strtolower($dayOfWeek) === strtolower($day)) {
+                        $weekNumber = (int)ceil($date->day / 7);
+                        $allowedWeeks = explode(',', $weeks);
+                        if (in_array($weekNumber, $allowedWeeks)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        };
+
         $query = LeaveRequest::whereHas('employee', function ($query) use ($companyId) {
             $query->where('company_id', $companyId);
         })->with(['employee.department', 'leaveType']);
@@ -267,7 +304,41 @@ class LeaveRequestController extends Controller
      */
     protected function isWeekend($date)
     {
-        return $date->isWeekend();
+        $companyId = Auth::user()->company_id;
+        // dd($companyId);
+        
+        // Get company's weekend configuration
+        $settings = AttendanceSetting::where('company_id', $companyId)
+            ->latest('updated_at')
+            ->first();
+            
+            Log::info($settings);
+
+            // dd($settings);
+        $weekendDays = $settings ? json_decode($settings->weekend_days, true) : ['Saturday', 'Sunday'];
+
+        $dayOfWeek = ucfirst($date->format('l')); // Get full day name (e.g., 'Monday')
+        
+        // Check if it's a regular weekend day
+        if (in_array($dayOfWeek, $weekendDays)) {
+            return true;
+        }
+
+        // Handle special weekend patterns (e.g., 'saturday_1_3', 'saturday_2_4')
+        foreach ($weekendDays as $pattern) {
+            if (strpos($pattern, '_') !== false) {
+                list($day, $weeks) = explode('_', $pattern);
+                if (strtolower($dayOfWeek) === strtolower($day)) {
+                    $weekNumber = (int)ceil($date->day / 7);
+                    $allowedWeeks = explode(',', $weeks);
+                    if (in_array($weekNumber, $allowedWeeks)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

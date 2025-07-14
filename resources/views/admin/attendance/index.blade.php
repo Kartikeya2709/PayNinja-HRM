@@ -79,6 +79,8 @@
                                             <option value="Late" {{ request('status') == 'Late' ? 'selected' : '' }}>Late</option>
                                             <option value="On Leave" {{ request('status') == 'On Leave' ? 'selected' : '' }}>On Leave</option>
                                             <option value="Half Day" {{ request('status') == 'Half Day' ? 'selected' : '' }}>Half Day</option>
+                                            <option value="Holiday" {{ request('status') == 'Holiday' ? 'selected' : '' }}>Holiday</option>
+                                            <option value="Week-Off" {{ request('status') == 'Week-Off' ? 'selected' : '' }}>Week-Off</option>
                                         </select>
                                     </div>
                                     <div class="col-md-4 d-flex">
@@ -292,6 +294,8 @@
                             <option value="Late">Late</option>
                             <option value="On Leave">On Leave</option>
                             <option value="Half Day">Half Day</option>
+                            <option value="Holiday">Holiday</option>
+                            <option value="Week-Off">Week-Off</option>
                         </select>
                     </div>
                     
@@ -351,7 +355,9 @@
                             <option value="Late">Late</option>
                             <option value="On Leave">On Leave</option>
                             <option value="Half Day">Half Day</option>
-                        </select>
+                            <option value="Holiday">Holiday</option>
+                            <option value="Week-Off">Week-Off</option>
+                            </select>
                     </div>
                     
                     <div class="mb-3">
@@ -417,7 +423,7 @@
                                 <li>Required fields: <code>employee_id</code>, <code>date</code>, <code>status</code></li>
                                 <li>Date format: YYYY-MM-DD</li>
                                 <li>Time format: HH:MM:SS (24-hour format)</li>
-                                <li>Valid status values: Present, Absent, Late, On Leave, Half Day</li>
+                                <li>Valid status values: Present, Absent, Late, On Leave, Half Day, Holiday, Week-Off</li>
                             </ol>
                         </div>
                     </div>
