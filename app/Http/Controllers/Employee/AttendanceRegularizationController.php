@@ -21,18 +21,32 @@ class AttendanceRegularizationController extends Controller
         $employee = Auth::user()->employee;
 
         if (is_null($employee->reporting_manager_id)) {
-            $requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
+            $pending_requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
+                ->where('status', '=', 'pending')
                 ->with('employee', 'approver')
                 ->latest()
-                ->paginate(10);
+                ->paginate(10, ['*'], 'pending_page');
+
+            $approved_requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
+                ->where('status', '=', 'approved')
+                ->with('employee', 'approver')
+                ->latest()
+                ->paginate(10, ['*'], 'approved_page');
+
+            $rejected_requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
+                ->where('status', '=', 'rejected')
+                ->with('employee', 'approver')
+                ->latest()
+                ->paginate(10, ['*'], 'rejected_page');
+
+            return view('employee.regularization.index', compact('pending_requests', 'approved_requests', 'rejected_requests'));
         } else {
             $requests = $employee->attendanceRegularizations()
                 ->with('employee', 'approver')
                 ->latest()
                 ->paginate(10);
+            return view('employee.regularization.index', compact('requests'));
         }
-
-        return view('employee.regularization.index', compact('requests'));
     }
 
     /**
@@ -98,9 +112,13 @@ class AttendanceRegularizationController extends Controller
     public function show($id)
     {
         $request = AttendanceRegularization::with('employee', 'approver')->findOrFail($id);
-        // Add authorization logic here if needed
+        $employee = Auth::user()->employee;
+        $requests = $employee->attendanceRegularizations()
+            ->with('employee', 'approver')
+            ->latest()
+            ->paginate(10);
 
-        return view('employee.regularization.show', compact('request'));
+        return view('employee.regularization.show', compact('request', 'requests'));
     }
 
     /**
@@ -122,38 +140,41 @@ class AttendanceRegularizationController extends Controller
         $regularizationRequest = AttendanceRegularization::findOrFail($id);
         // Add authorization logic here if needed
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'status' => 'required|in:approved,rejected',
-            'reason' => 'nullable|string|max:255', // For rejection reason
         ]);
+
+        $validator->sometimes('attendance_status', 'required|in:Present,Late,Half Day', function ($input) {
+            return $input->status == 'approved';
+        });
+
+        $validator->sometimes('reason', 'required|string|max:255', function ($input) {
+            return $input->status == 'rejected';
+        });
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
 
         $regularizationRequest->update([
-            'status' => $request->status,
-            'approved_by' => Auth::user()->employee->id,
+            'status' => $validated['status'],
+            'approved_by' => Auth::id(),
         ]);
 
+        if ($validated['status'] == 'approved') {
+            $this->updateAttendanceFromRegularization($regularizationRequest, $validated['attendance_status']);
+        }
+
         return redirect()->route('regularization.requests.index')
-            ->with('success', 'Request has been ' . $request->status);
+            ->with('success', 'Request has been ' . $validated['status'] . '.');
     }
 
     /**
      * Approve the specified resource in storage.
      */
-    public function approve(Request $request, $id)
-    {
-        $regularization = AttendanceRegularization::findOrFail($id);
-        // Add authorization logic here if needed
 
-        $regularization->update([
-            'status' => 'approved',
-            'approved_by' => Auth::user()->employee->id,
-        ]);
-
-        $this->updateAttendanceFromRegularization($regularization);
-
-        return redirect()->route('regularization.requests.index')
-            ->with('success', 'Request approved successfully.');
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -168,23 +189,32 @@ class AttendanceRegularizationController extends Controller
 
     public function bulkUpdate(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'request_ids' => 'required|array',
             'request_ids.*' => 'exists:attendance_regularizations,id',
             'action' => 'required|in:approve,reject',
         ]);
 
-        $status = ($request->action == 'approve') ? 'approved' : 'rejected';
+        $validator->sometimes('attendance_status', 'required|in:Present,Late,Half Day', function ($input) {
+            return $input->action == 'approve';
+        });
 
-        $regularizations = AttendanceRegularization::whereIn('id', $request->request_ids)
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
+        $status = ($validated['action'] == 'approve') ? 'approved' : 'rejected';
+
+        $regularizations = AttendanceRegularization::whereIn('id', $validated['request_ids'])
             ->where('status', 'pending')
             ->get();
 
         foreach ($regularizations as $regularization) {
-            $regularization->update(['status' => $status, 'approved_by' => Auth::user()->employee->id]);
+            $regularization->update(['status' => $status, 'approved_by' => Auth::id()]);
 
             if ($status == 'approved') {
-                $this->updateAttendanceFromRegularization($regularization);
+                $this->updateAttendanceFromRegularization($regularization, $validated['attendance_status']);
             }
         }
 
@@ -192,28 +222,19 @@ class AttendanceRegularizationController extends Controller
             ->with('success', 'Selected requests have been ' . $status . '.');
     }
 
-    private function updateAttendanceFromRegularization(AttendanceRegularization $regularization)
+    private function updateAttendanceFromRegularization(AttendanceRegularization $regularization, string $attendanceStatus)
     {
-        $approver = Auth::user()->employee;
-
-        $attendance = Attendance::firstOrNew(
+        $attendance = Attendance::updateOrCreate(
             [
                 'employee_id' => $regularization->employee_id,
                 'date' => $regularization->date,
+            ],
+            [
+                'status' => $attendanceStatus,
+                'check_in' => $regularization->check_in ? $regularization->date . ' ' . $regularization->check_in : null,
+                'check_out' => $regularization->check_out ? $regularization->date . ' ' . $regularization->check_out : null,
+                'updated_by' => Auth::id(),
             ]
         );
-
-        $attendance->status = 'Present';
-        // if ($regularization->check_in) {
-        //     $attendance->check_in = $regularization->date . ' ' . $regularization->check_in;
-        // }
-        // if ($regularization->check_out) {
-        //     $attendance->check_out = $regularization->date . ' ' . $regularization->check_out;
-        // }
-        $attendance->approver_id = $approver->id;
-        $attendance->approver_name = $approver->name;
-        // $attendance->remarks = 'Regularized by manager.';
-        
-        $attendance->save();
     }
 }

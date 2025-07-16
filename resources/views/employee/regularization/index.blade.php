@@ -25,59 +25,75 @@
                     @endif
 
                     @if(is_null(Auth::user()->employee->reporting_manager_id))
-                    <form action="{{ route('regularization.requests.bulk-update') }}" method="POST">
+                    <form action="{{ route('regularization.requests.bulk-update') }}" method="POST" id="bulk-action-form">
                         @csrf
                         <div class="mb-3">
-                            <button type="submit" name="action" value="approve" class="btn btn-success">Approve Selected</button>
+                            <button type="button" id="bulk-approve-btn" class="btn btn-success">Approve Selected</button>
                             <button type="submit" name="action" value="reject" class="btn btn-danger">Reject Selected</button>
                         </div>
                     @endif
 
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                @if(is_null(Auth::user()->employee->reporting_manager_id))
-                                <th><input type="checkbox" id="select-all"></th>
-                                @endif
-                                <th>Date</th>
-                                <th>Reason</th>
-                                <th>Status</th>
-                                <th>Applied By</th>
-                                <th>Approved By</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($requests as $request)
-                                <tr>
-                                    @if(is_null(Auth::user()->employee->reporting_manager_id))
-                                    <td><input type="checkbox" name="request_ids[]" value="{{ $request->id }}"></td>
-                                    @endif
-                                    <td>{{ $request->date }}</td>
-                                    <td>{{ $request->reason }}</td>
-                                    <td>{{ ucfirst($request->status) }}</td>
-                                    <td>{{ $request->employee->name }}</td>
-                                    <td>{{ $request->approver->name ?? 'N/A' }}</td>
-                                    <td>
-                                        <a href="{{ route('regularization.requests.show', $request->id) }}" class="btn btn-sm btn-info">View</a>
-                                        @if ($request->status == 'pending' && Auth::user()->employee->id != $request->employee_id)
-                                            <a href="{{ route('regularization.requests.edit', $request->id) }}" class="btn btn-sm btn-warning">Review</a>
-                                        @endif
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="text-center">No requests found.</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                    @if (isset($pending_requests))
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">Pending</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved" type="button" role="tab" aria-controls="approved" aria-selected="false">Approved</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="rejected-tab" data-bs-toggle="tab" data-bs-target="#rejected" type="button" role="tab" aria-controls="rejected" aria-selected="false">Rejected</button>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+            @include('employee.regularization._request_table', ['requests' => $pending_requests, 'show_actions' => true, 'pagination_name' => 'pending_page'])
+        </div>
+        <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
+            @include('employee.regularization._request_table', ['requests' => $approved_requests, 'show_actions' => false, 'pagination_name' => 'approved_page'])
+        </div>
+        <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
+            @include('employee.regularization._request_table', ['requests' => $rejected_requests, 'show_actions' => false, 'pagination_name' => 'rejected_page'])
+        </div>
+    </div>
+@else
+    @include('employee.regularization._request_table', ['requests' => $requests, 'show_actions' => false])
+@endif
 
                     @if(is_null(Auth::user()->employee->reporting_manager_id))
                     </form>
                     @endif
 
-                    {{ $requests->links() }}
+                    @if (isset($requests) && $requests instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        {{ $requests->links() }}
+                    @endif
+
+<!-- Approval Modal -->
+<div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="approvalModalLabel">Approve Requests</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+            <label for="bulk_attendance_status">Attendance Status</label>
+            <select name="attendance_status" id="bulk_attendance_status" class="form-control" required>
+                <option value="">Select Status</option>
+                <option value="Present">Present</option>
+                <option value="Late">Late</option>
+                <option value="Half Day">Half Day</option>
+            </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="confirm-approval-btn" class="btn btn-success">Confirm Approval</button>
+      </div>
+    </div>
+  </div>
+</div>
                 </div>
             </div>
         </div>
@@ -88,11 +104,58 @@
 @push('scripts')
 @if(is_null(Auth::user()->employee->reporting_manager_id))
 <script>
-    document.getElementById('select-all').addEventListener('click', function(event) {
-        let checkboxes = document.querySelectorAll('input[name="request_ids[]"]');
-        checkboxes.forEach(function(checkbox) {
-            checkbox.checked = event.target.checked;
-        });
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select-all checkbox logic
+        const selectAll = document.getElementById('select-all');
+        if (selectAll) {
+            selectAll.addEventListener('click', function(event) {
+                let checkboxes = document.querySelectorAll('input[name="request_ids[]"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.checked = event.target.checked;
+                });
+            });
+        }
+
+        const bulkApproveBtn = document.getElementById('bulk-approve-btn');
+        const confirmApprovalBtn = document.getElementById('confirm-approval-btn');
+        const bulkActionForm = document.getElementById('bulk-action-form');
+        const approvalModal = new bootstrap.Modal(document.getElementById('approvalModal'));
+
+        if (bulkApproveBtn) {
+            bulkApproveBtn.addEventListener('click', function() {
+                const selectedIds = Array.from(document.querySelectorAll('input[name="request_ids[]"]:checked')).map(cb => cb.value);
+                if (selectedIds.length === 0) {
+                    alert('Please select at least one request to approve.');
+                    return;
+                }
+                approvalModal.show();
+            });
+        }
+
+        if (confirmApprovalBtn) {
+            confirmApprovalBtn.addEventListener('click', function() {
+                const attendanceStatusSelect = document.getElementById('bulk_attendance_status');
+                if (attendanceStatusSelect.value === '') {
+                    alert('Please select an attendance status.');
+                    return;
+                }
+
+                // Add action and status to the form and submit
+                const actionInput = document.createElement('input');
+                actionInput.type = 'hidden';
+                actionInput.name = 'action';
+                actionInput.value = 'approve';
+                bulkActionForm.appendChild(actionInput);
+
+                const statusInput = document.createElement('input');
+                statusInput.type = 'hidden';
+                statusInput.name = 'attendance_status';
+                statusInput.value = attendanceStatusSelect.value;
+                bulkActionForm.appendChild(statusInput);
+
+                bulkActionForm.submit();
+            });
+        }
     });
 </script>
 @endif

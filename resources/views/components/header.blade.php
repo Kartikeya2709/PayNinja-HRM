@@ -59,7 +59,7 @@
                     <img alt="image" src="{{ asset('img/avatar/avatar-1.png') }}" class="rounded-circle me-2" width="32">
                     <div class="d-none d-lg-inline-block">
                         <span class="fw-medium">{{ auth()->user()->name }}</span>
-                        <small class="d-block text-muted">{{ auth()->user()->roles && auth()->user()->roles->first() ? ucfirst(auth()->user()->roles->first()->name) : 'User' }}</small>
+                        <small class="d-block text-muted">{{ auth()->user()->role ? auth()->user()->role : "N/A" }}</small>
                     </div>
                     <div class="d-lg-none">
                         <span class="fw-medium">{{ Str::words(auth()->user()->name, 1, '') }}</span>
