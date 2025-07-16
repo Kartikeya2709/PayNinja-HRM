@@ -48,11 +48,12 @@
                                             </span>
                                         </td>
                                         <td>
-                                            @if(auth()->user()->role === 'company_admin' || (auth()->user()->role === 'admin' && $employee->user->role !== 'company_admin'))
-                                            <a href="{{ route('company.employees.edit', [$employee->company_id, $employee->id]) }}" class="btn btn-warning btn-sm me-1">
+                                            <a href="{{ route('company-admin.employees.view', $employee->id) }}" class="btn btn-info btn-sm me-1" title="View Employee">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                            <a href="{{ route('company-admin.employees.edit', $employee->id) }}" class="btn btn-warning btn-sm me-1" title="Edit Employee">
                                                 <i class="fas fa-edit"></i> Edit
                                             </a>
-                                            @endif
                                             @if($employee->user->role !== 'company_admin')
                                             <button type="button" class="btn btn-primary btn-sm change-role-btn" 
                                                 data-bs-toggle="modal" 

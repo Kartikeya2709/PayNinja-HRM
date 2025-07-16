@@ -426,6 +426,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employees'])->name('employees.index');
         Route::get('/employees/create', [\App\Http\Controllers\CompanyAdminController::class, 'createEmployee'])->name('employees.create');
         Route::post('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'storeEmployee'])->name('employees.store');
+        Route::get('/employees/{id}/view', [\App\Http\Controllers\CompanyAdminController::class, 'viewEmployee'])->name('employees.view');
+        Route::get('/employees/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('employees.edit');
+        Route::put('/employees/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('employees.update');
         Route::put('/employees/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('employees.update-role');
 
         // Company Settings

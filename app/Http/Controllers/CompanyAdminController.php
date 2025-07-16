@@ -408,6 +408,201 @@ class CompanyAdminController extends Controller
         return view('company-admin.employees.create', compact('company', 'departments', 'designations', 'managers'));
     }
 
+    /**
+     * Show the employee details view page.
+     */
+    public function viewEmployee($id)
+    {
+        $user = Auth::user();
+        $company = $user->employee->company;
+
+        $employee = \App\Models\Employee::with(['department', 'designation', 'reportingManager', 'currentSalary'])
+            ->where('company_id', $company->id)
+            ->findOrFail($id);
+
+        $departments = \App\Models\Department::where('company_id', $company->id)->get();
+        $designations = \App\Models\Designation::where('company_id', $company->id)->get();
+        $managers = \App\Models\Employee::where('company_id', $company->id)->get();
+
+        // Fetch employee documents
+        $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
+
+        return view('company-admin.employees.view', compact('employee', 'departments', 'designations', 'managers', 'documents'));
+    }
+
+    /**
+     * Show the form for editing an employee.
+     */
+    public function editEmployee($id)
+    {
+        $user = Auth::user();
+        $company = $user->employee->company;
+
+        $employee = \App\Models\Employee::with(['currentSalary'])
+            ->where('company_id', $company->id)
+            ->findOrFail($id);
+
+        $departments = \App\Models\Department::where('company_id', $company->id)->get();
+        $designations = \App\Models\Designation::where('company_id', $company->id)->get();
+        $managers = \App\Models\Employee::where('company_id', $company->id)->get();
+        // Fetch employee documents
+        $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
+
+        return view('company-admin.employees.edit', compact('employee', 'departments', 'designations', 'managers', 'company', 'documents'));
+    }
+
+    /**
+     * Update the specified employee in storage.
+     */
+    public function updateEmployee(Request $request, $id)
+    {
+        $user = Auth::user();
+        $company = $user->employee->company;
+
+        $employee = \App\Models\Employee::where('company_id', $company->id)->findOrFail($id);
+
+        $validated = $request->validate([
+            // Basic Information
+            'name' => 'required|string|max:255',
+            'parent_name' => 'nullable|string|max:255',
+            'gender' => 'required|in:male,female,other',
+            'dob' => 'required|date',
+            'marital_status' => 'required|in:single,married,divorced,widowed',
+            'contact_number' => 'required|string|max:20',
+            'personal_email' => 'required|email',
+            'official_email' => 'nullable|email',
+            'current_address' => 'required|string',
+            'permanent_address' => 'required|string',
+            // Job Details
+            'employee_code' => 'nullable|string', // readonly, generated
+            'department_id' => 'required|exists:departments,id',
+            'designation_id' => 'required|exists:designations,id',
+            'employment_type' => 'required|in:permanent,trainee',
+            'joining_date' => 'required|date',
+            'location' => 'required|string',
+            'probation_period' => 'nullable|integer',
+            'reporting_manager' => 'required|exists:employees,id',
+            // Salary Details
+            'ctc' => 'required|numeric|min:0',
+            'basic_salary' => 'required|numeric|min:0',
+            'bank_name' => 'required|string',
+            'account_number' => 'required|string',
+            'ifsc_code' => 'required|string',
+            'pan_number' => 'required|string',
+            // Other Details
+            'emergency_contact' => 'nullable|string|max:20',
+            'emergency_contact_relation' => 'nullable|string',
+            'emergency_contact_name' => 'nullable|string',
+            'blood_group' => 'nullable|string',
+            'nominee_details' => 'nullable|string',
+            // Documents
+            'aadhaar_card.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'pan_card.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'passport_photo.*' => 'nullable|file|mimes:jpeg,png,jpg|max:2048',
+            'resume.*' => 'nullable|file|mimes:pdf|max:2048',
+            'qualification_certificate.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'experience_letters.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'relieving_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'offer_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'bank_passbook.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'signed_offer_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+        ]);
+
+        try {
+            \DB::beginTransaction();
+
+            // Update employee record
+            $employee->update([
+                'name' => $validated['name'],
+                'parent_name' => $validated['parent_name'],
+                'gender' => $validated['gender'],
+                'dob' => $validated['dob'],
+                'marital_status' => $validated['marital_status'],
+                'contact_number' => $validated['contact_number'],
+                'email' => $validated['personal_email'],
+                'official_email' => $validated['official_email'],
+                'current_address' => $validated['current_address'],
+                'permanent_address' => $validated['permanent_address'],
+                'department_id' => $validated['department_id'],
+                'designation_id' => $validated['designation_id'],
+                'employment_type' => $validated['employment_type'],
+                'joining_date' => $validated['joining_date'],
+                'location' => $validated['location'],
+                'probation_period' => $validated['probation_period'],
+                'reporting_manager_id' => $validated['reporting_manager'],
+                'emergency_contact' => $validated['emergency_contact'],
+                'emergency_contact_relation' => $validated['emergency_contact_relation'],
+                'emergency_contact_name' => $validated['emergency_contact_name'],
+                'blood_group' => $validated['blood_group'],
+                'nominee_details' => $validated['nominee_details'],
+                'created_by' => $user->id,
+            ]);
+
+            // Handle document uploads
+            $documentTypes = [
+                'aadhaar_card', 'pan_card', 'passport_photo', 'resume',
+                'qualification_certificate', 'experience_letters', 'relieving_letter',
+                'offer_letter', 'bank_passbook', 'signed_offer_letter'
+            ];
+
+            foreach ($documentTypes as $docType) {
+                $paths = [];
+                if ($request->hasFile($docType)) {
+                    foreach ($request->file($docType) as $file) {
+                        $paths[] = $file->store('employee_documents/' . $employee->id, 'public');
+                    }
+                }
+                if (count($paths)) {
+                    \App\Models\EmployeeDocument::create([
+                        'company_id' => $company->id,
+                        'employee_id' => $employee->id,
+                        'type' => $docType,
+                        'file_path' => json_encode($paths),
+                    ]);
+                }
+            }
+
+            // Update salary record
+            $salary = $employee->currentSalary;
+            if ($salary) {
+                $salary->update([
+                    'ctc' => $validated['ctc'],
+                    'basic_salary' => $validated['basic_salary'],
+                    'bank_name' => $validated['bank_name'],
+                    'account_number' => $validated['account_number'],
+                    'ifsc_code' => $validated['ifsc_code'],
+                    'pan_number' => $validated['pan_number'],
+                ]);
+            } else {
+                // Create salary record if not exists
+                \App\Models\EmployeeSalary::create([
+                    'employee_id' => $employee->id,
+                    'ctc' => $validated['ctc'],
+                    'basic_salary' => $validated['basic_salary'],
+                    'bank_name' => $validated['bank_name'],
+                    'account_number' => $validated['account_number'],
+                    'ifsc_code' => $validated['ifsc_code'],
+                    'pan_number' => $validated['pan_number'],
+                    'status' => 'active',
+                    'currency' => $employee->company->default_currency ?? config('app.currency', 'INR'),
+                    'payment_frequency' => 'monthly',
+                    'approved_by' => $user->id,
+                    'approved_at' => now(),
+                    'effective_from' => now(),
+                    'is_current' => true,
+                ]);
+            }
+
+            \DB::commit();
+
+            return redirect()->route('company-admin.employees.index')->with('success', 'Employee updated successfully.');
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            \Log::error('Error updating employee: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update employee: ' . $e->getMessage())->withInput();
+        }
+    }
+
     private function generateEmployeeCode($company, $employmentType = null)
     {
         // If employment type is not provided, use default format
