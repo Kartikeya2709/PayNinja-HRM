@@ -436,7 +436,27 @@ class AttendanceController extends Controller
                     // Basic validation
                     $validator = Validator::make($row, [
                         'employee_id' => 'required|exists:employees,id',
-                        'date' => 'required|date',
+                        'date' => [
+                            'required',
+                            function ($attribute, $value, $fail) {
+                                try {
+                                    // Handle Excel serial date numbers
+                                    if (is_numeric($value)) {
+                                        // Excel date serial number starts from 1900-01-01
+                                        $date = Carbon::create(1900, 1, 1)->addDays($value - 2);
+                                    } else {
+                                        // Try to parse the date using Carbon
+                                        $date = Carbon::parse($value);
+                                    }
+                                    // Ensure we have a valid date object
+                                    if (!$date instanceof Carbon) {
+                                        $fail('The date must be a valid date.');
+                                    }
+                                } catch (\Exception $e) {
+                                    $fail('The date must be a valid date. Please use formats like YYYY-MM-DD, DD-MM-YYYY, or Month DD, YYYY.');
+                                }
+                            }
+                        ],
                         'check_in' => 'nullable|date_format:H:i',
                         'check_out' => 'nullable|date_format:H:i|after_or_equal:check_in',
                         'status' => 'required|in:Present,Absent,Late,On Leave,Half Day,Holiday,Week-Off',
@@ -456,9 +476,24 @@ class AttendanceController extends Controller
                     }
                     
                     // Prepare data
+                    try {
+                        // Handle Excel serial date numbers
+                        $dateValue = $row['date'];
+                        if (is_numeric($dateValue)) {
+                            // Excel date serial number starts from 1900-01-01
+                            $parsedDate = Carbon::create(1900, 1, 1)->addDays($dateValue - 2)->format('Y-m-d');
+                        } else {
+                            // Parse and format the date consistently
+                            $parsedDate = Carbon::parse($dateValue)->format('Y-m-d');
+                        }
+                    } catch (\Exception $e) {
+                        $errors[] = "Row " . ($index + 2) . ": Invalid date format: " . $row['date'];
+                        continue;
+                    }
+                    
                     $attendanceData = [
                         'employee_id' => $row['employee_id'],
-                        'date' => $row['date'],
+                        'date' => $parsedDate,
                         'status' => $row['status'],
                         'check_in' => $row['check_in'] ?? null,
                         'check_out' => $row['check_out'] ?? null,
@@ -487,9 +522,22 @@ class AttendanceController extends Controller
                 }
             }
             
+            // Store import results in session
+            $results = [
+                'imported' => $imported,
+                'updated' => $updated,
+                'skipped' => $skipped,
+                'total' => count($data),
+                'errors' => $errors
+            ];
+
+            // Build message
             $message = "Successfully imported {$imported} records";
             if ($updated > 0) {
                 $message .= " and updated {$updated} records";
+            }
+            if ($skipped > 0) {
+                $message .= " and skipped {$skipped} records";
             }
             $message .= ".";
             
@@ -497,13 +545,14 @@ class AttendanceController extends Controller
                 $message .= " " . count($errors) . " records had errors.";
                 
                 // Store errors in session
-                return redirect()->back()
+                return redirect()->route('admin.attendance.import-results')
                     ->with('warning', $message)
-                    ->with('import_errors', $errors);
+                    ->with('import_results', $results);
             }
             
-            return redirect()->route('admin.attendance.index')
-                ->with('success', $message);
+            return redirect()->route('admin.attendance.import-results')
+                ->with('success', $message)
+                ->with('import_results', $results);
                 
         } catch (\Exception $e) {
             return redirect()->back()
@@ -524,6 +573,16 @@ class AttendanceController extends Controller
             new AttendanceImportTemplate(), 
             $fileName
         );
+    }
+
+    /**
+     * Show import results page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function importResults()
+    {
+        return view('admin.attendance.import-results');
     }
 
     /**

@@ -245,16 +245,38 @@ class CompanyAdminController extends Controller
         $user = Auth::user();
         $company = $user->employee->company;
         
-        // Get current module access settings
-        $modules = ModuleAccess::where('company_id', $company->id)
+        // Define all possible modules and roles
+        $allModules = [
+            'leave', 
+            'reimbursement', 
+            'team',
+            'payroll',
+            'attendance'
+        ];
+        $roles = ['admin', 'employee','company_admin'];
+        
+        // Initialize modules array with default values
+        $modules = [];
+        foreach ($allModules as $module) {
+            $modules[$module] = [];
+            foreach ($roles as $role) {
+                $modules[$module][$role] = false;
+            }
+        }
+        
+        // Get current module access settings from database
+        $moduleAccess = ModuleAccess::where('company_id', $company->id)
             ->get()
-            ->groupBy('module_name')
-            ->map(function ($moduleGroup) {
-                return $moduleGroup->mapWithKeys(function ($access) {
-                    return [$access->role => $access->has_access];
-                });
-            })
-            ->toArray();
+            ->groupBy('module_name');
+            
+        // Merge database values with default values
+        foreach ($moduleAccess as $module => $accesses) {
+            foreach ($accesses as $access) {
+                if (isset($modules[$module][$access->role])) {
+                    $modules[$module][$access->role] = (bool)$access->has_access;
+                }
+            }
+        }
 
         return view('company-admin.module-access.index', compact('modules'));
     }
@@ -270,15 +292,36 @@ class CompanyAdminController extends Controller
 
             DB::beginTransaction();
 
-            foreach ($request->input('modules', []) as $moduleName => $roleAccess) {
-                foreach ($roleAccess as $role => $hasAccess) {
+            // Define all possible module-role combinations
+            $modules = [
+                'leave', 
+                'reimbursement', 
+                'team', 
+                'department',
+                'payroll',
+                'attendance',
+                'recruitment',
+                'performance',
+                'documents',
+                'reports',
+                'settings'
+            ];
+            $roles = ['admin', 'employee', 'reporter'];
+            
+            // Process each module and role combination
+            foreach ($modules as $module) {
+                foreach ($roles as $role) {
+                    // Check if this module-role combination was submitted in the form
+                    $hasAccess = $request->has("modules.{$module}.{$role}");
+                    
+                    // Update or create the record
                     ModuleAccess::updateOrCreate(
                         [
                             'company_id' => $company->id,
-                            'module_name' => $moduleName,
+                            'module_name' => $module,
                             'role' => $role,
                         ],
-                        ['has_access' => (bool) $hasAccess]
+                        ['has_access' => $hasAccess]
                     );
                 }
             }
@@ -288,13 +331,10 @@ class CompanyAdminController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error updating module access: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Error updating module access settings.');
+            return redirect()->back()->with('error', 'Error updating module access settings: ' . $e->getMessage());
         }
-    }
+    } // Added the missing closing brace here
 
-    /**
-     * List employees for the company.
-     */
     public function employees()
     {
         $user = Auth::user();
@@ -372,19 +412,32 @@ class CompanyAdminController extends Controller
     {
         // If employment type is not provided, use default format
         if (!$employmentType) {
-            $prefix = '#' . strtoupper(substr($company->name, 0, 3)) . '000';
+            $prefix = '#' . strtoupper(substr($company->name, 0, 3));
+            
+            // Get the highest existing employee code with this prefix
             $lastEmployee = Employee::where('company_id', $company->id)
                 ->whereNotNull('employee_code')
-                ->where('employee_code', 'like', $prefix.'%')
-                ->orderBy('id', 'desc')
+                ->where('employee_code', 'like', $prefix . '%')
+                ->orderByRaw('LENGTH(employee_code) DESC, employee_code DESC')
                 ->first();
 
             $nextNumber = 1;
             if ($lastEmployee) {
-                $numericPart = (int) substr($lastEmployee->employee_code, -3);
-                $nextNumber = $numericPart + 1;
+                // Extract the numeric part from the code
+                preg_match('/\d+$/', $lastEmployee->employee_code, $matches);
+                $numericPart = $matches[0] ?? '0';
+                $nextNumber = intval($numericPart) + 1;
             }
-            return substr($prefix, 0, -3) . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+            
+            // Generate the new code and ensure it's unique
+            do {
+                $newCode = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+                $exists = Employee::where('employee_code', $newCode)->exists();
+                if (!$exists) {
+                    return $newCode;
+                }
+                $nextNumber++;
+            } while (true);
         }
 
         // Get the prefix settings for the company
@@ -392,9 +445,34 @@ class CompanyAdminController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // If no prefix settings found, use default
+        // If no prefix settings found, use default format
         if ($prefixSettings->isEmpty()) {
-            return '#' . strtoupper(substr($company->name, 0, 3)) . str_pad('1', 3, '0', STR_PAD_LEFT);
+            $prefix = '#' . strtoupper(substr($company->name, 0, 3));
+            
+            // Get the highest existing employee code with this prefix
+            $lastEmployee = Employee::where('company_id', $company->id)
+                ->whereNotNull('employee_code')
+                ->where('employee_code', 'like', $prefix . '%')
+                ->orderByRaw('LENGTH(employee_code) DESC, employee_code DESC')
+                ->first();
+
+            $nextNumber = 1;
+            if ($lastEmployee) {
+                // Extract the numeric part from the code
+                preg_match('/\d+$/', $lastEmployee->employee_code, $matches);
+                $numericPart = $matches[0] ?? '0';
+                $nextNumber = intval($numericPart) + 1;
+            }
+            
+            // Generate the new code and ensure it's unique
+            do {
+                $newCode = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+                $exists = Employee::where('employee_code', $newCode)->exists();
+                if (!$exists) {
+                    return $newCode;
+                }
+                $nextNumber++;
+            } while (true);
         }
 
         // Check if we have a common prefix (both types have same settings)
@@ -402,7 +480,8 @@ class CompanyAdminController extends Controller
             $permanent = $prefixSettings->where('employment_type', 'permanent')->first();
             $trainee = $prefixSettings->where('employment_type', 'trainee')->first();
 
-            if ($permanent->prefix === $trainee->prefix && 
+            if ($permanent && $trainee && 
+                $permanent->prefix === $trainee->prefix && 
                 $permanent->padding === $trainee->padding && 
                 $permanent->start === $trainee->start) {
                 // Use common settings
@@ -415,28 +494,73 @@ class CompanyAdminController extends Controller
             // Only one type exists, check if it matches the employee type
             $prefixSetting = $prefixSettings->first();
             if ($prefixSetting->employment_type !== $employmentType && $prefixSettings->count() == 1) {
-                // If settings don't exist for this employment type, use default
-                return '#' . strtoupper(substr($company->name, 0, 3)) . str_pad('1', 3, '0', STR_PAD_LEFT);
+                // If settings don't exist for this employment type, use default format
+                $prefix = '#' . strtoupper(substr($company->name, 0, 3));
+                
+                // Get the highest existing employee code with this prefix
+                $lastEmployee = Employee::where('company_id', $company->id)
+                    ->whereNotNull('employee_code')
+                    ->where('employee_code', 'like', $prefix . '%')
+                    ->orderByRaw('LENGTH(employee_code) DESC, employee_code DESC')
+                    ->first();
+
+                $nextNumber = 1;
+                if ($lastEmployee) {
+                    // Extract the numeric part from the code
+                    preg_match('/\d+$/', $lastEmployee->employee_code, $matches);
+                    $numericPart = $matches[0] ?? '0';
+                    $nextNumber = intval($numericPart) + 1;
+                }
+                
+                // Generate the new code and ensure it's unique
+                do {
+                    $newCode = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+                    $exists = Employee::where('employee_code', $newCode)->exists();
+                    if (!$exists) {
+                        return $newCode;
+                    }
+                    $nextNumber++;
+                } while (true);
             }
         }
 
-        // Get the last employee number for this prefix
-        $lastEmployee = Employee::where('company_id', $company->id)
-            ->where('employee_code', 'LIKE', $prefixSetting->prefix . '%')
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        $nextNumber = $prefixSetting->start;
-        if ($lastEmployee) {
-            // Extract the number from the last employee code
-            $lastNumber = intval(substr($lastEmployee->employee_code, strlen($prefixSetting->prefix)));
-            $nextNumber = $lastNumber + 1;
-        }
-
-        // Format the number according to padding settings
-        $formattedNumber = str_pad($nextNumber, $prefixSetting->padding, '0', STR_PAD_LEFT);
+        // Generate the new code based on prefix settings
+        $maxAttempts = 100; // Prevent infinite loops
+        $attempt = 0;
         
-        return $prefixSetting->prefix . $formattedNumber;
+        do {
+            // Get the last employee number for this prefix
+            $lastEmployee = Employee::where('company_id', $company->id)
+                ->where('employee_code', 'LIKE', $prefixSetting->prefix . '%')
+                ->orderByRaw('LENGTH(employee_code) DESC, employee_code DESC')
+                ->first();
+
+            $nextNumber = $prefixSetting->start;
+            if ($lastEmployee) {
+                // Extract the number from the last employee code
+                $lastNumber = intval(substr($lastEmployee->employee_code, strlen($prefixSetting->prefix)));
+                $nextNumber = $lastNumber + 1;
+            }
+
+            // Format the number according to padding settings
+            $formattedNumber = str_pad($nextNumber, $prefixSetting->padding, '0', STR_PAD_LEFT);
+            $newCode = $prefixSetting->prefix . $formattedNumber;
+            
+            // Check if the code already exists
+            $exists = Employee::where('employee_code', $newCode)->exists();
+            if (!$exists) {
+                return $newCode;
+            }
+            
+            $attempt++;
+            if ($attempt >= $maxAttempts) {
+                throw new \Exception('Failed to generate a unique employee code after ' . $maxAttempts . ' attempts');
+            }
+            
+            // If we get here, the code exists, so we'll try the next number
+            $prefixSetting->start = $nextNumber + 1;
+            
+        } while (true);
     }
 
     public function storeEmployee(Request $request)

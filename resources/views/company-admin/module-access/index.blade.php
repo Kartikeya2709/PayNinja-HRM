@@ -33,89 +33,39 @@
                                         <th>Module</th>
                                         <th>Admin Access</th>
                                         <th>Employee Access</th>
-                                        <th>Reporter Access</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Leave Management -->
-                                    <tr>
-                                        <td>Leave Management</td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[leave][admin]" value="1" {{ $modules['leave']['admin'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[leave][employee]" value="1" {{ $modules['leave']['employee'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[leave][reporter]" value="1" {{ $modules['leave']['reporter'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Reimbursement -->
-                                    <tr>
-                                        <td>Reimbursement</td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[reimbursement][admin]" value="1" {{ $modules['reimbursement']['admin'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[reimbursement][employee]" value="1" {{ $modules['reimbursement']['employee'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[reimbursement][reporter]" value="1" {{ $modules['reimbursement']['reporter'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Team Management -->
-                                    <tr>
-                                        <td>Team Management</td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[team][admin]" value="1" {{ $modules['team']['admin'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[team][employee]" value="1" {{ $modules['team']['employee'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[team][reporter]" value="1" {{ $modules['team']['reporter'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                    <!-- Department Management -->
-                                    <tr>
-                                        <td>Department Management</td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[department][admin]" value="1" {{ $modules['department']['admin'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[department][employee]" value="1" {{ $modules['department']['employee'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-check">
-                                                <input type="checkbox" class="form-check-input" name="modules[department][reporter]" value="1" {{ $modules['department']['reporter'] ?? false ? 'checked' : '' }}>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    @php
+                                        // Define module labels for display
+                                        $moduleLabels = [
+                                            'leave' => 'Leave Management',
+                                            'reimbursement' => 'Reimbursement',
+                                            'team' => 'Team Management',
+                                            'payroll' => 'Payroll Management',
+                                            'attendance' => 'Attendance Management'
+                                        ];
+                                        
+                                        // Define the order of roles
+                                        $roles = ['admin', 'employee'];
+                                    @endphp
+                                    
+                                    @foreach($modules as $moduleKey => $moduleAccess)
+                                        <tr>
+                                            <td>{{ $moduleLabels[$moduleKey] ?? ucfirst($moduleKey) }}</td>
+                                            @foreach($roles as $role)
+                                                <td>
+                                                    <div class="form-check">
+                                                        <input type="checkbox" 
+                                                               class="form-check-input" 
+                                                               name="modules[{{ $moduleKey }}][{{ $role }}]" 
+                                                               value="1" 
+                                                               {{ $moduleAccess[$role] ?? false ? 'checked' : '' }}>
+                                                    </div>
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @endforeach
                                 </tbody>
                             </table>
                         </div>
