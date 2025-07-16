@@ -99,7 +99,7 @@
                     <!-- End Filter Form -->
 
                     <div class="table-responsive">
-                        <table class="table table-hover table-striped" id="attendanceTable">
+                        <table class="table table-hover table-striped Attendance-Records" id="attendanceTable">
                             <thead>
                                 <tr>
                                     <th>#</th>

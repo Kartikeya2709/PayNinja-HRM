@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="container">
+    <div class="section">
 <div class="section-header">
     <h1>Manage Teams</h1>
 </div>
@@ -80,6 +81,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 </div>
 @endsection

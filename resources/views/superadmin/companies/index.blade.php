@@ -28,7 +28,7 @@
                         <a href="{{ route('superadmin.companies.create') }}" class="btn button">Add New Company</a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body Manage-Companies">
                     <table class="table table-bordered">
                         <thead>
                             <tr>
@@ -75,7 +75,7 @@
                 <div class="card-header">
                     <h4>All Admins & Super Admins</h4>
                 </div>
-                <div class="card-body">
+                <div class="card-body Manage-Companies">
                     <table class="table table-bordered">
                         <thead>
                             <tr>

@@ -123,10 +123,10 @@
                         <h5>Today's Attendance Status</h5>
                         <div class="d-flex justify-content-center">
                             <div class="text-start w-100">
-                                <div class="card mb-3">
+                                <div class="card mb-3 mt-3">
                                     <div class="card-body">
                                         @if($todayAttendance->check_in)
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="d-flex justify-content-center align-items-center mb-2">
                                                 <div>
                                                     <i class="bi bi-arrow-right-circle-fill text-success me-2"></i>
                                                     <strong>Check In:</strong> {{ \Carbon\Carbon::parse($todayAttendance->check_in)->format('h:i A') }}
@@ -145,7 +145,7 @@
                                         @endif
                                         
                                         @if($todayAttendance->check_out)
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div class="d-flex justify-content-center align-items-center mb-2">
                                                 <div>
                                                     <i class="bi bi-arrow-left-circle-fill text-danger me-2"></i>
                                                     <strong>Check Out:</strong> {{ \Carbon\Carbon::parse($todayAttendance->check_out)->format('h:i A') }}

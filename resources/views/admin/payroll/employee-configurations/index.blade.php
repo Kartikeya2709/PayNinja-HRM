@@ -3,17 +3,17 @@
 @section('title', 'Employee Payroll Configurations')
 
 @section('content')
+   
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-                <div>
-                    <h4 class="mb-3">Employee Payroll Configurations</h4>
+ <div class="section">
+    
+       
+                <div class="section-header">
+                    <h4>Employee Payroll Configurations</h4>
                     <p class="mb-0">Manage Cost To Company (CTC) and assigned beneficiary badges for employees.</p>
                 </div>
                 {{-- Optional: Add a link back or other actions here --}}
-            </div>
-        </div>
+           
 
         @if(session('success'))
             <div class="col-lg-12">
@@ -91,4 +91,5 @@
         </div>
     </div>
 </div>
+</section>
 @endsection

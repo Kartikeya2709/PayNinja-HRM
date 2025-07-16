@@ -62,11 +62,23 @@
   box-shadow: none !important;
   outline: none;
 }
+.month-sum{
+  margin-bottom: 0px!important;
+}
 .section-header{
   padding-bottom: 10px;
 }
 .section-header-breadcrumb{
   display: flex;
+}
+.modal-dialog{
+          margin: 125px auto!important;
+}
+.emp-profile{
+      box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.1) !important;
+    background: #fff;
+    padding: 15px;
+    border-radius: 12px;
 }
 .check-in-text h3{
   color: #000;
@@ -112,11 +124,17 @@
     top: 0;
     height: 100%;
     width: 100%;
-    background-color: #4361ee;
+    background-color: rgb(6, 58, 125);
     transform: scaleX(0);
     transform-origin: bottom;
     transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
     border-radius: 12px;
+}
+.search-btn{
+  background-color: rgb(6, 58, 125) !important;
+    border-radius: 0px 20px 20px 0px;
+    color: #fff !important;
+    height: 100%;
 }
 .card-link i{
       height: 50px;
@@ -141,6 +159,9 @@
    color: white !important;
     z-index: 999;
     position: relative;
+}
+.Academic-table{
+  display: flex;
 }
 .card-link:hover::before {
     transform: scaleX(1);
@@ -170,7 +191,7 @@ background-color: #4361ee36 !important;
     display: block;
     width: 60px;
     height: 4px;
-    background: #4361ee;
+    background: rgb(6, 58, 125);
     left: 0;
     right: 0;
     bottom: 0;
@@ -205,7 +226,7 @@ background-color: #4361ee36 !important;
   font-size: 30px;
 }
 .emp-dashboard .col-4{
-      background: #4361ee;
+      background: rgb(6, 58, 125);
     height: 80px;
     width: 80px;
     align-content: center;
@@ -242,14 +263,21 @@ background-color: #4361ee36 !important;
     padding-bottom: 20px !important;
 }
 .button{
-  background: #4361ee !important;
+  background: rgb(6, 58, 125)!important;
     color: #fff;
     border-radius: 0;
 }
 .button:hover{
-  background: #000!important;
+  background: rgb(255, 148, 8)!important;
+  border: 1px solid rgb(255, 148, 8);
   color:#fff!important;
   transition: 0.4s;
+}
+a:hover{
+  color:rgb(6, 58, 125)!important;
+}
+.btn-primary:hover{
+  color: #fff!important;
 }
 .form-select-sm{
       padding: 10px 16px!important;
@@ -309,7 +337,7 @@ background-color: #4361ee36 !important;
 .card-body h6{
   margin: 0px;
   text-align: center;
-      margin-left: 15px;
+     
 }
 .action-icon {
   position: relative;
@@ -350,6 +378,10 @@ background-color: #4361ee36 !important;
 .section-header{
   justify-content: space-between;
 }
+.Manage-Companies{
+  display:flex;
+  overflow-x: auto;
+}
 .month-sum:hover h2 {
     color: #fff;
       position: relative;
@@ -362,16 +394,19 @@ background-color: #4361ee36 !important;
   top: 0;
   height: 100%;
   width: 100%;
-  background-color:#4361ee;
+  background-color:rgb(6, 58, 125);
   transform: scaleX(0);
   transform-origin: bottom;
   transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.dropdown-menu .nav-link{
+  height: 55px!important;
 }
 .month-sum:hover::before {
   transform: scaleX(1);
 }
 a {
-  color: #6777ef;
+  color: rgb(6, 58, 125);
   text-decoration: unset!important;
   font-weight: 500;
   transition: all 0.5s;
@@ -460,7 +495,7 @@ a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fab {
   font-weight: 500 !important;
 }
 .check-in-text #currentTime{
-  background: linear-gradient(#3abaf4, #4361ee);
+  background: linear-gradient(#3abaf4, rgb(6, 58, 125));
     background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 600;
@@ -488,9 +523,20 @@ p, ul:not(.list-unstyled), ol {
   padding-bottom: 10px;
 }
 .text-muted {
-  color: #98a6ad !important;
+  color: #212529
+  !important;
   line-height: normal;
 }
+.attendance-setting .card-header .d-flex{
+  width: 100%;
+}
+#app .attendance-setting .card-header {
+  padding-left: 10px!important;
+  padding-right: 10px!important;
+     padding-bottom: 0px !important;
+        border-radius: 12px;
+    box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.1) !important;
+    margin-bottom: 30px;}
 .my-attendance .btn{
   display: grid;
   margin-bottom: 5px;
@@ -802,13 +848,16 @@ select.form-control:not([size]):not([multiple]) {
   position: relative;
   cursor: pointer;
 }
-
+.card-hover:hover .card-icon {
+    border: 2px solid transparent!important;}
 .imagecheck-input {
   position: absolute;
   z-index: -1;
   opacity: 0;
 }
-
+.card-hover:hover .card-icon i{
+      color: rgb(6, 58, 125)!important;
+}
 .imagecheck-figure {
   background-color: #fdfdff;
   border-color: #e4e6fc;
@@ -1265,7 +1314,7 @@ font-weight: 700;
   font-size: 18px;
   line-height: 60px;
 
-  color: #6777ef;
+  color: rgb(6, 58, 125);
   padding-right: 10px;
   margin-bottom: 0;
   text-transform: uppercase;
@@ -1692,11 +1741,11 @@ table tr:hover .table-links {
 
 /* 3.9 Nav */
 .nav-tabs .nav-item .nav-link {
-  color: #6777ef;
+  color: rgb(6, 58, 125);
 }
 .nav-tabs .nav-item .nav-link.active {
   color: #fff;
-  background: #6777ef;
+  background: rgb(6, 58, 125);
 }
 
 .tab-content > .tab-pane {
@@ -1712,7 +1761,7 @@ table tr:hover .table-links {
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   color: #fff;
-  background-color: #6777ef;
+  background-color: rgb(6, 58, 125);
 }
 .nav-pills .nav-item .nav-link {
   color: #6777ef;
@@ -1727,9 +1776,9 @@ table tr:hover .table-links {
   justify-content: space-between;
 }
 .nav-pills .nav-item .nav-link.active {
-  box-shadow: 0 2px 6px #acb5f6;
+  box-shadow: 0 2px 6px rgb(6, 58, 125);
   color: #fff;
-  background-color: #6777ef;
+  background-color: rgb(6, 58, 125);
 }
 .nav-pills .nav-item .nav-link .badge {
   padding: 5px 8px;
@@ -1829,7 +1878,7 @@ h2 .badge {
   padding: 14px 19px;
 }
 .card-body-box tr{
-  background: #4361ee!important;
+  background: rgb(6, 58, 125)!important;
 }
 
 h3 .badge {
@@ -2485,7 +2534,7 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
   color: #fff;
 }
 .navbar .nav-link {
-  color: #f2f2f2;
+  color: rgb(6, 58, 125);
   padding-left: 15px !important;
   padding-right: 15px !important;
   padding-top: 0 !important;
@@ -2524,15 +2573,13 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
   background-size: cover;
 }
 .nav-link.active{
-  background-color: #394eea!important;
+  background-color: rgb(6, 58, 125)!important;
 }
 .remove-caret:after {
   display: none;
 }
 
-.navbar .nav-link:hover {
-  color: #fff;
-}
+
 .navbar .nav-link.disabled {
   color: #fff;
   opacity: 0.6;
@@ -2586,9 +2633,9 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
   .collapse .navbar-nav {
     position: absolute;
   }
+ 
 }
 @media (max-width: 1024px) {
-  
 .card.card-statistic-1 .card-icon, .card.card-statistic-2 .card-icon {
     width: 60px;
     height: 60px;
@@ -3956,8 +4003,11 @@ html,body{
   width: 100%;
 }
 .main-sidebar .sidebar-menu li a:hover {
-  background-color: #f4f4f4;
-   color: rgb(6, 58, 125)!important;
+  background-color: rgb(6, 58, 125);
+  color: #fff !important;
+}
+.action-icon h6{
+  padding-left: 15px;
 }
 .main-sidebar .sidebar-menu li.active a {
   color: #6777ef;
@@ -4039,26 +4089,30 @@ html,body{
     font-size: 24px;
     color: #000;
     text-transform: uppercase;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 .navbars-payrolls .nav-link.active{
-  background: #4361ee;
+  background: rgb(6, 58, 125);
       color: #fff !important;
 }
+
 .container h2 {
     font-weight: 700;
     display: inline-block;
     font-size: 24px;
     color: #000;
     text-transform: uppercase;
-    margin-bottom: 20px !important;
+    margin-bottom: 0px !important;
 }
 .footer-left a{
    color: #fff;
 }
+.footer-left a:hover{
+   color: #fff!important;
+}
 .main-footer {
   padding: 10px 30px 10px 30px;
-  margin-top: 40px;
+  margin-top: 20px;
   color: #fff;
    display: inline-block;
   width: 100%;
@@ -4078,7 +4132,7 @@ html,body{
   text-decoration: none;
 }
 .card-body-box .table-striped{
-    background-color: #4361ee;
+    background-color: rgb(6, 58, 125);
     color: #fff;
     margin-top: 20px;
 }
@@ -4140,6 +4194,12 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
   .sidebar-gone-hide {
     display: none !important;
   }
+  .section .section-header h1 {
+    font-size: 20px!important;}
+  .card .card-header h4 {
+    font-size: 16px!important;}
+  .form-group .control-label, .form-group > label {
+    font-size: 14px!important;}
   .table:not(.table-sm):not(.table-md):not(.dataTable) td, .table:not(.table-sm):not(.table-md):not(.dataTable) th {
     font-size: 12px!important;}
     .card .card-header h3, .card .card-header h5 {
@@ -4163,7 +4223,7 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
     min-width: 100%;
     overflow-x: auto;
     margin-top: 10px;
-    display: flex;
+   
 }
 .card{
   display: block!important;
@@ -4173,7 +4233,7 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-men
     position: relative;
   }
  .navbar-toggler{
-    color:#fff!important;
+    color:rgb(6, 58, 125)!important;
   }
   .quick-actions-header {
     padding-left: 0;
@@ -4273,9 +4333,22 @@ body.layout-3 .main-wrapper {
   }
 }
 @media (max-width: 880px) {
-.section-body .col-lg-3{
-  margin-bottom: 30px;
+
+.Manage-Companies .table{
+      min-width: 900px;
 }
+.Reimbursements-table{
+  display: flex;
+}
+.Assigned-Company{
+      min-width: 900px;
+}
+ .Attendance-Records{
+        min-width: 1030px;
+  }
+  .table-striped{
+     min-width: 900px;
+  }
 .form-group .control-label, .form-group > label {
     font-size: 12px;}
 .profile-form {
@@ -4284,6 +4357,20 @@ body.layout-3 .main-wrapper {
     .section-body .form-group .col-lg-3 {
         margin-bottom: 0px;
     }
+    .quick-actions-header{
+          justify-content: center;
+    padding: 10px;
+    }
+    .quick-actions-header .d-grid{
+      width: 80%;
+    text-align: center;
+    }
+     .quick-actions-header a{
+          justify-content: center;
+     }
+     #app .payroll-setting{
+      padding-top: 0px!important;
+     }
 }
 @media (max-width: 575.98px) {
   .card.card-large-icons {
@@ -4301,6 +4388,21 @@ body.layout-3 .main-wrapper {
     flex-wrap: wrap;
     
   }
+  .check-in-text {
+    padding: 20px !important;
+}
+ .today-status{
+  text-align: center;
+ }
+  .quick-actions .mb-3{
+margin-bottom: 0px!important;
+  }
+  .quick-actions .action-icon {
+    padding: 15px 10px;
+  }
+  .quick-actions-header a{
+    font-size: 14px!important;
+  }
   .check-in-text .office-timings .text-center{
 display: block;
   }
@@ -4313,8 +4415,9 @@ display: block;
     padding-top: 0px!important;
   }
   .leave-calender .legend{
-  display: block!important;
+ flex-wrap: wrap;
   text-align: center;
+  justify-content: center;
 }
   .manage-shift{
     display: block!important;
@@ -4328,13 +4431,16 @@ display: block;
   margin-right: 0px!important;
   margin-bottom: 10px;
  }
- .attendance-setting .card-header {
+ #app .attendance-setting .card-header {
       padding: 5px !important;
+      padding-bottom: 5px!important;
  }
  .attendance-setting #geolocation-fields .d-flex{
       text-align: center;
     margin-bottom: 10px;
  }
+ .attendance-setting .card {
+    padding: 10px;}
  .attendance-btn{
   text-align: center;
  }
@@ -4343,9 +4449,7 @@ display: block;
   margin-bottom: 10px;
           margin-top: 10px;
  }
-  .main-contant-01 h1{
-    padding-bottom: 10px;
-  }
+ 
   .navbars-payrolls .nav-link{
     padding: 5px;
   }
@@ -4368,8 +4472,9 @@ display: block;
     margin-left: 0px!important;
   }
   .card .card-header h6 {
-    font-size: 15px;
-    line-height: 30px;}
+            font-size: 15px;
+        line-height: 24px;
+        padding: 0px;}
   .attendance .card-header{
     display: block;
      padding: 10px !important;
@@ -4394,6 +4499,7 @@ display: block;
   }
   .container-fluid h4{
     text-align: center;
+    font-size: 20px;
   }
   .payroll-setting .form-group .offset-sm-3 {
     display: block!important;
@@ -4469,10 +4575,19 @@ margin-left: 0px!important;
   .section-body .col-lg-3{
     margin-bottom: 0px;
   }
-  .btn{
-    font-size: 9px!important;
-    padding: 5px!important;
+  .Designations-table{
+     display: flex;
+    overflow-x: auto;
   }
+  .start-time{
+    justify-content: center;
+  }
+   .start-time .row{
+    padding: 0px;
+   }
+   .btn{
+    font-size: 10px!important;
+   }
   .table-responsive{
     padding: 10px;
   }

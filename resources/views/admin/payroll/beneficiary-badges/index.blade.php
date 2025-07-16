@@ -4,16 +4,22 @@
 
 @section('content')
 <div class="container-fluid">
+    <div class="section container">
     <div class="row beneficiary-badges">
-        <div class="col-lg-12">
-            <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
-                <div>
-                    <h4 class="mb-3">Beneficiary Badges</h4>
-                    <p class="mb-0">Manage company-wide allowances and deductions for payroll.</p>
-                </div>
+        <div class="section-header">
+        
+          
+                
+                    <h4>Beneficiary Badges</h4>
+                   
+           
+                <div class="section-header-button">
                 <a href="{{ route('admin.payroll.beneficiary-badges.create') }}" class="btn btn-primary add-list"><i class="fa-solid fa-plus me-2"></i>Create New Badge</a>
             </div>
+</div>
         </div>
+</div>
+         <p class="mb-4">Manage company-wide allowances and deductions for payroll.</p>
 
         @if(session('success'))
             <div class="col-lg-12">
@@ -121,4 +127,5 @@
         </div>
     </div>
 </div>
+</section>
 @endsection

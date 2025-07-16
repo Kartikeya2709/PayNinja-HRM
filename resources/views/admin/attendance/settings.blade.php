@@ -13,10 +13,10 @@
                             <i class="fas fa-clock me-2"></i>Attendance Settings
                         </h5>
                         <div class="attendance-btn">
-                            <a href="{{ route('admin.attendance.settings.view') }}" class="btn btn-outline-primary btn-sm me-2">
+                            <a href="{{ route('admin.attendance.settings.view') }}" class="btn btn-outline-primary btn-md me-2">
                                 <i class="fas fa-eye me-1"></i> View Current Settings
                             </a>
-                            <button type="submit" form="attendance-settings-form" class="btn btn-primary btn-sm">
+                            <button type="submit" form="attendance-settings-form" class="btn btn-primary btn-md">
                                 <i class="fas fa-save me-1"></i> Save Settings
                             </button>
                         </div>
@@ -30,7 +30,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label fw-medium">Company</label>
-                                    <input type="text" class="form-control bg-light" value="{{ $company->name }}" readonly>
+                                    <input type="text" class="form-control bg-light mb-2" value="{{ $company->name }}" readonly>
                                     <input type="hidden" name="company_id" value="{{ $company->id }}">
                                     <small class="text-muted">You can only manage settings for your company</small>
                                 </div>
@@ -43,7 +43,7 @@
                                 <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Office Hours</h6>
                             </div>
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row start-time">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -94,7 +94,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="work_hours" class="form-label fw-medium">Minimum Work Hours (per day)</label>
-                                            <div class="input-group">
+                                            <div class="input-group mb-2">
                                                 <input type="number" class="form-control" id="work_hours" 
                                                        name="work_hours" min="1" max="24" step="0.5"
                                                        value="{{ old('work_hours', $settings ? $settings->work_hours : 8) }}" required>
@@ -120,7 +120,7 @@
                                                     $gracePeriod = '00:15';
                                                 }
                                             @endphp
-                                            <input type="time" class="form-control" id="grace_period" 
+                                            <input type="time" class="form-control mb-2" id="grace_period" 
                                                    name="grace_period" step="300"
                                                    value="{{ $gracePeriod }}" required>
                                             <small class="text-muted">Allowed late arrival time (e.g., 00:15)</small>
@@ -145,7 +145,7 @@
         $autoAbsentTime = '18:00';
     }
 @endphp
-                                            <input type="time" class="form-control" id="auto_absent_time" 
+                                            <input type="time" class="form-control mb-2" id="auto_absent_time" 
                                                    name="auto_absent_time" step="300"
                                                    value="{{ $autoAbsentTime }}" required>
                                             <small class="form-text text-muted">Time after which employees will be marked as absent if not checked in (e.g., 11:00)</small>
@@ -171,7 +171,7 @@
                                             <label class="form-check-label fw-medium" for="allow_multiple_check_in">
                                                 Allow Multiple Check-ins
                                             </label>
-                                            <div class="ms-4 mt-1">
+                                            <div class="mt-1">
                                                 <small class="text-muted">Employees can check in/out multiple times per day</small>
                                             </div>
                                         </div>
@@ -184,7 +184,7 @@
                                             <label class="form-check-label fw-medium" for="track_location">
                                                 Track Employee Location
                                             </label>
-                                            <div class="ms-4 mt-1">
+                                            <div class="mt-1">
                                                 <small class="text-muted">Record GPS coordinates during check-in/out</small>
                                             </div>
                                         </div>
@@ -208,7 +208,7 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="alert alert-info">
+                                <div class="alert alert-info mb-4">
                                     <i class="fas fa-info-circle me-2"></i>
                                     Restrict attendance marking to specific location and radius
                                 </div>
@@ -233,7 +233,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row mt-2">
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="geofence_radius" class="form-label">Allowed Radius (meters)</label>

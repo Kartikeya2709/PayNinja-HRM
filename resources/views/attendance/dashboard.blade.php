@@ -27,7 +27,7 @@
                         @endif
                     </div>
                 @else
-                    <p class="text-muted text-center my-4">Not checked in today</p>
+                    <p class="text-muted my-4 today-status">Not checked in today</p>
                 @endif
                 
                 <div class="d-grid gap-2">
