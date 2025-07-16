@@ -107,6 +107,7 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{id}', [AdminAttendanceController::class, 'update'])->name('update');
         Route::delete('/{id}', [AdminAttendanceController::class, 'destroy'])->name('destroy');
         Route::post('/import', [AdminAttendanceController::class, 'import'])->name('import');
+        Route::get('/import-results', [AdminAttendanceController::class, 'importResults'])->name('import-results');
         Route::get('/export', [AdminAttendanceController::class, 'export'])->name('export');
         Route::get('/template', [AdminAttendanceController::class, 'template'])->name('template');
 
@@ -119,6 +120,13 @@ Route::middleware(['auth'])->group(function () {
             ->name('settings.update');
         Route::get('/api/office-timings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'getOfficeTimings'])
             ->name('api.office-timings');
+    });
+
+    // Admin Regularization Management
+    Route::middleware(['role:admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
+        Route::resource('requests', \App\Http\Controllers\Admin\AttendanceRegularizationController::class);
+        Route::put('requests/{id}/approve', [\App\Http\Controllers\Admin\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
+        Route::post('requests/bulk-update', [\App\Http\Controllers\Admin\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
     });
 
     // Employee Leave Management
