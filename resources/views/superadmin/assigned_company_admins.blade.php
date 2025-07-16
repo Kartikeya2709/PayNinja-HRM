@@ -19,7 +19,7 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
             <div class="table-responsive">
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover Assigned-Company">
                     <thead class="thead-light">
                         <tr>
                             <th>#</th>

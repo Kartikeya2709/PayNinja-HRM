@@ -28,7 +28,7 @@
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
 
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped Academic-table">
                         <thead>
                             <tr>
                                 <th>Name</th>

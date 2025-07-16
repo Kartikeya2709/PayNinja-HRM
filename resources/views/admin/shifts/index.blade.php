@@ -2,11 +2,16 @@
 
 @section('content')
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4 manage-shift">
+    <div class="section">
+    <div class="section-header">
+   
         <h1 class="h3 mb-0 text-gray-800">Manage Shifts</h1>
+        <div class="section-header-button">
         <a href="{{ route('admin.shifts.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add New Shift
         </a>
+</div>
+</div>
     </div>
 
     @if(session('success'))
@@ -85,6 +90,7 @@
         </div>
     </div>
 </div>
+</section>
 @endsection
 
 @push('scripts')

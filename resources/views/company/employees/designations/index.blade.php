@@ -13,7 +13,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body Designations-table">
                     @if(session('success'))
                         <div class="alert alert-success">
                             {{ session('success') }}

@@ -12,7 +12,7 @@
                             <div class="input-group">
                                 <input type="text" name="search" class="form-control" placeholder="Search by name or email..." value="{{ request('search') }}">
                                 <div class="input-group-append">
-                                    <button class="btn btn-primary search-btn" type="submit">Search</button>
+                                    <button class="btn search-btn" type="submit">Search</button>
                                 </div>
                             </div>
                         </form>

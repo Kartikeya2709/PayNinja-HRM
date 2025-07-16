@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="container">
-    <div class="row justify-content-center">
-        <div class="container">
-            <h2 class="mb-4">Reimbursements</h2>
-            
+    <div class="section">
+        <div class="section-header">
+            <h2>Reimbursements</h2>
+</div>
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -18,7 +18,7 @@
                 <input type="text" class="form-control" id="searchInput" placeholder="Search...">
             </div>
 
-            <table class="table table-bordered">
+            <table class="table table-bordered Reimbursements-table">
                 <thead>
                     <tr>
                         <th>Title</th>

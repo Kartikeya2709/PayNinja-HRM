@@ -74,7 +74,6 @@
                                 class="fas fa-user-clock"></i> <span>Regularization Requests</span></a>
                     </li>
 
-                    <li class="menu-header">Leave Management</li>
                     <li
                         class="{{ Request::is('leave-management/leave-requests') && !Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('leave-management.leave-requests.index') }}"><i
