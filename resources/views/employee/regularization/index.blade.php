@@ -4,12 +4,16 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">Attendance Regularization Requests</div>
-
-                <div class="card-body">
+        
+                <section class="section">
+                    <div class="section-header">
+                <h1>Attendance Regularization Requests</h1>
+                    
+               
+                    <div class="section-header-button attendace-reg">
                     @if (!is_null(Auth::user()->employee->reporting_manager_id))
-                        <a href="{{ route('regularization.requests.create') }}" class="btn btn-primary mb-3">New Request</a>
+                        <a href="{{ route('regularization.requests.create') }}" class="btn btn-primary">New Request</a></div>
+</div>
                     @endif
 
                     @if (session('success'))
@@ -27,14 +31,16 @@
                     @if(is_null(Auth::user()->employee->reporting_manager_id))
                     <form action="{{ route('regularization.requests.bulk-update') }}" method="POST" id="bulk-action-form">
                         @csrf
-                        <div class="mb-3">
+                       
                             <button type="button" id="bulk-approve-btn" class="btn btn-success">Approve Selected</button>
                             <button type="submit" name="action" value="reject" class="btn btn-danger">Reject Selected</button>
-                        </div>
+                    
+</div>
+</div>
                     @endif
 
                     @if (isset($pending_requests))
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <ul class="nav nav-tabs Attendance-Regularization" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">Pending</button>
         </li>
@@ -95,6 +101,7 @@
   </div>
 </div>
                 </div>
+</section>
             </div>
         </div>
     </div>

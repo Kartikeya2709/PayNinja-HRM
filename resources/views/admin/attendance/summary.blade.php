@@ -32,20 +32,21 @@
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card attendance">
-                <div class="card-header bg-primary text-white">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Attendance Summary</h4>
-                        <div class="d-flex align-items-center">
-                            <span class="badge bg-white text-primary fs-6">{{ $today->format('l, F j, Y') }}</span>
-                        </div>
+            
+                
+                    <div class="section">
+                    <div class="section-header">
+                        <h1>Attendance Summary</h1>
+                        <div class="section-header-button">
+                            <span class="btn btn-primary">{{ $today->format('l, F j, Y') }}</span>
+                      
                     </div>
                 </div>
                 <div class="card-body p-0">
                     @if($departmentSummary->isNotEmpty())
                         <div class="table-responsive">
                             <table class="table table-hover mb-0">
-                                <thead class="table-light">
+                                <thead>
                                     <tr>
                                         <th style="width: 40%">Department</th>
                                         <th class="text-center">Present</th>
@@ -202,6 +203,7 @@
                     @endif
                 </div>
             </div>
+            
         </div>
     </div>
 </div>

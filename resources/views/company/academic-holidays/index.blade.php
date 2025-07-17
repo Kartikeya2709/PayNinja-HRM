@@ -22,12 +22,12 @@
                 </div>
                 <div class="card-body">
                     @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success mb-2">{{ session('success') }}</div>
                     @endif
                     @if(session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
-
+                    <div class="card-body Aca-table">
                     <table class="table table-bordered table-striped Academic-table">
                         <thead>
                             <tr>
@@ -70,6 +70,7 @@
                         </tbody>
                     </table>
                 </div>
+              </div>
             </div>
         </div>
     </div>
