@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+
 
 class AttendanceController extends Controller
 {
@@ -388,7 +390,6 @@ class AttendanceController extends Controller
     public function import(Request $request)
     {
         $companyId = auth()->user()->company_id;
-        
         $request->validate([
             'file' => 'required|file|mimes:xlsx,xls,csv',
             'overwrite_existing' => 'boolean'
@@ -396,7 +397,6 @@ class AttendanceController extends Controller
 
         try {
             $overwrite = $request->boolean('overwrite_existing', false);
-            
             // Get the file
             $file = $request->file('file');
             
@@ -433,32 +433,43 @@ class AttendanceController extends Controller
                 try {
                     $row = array_combine($header, $row);
                     
+                    // Convert Excel serial numbers to proper formats
+                    try {
+                        // Convert date from Excel serial if needed
+                        if (isset($row['date']) && is_numeric($row['date'])) {
+                            $row['date'] = Carbon::create(1900, 1, 1)->addDays((int)$row['date'] - 2)->format('Y-m-d');
+                        }
+                        
+                        // Convert time from Excel fraction of day (0-1) to H:i:s
+                        if (isset($row['check_in']) && is_numeric($row['check_in'])) {
+                            $hours = (float)$row['check_in'] * 24;
+                            $hour = (int)$hours;
+                            $minutes = (int)(($hours - $hour) * 60);
+                            $seconds = (int)(((($hours - $hour) * 60) - $minutes) * 60);
+                            $row['check_in'] = sprintf('%02d:%02d:%02d', $hour, $minutes, $seconds);
+                        }
+                        
+                        if (isset($row['check_out']) && is_numeric($row['check_out'])) {
+                            $hours = (float)$row['check_out'] * 24;
+                            $hour = (int)$hours;
+                            $minutes = (int)(($hours - $hour) * 60);
+                            $seconds = (int)(((($hours - $hour) * 60) - $minutes) * 60);
+                            $row['check_out'] = sprintf('%02d:%02d:%02d', $hour, $minutes, $seconds);
+                        }
+                    } catch (\Exception $e) {
+                        $errors[] = "Row " . ($index + 2) . ": Error processing date/time values - " . $e->getMessage();
+                        continue;
+                    }
+                    
                     // Basic validation
                     $validator = Validator::make($row, [
                         'employee_id' => 'required|exists:employees,id',
                         'date' => [
                             'required',
-                            function ($attribute, $value, $fail) {
-                                try {
-                                    // Handle Excel serial date numbers
-                                    if (is_numeric($value)) {
-                                        // Excel date serial number starts from 1900-01-01
-                                        $date = Carbon::create(1900, 1, 1)->addDays($value - 2);
-                                    } else {
-                                        // Try to parse the date using Carbon
-                                        $date = Carbon::parse($value);
-                                    }
-                                    // Ensure we have a valid date object
-                                    if (!$date instanceof Carbon) {
-                                        $fail('The date must be a valid date.');
-                                    }
-                                } catch (\Exception $e) {
-                                    $fail('The date must be a valid date. Please use formats like YYYY-MM-DD, DD-MM-YYYY, or Month DD, YYYY.');
-                                }
-                            }
+                            'date_format:Y-m-d'
                         ],
-                        'check_in' => 'nullable|date_format:H:i',
-                        'check_out' => 'nullable|date_format:H:i|after_or_equal:check_in',
+                        'check_in' => 'nullable|date_format:H:i:s',
+                        'check_out' => 'nullable|date_format:H:i:s',
                         'status' => 'required|in:Present,Absent,Late,On Leave,Half Day,Holiday,Week-Off',
                         'remarks' => 'nullable|string|max:500',
                     ]);
@@ -467,7 +478,7 @@ class AttendanceController extends Controller
                         $errors[] = "Row " . ($index + 2) . ": " . implode(' ', $validator->errors()->all());
                         continue;
                     }
-                    
+                    // \Log::info($validator);
                     // Check if employee belongs to the company
                     if (!in_array($row['employee_id'], $validEmployeeIds)) {
                         $skipped++;
@@ -477,34 +488,25 @@ class AttendanceController extends Controller
                     
                     // Prepare data
                     try {
-                        // Handle Excel serial date numbers
-                        $dateValue = $row['date'];
-                        if (is_numeric($dateValue)) {
-                            // Excel date serial number starts from 1900-01-01
-                            $parsedDate = Carbon::create(1900, 1, 1)->addDays($dateValue - 2)->format('Y-m-d');
-                        } else {
-                            // Parse and format the date consistently
-                            $parsedDate = Carbon::parse($dateValue)->format('Y-m-d');
-                        }
+                        $attendanceData = [
+                            'employee_id' => $row['employee_id'],
+                            'date' => $row['date'],
+                            'status' => $row['status'],
+                            'check_in' => !empty($row['check_in']) ? $row['check_in'] : null,
+                            'check_out' => !empty($row['check_out']) ? $row['check_out'] : null,
+                            'remarks' => $row['remarks'] ?? null,
+                        ];
+                        
+                        info('Processed attendance data:', $attendanceData);
                     } catch (\Exception $e) {
-                        $errors[] = "Row " . ($index + 2) . ": Invalid date format: " . $row['date'];
+                        $errors[] = "Row " . ($index + 2) . ": Error preparing attendance data - " . $e->getMessage();
                         continue;
                     }
-                    
-                    $attendanceData = [
-                        'employee_id' => $row['employee_id'],
-                        'date' => $parsedDate,
-                        'status' => $row['status'],
-                        'check_in' => $row['check_in'] ?? null,
-                        'check_out' => $row['check_out'] ?? null,
-                        'remarks' => $row['remarks'] ?? null,
-                    ];
-                    
                     // Check if record exists
                     $existing = Attendance::where('employee_id', $attendanceData['employee_id'])
                         ->whereDate('date', $attendanceData['date'])
                         ->first();
-                    
+                  
                     if ($existing) {
                         if ($overwrite) {
                             $existing->update($attendanceData);
