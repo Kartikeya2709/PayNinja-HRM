@@ -17,7 +17,7 @@
             <div class="mb-3">
                 <input type="text" class="form-control" id="searchInput" placeholder="Search...">
             </div>
-
+<div class="Reimburs-table">
             <table class="table table-bordered Reimbursements-table">
                 <thead>
                     <tr>

@@ -117,10 +117,11 @@ position:fixed;
 }
 /* Card Styling */
 .card {
-  border: none;
-  border-radius: 12px;
-    box-shadow: 0px 10px 50px 0px rgba(0, 0, 0, 0.1)!important;
-  transition: transform 0.2s, box-shadow 0.2s;
+      background: #fff;
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
@@ -350,9 +351,12 @@ position:fixed;
   /* Improve touch targets on mobile */
   .nav-link,
   .dropdown-item {
-    padding: 10px;
+           padding: 5px;
+        font-size: 13px;
   }
-
+.nav-tabs{
+  justify-content: center;
+}
   /* Better spacing for mobile forms */
   .form-group {
     margin-bottom: 1.25rem;

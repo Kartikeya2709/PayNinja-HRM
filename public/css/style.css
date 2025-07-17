@@ -80,6 +80,9 @@
     padding: 15px;
     border-radius: 12px;
 }
+.department-header td{
+  border:1px solid #dee2e6;
+}
 .check-in-text h3{
   color: #000;
     text-transform: uppercase;
@@ -106,13 +109,20 @@
     justify-content: space-between;
 }
 #colleaguesTable_wrapper .table{
-      margin-top: 10px;
+      margin-top: 20px;
+}
+.table th{
+ 
+    border: 1px solid #dee2e6;
 }
 #colleaguesTable_filter input{
-      height: 30px;
+      height: 40px;
     margin-left: 15px;
-    border-radius: 5px;
-    border: 1px solid #000;
+       padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 250px;
+    background: transparent;
 }
 #app .paginate_button{
   padding: 0px 10px!important;
@@ -160,8 +170,9 @@
     z-index: 999;
     position: relative;
 }
-.Academic-table{
-  display: flex;
+.Aca-table {
+      display: flex;
+   overflow-x: auto;
 }
 .card-link:hover::before {
     transform: scaleX(1);
@@ -288,7 +299,6 @@ a:hover{
     display: inline-block;
     font-size: 24px;
     color: #000;
-    text-transform: uppercase;
     margin-bottom: 20px !important;
 }
 .card .card-header h3,
@@ -556,7 +566,9 @@ p, ul:not(.list-unstyled), ol {
   background-color: #fefeff;
   border-color: #95a0f4;
 }
-
+.navbars-payrolls{
+  justify-content: center;
+}
 .input-group-text,
 select.form-control:not([size]):not([multiple]),
 .form-control:not(.form-control-sm):not(.form-control-lg) {
@@ -636,6 +648,16 @@ select.form-control:not([size]):not([multiple]) {
   height: 100%;
   z-index: 5;
 }
+.emp-profile-details{
+    background: #4361ee36;
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;}
+    .emp-profile-details p{
+      color:#000;
+    }
 
 .form-group.floating-addon:not(.floating-addon-not-append) .input-group-append {
   position: absolute;
@@ -687,6 +709,9 @@ select.form-control:not([size]):not([multiple]) {
   height: calc(2.25rem + 4px);
   line-height: 2.2;
   border-color: transparent;
+}
+.Attendance-Regularization{
+      justify-content: center;
 }
 .custom-file-label:focus, .custom-file-label:active {
   box-shadow: none;
@@ -785,7 +810,42 @@ select.form-control:not([size]):not([multiple]) {
   align-items: center;
   margin: 0;
 }
-
+.table thead{
+    background: linear-gradient(to right, #003366, #0059b3)!important;
+    color: #fff;
+}
+.table-striped th{
+      border-color: #dee2e6;
+    border: 1px solid;
+        height: 60px;
+    padding: 0px 20px;
+    align-content: center;
+}
+.dataTables_length{
+      width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+}
+.Reimburs-table{
+      display: flex;
+    overflow-x: auto;
+}
+.dataTables_length label{
+  width: 100%;
+    display: flex;
+    align-items: center;
+}
+.dataTables_length select{
+        padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 250px;
+        margin: 0px 10px;
+        background: transparent;
+}
+.table-striped td{    height: 60px;
+  align-content: center;
+      border: 1px solid #dee2e6;}
 .custom-switch-input {
   position: absolute;
   z-index: -1;
@@ -1219,8 +1279,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 .card .card-header {
  border: 0px;
-  
-  align-self: center;
+  background: transparent;  align-self: center;
   width: 100%;
 
   display: flex;
@@ -1742,6 +1801,9 @@ table tr:hover .table-links {
 /* 3.9 Nav */
 .nav-tabs .nav-item .nav-link {
   color: rgb(6, 58, 125);
+  background: rgb(6 58 125 / 16%);
+      border: 1px solid rgb(6, 58, 125);
+    margin: 0px 5px;
 }
 .nav-tabs .nav-item .nav-link.active {
   color: #fff;
@@ -3452,7 +3514,6 @@ pre {
   display: inline-block;
   font-size: 24px;
   color: #000;
-  text-transform: uppercase;
   margin-bottom: 0px!important;
 }
 .section .section-header .section-header-back {
@@ -4333,13 +4394,13 @@ body.layout-3 .main-wrapper {
   }
 }
 @media (max-width: 880px) {
-
+.table {
+      min-width: 900px;
+}
 .Manage-Companies .table{
       min-width: 900px;
 }
-.Reimbursements-table{
-  display: flex;
-}
+
 .Assigned-Company{
       min-width: 900px;
 }
@@ -4387,6 +4448,34 @@ body.layout-3 .main-wrapper {
     height: auto;
     flex-wrap: wrap;
     
+  }
+  .nav-tabs .nav-item .nav-link {
+    margin: 0px 3px;
+}
+ .attendace-reg button{
+      padding: 5px;
+ }
+  .Attendance-Regularization .nav-link, .dropdown-item {
+        padding: 8px;
+        font-size: 12px;
+    }
+  .dataTables_filter label{
+        display: flex;
+    width: 100%;
+    align-items: center;
+  }
+  #colleaguesTable_filter input{
+    width: 100%;
+  }
+  #app .card-header {
+    padding-bottom: 0px !important;
+  }
+.card .card-header h4{
+  padding-bottom: 0px!important;
+  padding-right: 0px!important;
+}
+  .emp-dashboard .badge {
+    padding: 0px!important;
   }
   .check-in-text {
     padding: 20px !important;
@@ -4489,7 +4578,7 @@ display: block;
   }
   .card .card-header h4 {
     font-size: 15px;
-        line-height: 30px;
+        line-height: 24px;
   }
   .beneficiary-badges h4{
     text-align: center;
@@ -4586,7 +4675,11 @@ margin-left: 0px!important;
     padding: 0px;
    }
    .btn{
-    font-size: 10px!important;
+    font-size: 11px!important;
+            line-height: 18px;
+   }
+   .section-header-button {
+        margin-top: 10px;
    }
   .table-responsive{
     padding: 10px;

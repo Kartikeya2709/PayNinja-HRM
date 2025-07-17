@@ -1,6 +1,6 @@
 @if ($requests->count() > 0)
     <div class="table-responsive">
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover mt-4">
             <thead>
                 <tr>
                     <th>S.No.</th>
