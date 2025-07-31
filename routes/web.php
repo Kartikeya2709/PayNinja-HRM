@@ -35,11 +35,30 @@ require __DIR__ . '/test-logging.php';
 
 //     return '✅ Fresh migration with seeding done!';
 // });
-Route::get('/migrate', function () {
-    Artisan::call('migrate');
+// Route::get('/migrate', function () {
+//     Artisan::call('migrate');
 
-    return '✅ Migration done!';
+//     return '✅ Migration done!';
+// });
+
+
+Route::get('/run-attendance/{date?}', function ($date = null) {
+    try {
+        // Pass the date as an Artisan option
+        Artisan::call('attendance:run-all', [
+            'date' => $date,
+        ]);
+
+        Log::info('✅ attendance:run-all run from route at ' . now() . ' for date: ' . ($date ?? 'today'));
+
+        return '✅ Attendance command executed for date: ' . ($date ?? 'today');
+    } catch (\Exception $e) {
+        Log::error('❌ Failed to run attendance command: ' . $e->getMessage());
+        return response('❌ Error running attendance command.', 500);
+    }
 });
+
+
 
 Route::get('/', function () {
     return view('welcome');

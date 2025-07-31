@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Support\Facades\Artisan;
 use App\Console\Commands;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -31,13 +32,47 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule) {
         // Master attendance scheduler - runs all attendance commands in order
-        $schedule->command('attendance:run-all')
-            ->dailyAt('19:00')  // Run daily at 1:00 AM
-            // ->everyMinute()
-            ->timezone('Asia/Kolkata')
-            ->withoutOverlapping()
-            ->appendOutputTo(storage_path('logs/attendance.log'))
-            ->description('Run all attendance marking commands in order');
+        // $schedule->command('attendance:run-all')
+        //     ->dailyAt('19:00')  
+        //     // ->everyMinute()
+        //     ->timezone('Asia/Kolkata')
+        //     ->withoutOverlapping()
+        //     ->appendOutputTo(storage_path('logs/attendance.log'))
+        //     ->description('Run all attendance marking commands in order');
+        
+        
+        
+        // Testing Purpose only
+    //     $schedule->call(function () {
+    //         \Log::info('✅ Closure-based cron test ran at: ' . now()->toDateTimeString());
+    //     // Artisan::call('attendance:run-all');
+    //  })
+    //     ->everyMinute()
+    //     ->timezone('Asia/Kolkata')
+    //     // ->withoutOverlapping()
+    //     // // ->appendOutputTo(storage_path('logs/attendance.log'))
+    //     ->description('Run all attendance marking commands in order');
+
+        $schedule->call(function () {
+            // Log internally (Laravel log)
+            \Log::info('✅ Attendance cron triggered at: ' . now()->toDateTimeString());
+
+            // Run the command manually
+            \Artisan::call('attendance:run-all');
+
+            // Optionally: log output from the command (useful for debugging)
+            \Log::info(Artisan::output());
+
+        })->name('attendance-run-all')
+        ->dailyAt('19:00') 
+        //   ->everyMinute()
+        ->timezone('Asia/Kolkata')
+        ->withoutOverlapping()
+        ->description('Run all attendance marking commands in order');
+
+
+
+
             
         // For testing, you can uncomment this to run every minute
         // $schedule->command('attendance:run-all')
