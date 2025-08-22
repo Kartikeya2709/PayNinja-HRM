@@ -3,9 +3,10 @@
 @section('title', 'Attendance Dashboard')
 
 @section('content')
+<div class="container">
 <div class="row">
     <!-- Today's Status Card -->
-    <div class="col-md-4 mb-4">
+    <div class="col-md-4 px-1">
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Today's Status</h5>
@@ -46,7 +47,7 @@
     </div>
 
     <!-- This Week's Summary -->
-    <div class="col-md-8 mb-4">
+    <div class="col-md-8 px-1">
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">This Week's Summary</h5>
@@ -103,39 +104,57 @@
 </div>
 
 <!-- Monthly Summary -->
-<div class="row">
-    <div class="col-12">
+<div class="row mt-4">
+    <div class="col-12 px-1">
         <div class="card attendance-card">
             <div class="card-body">
                 <h5 class="card-title">Monthly Summary - {{ now()->format('F Y') }}</h5>
                 <div class="row text-center mt-4">
                     <div class="col-md-3 mb-3">
                         <div class="card card-hover">
-                            <div class="card-body">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icon">
+                                <i class="bi bi-check-circle-fill"></i></div>
+                                <div class="text">
                                 <h6 class="card-title">Present</h6>
                                 <h2>{{ $monthlySummary['present'] ?? 0 }}</h2>
+</div>
                             </div>
+
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="card card-hover">
-                            <div class="card-body">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icon">
+                                <i class="bi bi-x-circle-fill"></i>
+</div>
+<div class="text">
                                 <h6 class="card-title">Absent</h6>
                                 <h2>{{ $monthlySummary['absent'] ?? 0 }}</h2>
                             </div>
+</div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="card card-hover">
-                            <div class="card-body">
+                            <div class="card-body d-flex align-items-center">
+                                 <div class="icon">
+                                    <i class="bi bi-clock-fill"></i>
+</div>
+<div class="text">
                                 <h6 class="card-title">Late</h6>
                                 <h2>{{ $monthlySummary['late'] ?? 0 }}</h2>
+</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="card card-hover">
-                            <div class="card-body">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icon">
+                                    <i class="bi bi-calendar-event-fill"></i></div>
+                                    <div class="text">
                                 <h6 class="card-title">On Leave</h6>
                                 <h2>{{ $monthlySummary['on_leave'] ?? 0 }}</h2>
                             </div>
@@ -145,6 +164,8 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 @endsection
 

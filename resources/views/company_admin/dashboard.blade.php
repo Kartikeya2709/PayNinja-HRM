@@ -105,65 +105,113 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="row emp-card">
+            
             <!-- Employees Card -->
-            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1 card-hover">
-                    <div class="card-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
+            <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-hover card-str-1">
+                
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Total Employees</h4>
-                        </div>
+                       
                         <div class="card-body">
                             {{ array_sum($companyRoleData->toArray()) }}
                         </div>
-                    </div>
-                </div>
-            </div>
+</div>
+                    
+                     <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                   
+</div>
+</div>
+</div>
+</div>
 
             <!-- Departments Card -->
-            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1 card-hover">
-                    <div class="card-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
+            <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-hover card-str-2">
+                   
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Departments</h4>
-                        </div>
+                        
                         <div class="card-body">
                             {{ $departmentCount }}
                         </div>
                     </div>
+                     <div class="card-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
                 </div>
+</div>
             </div>
 
+
             <!-- Today's Attendance -->
-            <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1 card-hover">
-                    <div class="card-icon">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
+            <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-hover card-str-3">
+                    
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Today's Attendance</h4>
-                        </div>
+                        
                         <div class="card-body">
                             {{ $todayAttendanceCount }}/{{ $totalEmployees }}
                         </div>
                     </div>
+                    <div class="card-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+</div>
+</div>
+             <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-hover card-str-4">
+                    
+                    <div class="card-wrap">
+                        <div class="card-header">
+                            <h4>Today's Attendance</h4>
+                        
+                        <div class="card-body">
+                            {{ $todayAttendanceCount }}/{{ $totalEmployees }}
+                        </div>
+                    </div>
+                    <div class="card-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
                 </div>
             </div>
         </div>
+</div>
 
         <!-- Quick Actions Section -->
-        <div class="quick-actions">
-            <h4 class="section-title">Quick Actions</h4>
-            <div class="row g-3">
+        
+           
+            <div class="row mt-4">
+ <div class="col-6 px-1">
+    <div class="card emp-department p-4">
+      <h5 class="mb-3">Employee Distribution by Department</h5>
+      <canvas id="departmentChart"></canvas>
+    </div>
+  </div>
+  <div class="col-lg-6 px-1">
+         <div class="card emp-calender">
+            <div class="card-header">
+                <h5>Calendar</h5>
+            </div>
+            <div class="card-body">
+                <div id="employeeCalendar"></div>
+            </div>
+        </div> 
+</div>
+</div>
+<div class="row mt-4">
+            <div class="col-lg-4 px-1">
+                <div class="quick-actions card">
+                 <h5 class="mt-3 pb-3 ps-3">Quick Actions</h5>
                 <!-- Attendance Card -->
-                <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
+                <div class="col-xl-12">
                     <a href="{{ route('attendance.dashboard') }}" class="action-card h-100">
                         <div class="card-body p-3">
                             <div class="action-icon">
@@ -175,7 +223,7 @@
                 </div>
 
                 <!-- Departments Card -->
-                <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
+                <div class="col-xl-12">
                     <a href="{{ route('company.departments.index') }}" class="action-card h-100">
                         <div class="card-body p-3">
                             <div class="action-icon">
@@ -188,7 +236,7 @@
                 </div>
                 
                 <!-- Leave Requests Card -->
-                <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
+                <div class="col-xl-12">
                     <a href="{{ route('company.leave-requests.index') }}" class="action-card h-100">
                         <div class="card-body p-3">
                             <div class="action-icon">
@@ -201,7 +249,7 @@
                 </div>
 
                 <!-- Employee Management Card -->
-                <div class="col-xl-3 col-lg-4 col-md-6 mb-3">
+                <div class="col-xl-12">
                     <a href="{{ route('company.employees.index', ['companyId' => auth()->user()->company_id]) }}" class="action-card h-100">
                         <div class="card-body p-3">
                             <div class="action-icon">
@@ -213,12 +261,293 @@
                     </a>
                 </div>
             </div>
+</div>
+          <div class="col-4 px-1">
+    <div class="card p-4 attendance-height">
+      <h5 class="mb-3 attendance-card">Attendance Overview</h5>
+      <canvas id="attendanceChart"></canvas>
+    </div>
+  </div>
+
+
+<div class="col-4 px-1">
+  <div class="card card-glass p-3 new-old-emp">
+    <h5 class="mb-4">Employee Movement</h5>
+    <!-- New Joinees -->
+    <div class="mb-4 joinee-resign">
+        <div class="icon">
+      <i class="bi bi-person-plus-fill fs-1"></i></div>
+      <div class="joinee">
+      <h6>New Joinees</h6>
+      <h2>12</h2>
+      <small class="text-muted">Joined this month</small>
+</div>
+    </div>
+
+    <!-- Resigned Employees -->
+    <div class="joinee-resign">
+        <div class="icon">
+      <i class="bi bi-person-dash-fill fs-1"></i></div>
+      <div class="joinee">
+      <h6>Resigned This Month</h6>
+      <h2>3</h2>
+      <small class="text-muted">Employees left</small>
+</div>
+    </div>
+</div>
+</div>
+</div>
+
+ <div class="row mt-4">
+    <div class="col-lg-5 px-1">
+   <div class="card holiday-table">
+  <div class="card-header">
+    <h5 class>Upcoming Holidays</h5>
+  </div>
+  <div class="card-body p-0">
+  <table class="table table-hover table-bordered mb-0">
+    <thead class="table-light">
+      <tr>
+        <th>Date</th>
+        <th>Day</th>
+        <th>Holiday</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>26 Jan 2025</td>
+        <td>Sunday</td>
+        <td>Republic Day</td>
+      </tr>
+      <tr>
+        <td>14 Apr 2025</td>
+        <td>Monday</td>
+        <td>Ambedkar Jayanti</td>
+      </tr>
+      <tr>
+        <td>1 May 2025</td>
+        <td>Thursday</td>
+        <td>Labour Day</td>
+      </tr>
+      <tr>
+        <td>1 May 2025</td>
+        <td>Thursday</td>
+        <td>Labour Day</td>
+      </tr>
+      <tr>
+        <td>1 May 2025</td>
+        <td>Thursday</td>
+        <td>Labour Day</td>
+      </tr>
+      
+    </tbody>
+  </table>
+</div>
+
+  </div>
+    </div>
+    <div class="col-lg-7 px-1">
+        <div class="card">
+<div class="card-body">
+<h5 class="text-center fw-bold">Department-wise Employee Count</h5>
+<div class="chart-wrap">
+<canvas id="payrollChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+ <div class="row mt-4">
+            <div class="col-lg-12 px-1 cash-dep">
+                <div class="card">
+                            <h5>Announcement List</h5>
+             <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Holiday Notice</td>
+                <td>Office will remain closed on 15th August for Independence Day.</td>
+                <td>2025-08-10</td>
+                <td><span class="badge bg-info">Upcoming</span></td>
+                <td>
+                  <button class="btn btn-sm btn-primary">Edit</button>
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>New HR Policy</td>
+                <td>Updated leave policy effective from September 1st.</td>
+                <td>2025-08-05</td>
+                <td><span class="badge bg-warning text-dark">Ongoing</span></td>
+                <td>
+                  <button class="btn btn-sm btn-primary">Edit</button>
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Team Outing</td>
+                <td>Annual team outing scheduled for September 15th.</td>
+                <td>2025-07-30</td>
+                <td><span class="badge bg-success">Completed</span></td>
+                <td>
+                  <button class="btn btn-sm btn-primary">Edit</button>
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
+      </div>
+
+</div>
+</div>
+ 
+</div>
     </section>
 </div>
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script>
+const ctx = document.getElementById('payrollChart');
+
+
+const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+gradient.addColorStop(0, 'rgba(255, 99, 132, 0.4)');
+gradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
+
+
+new Chart(ctx, {
+type: 'line',
+data: {
+labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+datasets: [{
+label: 'Payroll Expense (₹ in Lakhs)',
+data: [12, 15, 13, 14, 16, 18, 17, 19, 20, 18, 17, 21],
+fill: true,
+backgroundColor: gradient,
+borderColor: '#ff5c5c',
+borderWidth: 2,
+tension: 0.3,
+pointBackgroundColor: '#fff',
+pointBorderColor: '#ff5c5c',
+pointBorderWidth: 2,
+pointRadius: 5,
+pointHoverRadius: 7,
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+plugins: {
+legend: {
+display: true,
+labels: {
+boxWidth: 20,
+usePointStyle: false,
+font: {
+size: 13,
+weight: 'bold'
+}
+},
+position: 'top',
+},
+},
+scales: {
+y: {
+beginAtZero: true,
+ticks: {
+callback: (val) => `₹${val}L`
+},
+grid: { drawBorder: false }
+},
+x: {
+grid: { display: false }
+}
+}
+}
+});
+</script>
+<script>
+  const ctxAttend = document.getElementById('attendanceChart').getContext('2d');
+  new Chart(ctxAttend, {
+    type: 'doughnut',
+    data: {
+      labels: ['Present', 'Absent', 'On Leave'],
+      datasets: [{
+        label: 'Employees',
+        data: [115, 5, 8],
+        backgroundColor: ['#4bc0c0', '#ff6384', '#ffcd56']
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }
+  });
+</script>
+<script>
+  const ctxDept = document.getElementById('departmentChart').getContext('2d');
+  new Chart(ctxDept, {
+    type: 'bar',
+    data: {
+      labels: ['Marketing', 'Sales', 'IT', 'HR', 'Finance'],
+      datasets: [{
+        label: 'Number of Employees',
+        data: [20, 30, 40, 15, 23], 
+        backgroundColor: [
+          '#ffcd56', '#ff6384', '#4bc0c0', '#36a2eb', '#9966ff'
+        ]
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            stepSize: 5
+          }
+        }
+      }
+    }
+  });
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('employeeCalendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+   
+  });
+  calendar.render();
+});
+</script>
 <script>
     // Employee Distribution Chart
     const employeeCtx = document.getElementById('employeeChart').getContext('2d');

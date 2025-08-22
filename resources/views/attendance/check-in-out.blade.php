@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-6">
         <div class="card check-in-text">
             <div class="card-body text-center">
                 <h3 class="mb-4">
@@ -26,7 +26,7 @@
                 <!-- Office Timings -->
                 <div class="office-timings mb-4">
                     <div class="row justify-content-center check-in">
-                        <div class="col-md-10">
+                        <div class="col-md-12">
                             <div class="card check-in-bg">
                                 <div class="card-body p-3">
                                     <div class="row text-center">
@@ -75,7 +75,7 @@
                 </div>
                 
                 <!-- Location Button (if geolocation is enabled) -->
-                <div class="d-grid gap-3 col-md-8 mx-auto mb-4">
+                <div class="d-grid gap-3 col-md-12 mx-auto mb-4">
                     <button id="getLocationBtn" class="btn button btn-lg">
                         <i class="bi bi-geo-alt-fill me-2"></i> Update Location
                     </button>
@@ -86,7 +86,7 @@
                 @endif
                 
                 <!-- Check In/Out Buttons -->
-                <div class="d-grid gap-3 alert-info col-md-8 mx-auto">
+                <div class="d-grid gap-3 alert-info col-md-12 mx-auto">
                     @if($isWeekend)
                         <div class="alert alert-info mb-0">
                             <strong>Today is a weekend. Enjoy your day off!</strong>

@@ -4,7 +4,7 @@
 
 <div class="navbar-bg"></div>
 <nav class="navbar navbar-expand-lg main-navbar">
-    <div class="container-fluid px-3 px-lg-4">
+    <div class="container-fluid">
         <!-- Left Side -->
         
         <div class="d-flex align-items-center">
@@ -31,9 +31,21 @@
         <div class="collapse navbar-collapse" id="navbarContent">
             <!-- Quick Actions - Shows on larger screens inline, on mobile in collapse -->
              <div class="sidebar-brand logo">
-                <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="150px"></a>
+                <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="120px"></a>
             </div>
-            <div class="quick-actions quick-actions-header">
+            <!-- Add search input -->
+            <div class="sidebar-search px-4">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="sidebar-menu-search" placeholder="Search menu...">
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- <div class="quick-actions quick-actions-header">
                 <div class="d-grid d-lg-flex gap-2">
                     @if(!Auth::user()->hasRole(['superadmin']))
                     <a href="{{ route('attendance.check-in') }}" class="btn button">
@@ -46,7 +58,7 @@
                     </a>
                     @endif
                 </div>
-            </div>
+            </div> -->
             </div>
         </div>
 

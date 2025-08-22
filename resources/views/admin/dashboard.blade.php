@@ -158,158 +158,150 @@
 @endpush
 
 @section('content')
-<div class="main-content">
+<div class="main-content container">
     <section class="section">
         <div class="section-header">
             <h1>Admin Dashboard</h1>
         </div>
 
         <!-- Stats Row -->
-        <div class="row">
+        <div class="row emp-card">
             <!-- Total Employees -->
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #6777ef 0%, #9c27b0 100%);">
-                        <i class="fas fa-users"></i>
-                    </div>
+            <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-str-1">
+                    
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Total Employees</h4>
-                        </div>
+                        
                         <div class="card-body">
                             {{ $totalEmployees ?? 0 }}
                         </div>
                     </div>
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
                 </div>
             </div>
 
+</div>
+
             <!-- Departments -->
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);">
-                        <i class="fas fa-building"></i>
-                    </div>
+            <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-str-2">
+                   
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Departments</h4>
-                        </div>
+                       
                         <div class="card-body">
                             {{ $departmentCount ?? 0 }}
                         </div>
                     </div>
+                     <div class="card-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
                 </div>
             </div>
-
+</div>
             <!-- Today's Attendance -->
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
+            <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-str-3">
+                    
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Today's Attendance</h4>
-                        </div>
+                        
                         <div class="card-body">
                             {{ $todayAttendanceCount ?? 0 }}/{{ $totalEmployees ?? 0 }}
                         </div>
                     </div>
+                    <div class="card-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+</div>
                 </div>
             </div>
 
             <!-- Pending Requests -->
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon" style="background: linear-gradient(135deg, #26c6da 0%, #00acc1 100%);">
-                        <i class="fas fa-clock"></i>
-                    </div>
+            <div class="col-lg-3 px-1">
+                <div class="card card-statistic-1 card-str-4">
+                   
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Pending Requests</h4>
-                        </div>
+                        
                         <div class="card-body">
                             {{ $pendingRequests ?? 0 }}
                         </div>
                     </div>
+                     <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
                 </div>
             </div>
         </div>
+</div>
 
-        <!-- Charts Row -->
-        <div class="row">
-            <!-- Employee Distribution Chart -->
-            <div class="col-lg-8">
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <i class="fas fa-chart-pie"></i> Employee Distribution by Department
-                    </div>
-                    <div id="employeeDistributionChart" style="min-height: 300px;"></div>
-                </div>
-            </div>
+ <!-- Quick Actions -->
+        <div class="row mt-4">
             
-            <!-- Attendance Overview -->
-            <div class="col-lg-4">
-                <div class="chart-container">
-                    <div class="chart-title">
-                        <i class="fas fa-chart-bar"></i> Attendance Overview
-                    </div>
-                    <div id="attendanceChart" style="min-height: 300px;"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="row">
-            <div class="col-12">
-                <h4 class="section-title">Quick Actions</h4>
-            </div>
+                 <div class="col-lg-5 px-1">
+                     <div class="quick-actions card">
+                <h5 class="mt-3 pb-3 ps-3">Quick Actions</h5>
+            
             
             <!-- Employee Management -->
-            <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="col-xl-12">
                 <a href="{{ route('company.employees.index', ['companyId' => auth()->user()->company_id]) }}" class="action-card">
-                    <div class="card-body">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #6777ef 0%, #9c27b0 100%);">
+                    <div class="card-body p-3">
+                        <div class="action-icon">
                             <i class="fas fa-users-cog"></i>
-                        </div>
-                        <h5>Manage Employees</h5>
+                            <div class="action-des ms-3">
+                            <h5>Manage Employees</h5>
                         <span class="text-muted small">Add, edit, or remove employees</span>
+                    </div>
+                        </div>
+                        
                     </div>
                 </a>
             </div>
 
             <!-- Attendance -->
-            <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="col-xl-12">
                 <a href="{{ route('attendance.dashboard') }}" class="action-card">
-                    <div class="card-body">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);">
+                    <div class="card-body p-3">
+                        <div class="action-icon">
                             <i class="fas fa-calendar-check"></i>
-                        </div>
+                        <div class="action-des ms-3">
                         <h5>Attendance</h5>
                         <span class="text-muted small">View and manage attendance</span>
+</div>
                     </div>
                 </a>
             </div>
 
             <!-- Leave Management -->
-            <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="col-xl-12">
                 <a href="{{ route('company.leave-requests.index') }}" class="action-card">
-                    <div class="card-body">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);">
+                    <div class="card-body p-3">
+                        <div class="action-icon">
                             <i class="fas fa-calendar-minus"></i>
-                        </div>
+                        <div class="action-des ms-3">
                         <h5>Leave Management</h5>
                         <span class="text-muted small">Approve or reject leave requests</span>
+</div>
                     </div>
                 </a>
             </div>
 
             <!-- Reports -->
-            <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="col-xl-12">
                 <a href="#" class="action-card" onclick="alert('Reports feature coming soon!'); return false;">
-                    <div class="card-body">
-                        <div class="card-icon" style="background: linear-gradient(135deg, #26c6da 0%, #00acc1 100%);">
+                    <div class="card-body p-3">
+                        <div class="action-icon">
                             <i class="fas fa-chart-bar"></i>
-                        </div>
+                       <div class="action-des ms-3">
                         <h5>Reports</h5>
                         <span class="coming-soon">Coming Soon</span>
                         <span class="text-muted small">Generate detailed reports</span>
@@ -317,205 +309,266 @@
                 </a>
             </div>
         </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+ <div class="col-lg-7 px-1">
+         <div class="card emp-calender">
+            <div class="card-header">
+                <h5>Calendar</h5>
+            </div>
+            <div class="card-body">
+                <div id="employeeCalendar"></div>
+            </div>
+        </div> 
+</div>
+</div>
+
+
+
+
+<div class="row mt-4">
+
+ <div class="col-lg-8 px-1">
+      <div class="card p-3">
+        <h5 class="chart-title text-center">Employee Distribution by Department</h5>
+        <canvas id="employeeChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Upcoming Events -->
+    <div class="col-lg-4 px-1">
+      <div class="card p-3 admin-up-events">
+        <h5 class="chart-title text-start">Upcoming Events / Holidays</h5>
+        
+        <div class="event-item">
+          <div class="event-date">
+            21 <span>Aug</span>
+          </div>
+          <div class="event-name">Independence Day (Holiday)</div>
+        </div>
+        
+        <div class="event-item">
+          <div class="event-date">
+            25 <span>Aug</span>
+          </div>
+          <div class="event-name">Team Outing</div>
+        </div>
+        
+        <div class="event-item">
+          <div class="event-date">
+            28 <span>Aug</span>
+          </div>
+          <div class="event-name">Krishna Janmashtami (Holiday)</div>
+        </div>
+        
+        <div class="event-item">
+          <div class="event-date">
+            01 <span>Sep</span>
+          </div>
+          <div class="event-name">Quarterly Townhall</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+   <div class="row mt-4"> 
+    <div class="col-lg-6 px-1">
+   <div class="card">
+        <h5 class="text-center">Attendance Overview</h5>
+        <div class="d-flex justify-content-center">
+        <canvas id="attendanceChart"></canvas>
+</div>
+      </div>
+    </div>
+    <div class="col-lg-6 px-1">
+        <div class="card today-not">
+        <h5 class="text-center">Today's Not Clock In</h5>
+         <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Employee Name</th>
+              <th scope="col">Department</th>
+              <th scope="col">Expected Shift</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Amit Sharma</td>
+              <td>Development</td>
+              <td>09:00 AM - 06:00 PM</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Neha Singh</td>
+              <td>Sales</td>
+              <td>10:00 AM - 07:00 PM</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Raj Patel</td>
+              <td>Support</td>
+              <td>08:00 AM - 05:00 PM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mb-0 text-center">*These employees have not clocked in today</p>
+    </div>
+  </div>
+</div>
+      
+ <div class="row mt-4">
+            <div class="col-lg-12 px-1 cash-dep">
+                <div class="card">
+                            <h5>Announcement List</h5>
+             <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Holiday Notice</td>
+                <td>Office will remain closed on 15th August for Independence Day.</td>
+                <td>2025-08-10</td>
+                <td><span class="badge bg-info">Upcoming</span></td>
+                <td>
+                  <button class="btn btn-sm btn-primary">Edit</button>
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>New HR Policy</td>
+                <td>Updated leave policy effective from September 1st.</td>
+                <td>2025-08-05</td>
+                <td><span class="badge bg-warning text-dark">Ongoing</span></td>
+                <td>
+                  <button class="btn btn-sm btn-primary">Edit</button>
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Team Outing</td>
+                <td>Annual team outing scheduled for September 15th.</td>
+                <td>2025-07-30</td>
+                <td><span class="badge bg-success">Completed</span></td>
+                <td>
+                  <button class="btn btn-sm btn-primary">Edit</button>
+                  <button class="btn btn-sm btn-danger">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+</div>
+</div>
+ 
+</div>
+       
     </section>
 </div>
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Employee Distribution Chart
-        var employeeOptions = {
-            series: [{
-                name: 'Employees',
-                data: @json($departmentData['counts'] ?? [])
-            }],
-            chart: {
-                type: 'bar',
-                height: 350,
-                toolbar: {
-                    show: true,
-                    tools: {
-                        download: true,
-                        selection: true,
-                        zoom: true,
-                        zoomin: true,
-                        zoomout: true,
-                        pan: false,
-                        reset: true
-                    }
-                },
-                zoom: {
-                    enabled: true
-                }
-            },
-            plotOptions: {
-                bar: {
-                    horizontal: true,
-                    borderRadius: 4,
-                    dataLabels: {
-                        position: 'top',
-                    },
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                offsetX: -6,
-                style: {
-                    fontSize: '12px',
-                    colors: ['#fff']
-                }
-            },
-            stroke: {
-                show: true,
-                width: 1,
-                colors: ['#fff']
-            },
-            xaxis: {
-                categories: @json($departmentData['names'] ?? []),
-            },
-            colors: ['#6777ef', '#9c27b0', '#66bb6a', '#ffa726', '#26c6da', '#ff5252', '#ab47bc', '#7e57c2', '#5c6bc0', '#42a5f5'],
-            tooltip: {
-                y: {
-                    formatter: function(val) {
-                        return val + ' employees';
-                    }
-                }
-            }
-        };
-
-        var employeeChart = new ApexCharts(document.querySelector("#employeeDistributionChart"), employeeOptions);
-        employeeChart.render();
-
-        // Attendance Overview Chart
-        var presentCount = {{ $todayAttendanceCount ?? 0 }};
-        var onLeaveCount = {{ $onLeaveCount ?? 0 }};
-        var totalEmployees = {{ $totalEmployees ?? 1 }}; // Prevent division by zero
-        var accountedFor = presentCount + onLeaveCount;
-        var notMarkedCount = Math.max(0, totalEmployees - accountedFor);
-        var absentCount = {{ $absentCount ?? 0 }};
-        
-        // Log the values for debugging
-        console.log('Present:', presentCount, 'On Leave:', onLeaveCount, 'Not Marked:', notMarkedCount, 'Absent:', absentCount, 'Total:', totalEmployees);
-        
-        // Donut chart configuration with four categories
-        var attendanceOptions = {
-            series: [presentCount, onLeaveCount, notMarkedCount, absentCount],
-            chart: {
-                type: 'donut',
-                height: 320,
-                toolbar: {
-                    show: true,
-                    tools: {
-                        download: true
-                    }
-                }
-            },
-            labels: ['Present', 'On Leave', 'Not Marked', 'Absent'],
-            colors: ['#66bb6a', '#ffa726', '#6c757d', '#ff5252'],
-            legend: {
-                position: 'bottom',
-                horizontalAlign: 'center',
-                fontSize: '14px',
-                itemMargin: {
-                    horizontal: 10,
-                    vertical: 5
-                }
-            },
-            plotOptions: {
-                pie: {
-                    donut: {
-                        size: '60%',
-                        labels: {
-                            show: true,
-                            total: {
-                                show: true,
-                                label: 'Total',
-                                formatter: function (w) {
-                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                                }
-                            },
-                            value: {
-                                fontSize: '20px',
-                                fontWeight: 'bold',
-                                color: '#2c3e50'
-                            }
-                        }
-                    }
-                }
-            },
-            dataLabels: {
-                enabled: true,
-                formatter: function(val, { seriesIndex, w }) {
-                    // Show both count and percentage on the chart
-                    const count = w.config.series[seriesIndex];
-                    const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                    const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
-                    return `${count} (${percentage}%)`;
-                },
-                style: {
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    colors: ['#fff']
-                },
-                dropShadow: {
-                    enabled: true,
-                    top: 1,
-                    left: 1,
-                    blur: 1,
-                    opacity: 0.8
-                }
-            },
-            tooltip: {
-                y: {
-                    formatter: function(value, { seriesIndex, w }) {
-                        const total = w.globals.seriesTotals.reduce((a, b) => a + b, 0);
-                        const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
-                        return `${w.config.labels[seriesIndex]}: ${value} (${percentage}%)`;
-                    }
-                }
-            },
-            responsive: [{
-                breakpoint: 480,
-                options: {
-                    chart: {
-                        height: 280
-                    },
-                    legend: {
-                        position: 'bottom',
-                        fontSize: '12px'
-                    }
-                }
-            }]
-        };
-        
-        // Add noData configuration if no employees
-        if (totalEmployees === 0) {
-            attendanceOptions.noData = {
-                text: 'No attendance data available',
-                align: 'center',
-                verticalAlign: 'middle',
-                style: {
-                    color: '#6c757d',
-                    fontSize: '14px',
-                    fontFamily: 'inherit'
-                }
-            };
+  // Attendance Pie Chart
+  const ctxAttendance = document.getElementById('attendanceChart').getContext('2d');
+  new Chart(ctxAttendance, {
+    type: 'pie',
+    data: {
+      labels: ['Present', 'Absent', 'On Leave'],
+      datasets: [{
+        label: 'Attendance',
+        data: [75, 15, 10],
+        backgroundColor: [
+          'rgba(34,197,94,0.8)',
+          'rgba(239,68,68,0.8)',
+          'rgba(59,130,246,0.8)'
+        ],
+        borderColor: [
+          'rgba(34,197,94,1)',
+          'rgba(239,68,68,1)',
+          'rgba(59,130,246,1)'
+        ],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { size: 14 } }
         }
+      }
+    }
+  });
 
-        var attendanceChart = new ApexCharts(document.querySelector("#attendanceChart"), attendanceOptions);
-        attendanceChart.render();
-
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            employeeChart.updateOptions({
-                chart: {
-                    width: '100%'
-                }
-            });
-        });
-    });
+  // Employee Bar Chart
+  const ctxEmployee = document.getElementById('employeeChart').getContext('2d');
+  new Chart(ctxEmployee, {
+    type: 'bar',
+    data: {
+      labels: ['Company Admin', 'Human Resource', 'Development', 'Sales', 'Support'],
+      datasets: [{
+        label: 'Employees',
+        data: [3, 5, 10, 6, 4],
+        backgroundColor: '#3b82f6',
+        borderRadius: 5,
+        barThickness: 40,
+        maxBarThickness: 50
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true, position: 'top' }
+      },
+      scales: {
+        y: { beginAtZero: true, max: 10 }
+      }
+    }
+  });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('employeeCalendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+   
+  });
+  calendar.render();
+});
+</script>
+
 @endpush
 
 @endsection
