@@ -241,9 +241,19 @@ position:fixed;
     z-index: 1080;
     position: fixed;
   }
+  #employeeCalendar button{
+        padding: 5px!important;
+
+  }
+  .attendance-height #attendanceChart{
+        height: 280px !important;
+  }
+  .sidebar-brand.logo img{
+    display: none;
+  }
 .main-sidebar {
     
-    top: 75px;}
+    top: 60px;}
   body.sidebar-open {
     overflow: hidden;
   }
@@ -261,23 +271,46 @@ position:fixed;
     padding-left: 30px !important;
    
   }
+  .quick-actions h5{
+    padding-top: 20px;
+        margin-top: 0rem!important;
+  }
 }
 @media (max-width: 880px) {
       .main-content {
-        padding-top: 150px;
+        padding-top: 120px;
+    }
+    .left-side{
+      left:20px;
+    
+    }
+    .col-lg-3{
+      width: 100%;
+      padding-top: 10px;
+    }
+    .col-6{
+      width: 100%; 
+        padding-top: 30px;
+    }
+     .col-4{
+      width: 100%;
+        padding-top: 30px;
     }
 .main-sidebar {
-        top: 105px;
+        top: 60px;
     }
-
 }
+
 @media (max-width: 767px) {
   .navbar-bg {
     height: 65px;
   }
-
-
-
+  .quick-actions h5{
+    padding-bottom: 0px!important;
+  }
+#attendanceChart {
+    height: 220px !important;
+}
   .navbar-brand .brand-text {
     font-size: 1.25rem;
   }
@@ -304,7 +337,7 @@ position:fixed;
   
   .main-content {
     padding: 16px !important;
-    padding-top: 150px !important;
+    padding-top: 120px !important;
     min-height: auto!important;
   }
   
@@ -369,6 +402,7 @@ position:fixed;
   .card-statistic-4 .card-content {
     padding: 1rem;
   }
+  
 
   /* Better mobile search experience */
   .search-element {

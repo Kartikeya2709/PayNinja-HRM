@@ -4,6 +4,14 @@
 
 @section('content')
 <div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Attendance Dashboard</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Attendance Dashboard</div>
+                </div>
+            </div>
 <div class="row">
     <!-- Today's Status Card -->
     <div class="col-md-4 px-1">

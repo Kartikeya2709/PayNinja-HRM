@@ -3,6 +3,15 @@
 @section('title', 'Check In/Out')
 
 @section('content')
+<div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Check In/Out</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Check In/Out</a></div>
+                </div>
+            </div>
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card check-in-text">
@@ -92,11 +101,11 @@
                             <strong>Today is a weekend. Enjoy your day off!</strong>
                         </div>
                     @elseif(!$todayAttendance || !$todayAttendance->check_in)
-                        <button id="checkInBtn" class="btn btn-primary btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
+                        <button id="checkInBtn" class="btn btn-success check-inn btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
                             <i class="bi bi-box-arrow-in-right me-2"></i> Check In
                         </button>
                     @elseif(!$todayAttendance->check_out)
-                        <button id="checkOutBtn" class="btn btn-danger btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
+                        <button id="checkOutBtn" class="btn btn-danger check-outt btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
                             <i class="bi bi-box-arrow-right me-2"></i> Check Out
                         </button>
                     @else

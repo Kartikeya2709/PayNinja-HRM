@@ -62,6 +62,9 @@
   box-shadow: none !important;
   outline: none;
 }
+.fc .fc-toolbar-title{
+  font-size: 16px!important;
+}
 #sidebar-menu-search{
   border-radius: 50px 0px 0px 50px;
 }
@@ -89,9 +92,14 @@
 .department-header td{
   border:1px solid #dee2e6;
 }
+.card-1{
+  display: flex;
+  justify-content: space-between;
+      align-items: center;
+}
 .check-in-text h3{
   color: #000;
-    text-transform: uppercase;
+
     font-weight: 800;
     position: relative;
         padding-bottom: 10px;
@@ -227,6 +235,14 @@ font-weight: 400;
   color: #fff;
     opacity: 1;
 }
+.sidebar-brand.logo{
+      width: 100%;
+    display: flex;
+    align-items: center;
+}
+.sidebar-search {
+    border-bottom: 0px!important;
+}
 .mobile-logo{
   display: none;
 }
@@ -234,7 +250,7 @@ font-weight: 400;
       color: #000;
     margin-left: 0px;
     margin-bottom: 10px;
-
+padding-left: 0px !important;
 }
 .emp-dash-h4 h4{
   line-height: normal!important;
@@ -429,7 +445,12 @@ align-items: center;
 .emp-card .col-lg-3{
   overflow: hidden;
 } 
-
+.reg-req{
+  height: 100%;
+}
+.card-statistic-1 .card-icon{
+      z-index: 9;
+}
 .quick-actions {
   padding: 0px!important;
 }
@@ -443,8 +464,7 @@ align-items: center;
     height: 60px;
     width: 60px;
     padding: 10px;
-    display: flex
-;
+    display: flex;
     align-items: center;
     border-radius: 10px;
     justify-content: center;
@@ -519,12 +539,8 @@ align-items: center;
   transform-origin: bottom;
   transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
 }
-#app .main-sidebar .sidebar-menu .dropdown-menu a:hover {
-    color: #000!important;
-}
-#app .main-sidebar .sidebar-menu .dropdown-menu li.active a:hover {
-    color: #fff!important;
-}
+
+
 #attendance-settings-form .card-header{
   margin-bottom: 20px;
 }
@@ -534,6 +550,72 @@ align-items: center;
 .month-sum .card-body{
   z-index: 999;
 }
+
+/* ✅ Check In Button */
+.check-inn {
+  position: relative;
+  overflow: hidden;
+  opacity: 1!important;
+  border: none !important;
+  color: #fff !important;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.5);
+  transition: all 0.3s ease;
+  animation: pulseGreen 2.5s infinite;
+}
+
+/* ✅ Check Out Button */
+.check-outt {
+  position: relative;
+  overflow: hidden;
+  opacity: 1!important;
+  border: none !important;
+  color: #fff !important;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
+  transition: all 0.3s ease;
+  animation: pulseRed 2.5s infinite;
+}
+
+/* Green pulse animation */
+@keyframes pulseGreen {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.2);
+  }
+  70% {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 12px rgba(25, 135, 84, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.2);
+  }
+}
+
+/* Red pulse animation */
+@keyframes pulseRed {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.2);
+  }
+  70% {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 12px rgba(220, 53, 69, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.2);
+  }
+}
+
+
 
 .section-header{
   justify-content: space-between;
@@ -756,7 +838,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 .profile-form .button{
   width: 100%;}
@@ -908,11 +990,18 @@ color: #fff;
 .input-group-append [class*=btn-outline-] {
   background-color: #fdfdff;
 }
+.action-des h6{
+      padding-left: 0px!important;
 
+    text-align: left!important;
+    font-size: 18px !important;
+    font-weight: 500!important;
+}
 .form-text {
   font-size: 12px;
   line-height: 22px;
 }
+
 .leave{
   height: 100%;
 }
@@ -1197,7 +1286,6 @@ color: #fff;
 .imagecheck-input:checked ~ .imagecheck-figure:before {
   opacity: 1;
 }
-
 .imagecheck-image {
   max-width: 100%;
   opacity: 0.64;
@@ -1525,6 +1613,7 @@ color: #fff;
 
 .profile-form{
   padding: 50px;
+  height: 500px;
 }
 .card-body{
   line-height: normal;
@@ -1547,11 +1636,11 @@ color: #fff;
       border-radius: 20px!important;
 }
 .profile-form .card-header{
-  justify-content: center;
+  justify-content: center!important;
     font-size: 25px;
     font-weight: 800;
     color: #000;
-    text-transform: uppercase;
+    
     padding-bottom: 20px !important;
 }
 .profile-form-01:before {
@@ -1613,10 +1702,9 @@ position: relative;
 
 .form-group .control-label, .form-group > label{
 font-weight: 700;
-    color: #34395e;
-    font-size: 16px;
+    color: #34395e6b;
+    font-size: 14px;
     letter-spacing: 0.5px;
-    text-transform: uppercase;
     padding-bottom: 5px;
 }
 .card .card-header h4 {
@@ -2077,16 +2165,7 @@ table tr:hover .table-links {
 }
 
 /* 3.9 Nav */
-.nav-tabs .nav-item .nav-link {
-  color: rgb(6, 58, 125);
-  background: rgb(6 58 125 / 16%);
-      border: 1px solid rgb(6, 58, 125);
-    margin: 0px 5px;
-}
-.nav-tabs .nav-item .nav-link.active {
-  color: #fff;
-  background: rgb(6, 58, 125);
-}
+
 
 .tab-content > .tab-pane {
   padding: 10px 0;
@@ -2662,7 +2741,7 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
 
 /* 3.14 Breadcrumb */
 .breadcrumb {
-  background-color: #f9f9f9;
+ justify-content: end;
 }
 .breadcrumb .breadcrumb-item {
   line-height: 1;
@@ -3293,11 +3372,31 @@ ul.nav-tabs li.nav-item a.nav-link.active i {
   --light: #e3eaef;
   --dark: #191d21;
 }
-
+.monthly-summary .icon {
+    height: 50px;
+    width: 50px;
+    background: #ff970563;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    transition: 0.5s;
+    margin-right: 10px;
+}
+.monthly-summary .text{
+  text-align: left;
+}
+.monthly-summary .icon i{
+  color: #000;
+}
 body, html {
   min-height: 100%;
 }
-
+.month-sum{
+  border: 1px solid #ff9705!important;
+  
+}
 body {
   background-color: #f4f6f9;
   font-size: 14px;
@@ -4339,11 +4438,20 @@ html,body{
 .main-sidebar .sidebar-menu li.menu-header:not(:first-child) {
   margin-top: 10px;
 }
+#attendanceChart{
+  height: 280px!important;
+}
+.cash-dep #attendanceChart{
+  height: 100%!important;
+}
+.attendance-height #attendanceChart{
+  height: 100%!important;
+}
 .main-sidebar .sidebar-menu li a {
   position: relative;
   display: flex;
   align-items: center;
-  height: 45px;
+  height: 45px!important;
   padding: 0px;
   width: 100%;
   letter-spacing: 0.3px;
@@ -4360,8 +4468,11 @@ html,body{
     height: auto!important;
 }
 .profile-form .form-group .button{
-  margin-top:20px;
   border-radius: 0px;
+}
+.pro-form{
+  height: 100%;
+    align-content: center;
 }
 .main-sidebar .sidebar-menu li.active a:hover{
   color:#fff!important;
@@ -4394,9 +4505,75 @@ color: #fff;
   background-color: #ff9705;
   color: #fff !important;
 }
+/* Default tab style */
+.nav-tabs .nav-link {
+    color: #555; /* text color */
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.nav-tabs .nav-link:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+/* Active tab */
+.nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: #fff !important;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Remove default bottom border of nav-tabs */
+.nav-tabs {
+    border-bottom: none;
+}
+
+#app .glass-box .card-header{
+      justify-content: center!important;
+    padding-bottom: 30px !important;
+}
+.custom-tabs{
+  justify-content: center;
+}
 .action-icon h6{
-  padding-left: 15px;
+padding-left: 10px;
   font-weight: 400;
+}
+.month-sum h2{
+      font-weight: 400;
+    font-size: 16px!important;
+}
+.main-contant-01 h1{
+      color: #000;
+    font-size: 30px;
+}
+.profile-form .form-group {
+
+    position: relative;
+}
+.breadcrumb {
+  margin-bottom: 0px!important;
+}
+.profile-form .form-group input{
+  border: 1px solid #000;
+    border-radius: 10px;
+    position: relative;
+    padding: 10px!important;
+}
+.profile-form .form-group label{
+      padding: 0px 5px;
+    position: absolute;
+    top: -14px;
+    background: #fff;
+    width: auto;
+    left: 25px;
+    z-index: 9;
 }
 /* .main-sidebar .sidebar-menu li.active a {
   color: #6777ef;
@@ -4421,7 +4598,8 @@ color: #fff;
   transition: all 0.5s;
 }
 .main-sidebar .sidebar-menu li.active > ul.dropdown-menu li a:hover {
-  background-color: #f8fafb;
+  background-color: #ff9705;
+  color: #fff!important;
 }
 .main-sidebar .sidebar-menu li ul.dropdown-menu {
   padding: 0;
@@ -4576,10 +4754,7 @@ body:not(.sidebar-mini) .sidebar-style-1 .sidebar-menu li.active ul.dropdown-men
   width: 4px;
   background-color: #6777ef;
 } */
-body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-menu li a {
-  padding-left: 61px;
-  background-color: #fff;
-}
+
 
 @media (max-width: 1024px) {
   .sidebar-gone-hide {
@@ -4934,6 +5109,7 @@ display: block;
   }
   .section .section-header{
    justify-content: center!important;
+   margin-bottom: 0px!important;
   }
   .beneficiary-badges .d-flex .btn{
 margin-top: 10px;
@@ -5020,6 +5196,7 @@ margin: 0px!important;
 
   .profile-form{
     padding: 20px;
+   
   }
  .my-attendance form{    
   padding-bottom: 4px;

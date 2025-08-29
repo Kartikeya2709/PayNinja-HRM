@@ -1,11 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <div class="section">
-    <div class="section-header">
+<div class="container">
+    <section class="section">
+       <div class="section-header">
+        <h1 class="mb-0">Manage Shift</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item"><a href="{{ route('home') }}"></a>Dashboard</div>
+            <div class="breadcrumb-item active"> <a href="">Manage Shift</a></div>
+        </div>
+    </div>
+    <div class="card">
+    <div class="card-1">
    
-        <h1 class="h3 mb-0 text-gray-800">Manage Shifts</h1>
+        <h5 class="mb-0">Manage Shifts</h5>
         <div class="section-header-button">
         <a href="{{ route('admin.shifts.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Add New Shift
@@ -26,7 +34,7 @@
         </div>
     @endif
 
-    <div class="card shadow mb-4">
+    <div class="card shadow mb-4 mt-4">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="shifts-table" width="100%" cellspacing="0">

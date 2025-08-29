@@ -158,7 +158,7 @@
 @endpush
 
 @section('content')
-<div class="main-content container">
+<div class="container">
     <section class="section">
         <div class="section-header">
             <h1>Admin Dashboard</h1>
@@ -258,7 +258,7 @@
                         <div class="action-icon">
                             <i class="fas fa-users-cog"></i>
                             <div class="action-des ms-3">
-                            <h5>Manage Employees</h5>
+                            <h6>Manage Employees</h6>
                         <span class="text-muted small">Add, edit, or remove employees</span>
                     </div>
                         </div>
@@ -274,7 +274,7 @@
                         <div class="action-icon">
                             <i class="fas fa-calendar-check"></i>
                         <div class="action-des ms-3">
-                        <h5>Attendance</h5>
+                        <h6>Attendance</h6>
                         <span class="text-muted small">View and manage attendance</span>
 </div>
                     </div>
@@ -288,7 +288,7 @@
                         <div class="action-icon">
                             <i class="fas fa-calendar-minus"></i>
                         <div class="action-des ms-3">
-                        <h5>Leave Management</h5>
+                        <h6>Leave Management</h6>
                         <span class="text-muted small">Approve or reject leave requests</span>
 </div>
                     </div>
@@ -302,7 +302,7 @@
                         <div class="action-icon">
                             <i class="fas fa-chart-bar"></i>
                        <div class="action-des ms-3">
-                        <h5>Reports</h5>
+                        <h6>Reports</h6>
                         <span class="coming-soon">Coming Soon</span>
                         <span class="text-muted small">Generate detailed reports</span>
                     </div>
@@ -384,6 +384,129 @@
 </div>
       </div>
     </div>
+    <div class="col-lg-6 px-1">
+   <div class="card reg-req">
+        <h5 class="text-center">Regularization Requests</h5>
+        <div class="d-flex justify-content-center">
+         <div class="card-body card p-0">
+       <div class="table-responsive">
+  <table class="table table-striped table-hover align-middle mb-0">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Neha</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+       <tr>
+        <td>2</td>
+        <td>Nidhi</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+       <tr>
+        <td>3</td>
+        <td>Rahul</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+       <tr>
+        <td>4</td>
+        <td>Rohan</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+
+  <div class="row mt-4"> 
+   <div class="col-lg-6 px-1">
+   <div class="card reg-req">
+        <h5 class="text-center">Today's Clock In</h5>
+        <div class="d-flex justify-content-center">
+         <div class="card-body card p-0">
+       <div class="table-responsive">
+  <table class="table table-striped table-hover align-middle mb-0">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Neha</td>
+        <td>
+          <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+        </td>
+      </tr>
+       <tr>
+        <td>2</td>
+        <td>Nidhi</td>
+        <td>
+           <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+
+        </td>
+      </tr>
+       <tr>
+        <td>3</td>
+        <td>Rahul</td>
+        <td>
+           <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+
+        </td>
+      </tr>
+       <tr>
+        <td>4</td>
+        <td>Rohan</td>
+        <td>
+           <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+         
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+  </div>
+  </div>
+  </div>
+              
+
+    
+   
     <div class="col-lg-6 px-1">
         <div class="card today-not">
         <h5 class="text-center">Today's Not Clock In</h5>

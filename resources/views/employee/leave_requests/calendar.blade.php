@@ -103,10 +103,20 @@
 @endsection
 
 @section('content')
-<section class="section">
+<section class="section container">
+
     <div class="section-header">
         <h1>Leave Calendar</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item"><a href="{{ route('home') }}"></a>Dashboard</div>
+            <div class="breadcrumb-item active"> <a href="">Leave Calendar</a></div>
+        </div>
     </div>
+
+    <div class="card">
+        
+        <h1>Leave Calendar</h1>
+    
 
     <div class="section-body">
         <div class="row">

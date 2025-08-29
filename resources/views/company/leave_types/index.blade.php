@@ -4,9 +4,17 @@
 
 @section('content')
 <div class="container">
-<section class="section">
-    <div class="section-header">
-        <h1>Leave Types</h1>
+    <section class="section">
+            <div class="section-header">
+                <h1>Leave Types</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Leave Types</div>
+                </div>
+            </div>
+<section class="card">
+    <div class="card-1">
+        <h5 class="mb-0">Leave Types</h5>
         <div class="section-header-button">
             <a href="{{ route('company.leave-types.create') }}" class="btn btn-primary">Add New Leave Type</a>
         </div>
@@ -14,7 +22,7 @@
 
     <div class="section-body">
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 px-0">
                 <div class="card">
                     <div class="card-body">
                         @if(session('success'))

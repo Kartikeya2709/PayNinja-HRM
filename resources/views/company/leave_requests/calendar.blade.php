@@ -128,10 +128,14 @@
 @endsection
 
 @section('content')
-<div class="container">
-<section class="section leave-calender">
+<section class="section container">
+
     <div class="section-header">
         <h1>Leave Calendar</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item"><a href="{{ route('home') }}"></a>Dashboard</div>
+            <div class="breadcrumb-item active"> <a href="">Leave Calendar</a></div>
+        </div>
     </div>
 
     <div class="section-body">
@@ -143,7 +147,7 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="department_filter">Department</label>
                                     <select id="department_filter" class="form-control select2">
@@ -154,7 +158,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status_filter">Status</label>
                                     <select id="status_filter" class="form-control select2">

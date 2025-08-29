@@ -3,18 +3,19 @@
 @section('title', 'Request Leave')
 
 @section('content')
-<section class="section">
+<section class="section container">
+
     <div class="section-header">
         <h1>Request Leave</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('employee.leave-requests.index') }}">My Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></div>
             <div class="breadcrumb-item active">Request Leave</div>
         </div>
     </div>
 
     <div class="section-body">
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 px-1">
                 <div class="card">
                     <div class="card-header">
                         <h4>Leave Balances</h4>
@@ -49,7 +50,7 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card mt-4">
                     <div class="card-header">
                         <h4>Leave Request Form</h4>
                     </div>

@@ -101,7 +101,7 @@
             <h1>Dashboard Overview</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
-                <div class="breadcrumb-item">Companies &amp; Users</div>
+                <div class="breadcrumb-item"><a href="">Companies Users</a></div>
             </div>
         </div>
 
@@ -191,7 +191,7 @@
             <div class="row mt-4">
  <div class="col-6 px-1">
     <div class="card emp-department p-4">
-      <h5 class="mb-3">Employee Distribution by Department</h5>
+      <h5 class="mb-3 text-center">Employee Distribution by Department</h5>
       <canvas id="departmentChart"></canvas>
     </div>
   </div>
@@ -209,7 +209,7 @@
 <div class="row mt-4">
             <div class="col-lg-4 px-1">
                 <div class="quick-actions card">
-                 <h5 class="mt-3 pb-3 ps-3">Quick Actions</h5>
+                 <h5 class="pt-3 pb-3 ps-3">Quick Actions</h5>
                 <!-- Attendance Card -->
                 <div class="col-xl-12">
                     <a href="{{ route('attendance.dashboard') }}" class="action-card h-100">
@@ -271,7 +271,7 @@
 
 
 <div class="col-4 px-1">
-  <div class="card card-glass p-3 new-old-emp">
+  <div class="card card-glass new-old-emp">
     <h5 class="mb-4">Employee Movement</h5>
     <!-- New Joinees -->
     <div class="mb-4 joinee-resign">
@@ -297,6 +297,207 @@
 </div>
 </div>
 </div>
+<div class="row mt-4"> 
+   
+ 
+  <div class="col-lg-6 px-1">
+   <div class="card reg-req">
+        <h5 class="text-center">Today's Clock In</h5>
+        <div class="d-flex justify-content-center">
+         <div class="card-body card p-0">
+       <div class="table-responsive">
+  <table class="table table-striped table-hover align-middle mb-0">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Neha</td>
+        <td>
+          <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+        </td>
+      </tr>
+       <tr>
+        <td>2</td>
+        <td>Nidhi</td>
+        <td>
+           <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+
+        </td>
+      </tr>
+       <tr>
+        <td>3</td>
+        <td>Rahul</td>
+        <td>
+           <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+
+        </td>
+      </tr>
+       <tr>
+        <td>4</td>
+        <td>Rohan</td>
+        <td>
+           <button class="btn btn-sm btn-success me-2">check in</button>
+          <button class="btn btn-sm btn-danger me-2">check out</button>
+          <button class="btn btn-sm btn-warning">Late</button>
+         
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+  </div>
+  </div>
+  </div>
+ <div class="col-lg-6 px-1">
+        <div class="card today-not">
+        <h5 class="text-center">Today's Not Clock In</h5>
+         <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Employee Name</th>
+              <th scope="col">Department</th>
+              <th scope="col">Expected Shift</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Amit Sharma</td>
+              <td>Development</td>
+              <td>09:00 AM - 06:00 PM</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Neha Singh</td>
+              <td>Sales</td>
+              <td>10:00 AM - 07:00 PM</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Raj Patel</td>
+              <td>Support</td>
+              <td>08:00 AM - 05:00 PM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="text-muted small mb-0 text-center">*These employees have not clocked in today</p>
+    </div>
+  </div>
+  </div>
+
+
+  <div class="row mt-4"> 
+   
+  <div class="col-lg-7 px-1">
+        <div class="card today-not">
+        <h5 class="text-center">Meeting Schedule</h5>
+         <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Title</th>
+              <th scope="col">Date</th>
+              <th scope="col">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>New Technology</td>
+              <td>Apr 12, 2025</td>
+              <td>3:20 PM</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Team Meeting</td>
+              <td>May 26, 2025</td>
+              <td>5:00 PM</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Event Related</td>
+              <td>Jun 10, 2025</td>
+              <td>2:25 PM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+     
+    </div>
+  </div>
+  <div class="col-lg-5 px-1">
+   <div class="card reg-req">
+        <h5 class="text-center">Regularization Requests</h5>
+               <div class="d-flex justify-content-center">
+         <div class="card-body card p-0">
+       <div class="table-responsive">
+  <table class="table table-striped table-hover align-middle mb-0">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Name</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td>Neha</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+       <tr>
+        <td>2</td>
+        <td>Nidhi</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+       <tr>
+        <td>3</td>
+        <td>Rahul</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+       <tr>
+        <td>4</td>
+        <td>Rohan</td>
+        <td>
+          <button class="btn btn-sm btn-success">View</button>
+         
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+  </div>
+  </div>
+  </div>
+
+  </div>
 
  <div class="row mt-4">
     <div class="col-lg-5 px-1">

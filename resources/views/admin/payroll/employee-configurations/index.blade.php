@@ -4,14 +4,26 @@
 
 @section('content')
    
-<div class="container-fluid">
+<div class="container">
+     <section class="section">
+        <div class="section-header">
+            <h1>Employee Payroll Configurations</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active">
+                    <a href="{{ route('home') }}">Dashboard</a>
+                </div>
+                <div class="breadcrumb-item">
+                    <a href="">Employee Payroll Configurations</a>
+                </div>
+            </div>
+        </div>
  <div class="section">
     
        
-                <div class="section-header">
-                    <h4>Employee Payroll Configurations</h4>
-                    <p class="mb-0">Manage Cost To Company (CTC) and assigned beneficiary badges for employees.</p>
-                </div>
+             
+                   
+                    <p class="mb-2">Manage Cost To Company (CTC) and assigned beneficiary badges for employees.</p>
+              
                 {{-- Optional: Add a link back or other actions here --}}
            
 

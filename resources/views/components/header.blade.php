@@ -10,7 +10,7 @@
         <div class="d-flex align-items-center">
             <!-- Sidebar Toggle Button -->
       
-            <a href="#"  data-toggle="sidebar" class="nav-link nav-link-lg me-3 me-lg-4">
+            <a href="#"  data-toggle="sidebar" class="nav-link nav-link-lg me-1 me-lg-4">
                 <i class="fas fa-bars"></i>
             </a>
             {{-- <a href="#"  class="nav-link nav-link-lg me-3 me-lg-4" ><i class="fas fa-bars"></i></a> --}}
@@ -18,21 +18,21 @@
 
             <!-- Brand for Mobile -->
            <div class="mobile-logo logo"> 
-            <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="100px"></a> 
+            <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="120px"></a> 
         </div>
         </div>
 
         <!-- Mobile Toggle Button -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
             <i class="fas fa-ellipsis-v"></i>
-        </button>
+        </button> -->
 
         <!-- Collapsible Content -->
         <div class="collapse navbar-collapse" id="navbarContent">
             <!-- Quick Actions - Shows on larger screens inline, on mobile in collapse -->
              <div class="sidebar-brand logo">
                 <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="120px"></a>
-            </div>
+            
             <!-- Add search input -->
             <div class="sidebar-search px-4">
                 <div class="input-group">
@@ -66,7 +66,7 @@
         <ul class="navbar-nav ms-auto d-flex align-items-center">
 
             <!-- User Menu -->
-            <li class="nav-item dropdown ms-2">
+            <li class="nav-item dropdown left-side">
                 <a href="#" class="nav-link dropdown-toggle nav-link-lg nav-link-user d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
                     <img alt="image" src="{{ asset('img/avatar/avatar-1.png') }}" class="rounded-circle me-2" width="32">
                     <div class="d-none d-lg-inline-block">
