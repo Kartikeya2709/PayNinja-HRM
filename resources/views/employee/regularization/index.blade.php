@@ -2,17 +2,27 @@
 
 @section('content')
 <div class="container">
+     <section class="section">
+            <div class="section-header">
+                <h1>Regularization Requests</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Regularization Requests</div>
+                </div>
+            </div>
     <div class="row">
         <div class="col-md-12">
         
-                <section class="section">
-                    <div class="section-header">
-                <h1>Attendance Regularization Requests</h1>
+                
+                    <div class="card">
+                        <div class="card-1">
+                <h5 class="card-title mb-0">Attendance Regularization Requests</h5>
                     
                
-                    <div class="section-header-button attendace-reg">
+                    <div class="">
                     @if (!is_null(Auth::user()->employee->reporting_manager_id))
                         <a href="{{ route('regularization.requests.create') }}" class="btn btn-primary">New Request</a></div>
+</div>
 </div>
                     @endif
 

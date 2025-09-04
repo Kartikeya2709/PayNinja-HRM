@@ -1,194 +1,251 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Company Settings</h5>
-                </div>
+<div class="container">
+    <section class="section">
+        <div class="section-header">
+            <h1>Company Settings</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="#">Company Settings</a></div>
+            </div>
+        </div>
 
-                <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card glass-box">
+                    <div class="card-header">
+                        <h5 class="mb-0">Company Settings</h5>
+                    </div>
 
-                    @if(session('error'))
-                        <div class="alert alert-danger">{{ session('error') }}</div>
-                    @endif
+                    <div class="card-body">
+                        @if(session('success'))
+                            <div class="alert alert-success">{{ session('success') }}</div>
+                        @endif
 
-                    <ul class="nav nav-tabs" id="companySettingsTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="company-info-tab" data-bs-toggle="tab" data-bs-target="#company-info" type="button" role="tab" aria-controls="company-info" aria-selected="true">Company Info</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="emp-id-prefix-tab" data-bs-toggle="tab" data-bs-target="#emp-id-prefix" type="button" role="tab" aria-controls="emp-id-prefix" aria-selected="false">Emp. ID Prefix</button>
-                        </li>
-                    </ul>
+                        @if(session('error'))
+                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        @endif
 
-                    <div class="tab-content mt-3" id="companySettingsTabContent">
-                        <div class="tab-pane fade show active" id="company-info" role="tabpanel" aria-labelledby="company-info-tab">
-                            <form action="{{ route('company-admin.settings.update') }}" method="POST">
-                                @csrf
-                                @method('PUT')
+                        {{-- 🔹 Modern Glass Tabs --}}
+                        <ul class="nav nav-pills custom-tabs" id="companySettingsTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="company-info-tab" data-bs-toggle="tab" data-bs-target="#company-info"
+                                    type="button" role="tab" aria-controls="company-info" aria-selected="true">
+                                    <i class="fas fa-building me-2"></i> Company Info
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="emp-id-prefix-tab" data-bs-toggle="tab" data-bs-target="#emp-id-prefix"
+                                    type="button" role="tab" aria-controls="emp-id-prefix" aria-selected="false">
+                                    <i class="fas fa-id-badge me-2"></i> Employee ID Prefix
+                                </button>
+                            </li>
+                        </ul>
 
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="name" class="form-label">Company Name</label>
-                                            <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                                   id="name" name="name" value="{{ old('name', $company->name) }}" required>
-                                            @error('name')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                        <div class="tab-content p-4 glass-box" id="companySettingsTabContent">
+
+                            {{-- 🔹 Company Info Tab --}}
+                            <div class="tab-pane fade show active" id="company-info" role="tabpanel" aria-labelledby="company-info-tab">
+                                <form action="{{ route('company-admin.settings.update') }}" method="POST">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">Company Name</label>
+                                                <input type="text" class="form-control @error('name') is-invalid @enderror" 
+                                                       id="name" name="name" value="{{ old('name', $company->name) }}" required>
+                                                @error('name')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="email" class="form-label">Company Email</label>
+                                                <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                                       id="email" name="email" value="{{ old('email', $company->email) }}" required>
+                                                @error('email')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="email" class="form-label">Company Email</label>
-                                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                                   id="email" name="email" value="{{ old('email', $company->email) }}" required>
-                                            @error('email')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="phone" class="form-label">Phone Number</label>
+                                                <input type="text" class="form-control @error('phone') is-invalid @enderror" 
+                                                       id="phone" name="phone" value="{{ old('phone', $company->phone) }}" required>
+                                                @error('phone')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="website" class="form-label">Website</label>
+                                                <input type="url" class="form-control @error('website') is-invalid @enderror" 
+                                                       id="website" name="website" value="{{ old('website', $company->domain) }}">
+                                                @error('website')
+                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="phone" class="form-label">Phone Number</label>
-                                            <input type="text" class="form-control @error('phone') is-invalid @enderror" 
-                                                   id="phone" name="phone" value="{{ old('phone', $company->phone) }}" required>
-                                            @error('phone')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Address</label>
+                                        <textarea class="form-control @error('address') is-invalid @enderror" 
+                                                  id="address" name="address" rows="3" required>{{ old('address', $company->address) }}</textarea>
+                                        @error('address')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label for="website" class="form-label">Website</label>
-                                            <input type="url" class="form-control @error('website') is-invalid @enderror" 
-                                                   id="website" name="website" value="{{ old('website', $company->domain) }}">
-                                            @error('website')
-                                                <div class="invalid-feedback">{{ $message }}</div>
-                                            @enderror
-                                        </div>
+                                    <div class="mb-3 text-center">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-2"></i> Save Changes
+                                        </button>
                                     </div>
-                                </div>
+                                </form>
+                            </div>
 
-                                <div class="mb-3">
-                                    <label for="address" class="form-label">Address</label>
-                                    <textarea class="form-control @error('address') is-invalid @enderror" 
-                                              id="address" name="address" rows="3" required>{{ old('address', $company->address) }}</textarea>
-                                    @error('address')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
-                                </div>
-
-                                <div class="mb-3">
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="fas fa-save me-2"></i>Save Changes
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-
-                        <div class="tab-pane fade" id="emp-id-prefix" role="tabpanel" aria-labelledby="emp-id-prefix-tab">
-                            <h5>Employee ID Prefix Settings</h5>
+                            {{-- 🔹 Employee ID Prefix Tab --}}
+                            <div class="tab-pane fade" id="emp-id-prefix" role="tabpanel" aria-labelledby="emp-id-prefix-tab">
+                                <h5>Employee ID Prefix Settings</h5>
                                 <form id="empIdPrefixForm" method="POST" action="{{ route('company-admin.settings.save-employee-id-prefix') }}">
-                                @csrf
-                                <div class="row mb-4">
-                                    <div class="col-12">
-                                        <div class="alert alert-info">
-                                            <i class="fas fa-info-circle me-2"></i>
-                                            Employee ID settings can be common for all employment types or specific to each type.
-                                            Once saved, the settings cannot be modified, except for adding settings for an unused employment type.
+                                    @csrf
+                                    <div class="row mb-4">
+                                        <div class="col-12">
+                                            <div class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                Employee ID settings can be common for all employment types or specific to each type.
+                                                Once saved, the settings cannot be modified, except for adding settings for an unused employment type.
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="mb-3">
-                                            <label class="form-label">Employment Type</label>
-                                            <select class="form-select" name="employment_type" id="employment_type">
-                                                <option value="">Common for All</option>
-                                                <option value="permanent">Permanent Employee</option>
-                                                <option value="trainee">Trainee</option>
-                                            </select>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="mb-3">
+                                                <label class="form-label">Employment Type</label>
+                                                <select class="form-select" name="employment_type" id="employment_type">
+                                                    <option value="">Common for All</option>
+                                                    <option value="permanent">Permanent Employee</option>
+                                                    <option value="trainee">Trainee</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <div class="mb-3">
-                                            <label for="prefix" class="form-label">Prefix</label>
-                                            <input type="text" class="form-control" id="prefix" name="prefix" required>
+
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="prefix" class="form-label">Prefix</label>
+                                                <input type="text" class="form-control" id="prefix" name="prefix" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="padding" class="form-label">Number Padding</label>
+                                                <input type="number" class="form-control" id="padding" name="padding" min="1" max="6" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="start" class="form-label">Start From</label>
+                                                <input type="number" class="form-control" id="start" name="start" min="1" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="mb-3">
+                                                <label for="preview" class="form-label">Preview</label>
+                                                <input type="text" class="form-control" id="preview" readonly>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <div class="mb-3">
-                                            <label for="padding" class="form-label">Number Padding</label>
-                                            <input type="number" class="form-control" id="padding" name="padding" min="1" max="6" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="mb-3">
-                                            <label for="start" class="form-label">Start From</label>
-                                            <input type="number" class="form-control" id="start" name="start" min="1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="mb-3">
-                                            <label for="preview" class="form-label">Preview</label>
-                                            <input type="text" class="form-control" id="preview" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary" id="savePrefix">Save Prefix</button>
-                            </form>
-                        </div>
+                                    <div class="text-center">
+                                    <button type="submit" class="btn btn-primary" id="savePrefix">Save Prefix</button>
+                                </form>
+</div>
+                            </div>
+
+                        </div> {{-- tab-content --}}
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 </div>
 @endsection
+
+@push('styles')
+<style>
+/* 🔹 Custom glass-style tabs */
+.custom-tabs .nav-link {
+    border-radius: 12px;
+    margin-right: 8px;
+    padding: 10px 18px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.12);
+    color: #222;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.custom-tabs .nav-link:hover {
+    background: rgba(37, 99, 235, 0.12);
+    transform: translateY(-2px);
+    color: #2563eb;
+}
+
+.custom-tabs .nav-link.active {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* 🔹 Glass effect for tab content */
+.glass-box {
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
     $(document).ready(function() {
         let savedData = null;
-        
+
         // Load existing prefix data
         function loadPrefixData() {
             $.get("{{ route('company-admin.settings.get-employee-id-prefix') }}", function(response) {
                 savedData = response;
                 
                 if (response.status === 'empty') {
-                    // No data saved yet, form is ready for input
                     enableForm(true);
                     return;
                 }
 
                 if (response.status === 'common') {
-                    // Same settings for both types
                     $('#employment_type').val('');
                     fillFormData(response.data);
                     enableForm(false);
                 } else if (response.status === 'specific') {
-                    // Different settings for each type
                     if (response.data.permanent && response.data.trainee) {
-                        // Both types have settings
                         $('#employment_type').val('permanent');
                         fillFormData(response.data.permanent);
                         enableForm(false);
                     } else {
-                        // Only one type has settings
                         const savedType = response.data.permanent ? 'permanent' : 'trainee';
                         const unsavedType = response.data.permanent ? 'trainee' : 'permanent';
                         
@@ -198,7 +255,6 @@
                     }
                 }
 
-                // Store the initial data
                 updateFormBasedOnSavedData();
             });
         }
@@ -219,7 +275,6 @@
                     fillFormData(savedData.data);
                     enableForm(false);
                 } else {
-                    // If switching to specific type when common data exists
                     clearForm();
                     enableForm(false);
                 }
@@ -293,7 +348,7 @@
                 success: function(response) {
                     if (response.success) {
                         toastr.success('Employee ID prefix settings saved successfully');
-                        loadPrefixData(); // Reload the data
+                        loadPrefixData();
                     } else {
                         toastr.error('Failed to save settings');
                     }

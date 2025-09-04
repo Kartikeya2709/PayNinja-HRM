@@ -2,6 +2,14 @@
 
 @section('content')
 <div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Create Reimbursements</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Create Reimbursements</a></div>
+                </div>
+            </div>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">

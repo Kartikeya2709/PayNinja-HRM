@@ -3,12 +3,21 @@
 @section('title', 'Generate Payroll')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
+    
+    <section class="section">
+       <div class="section-header">
+        <h1 class="mb-0">Generate New Payroll</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item"><a href="{{ route('home') }}"></a>Dashboard</div>
+            <div class="breadcrumb-item active"> <a href="">Generate New Payroll</a></div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">Generate New Payroll</h3>
+                    <h5 class="mb-0">Generate New Payroll</h5>
                     <a href="{{ route('admin.payroll.index') }}" class="btn btn-secondary btn-sm">Back to Payrolls</a>
                 </div>
                 <div class="card-body">

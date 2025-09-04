@@ -3,7 +3,15 @@
 @section('title', 'Attendance Management')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Attendance Records</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Attendance Records</div>
+                </div>
+            </div>
     @if(session('error'))
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>

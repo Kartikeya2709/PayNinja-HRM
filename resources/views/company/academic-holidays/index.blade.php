@@ -3,7 +3,15 @@
 @section('title', 'Academic Holidays')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
+     <section class="section">
+        <div class="section-header">
+            <h1>Academic Holidays</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Academic Holidays</a></div>
+            </div>
+        </div>
     <div class="row">
         <div class="col-12">
             <div class="card">

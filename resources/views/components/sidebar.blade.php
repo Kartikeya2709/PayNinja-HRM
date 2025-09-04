@@ -59,18 +59,7 @@
     
     <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
-            <!-- Add search input -->
-            <div class="sidebar-search px-4 py-2">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="sidebar-menu-search" placeholder="Search menu...">
-                    <div class="input-group-append">
-                        <span class="input-group-text">
-                            <i class="fas fa-search"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
+            
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="menu-header">Dashboard</li>

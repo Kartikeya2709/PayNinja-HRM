@@ -3,10 +3,21 @@
 @section('title', 'Beneficiary Badges Management')
 
 @section('content')
-<div class="container-fluid">
-    <div class="section container">
-    <div class="row beneficiary-badges">
+<div class="container">
+     <section class="section">
         <div class="section-header">
+            <h1>Beneficiary Badges</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active">
+                    <a href="{{ route('home') }}">Dashboard</a>
+                </div>
+                <div class="breadcrumb-item">
+                    <a href="">Beneficiary Badges</a>
+                </div>
+            </div>
+        </div>
+    <div class="card">
+        <div class="card-1">
         
           
                 
@@ -17,12 +28,12 @@
                 <a href="{{ route('admin.payroll.beneficiary-badges.create') }}" class="btn btn-primary add-list"><i class="fa-solid fa-plus me-2"></i>Create New Badge</a>
             </div>
 </div>
-        </div>
-</div>
+        
+
          <p class="mb-4">Manage company-wide allowances and deductions for payroll.</p>
 
         @if(session('success'))
-            <div class="col-lg-12">
+            <div class="col-lg-12 ">
                 <div class="alert alert-success alert-dismissible fade show" role="alert">
                     {{ session('success') }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -39,7 +50,7 @@
         @endif
 
         <div class="col-lg-12">
-            <div class="card">
+           
                 <div class="card-header">
                     <h5 class="card-title">All Beneficiary Badges</h5>
                 </div>
