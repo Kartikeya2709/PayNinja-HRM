@@ -29,14 +29,22 @@
 @endpush
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Attendance Summary</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Attendance Summary</div>
+                </div>
+            </div>
     <div class="row mb-4">
         <div class="col-12">
             
                 
-                    <div class="section">
-                    <div class="section-header">
-                        <h1>Attendance Summary</h1>
+                    <div class="card">
+                    <div class="card-1 mb-4">
+                        <h5 class="mb-0">Attendance Summary</h5>
                         <div class="section-header-button">
                             <span class="btn btn-primary">{{ $today->format('l, F j, Y') }}</span>
                       

@@ -62,11 +62,20 @@
   box-shadow: none !important;
   outline: none;
 }
+.fc .fc-toolbar-title{
+  font-size: 16px!important;
+}
+#sidebar-menu-search{
+  border-radius: 50px 0px 0px 50px;
+}
+
 .month-sum{
   margin-bottom: 0px!important;
 }
 .section-header{
-  padding-bottom: 10px;
+  padding-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
 }
 .section-header-breadcrumb{
   display: flex;
@@ -83,9 +92,14 @@
 .department-header td{
   border:1px solid #dee2e6;
 }
+.card-1{
+  display: flex;
+  justify-content: space-between;
+      align-items: center;
+}
 .check-in-text h3{
   color: #000;
-    text-transform: uppercase;
+
     font-weight: 800;
     position: relative;
         padding-bottom: 10px;
@@ -121,25 +135,13 @@
        padding: 10px 14px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    width: 250px;
+ 
     background: transparent;
 }
 #app .paginate_button{
   padding: 0px 10px!important;
 }
-.card-link::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-    background-color: rgb(6, 58, 125);
-    transform: scaleX(0);
-    transform-origin: bottom;
-    transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
-    border-radius: 12px;
-}
+
 .search-btn{
   background-color: rgb(6, 58, 125) !important;
     border-radius: 0px 20px 20px 0px;
@@ -147,29 +149,44 @@
     height: 100%;
 }
 .card-link i{
-      height: 50px;
+         height: 50px;
     width: 50px;
     align-content: center;
-    background: #4361ee33;
-    border-radius: 50px;
+    background: #ffff;
+    border-radius: 10px;
     margin: 0px !important;
+    border: 1px solid #f5f5f5;
+    transition: 0.4s;
 }
 .card-link{
   text-decoration: none;
 }
+  .card-link {
+        text-decoration: none !important;
+        color: inherit;
+        transition: transform 0.2s;
+    }
+    
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 85%;
+    }
+    .fa-3x {
+        font-size: 3em;
+    }
+    .income-breakdown{
+      text-align: center;
+    }
 .card-link .card-body h6 {
     margin-left: 0px;}
 .card-link:hover i{
-    color: black !important;
+    color: #fff !important;
     z-index: 999;
     position: relative;
-    background: #fff;
+    background: #ff9705;
+    transition: 0.4s;
 }
-.card-link:hover .card-title{
-   color: white !important;
-    z-index: 999;
-    position: relative;
-}
+
 .Aca-table {
       display: flex;
    overflow-x: auto;
@@ -186,7 +203,10 @@ background-color: #4361ee36 !important;
 .my-attendance .card-header .form-control{
   border: 1px solid #000!important;
 }
-
+.employee-check-in h6{
+  font-size: 14px;
+font-weight: 400;
+}
 #office-timings .check-in-bg{
   background-color: #4361ee29 !important;
 }
@@ -215,6 +235,14 @@ background-color: #4361ee36 !important;
   color: #fff;
     opacity: 1;
 }
+.sidebar-brand.logo{
+      width: 100%;
+    display: flex;
+    align-items: center;
+}
+.sidebar-search {
+    border-bottom: 0px!important;
+}
 .mobile-logo{
   display: none;
 }
@@ -222,7 +250,7 @@ background-color: #4361ee36 !important;
       color: #000;
     margin-left: 0px;
     margin-bottom: 10px;
-
+padding-left: 0px !important;
 }
 .emp-dash-h4 h4{
   line-height: normal!important;
@@ -284,9 +312,7 @@ background-color: #4361ee36 !important;
   color:#fff!important;
   transition: 0.4s;
 }
-a:hover{
-  color:rgb(6, 58, 125)!important;
-}
+
 .btn-primary:hover{
   color: #fff!important;
 }
@@ -303,28 +329,94 @@ a:hover{
 }
 .card .card-header h3,
  .card .card-header h5{
-    font-size: 18px;
-    line-height: 60px;
+    font-size: 20px;
+   
     color: #000;
     padding-right: 10px;
     margin-bottom: 0;
-    text-transform: uppercase;
+   
     font-weight: 700 !important;
 }
+.fc .fc-button:disabled{
+  opacity: 1;
+}
+.fc-view{
+  padding: 0px!important
+}
+.fc .fc-daygrid-day-frame {
+  min-height: 40px !important;
+  height: 40px !important;
+  padding: 2px !important;
+}
 
+/* Smaller date text */
+.fc .fc-daygrid-day-number {
+  font-size: 12px !important;
+  font-weight: 600;
+  color: #003366;
+}
+
+/* Background event colors (attendance status) */
+.fc-daygrid-day.fc-day-past {
+  background-color: #f8f9fa; /* light grey for past days */
+}
+
+.fc-daygrid-day.fc-day-today {
+  background-color: #e3f2fd !important; /* light blue highlight for today */
+}
+.fc-daygrid-day-frame{
+      display: flex
+;
+    align-items: center;
+    justify-content: center;
+  
+}
+.fc-scrollgrid-section-header th{
+  padding: 0px!important;
+}
+.employee-check-in{
+  height: 100%
+}
+.today-check-in .card{
+  padding: 0px!important;
+  border: 0px!important;
+}
+.today-status{
+  padding-bottom: 20px;
+}
+.today-check-in{
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+      height: 100%;
+}
+
+.income-breakdown{
+  height: 100%
+}
+#app .fc-col-header-cell {
+  padding: 10px!important;
+}
+#employeeCalendar button{
+  background: #ff9705;
+  border: 1px solid #ff9705;
+}
+.emp-calender .card-header{
+justify-content: center!important;
+}
 .action-card {
       text-decoration: none;
       color: #000;
 }
 .quick-actions .action-icon i{
          color: rgb(255, 148, 8);
-    font-size: 30px;
+    font-size: 25px;
     transition: 0.9s;
     border-radius: 10px;
     background: rgb(255 148 8 / 11%);
     padding: 5px;
-    width: 70px;
-    height: 70px;
+    width: 60px;
+    height: 60px;
     align-items: center;
     display: flex
 ;
@@ -334,20 +426,102 @@ a:hover{
       color:#fff!important;
       transition: 0.9s;
     }
+    .admin-up-events{
+      height: 100%;
+    }
+    .today-not{
+      height: 100%;
+    }
+   
 .quick-actions .action-icon{
-  display: flex;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-     padding: 20px;
-    text-align: center;
-    margin-right: 0px;
-    background: #fff;
-    border-radius: 10px;
-        align-items: center;
+      display: flex;
+align-items: center;
+    border-bottom: 1px solid #f5f5f5;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    padding-top: 15px;
+    width: 100%;
+}
+.emp-card .col-lg-3{
+  overflow: hidden;
+} 
+.reg-req{
+  height: 100%;
+}
+.card-statistic-1 .card-icon{
+      z-index: 9;
+}
+.quick-actions {
+  padding: 0px!important;
 }
 .card-body h6{
   margin: 0px;
   text-align: center;
      
+}
+.joinee-resign .icon{
+      background: rgb(255 148 8 / 11%);
+    height: 60px;
+    width: 60px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    justify-content: center;
+    margin-right: 15px;
+}
+.emp-calender{
+  height: 100%;
+}
+ .event-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .event-date {
+      background: #4e73df;
+      color: #fff;
+      font-weight: bold;
+      padding: 6px 12px;
+      border-radius: 8px;
+      text-align: center;
+      margin-right: 15px;
+      min-width: 65px;
+    }
+    .event-date span {
+      display: block;
+      font-size: 12px;
+    }
+    .event-name {
+      font-size: 15px;
+      font-weight: 500;
+    }
+.joinee-resign .icon i{
+      font-size: 30px !important;
+      color: rgb(255, 148, 8)!important;
+}
+.new-old-emp{
+  height: 100%;
+}
+#payrollChart{
+      height: 250px!important;
+}
+.joinee{
+  text-align: left;
+}
+.joinee-resign{
+  display: flex;
+}
+.attendance-card{
+  text-align: center;
+}
+.attendance-height{
+  height: 100%;
+}
+.emp-department{
+  height: 100%;
 }
 .action-icon {
   position: relative;
@@ -365,12 +539,8 @@ a:hover{
   transform-origin: bottom;
   transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
 }
-#app .main-sidebar .sidebar-menu .dropdown-menu a:hover {
-    color: #000!important;
-}
-#app .main-sidebar .sidebar-menu .dropdown-menu li.active a:hover {
-    color: #fff!important;
-}
+
+
 #attendance-settings-form .card-header{
   margin-bottom: 20px;
 }
@@ -380,11 +550,73 @@ a:hover{
 .month-sum .card-body{
   z-index: 999;
 }
-.month-sum:hover .card-title {
-    color: #fff;
-    position: relative;
-    z-index: 9;
+
+/* ✅ Check In Button */
+.check-inn {
+  position: relative;
+  overflow: hidden;
+  opacity: 1!important;
+  border: none !important;
+  color: #fff !important;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(25, 135, 84, 0.5);
+  transition: all 0.3s ease;
+  animation: pulseGreen 2.5s infinite;
 }
+
+/* ✅ Check Out Button */
+.check-outt {
+  position: relative;
+  overflow: hidden;
+  opacity: 1!important;
+  border: none !important;
+  color: #fff !important;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.5);
+  transition: all 0.3s ease;
+  animation: pulseRed 2.5s infinite;
+}
+
+/* Green pulse animation */
+@keyframes pulseGreen {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.2);
+  }
+  70% {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 12px rgba(25, 135, 84, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.2);
+  }
+}
+
+/* Red pulse animation */
+@keyframes pulseRed {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.2);
+  }
+  70% {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 12px rgba(220, 53, 69, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.2);
+  }
+}
+
+
+
 .section-header{
   justify-content: space-between;
 }
@@ -392,29 +624,12 @@ a:hover{
   display:flex;
   overflow-x: auto;
 }
-.month-sum:hover h2 {
-    color: #fff;
-      position: relative;
-    z-index: 9;
-}
-.month-sum::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  background-color:rgb(6, 58, 125);
-  transform: scaleX(0);
-  transform-origin: bottom;
-  transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
-}
+
+
 .dropdown-menu .nav-link{
   height: 55px!important;
 }
-.month-sum:hover::before {
-  transform: scaleX(1);
-}
+
 a {
   color: rgb(6, 58, 125);
   text-decoration: unset!important;
@@ -574,7 +789,7 @@ select.form-control:not([size]):not([multiple]),
 .form-control:not(.form-control-sm):not(.form-control-lg) {
   font-size: 14px;
   padding: 10px 15px;
-  height: 42px;
+  height: 45px;
 }
 
 textarea.form-control {
@@ -623,7 +838,7 @@ select.form-control:not([size]):not([multiple]) {
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 }
 .profile-form .button{
   width: 100%;}
@@ -672,6 +887,97 @@ select.form-control:not([size]):not([multiple]) {
   background-color: transparent;
   font-size: 20px;
 }
+.event-wrapper {
+  position: relative;
+  height: 250px;
+  border-radius: 15px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+}
+
+/* Background Layer */
+.background {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Foreground Event Card */
+.event-card {
+color: #fff;
+    height: 100%;
+    align-content: center;
+    text-align: center;
+}
+.event-card h6 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+}
+.event-card p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* 🎈 Balloons */
+.balloon {
+  position: absolute;
+  bottom: -150px; /* start just below */
+  width: 70px;
+  height: 90px;
+  border-radius: 50%;
+  background: red;
+  opacity: 0.8;
+  animation: floatUp 8s linear infinite;
+  z-index: 0;
+}
+.balloon::after {
+  content: "";
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 40px;
+  background: #fff;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(100vh); opacity: 1; }
+  100% { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* ✨ Stars */
+.star {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s infinite alternate;
+  z-index: 0;
+}
+@keyframes twinkle {
+  from { opacity: 0.2; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1.5); }
+}
+
+/* 🎊 Confetti */
+.confetti {
+  position: absolute;
+  top: -20px;
+  width: 10px;
+  height: 10px;
+  background: yellow;
+  opacity: 0.8;
+  animation: fall 5s linear infinite;
+  z-index: 0;
+}
+@keyframes fall {
+  0%   { transform: translateY(-20vh) rotate(0); opacity: 1; }
+  100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+}
 .form-group.floating-addon .form-control {
   border-radius: 3px;
   padding-left: 40px;
@@ -684,12 +990,37 @@ select.form-control:not([size]):not([multiple]) {
 .input-group-append [class*=btn-outline-] {
   background-color: #fdfdff;
 }
+.action-des h6{
+      padding-left: 0px!important;
 
+    text-align: left!important;
+    font-size: 18px !important;
+    font-weight: 500!important;
+}
 .form-text {
   font-size: 12px;
   line-height: 22px;
 }
 
+.leave{
+  height: 100%;
+}
+
+.birthday-text h5{
+  text-align: center;
+}
+.cash-dep h5{
+  text-align: center;}
+
+.holiday-table .card-header{
+  justify-content: center!important;
+}
+.holiday-table .card-header h5{
+  padding-right: 0px!important;
+}
+.holiday-table{
+  height: 100%;
+}
 .custom-radio .custom-control-input:checked ~ .custom-control-label::before,
 .custom-control-input:checked ~ .custom-control-label::before {
   background-color: #6777ef !important;
@@ -811,14 +1142,13 @@ select.form-control:not([size]):not([multiple]) {
   margin: 0;
 }
 .table thead{
-    background: linear-gradient(to right, #003366, #0059b3)!important;
-    color: #fff;
+    background: #f5f5f5!important;
+    color: #000;
 }
 .table-striped th{
-      border-color: #dee2e6;
-    border: 1px solid;
-        height: 60px;
-    padding: 0px 20px;
+     
+       
+    padding:10px;
     align-content: center;
 }
 .dataTables_length{
@@ -839,11 +1169,10 @@ select.form-control:not([size]):not([multiple]) {
         padding: 10px 14px;
     border: 1px solid #ccc;
     border-radius: 8px;
-    width: 250px;
         margin: 0px 10px;
         background: transparent;
 }
-.table-striped td{    height: 60px;
+.table-striped td{    
   align-content: center;
       border: 1px solid #dee2e6;}
 .custom-switch-input {
@@ -908,16 +1237,13 @@ select.form-control:not([size]):not([multiple]) {
   position: relative;
   cursor: pointer;
 }
-.card-hover:hover .card-icon {
-    border: 2px solid transparent!important;}
+
 .imagecheck-input {
   position: absolute;
   z-index: -1;
   opacity: 0;
 }
-.card-hover:hover .card-icon i{
-      color: rgb(6, 58, 125)!important;
-}
+
 .imagecheck-figure {
   background-color: #fdfdff;
   border-color: #e4e6fc;
@@ -960,7 +1286,6 @@ select.form-control:not([size]):not([multiple]) {
 .imagecheck-input:checked ~ .imagecheck-figure:before {
   opacity: 1;
 }
-
 .imagecheck-image {
   max-width: 100%;
   opacity: 0.64;
@@ -1221,22 +1546,47 @@ select.form-control:not([size]):not([multiple]) {
         background: transparent;
     } */
 /* 3.5 Card */
-.card {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
-  background-color: #fff;
-  border-radius: 3px;
-  border: none;
-  position: relative;
-  margin-bottom: 30px;
+.employee-check-in{
+      background: #fff;
+    border-radius: 10px;
+    padding: 20px 0px
+}
+.card{
+  border-radius: 10px;
+  padding: 20px;
+  border: 0px!important;
+}
+.holiday-table {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.holiday-table .card-header {
+  font-size: 18px;
+  font-weight: bold;
+}
+.emp-dash-h4 h5{
+  padding-bottom: 10px;
+}
+.monthly-leave h5{
+  text-align: center;
+}
+.employee-check-in a{
+  border-left: 0px;
+  border-right: 0px;
+  border-top: 0px;
+  border-bottom: 1px solid #f5f5f5!important;
+     border-radius: 0px !important;
+    padding: 0px 20px;
+    margin-bottom: 20px;
   
+}
+.employee-check-in .card-body{
+  padding-bottom: 20px !important;
 }
 .card-hover .card-title{
   margin: 0px;
 }
-.card-hover:hover .card-title{
 
-  color:#fff;
-}
 .card-hover h2{
   margin-bottom: 0px;
 }
@@ -1260,16 +1610,10 @@ select.form-control:not([size]):not([multiple]) {
 .card .card-body p {
   font-weight: 500;
 }
-.card{
-  padding: 15px;
-    align-content: center;
-    display: flex!important;
-    flex-wrap: wrap;
-    flex-direction: row;
-    align-items: center;
-}
+
 .profile-form{
   padding: 50px;
+  height: 500px;
 }
 .card-body{
   line-height: normal;
@@ -1292,11 +1636,11 @@ select.form-control:not([size]):not([multiple]) {
       border-radius: 20px!important;
 }
 .profile-form .card-header{
-  justify-content: center;
+  justify-content: center!important;
     font-size: 25px;
     font-weight: 800;
     color: #000;
-    text-transform: uppercase;
+    
     padding-bottom: 20px !important;
 }
 .profile-form-01:before {
@@ -1330,12 +1674,7 @@ color: #fff!important;
 z-index: 9;
 position: relative;
 }
-.card-hover:hover .card-icon{
-  background: #fff!important;
-  transition: 0.9s;
-  z-index: 9;
-  position: relative;
-}
+
 /* .card-hover:hover i{
   color: #000!important;
   transition: 0.9s;
@@ -1363,17 +1702,16 @@ position: relative;
 
 .form-group .control-label, .form-group > label{
 font-weight: 700;
-    color: #34395e;
-    font-size: 16px;
+    color: #34395e6b;
+    font-size: 14px;
     letter-spacing: 0.5px;
-    text-transform: uppercase;
     padding-bottom: 5px;
 }
 .card .card-header h4 {
   font-size: 18px;
-  line-height: 60px;
+  
 
-  color: rgb(6, 58, 125);
+  color: #000;
   padding-right: 10px;
   margin-bottom: 0;
   text-transform: uppercase;
@@ -1538,24 +1876,54 @@ font-weight: 700;
   display: inline-block;
   width: 100%;
 }
-.card.card-statistic-1 .card-icon, .card.card-statistic-2 .card-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 3px;
-  text-align: center;
-  float: left;
-  margin-right: 15px;
+.card.card-statistic-1{
+  height: 200px;
+  align-content: center;
 }
+
+.card-statistic-1{
+  position: relative;
+}
+/* Circle background shapes */
+.card-statistic-1::before,
+.card-statistic-1::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 0;
+}
+
+.card-statistic-1::before {
+    width: 200px;
+    height: 200px;
+    bottom: -80px;
+    right: -80px;
+}
+
+.card-statistic-1::after {
+    width: 150px;
+    height: 150px;
+    top: -50px;
+    right: -50px;
+}
+
+.custom-card .card-wrap {
+    position: relative;
+    z-index: 1; /* content stays above circles */
+}
+
+
 .card.card-statistic-1 .card-icon .ion, .card.card-statistic-1 .card-icon .fas, .card.card-statistic-1 .card-icon .far, .card.card-statistic-1 .card-icon .fab, .card.card-statistic-1 .card-icon .fal, .card.card-statistic-2 .card-icon .ion, .card.card-statistic-2 .card-icon .fas, .card.card-statistic-2 .card-icon .far, .card.card-statistic-2 .card-icon .fab, .card.card-statistic-2 .card-icon .fal {
  font-size: 30px;
     color: rgb(255, 148, 8);
 }
-.card.card-statistic-1 .card-icon {
-  line-height: 90px;
-      background: #fff;
-    border: 2px solid rgb(255, 148, 8);
-    border-radius: 10px;
-
+.card.card-statistic-1 .card-icon i{
+  color: #fff!important;
+}
+.card-statistic-1 .card-header h4,
+.card-statistic-1 .card-header .card-body{
+  color: #fff!important;
 }
 .card.card-statistic-2 .card-icon {
   width: 50px;
@@ -1576,7 +1944,7 @@ font-weight: 700;
 }
 .card.card-statistic-1 .card-header h4, .card.card-statistic-2 .card-header h4 {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
   letter-spacing: 0.5px;
 }
 .card.card-statistic-1 .card-header h4 {
@@ -1679,16 +2047,14 @@ font-weight: 700;
 .table {
   color: #000;
 }
-.table td, .table:not(.table-bordered) th {
-  border-top: none;
-}
+
 .attendance .card-header h4{
   color:#fff!important;
       padding-left: 10px!important;
 }
 .table:not(.table-sm):not(.table-md):not(.dataTable) td, .table:not(.table-sm):not(.table-md):not(.dataTable) th {
-  padding: 0 20px;
-  height: 60px;
+  padding:10px;
+  
   vertical-align: middle;
 }
 /* .table:not(.table-sm) thead th {
@@ -1799,16 +2165,7 @@ table tr:hover .table-links {
 }
 
 /* 3.9 Nav */
-.nav-tabs .nav-item .nav-link {
-  color: rgb(6, 58, 125);
-  background: rgb(6 58 125 / 16%);
-      border: 1px solid rgb(6, 58, 125);
-    margin: 0px 5px;
-}
-.nav-tabs .nav-item .nav-link.active {
-  color: #fff;
-  background: rgb(6, 58, 125);
-}
+
 
 .tab-content > .tab-pane {
   padding: 10px 0;
@@ -2204,13 +2561,31 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.disabled:hover, .btn-info.disabled:focus, .btn-info.disabled:active {
   background-color: #0da8ee !important;
 }
-
+.attendance-card .icon{
+  height: 50px;
+    width: 50px;
+    background: #ff970563;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    transition: 0.5s;
+    margin-right: 10px;
+}
+.attendance-card .text{
+  text-align: left;
+}
+.attendance-card .card:hover .icon{
+  background: #ff9705;
+  transition: 0.5s;
+}
 .btn-outline-info:hover, .btn-outline-info:focus, .btn-outline-info:active, .btn-outline-info.disabled:hover, .btn-outline-info.disabled:focus, .btn-outline-info.disabled:active {
   background-color: #0da8ee !important;
   color: #fff !important;
 }
-.card-hover:hover{
-  transform: translateY(0px)!important;
+.attendance-card .card {
+     box-shadow: 0 4px 12px #ff9705;
 }
 .btn-primary, .btn-primary.disabled {
   background-color: #6777ef;
@@ -2366,7 +2741,7 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
 
 /* 3.14 Breadcrumb */
 .breadcrumb {
-  background-color: #f9f9f9;
+ justify-content: end;
 }
 .breadcrumb .breadcrumb-item {
   line-height: 1;
@@ -2997,11 +3372,31 @@ ul.nav-tabs li.nav-item a.nav-link.active i {
   --light: #e3eaef;
   --dark: #191d21;
 }
-
+.monthly-summary .icon {
+    height: 50px;
+    width: 50px;
+    background: #ff970563;
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    transition: 0.5s;
+    margin-right: 10px;
+}
+.monthly-summary .text{
+  text-align: left;
+}
+.monthly-summary .icon i{
+  color: #000;
+}
 body, html {
   min-height: 100%;
 }
-
+.month-sum{
+  border: 1px solid #ff9705!important;
+  
+}
 body {
   background-color: #f4f6f9;
   font-size: 14px;
@@ -3487,7 +3882,7 @@ pre {
 .section > *:first-child {
   margin-top: -7px;
 }
-.section .section-header {
+/* .section .section-header {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
   background-color: #fff;
@@ -3498,7 +3893,7 @@ pre {
   padding: 20px;
   display: flex;
   align-items: center;
-}
+} */
 .card-tools i{
       top: 3px;
     position: relative;
@@ -3523,12 +3918,32 @@ pre {
   background-color: #6777ef;
   color: #fff;
 }
+.card-str-1{
+  background: linear-gradient(to right, #ffbf96, #fe7096) !important;
+
+}
+.card-str-2{
+ background: linear-gradient(to right, #90caf9, #047edf 99%) !important;
+
+}
+.card-str-3{
+      background: linear-gradient(to right, #84d9d2, #07cdae) !important;
+}
+.card-str-4{
+  background: linear-gradient(to right, #db4f21, #e63946 ) !important;
+}
+.card-statistic-1 .card-wrap{
+  display: flex;
+}
+.card-statistic-1 {
+  display: flex;
+}
 .section .section-header .section-header-button {
   margin-left: 0px;
 }
 .section .section-header .section-header-breadcrumb {
   margin-left: auto;
-  display: flex;
+  
   align-items: center;
 }
 .section .section-header .section-header-breadcrumb .breadcrumb-item {
@@ -3830,6 +4245,7 @@ body.layout-2 .main-sidebar .sidebar-menu li a.has-dropdown:after {
 body.layout-2 .main-sidebar .sidebar-menu li a:hover {
   color: rgb(6, 58, 125);
   background-color: transparent;
+
 }
 body.layout-2 .main-sidebar .sidebar-menu li ul.dropdown-menu li a {
   padding-left: 34px;
@@ -4022,11 +4438,20 @@ html,body{
 .main-sidebar .sidebar-menu li.menu-header:not(:first-child) {
   margin-top: 10px;
 }
+#attendanceChart{
+  height: 280px!important;
+}
+.cash-dep #attendanceChart{
+  height: 100%!important;
+}
+.attendance-height #attendanceChart{
+  height: 100%!important;
+}
 .main-sidebar .sidebar-menu li a {
   position: relative;
   display: flex;
   align-items: center;
-  height: 55px;
+  height: 45px!important;
   padding: 0px;
   width: 100%;
   letter-spacing: 0.3px;
@@ -4043,8 +4468,11 @@ html,body{
     height: auto!important;
 }
 .profile-form .form-group .button{
-  margin-top:20px;
   border-radius: 0px;
+}
+.pro-form{
+  height: 100%;
+    align-content: center;
 }
 .main-sidebar .sidebar-menu li.active a:hover{
   color:#fff!important;
@@ -4063,18 +4491,95 @@ html,body{
   
   width: 100%;
 }
+.sidebar-menu a i {
+  color: #ff9705;
+}
+
+.sidebar-menu a:hover i {
+  color: #fff;
+}
+.sidebar-menu li.active > a i{
+color: #fff;
+}
 .main-sidebar .sidebar-menu li a:hover {
-  background-color: rgb(6, 58, 125);
+  background-color: #ff9705;
   color: #fff !important;
 }
-.action-icon h6{
-  padding-left: 15px;
+/* Default tab style */
+.nav-tabs .nav-link {
+    color: #555; /* text color */
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    transition: all 0.3s ease;
 }
-.main-sidebar .sidebar-menu li.active a {
+
+/* Hover effect */
+.nav-tabs .nav-link:hover {
+    background: rgba(37, 99, 235, 0.1);
+    color: #2563eb;
+}
+
+/* Active tab */
+.nav-tabs .nav-link.active {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: #fff !important;
+    border: none;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Remove default bottom border of nav-tabs */
+.nav-tabs {
+    border-bottom: none;
+}
+
+#app .glass-box .card-header{
+      justify-content: center!important;
+    padding-bottom: 30px !important;
+}
+.custom-tabs{
+  justify-content: center;
+}
+.action-icon h6{
+padding-left: 10px;
+  font-weight: 400;
+}
+.month-sum h2{
+      font-weight: 400;
+    font-size: 16px!important;
+}
+.main-contant-01 h1{
+      color: #000;
+    font-size: 30px;
+}
+.profile-form .form-group {
+
+    position: relative;
+}
+.breadcrumb {
+  margin-bottom: 0px!important;
+}
+.profile-form .form-group input{
+  border: 1px solid #000;
+    border-radius: 10px;
+    position: relative;
+    padding: 10px!important;
+}
+.profile-form .form-group label{
+      padding: 0px 5px;
+    position: absolute;
+    top: -14px;
+    background: #fff;
+    width: auto;
+    left: 25px;
+    z-index: 9;
+}
+/* .main-sidebar .sidebar-menu li.active a {
   color: #6777ef;
   font-weight: 600;
   background-color: #f8fafb;
-}
+} */
 .main-sidebar .sidebar-menu li.active a.has-dropdown:after {
   transform: translate(0, -50%) rotate(90deg);
 }
@@ -4093,7 +4598,8 @@ html,body{
   transition: all 0.5s;
 }
 .main-sidebar .sidebar-menu li.active > ul.dropdown-menu li a:hover {
-  background-color: #f8fafb;
+  background-color: #ff9705;
+  color: #fff!important;
 }
 .main-sidebar .sidebar-menu li ul.dropdown-menu {
   padding: 0;
@@ -4166,10 +4672,10 @@ html,body{
     margin-bottom: 0px !important;
 }
 .footer-left a{
-   color: #fff;
+   color: #000;
 }
 .footer-left a:hover{
-   color: #fff!important;
+   color: #000!important;
 }
 .main-footer {
   padding: 10px 30px 10px 30px;
@@ -4177,7 +4683,7 @@ html,body{
   color: #fff;
    display: inline-block;
   width: 100%;
-  background: rgb(6, 58, 125);
+ 
     width: 100%;
     z-index: 9999;
    
@@ -4185,9 +4691,11 @@ html,body{
 .main-footer .footer-left {
   float: left;
   padding-left: 300px;
+  color: #000;
 }
 .main-footer .footer-right {
   float: right;
+  color: #000;
 }
 .footer-left a{
   text-decoration: none;
@@ -4231,11 +4739,11 @@ body:not(.sidebar-mini) .sidebar-style-1 .sidebar-menu li.active ul.dropdown-men
   color: #fff;
 }
 
-body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu > li.active > a {
+/* body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu > li.active > a {
  
   background-color: transparent;
   position: relative;
-}
+} */
 /* body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu > li.active > a:before {
   content: "";
   position: absolute;
@@ -4246,10 +4754,7 @@ body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu > li.active > a {
   width: 4px;
   background-color: #6777ef;
 } */
-body:not(.sidebar-mini) .sidebar-style-2 .sidebar-menu li.active ul.dropdown-menu li a {
-  padding-left: 61px;
-  background-color: #fff;
-}
+
 
 @media (max-width: 1024px) {
   .sidebar-gone-hide {
@@ -4604,6 +5109,7 @@ display: block;
   }
   .section .section-header{
    justify-content: center!important;
+   margin-bottom: 0px!important;
   }
   .beneficiary-badges .d-flex .btn{
 margin-top: 10px;
@@ -4690,6 +5196,7 @@ margin: 0px!important;
 
   .profile-form{
     padding: 20px;
+   
   }
  .my-attendance form{    
   padding-bottom: 4px;

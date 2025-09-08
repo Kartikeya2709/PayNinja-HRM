@@ -2,10 +2,19 @@
 
 @section('content')
 <div class="container">
-    <div class="section">
-        <div class="section-header">
-            <h2>Reimbursements</h2>
-</div>
+     <section class="section">
+            <div class="section-header">
+                <h1>Reimbursements</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Reimbursements</a></div>
+                </div>
+            </div>
+
+    <div class="card">
+        <div class="card-1">
+            <h5 class="card-title mb-0">Reimbursements</h5>
+
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -17,6 +26,7 @@
             <div class="mb-3">
                 <input type="text" class="form-control" id="searchInput" placeholder="Search...">
             </div>
+</div>
 <div class="Reimburs-table">
             <table class="table table-bordered Reimbursements-table">
                 <thead>

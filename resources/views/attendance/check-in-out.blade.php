@@ -3,8 +3,17 @@
 @section('title', 'Check In/Out')
 
 @section('content')
+<div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Check In/Out</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Check In/Out</a></div>
+                </div>
+            </div>
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-md-6">
         <div class="card check-in-text">
             <div class="card-body text-center">
                 <h3 class="mb-4">
@@ -26,7 +35,7 @@
                 <!-- Office Timings -->
                 <div class="office-timings mb-4">
                     <div class="row justify-content-center check-in">
-                        <div class="col-md-10">
+                        <div class="col-md-12">
                             <div class="card check-in-bg">
                                 <div class="card-body p-3">
                                     <div class="row text-center">
@@ -75,7 +84,7 @@
                 </div>
                 
                 <!-- Location Button (if geolocation is enabled) -->
-                <div class="d-grid gap-3 col-md-8 mx-auto mb-4">
+                <div class="d-grid gap-3 col-md-12 mx-auto mb-4">
                     <button id="getLocationBtn" class="btn button btn-lg">
                         <i class="bi bi-geo-alt-fill me-2"></i> Update Location
                     </button>
@@ -86,17 +95,17 @@
                 @endif
                 
                 <!-- Check In/Out Buttons -->
-                <div class="d-grid gap-3 alert-info col-md-8 mx-auto">
+                <div class="d-grid gap-3 alert-info col-md-12 mx-auto">
                     @if($isWeekend)
                         <div class="alert alert-info mb-0">
                             <strong>Today is a weekend. Enjoy your day off!</strong>
                         </div>
                     @elseif(!$todayAttendance || !$todayAttendance->check_in)
-                        <button id="checkInBtn" class="btn btn-primary btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
+                        <button id="checkInBtn" class="btn btn-success check-inn btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
                             <i class="bi bi-box-arrow-in-right me-2"></i> Check In
                         </button>
                     @elseif(!$todayAttendance->check_out)
-                        <button id="checkOutBtn" class="btn btn-danger btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
+                        <button id="checkOutBtn" class="btn btn-danger check-outt btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
                             <i class="bi bi-box-arrow-right me-2"></i> Check Out
                         </button>
                     @else

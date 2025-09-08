@@ -13,8 +13,10 @@ use Illuminate\Support\Carbon;
 
 class AcademicHolidayController extends Controller
 {
-    public function index($companyId)
+    public function index()
     {
+        $user = Auth::user();
+        $companyId = $user->company_id;
         $company = Company::findOrFail($companyId);
         $holidays = AcademicHoliday::where('company_id', $companyId)
             ->orderBy('from_date')
@@ -23,14 +25,16 @@ class AcademicHolidayController extends Controller
         return view('company.academic-holidays.index', compact('holidays', 'company'));
     }
 
-    public function create($companyId)
+    public function create(Request $request)
     {
+        $companyId = $request->input('company_id');
         $company = Company::findOrFail($companyId);
         return view('company.academic-holidays.create', compact('company'));
     }
 
-    public function store(Request $request, $companyId)
+    public function store(Request $request)
     {
+        $companyId = $request->input('company_id');
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'from_date' => 'required|date',
@@ -51,10 +55,11 @@ class AcademicHolidayController extends Controller
             ->with('success', 'Holiday created successfully');
     }
 
-    public function edit($companyId, $id)
+    public function edit(Request $request, $id)
     {
+        $companyId = $request->input('company_id');
         $company = Company::findOrFail($companyId);
-        $holiday = AcademicHoliday::findOrFail($id);
+        $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
 
         // Explicitly cast from_date and to_date to Carbon instances
         if ($holiday->from_date && !($holiday->from_date instanceof Carbon)) {
@@ -67,9 +72,10 @@ class AcademicHolidayController extends Controller
         return view('company.academic-holidays.create', compact('holiday', 'company'));
     }
 
-    public function update(Request $request, $companyId, $id)
+    public function update(Request $request, $id)
     {
-        $holiday = AcademicHoliday::findOrFail($id);
+        $companyId = $request->input('company_id');
+        $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -80,21 +86,23 @@ class AcademicHolidayController extends Controller
 
         $holiday->update($validated);
 
-        return redirect()->route('company.academic-holidays.index', $companyId)
+        return redirect()->route('company.academic-holidays.index')
             ->with('success', 'Holiday updated successfully');
     }
 
-    public function destroy($companyId, $id)
+    public function destroy(Request $request, $id)
     {
-        $holiday = AcademicHoliday::findOrFail($id);
+        $companyId = $request->input('company_id');
+        $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
         $holiday->delete();
 
-        return redirect()->route('company.academic-holidays.index', $companyId)
+        return redirect()->route('company.academic-holidays.index')
             ->with('success', 'Holiday deleted successfully');
     }
 
-    public function import(Request $request, $companyId)
+    public function import(Request $request)
     {
+        $companyId = $request->input('company_id');
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);

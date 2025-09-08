@@ -3,12 +3,20 @@
 @section('title', 'Attendance Settings')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Attendance Settings</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Attendance Settings</div>
+                </div>
+            </div>
     <div class="row attendance-setting">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center px-2 py-2">
                         <h5 class="card-title mb-0">
                             <i class="fas fa-clock me-2"></i>Attendance Settings
                         </h5>
@@ -27,8 +35,8 @@
                         @csrf
                         
                         <div class="row mb-4">
-                            <div class="col-md-6">
-                                <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="form-group mb-0">
                                     <label class="form-label fw-medium">Company</label>
                                     <input type="text" class="form-control bg-light mb-2" value="{{ $company->name }}" readonly>
                                     <input type="hidden" name="company_id" value="{{ $company->id }}">
@@ -38,7 +46,7 @@
                         </div>
 
                         <!-- Office Hours Section -->
-                        <div class="card mb-4">
+                        <div class="card mb-4 px-0 py-0">
                             <div class="card-header bg-light">
                                 <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Office Hours</h6>
                             </div>
@@ -90,8 +98,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt-3">
-                                    <div class="col-md-4">
+                                <div class="row">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="work_hours" class="form-label fw-medium">Minimum Work Hours (per day)</label>
                                             <div class="input-group mb-2">
@@ -103,7 +111,7 @@
                                             <small class="text-muted">Standard working hours per day(CheckOut before it will be marked as Half Day)</small>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="grace_period" class="form-label fw-medium">Grace Period</label>
                                             @php
@@ -127,7 +135,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row mt-3">
+                                <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="auto_absent_time" class="form-label">Auto Absent Time</label>
@@ -157,7 +165,7 @@
                         <!-- End Office Hours Section -->
 
                         <!-- Attendance Settings Section -->
-                        <div class="card mb-4">
+                        <div class="card mb-4 px-0 py-0">
                             <div class="card-header bg-light">
                                 <h6 class="mb-0"><i class="fas fa-user-clock me-2"></i>Attendance Settings</h6>
                             </div>
@@ -195,7 +203,7 @@
                         <!-- End Attendance Settings Section -->
 
                         <!-- Geolocation Settings Section -->
-                        <div class="card mb-4">
+                        <div class="card mb-4 px-0 py-0">
                             <div class="card-header bg-light d-flex justify-content-between align-items-center">
                                 <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Geolocation Settings</h6>
                                 <div class="form-check form-switch">
@@ -248,7 +256,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 d-flex align-items-center">
+                                        <div class="col-md-4 d-flex align-items-center justify-content-end">
                                             <button type="button" class="btn btn-outline-primary btn-sm mt-3" id="get-location">
                                                 <i class="fas fa-map-marker-alt me-1"></i> Use Current Location
                                             </button>
@@ -265,7 +273,7 @@
                         <!-- End Geolocation Settings Section -->
 
                         <!-- Weekend Settings Section -->
-                        <div class="card mb-4">
+                        <div class="card mb-4 px-0 py-0">
                             <div class="card-header bg-light">
                                 <h6 class="mb-0"><i class="fas fa-calendar-week me-2"></i>Weekend Configuration</h6>
                             </div>

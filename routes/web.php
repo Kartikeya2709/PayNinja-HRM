@@ -61,7 +61,8 @@ Route::get('/run-attendance/{date?}', function ($date = null) {
 
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
+    // return view('welcome');
 });
 
 Auth::routes();
@@ -266,27 +267,27 @@ Route::middleware(['auth'])->group(function () {
         // Add other resource routes (create, store, show, destroy) here later if needed
     });
 
-    Route::middleware(['role:admin'])->prefix('company')->name('company.')->group(function () {
+    Route::middleware(['auth', 'role:admin', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
         // Academic Holidays Management
-        Route::get('companies/{companyId}/academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
-        Route::get('companies/{companyId}/academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
-        Route::post('companies/{companyId}/academic-holidays', [AcademicHolidayController::class, 'store'])->name('academic-holidays.store');
-        Route::get('companies/{companyId}/academic-holidays/{holiday}/edit', [AcademicHolidayController::class, 'edit'])->name('academic-holidays.edit');
-        Route::put('companies/{companyId}/academic-holidays/{holiday}', [AcademicHolidayController::class, 'update'])->name('academic-holidays.update');
-        Route::delete('companies/{companyId}/academic-holidays/{holiday}', [AcademicHolidayController::class, 'destroy'])->name('academic-holidays.destroy');
-        Route::post('companies/{companyId}/academic-holidays/import', [AcademicHolidayController::class, 'import'])->name('academic-holidays.import');
-        Route::get('companies/{companyId}/academic-holidays/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('academic-holidays.template');
+        Route::get('academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
+        Route::get('academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
+        Route::post('academic-holidays', [AcademicHolidayController::class, 'store'])->name('academic-holidays.store');
+        Route::get('academic-holidays/{holiday}/edit', [AcademicHolidayController::class, 'edit'])->name('academic-holidays.edit');
+        Route::put('academic-holidays/{holiday}', [AcademicHolidayController::class, 'update'])->name('academic-holidays.update');
+        Route::delete('academic-holidays/{holiday}', [AcademicHolidayController::class, 'destroy'])->name('academic-holidays.destroy');
+        Route::post('academic-holidays/import', [AcademicHolidayController::class, 'import'])->name('academic-holidays.import');
+        Route::get('academic-holidays/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('academic-holidays.template');
 
         // Employee Management
-        Route::get('companies/{companyId}/employees', [EmployeeController::class, 'index'])->name('employees.index');
-        Route::get('companies/{companyId}/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-        Route::post('companies/{companyId}/employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::get('companies/{companyId}/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
+        Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
+        Route::get('employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+        Route::post('employees', [EmployeeController::class, 'store'])->name('employees.store');
+        Route::get('employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
 
         // Admin Management for Company
-        Route::get('companies/{companyId}/admins', [EmployeeController::class, 'admins'])->name('admins.index');
-        Route::put('companies/{companyId}/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('companies/{companyId}/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+        Route::get('admins', [EmployeeController::class, 'admins'])->name('admins.index');
+        Route::put('employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+        Route::delete('employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 
         // Designation Management
         Route::resource('designations', DesignationManagementController::class)->except(['show'])->names([
@@ -331,15 +332,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
         Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
 
-        // Academic Holidays Management
-        Route::get('companies/{companyId}/academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
-        Route::get('companies/{companyId}/academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
-        Route::post('companies/{companyId}/academic-holidays', [AcademicHolidayController::class, 'store'])->name('academic-holidays.store');
-        Route::get('companies/{companyId}/academic-holidays/{id}/edit', [AcademicHolidayController::class, 'edit'])->name('academic-holidays.edit');
-        Route::put('companies/{companyId}/academic-holidays/{id}', [AcademicHolidayController::class, 'update'])->name('academic-holidays.update');
-        Route::delete('companies/{companyId}/academic-holidays/{id}', [AcademicHolidayController::class, 'destroy'])->name('academic-holidays.destroy');
-        Route::post('companies/{companyId}/academic-holidays/import', [AcademicHolidayController::class, 'import'])->name('academic-holidays.import');
-        Route::get('companies/{companyId}/academic-holidays/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('academic-holidays.template');
     });
 
     // Debug route for attendance data

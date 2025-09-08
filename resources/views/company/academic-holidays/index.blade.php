@@ -3,19 +3,27 @@
 @section('title', 'Academic Holidays')
 
 @section('content')
-<div class="container-fluid">
+<div class="container">
+     <section class="section">
+        <div class="section-header">
+            <h1>Academic Holidays</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Academic Holidays</a></div>
+            </div>
+        </div>
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Academic Holidays</h3>
                     <div class="academic d-flex align-items-center gap-2">
-                        <a href="{{ route('company.academic-holidays.create', $company->id) }}" class="btn btn-primary d-flex align-items-center gap-1">
+                        <a href="{{ route('company.academic-holidays.create') }}" class="btn btn-primary d-flex align-items-center gap-1">
                             <i class="fas fa-plus"></i> Add Holiday
                         </a>                        <button type="button" class="btn btn-success d-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="fas fa-file-import"></i> Import Holidays
                         </button>
-                        <a href="{{ route('company.academic-holidays.template', $company->id) }}" class="btn btn-info d-flex align-items-center gap-1">
+                        <a href="{{ route('company.academic-holidays.template') }}" class="btn btn-info d-flex align-items-center gap-1">
                             <i class="fas fa-download"></i> Download Template
                         </a>
                     </div>
@@ -40,16 +48,17 @@
                         </thead>
                         <tbody>
                             @forelse($holidays as $holiday)
-                                <tr>                                        <td>{{ $holiday->name }}</td>
-                                        <td>{{ $holiday->from_date ? \Carbon\Carbon::parse($holiday->from_date)->format('Y-m-d') : '-' }}</td>
-                                        <td>{{ $holiday->to_date ? \Carbon\Carbon::parse($holiday->to_date)->format('Y-m-d') : '-' }}</td>
-                                        <td>{{ $holiday->description ?? '-' }}</td>
+                                <tr>
+                                    <td>{{ $holiday->name }}</td>
+                                    <td>{{ $holiday->from_date ? \Carbon\Carbon::parse($holiday->from_date)->format('Y-m-d') : '-' }}</td>
+                                    <td>{{ $holiday->to_date ? \Carbon\Carbon::parse($holiday->to_date)->format('Y-m-d') : '-' }}</td>
+                                    <td>{{ $holiday->description ?? '-' }}</td>
                                     <td>
-                                        <a href="{{ route('company.academic-holidays.edit', [$company->id, $holiday->id]) }}" 
+                                        <a href="{{ route('company.academic-holidays.edit', $holiday->id) }}" 
                                            class="btn btn-sm btn-primary">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('company.academic-holidays.destroy', [$company->id, $holiday->id]) }}" 
+                                        <form action="{{ route('company.academic-holidays.destroy', $holiday->id) }}" 
                                               method="POST" 
                                               class="d-inline-block">
                                             @csrf
@@ -83,7 +92,7 @@
                 <h5 class="modal-title" id="importModalLabel">Import Academic Holidays</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('company.academic-holidays.import', $company->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('company.academic-holidays.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">

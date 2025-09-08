@@ -7,17 +7,28 @@ use Carbon\Carbon;
 @section('title', 'My Leave Requests')
 
 @section('content')
-<section class="section">
-    <div class="section-header">
-        <h1>My Leave Requests</h1>
+<div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Request Leave</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Request Leave</a></div>
+                </div>
+            </div>
+
+    <div class="card">
+        <div class="card-1">
+        <h5 class="mb-0">My Leave Requests</h5>
         <div class="section-header-button">
             <a href="{{ route('employee.leave-requests.create') }}" class="btn btn-primary">Request Leave</a>
         </div>
+</div>
     </div>
 
-    <div class="section-body">
-        <div class="row">
-            <div class="col-12">
+    
+        <div class="mt-4">
+            <div class="col-12 px-1">
                 <div class="card">
                     <div class="card-header">
                         <h4>Leave Balances</h4>
@@ -52,7 +63,7 @@ use Carbon\Carbon;
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card mt-4">
                     <div class="card-header">
                         <h4>Leave Requests</h4>
                     </div>
