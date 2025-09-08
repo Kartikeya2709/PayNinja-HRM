@@ -4,8 +4,9 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>PayNinja - HRM</title>
-	<style>
+    <title>PayNinja - HRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
 		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
 		body,
@@ -18,7 +19,7 @@
 			overflow: hidden;
 		}
 
-		.container {
+		.container-cutsom {
 			display: flex;
 			height: 100vh;
 			align-items: center;
@@ -94,11 +95,10 @@
 		input[name="email"],
 		input[name="password"] {
 			width: 100%;
-			padding: 12px 16px;
+			padding: 8px 12px;
 			border: 2px solid #6777EF;
 			border-radius: 6px;
 			font-size: 1rem;
-			margin-bottom: 1.5rem;
 			box-sizing: border-box;
 			outline: none;
 			transition: border-color 0.3s ease;
@@ -106,13 +106,13 @@
 
 		input[name="email"]:focus,
 		input[name="password"]:focus {
-			border-color: #388e3c;
+			border-color: #FE9800;
 		}
 
 		.forgot-password {
 			color: #6777EF;
 			font-weight: 600;
-			margin-bottom: 1.5rem;
+			margin-bottom: 1rem;
 			display: inline-block;
 			text-decoration: none;
 			align-self: flex-start;
@@ -191,9 +191,9 @@
 </head>
 
 <body>
-	<div class="container">
+	<div class="container-cutsom">
 		<div class="left-illustration">
-			<img src="https://demo.workdo.io/hrmgo/assets/images/theme-3.svg" alt="Left Illustration" />
+			<img src="{{ asset('/images/theme-3.svg') }}" alt="Left Illustration" />
 		</div>
 		<div class="login-card">
 			<div class="login-logo-container"
@@ -204,55 +204,44 @@
 			<h2>Login</h2>
 			<form style="width: 100%;" method="POST" action="{{ route('login') }}">
 				@csrf
-				@if ($errors->any())
-					<div
-						style="background-color: #ffebee; color: #c62828; padding: 12px; border-radius: 6px; margin-bottom: 20px; width: 100%; box-sizing: border-box;">
-						<strong>Whoops!</strong> There were some problems with your input.
-						<ul style="margin: 8px 0 0 20px; padding: 0;">
-							@foreach ($errors->all() as $error)
-								<li>{{ $error }}</li>
-							@endforeach
-						</ul>
-					</div>
-				@endif
-
 				@if (session('status'))
-					<div
-						style="background-color: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 6px; margin-bottom: 20px; width: 100%; box-sizing: border-box;">
+					<div class="alert alert-success mb-3">
 						{{ session('status') }}
 					</div>
 				@endif
-				<label for="email">Email</label>
-				<input id="email" type="email" name="email" required autocomplete="email" value="{{ old('email') }}"
-					autofocus placeholder="company@example.com" />
-				<label for="password">Password</label>
-				{{-- <input id="password" type="password" name="password" value="{{ old('password') }}" required
-					autocomplete="current-password" placeholder="Password" /> --}}
-				<div style="position: relative; width: 100%;">
-					<input id="password" type="password" name="password" value="{{ old('password') }}" required
-						autocomplete="current-password" placeholder="Password" style="padding-right: 44px;" />
-					<button type="button" id="togglePassword" aria-label="Show password"
-						style="position: absolute; right: 10px; top: 35%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 0;">
-						<svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none"
-							viewBox="0 0 24 24" stroke="currentColor">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-								d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-						</svg>
-					</button>
+				<div class="form-group mb-4">
+					<label for="email" class="form-label">Email</label>
+					<input id="email" type="email" name="email" value="{{ old('email') }}" class="form-control @error('email') is-invalid @enderror" autocomplete="email" autofocus placeholder="company@example.com" />
+					@error('email')
+						<div class="text-danger">{{ $message }}</div>
+					@enderror
+				</div>
+				<div class="form-group mb-3">
+					<label for="password" class="form-label">Password</label>
+					<div style="position: relative;">
+						<input id="password" type="password" name="password" value="{{ old('password') }}" class="form-control @error('password') is-invalid @enderror" autocomplete="current-password" placeholder="Password" style="padding-right: 44px;" />
+						<button type="button" id="togglePassword" aria-label="Show password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 0;">
+							<svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+							</svg>
+						</button>
+					</div>
+					@error('password')
+						<div class="text-danger">{{ $message }}</div>
+					@enderror
 				</div>
 				<a href="{{ route('password.request') }}" class="forgot-password">Forgot Your Password?</a>
-				<div class="form-check">
-					<input type="checkbox" name="remember" id="remember" />
-					<label for="remember">Remember Me</label>
+				<div class="form-check mb-3">
+					<input type="checkbox" name="remember" id="remember" class="form-check-input" />
+					<label for="remember" class="form-check-label">Remember Me</label>
 				</div>
 				<button type="submit" class="login-btn">Login</button>
 				<a href="{{ route('register') }}" class="register-btn">Register</a>
 			</form>
 		</div>
 		<div class="right-illustration">
-			<img src="https://demo.workdo.io/hrmgo/assets/images/common.svg" alt="Right Illustration" />
+			<img src="{{ asset('/images/common.svg') }}" alt="Right Illustration" />
 		</div>
 	</div>
 	<div class="footer-text">

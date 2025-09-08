@@ -20,24 +20,26 @@
 
                     <div class="card-body">
                         @if(session('success'))
-                            <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
 
                         @if(session('error'))
-                            <div class="alert alert-danger">{{ session('error') }}</div>
+                        <div class="alert alert-danger">{{ session('error') }}</div>
                         @endif
 
                         {{-- 🔹 Modern Glass Tabs --}}
                         <ul class="nav nav-pills custom-tabs" id="companySettingsTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="company-info-tab" data-bs-toggle="tab" data-bs-target="#company-info"
-                                    type="button" role="tab" aria-controls="company-info" aria-selected="true">
+                                <button class="nav-link active" id="company-info-tab" data-bs-toggle="tab"
+                                    data-bs-target="#company-info" type="button" role="tab" aria-controls="company-info"
+                                    aria-selected="true">
                                     <i class="fas fa-building me-2"></i> Company Info
                                 </button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="emp-id-prefix-tab" data-bs-toggle="tab" data-bs-target="#emp-id-prefix"
-                                    type="button" role="tab" aria-controls="emp-id-prefix" aria-selected="false">
+                                <button class="nav-link" id="emp-id-prefix-tab" data-bs-toggle="tab"
+                                    data-bs-target="#emp-id-prefix" type="button" role="tab"
+                                    aria-controls="emp-id-prefix" aria-selected="false">
                                     <i class="fas fa-id-badge me-2"></i> Employee ID Prefix
                                 </button>
                             </li>
@@ -46,7 +48,8 @@
                         <div class="tab-content p-4 glass-box" id="companySettingsTabContent">
 
                             {{-- 🔹 Company Info Tab --}}
-                            <div class="tab-pane fade show active" id="company-info" role="tabpanel" aria-labelledby="company-info-tab">
+                            <div class="tab-pane fade show active" id="company-info" role="tabpanel"
+                                aria-labelledby="company-info-tab">
                                 <form action="{{ route('company-admin.settings.update') }}" method="POST">
                                     @csrf
                                     @method('PUT')
@@ -55,10 +58,11 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label">Company Name</label>
-                                                <input type="text" class="form-control @error('name') is-invalid @enderror" 
-                                                       id="name" name="name" value="{{ old('name', $company->name) }}" required>
+                                                <input type="text"
+                                                    class="form-control @error('name') is-invalid @enderror" id="name"
+                                                    name="name" value="{{ old('name', $company->name) }}" required>
                                                 @error('name')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -66,10 +70,11 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="email" class="form-label">Company Email</label>
-                                                <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                                       id="email" name="email" value="{{ old('email', $company->email) }}" required>
+                                                <input type="email"
+                                                    class="form-control @error('email') is-invalid @enderror" id="email"
+                                                    name="email" value="{{ old('email', $company->email) }}" required>
                                                 @error('email')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -79,10 +84,11 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="phone" class="form-label">Phone Number</label>
-                                                <input type="text" class="form-control @error('phone') is-invalid @enderror" 
-                                                       id="phone" name="phone" value="{{ old('phone', $company->phone) }}" required>
+                                                <input type="text"
+                                                    class="form-control @error('phone') is-invalid @enderror" id="phone"
+                                                    name="phone" value="{{ old('phone', $company->phone) }}" required>
                                                 @error('phone')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -90,10 +96,12 @@
                                         <div class="col-md-6">
                                             <div class="mb-3">
                                                 <label for="website" class="form-label">Website</label>
-                                                <input type="url" class="form-control @error('website') is-invalid @enderror" 
-                                                       id="website" name="website" value="{{ old('website', $company->domain) }}">
+                                                <input type="url"
+                                                    class="form-control @error('website') is-invalid @enderror"
+                                                    id="website" name="website"
+                                                    value="{{ old('website', $company->domain) }}">
                                                 @error('website')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
+                                                <div class="invalid-feedback">{{ $message }}</div>
                                                 @enderror
                                             </div>
                                         </div>
@@ -101,10 +109,11 @@
 
                                     <div class="mb-3">
                                         <label for="address" class="form-label">Address</label>
-                                        <textarea class="form-control @error('address') is-invalid @enderror" 
-                                                  id="address" name="address" rows="3" required>{{ old('address', $company->address) }}</textarea>
+                                        <textarea class="form-control @error('address') is-invalid @enderror"
+                                            id="address" name="address" rows="3"
+                                            required>{{ old('address', $company->address) }}</textarea>
                                         @error('address')
-                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        <div class="invalid-feedback">{{ $message }}</div>
                                         @enderror
                                     </div>
 
@@ -117,16 +126,20 @@
                             </div>
 
                             {{-- 🔹 Employee ID Prefix Tab --}}
-                            <div class="tab-pane fade" id="emp-id-prefix" role="tabpanel" aria-labelledby="emp-id-prefix-tab">
+                            <div class="tab-pane fade" id="emp-id-prefix" role="tabpanel"
+                                aria-labelledby="emp-id-prefix-tab">
                                 <h5>Employee ID Prefix Settings</h5>
-                                <form id="empIdPrefixForm" method="POST" action="{{ route('company-admin.settings.save-employee-id-prefix') }}">
+                                <form id="empIdPrefixForm" method="POST"
+                                    action="{{ route('company-admin.settings.save-employee-id-prefix') }}">
                                     @csrf
                                     <div class="row mb-4">
                                         <div class="col-12">
                                             <div class="alert alert-info">
                                                 <i class="fas fa-info-circle me-2"></i>
-                                                Employee ID settings can be common for all employment types or specific to each type.
-                                                Once saved, the settings cannot be modified, except for adding settings for an unused employment type.
+                                                Employee ID settings can be common for all employment types or specific
+                                                to each type.
+                                                Once saved, the settings cannot be modified, except for adding settings
+                                                for an unused employment type.
                                             </div>
                                         </div>
                                     </div>
@@ -148,19 +161,22 @@
                                         <div class="col-md-3">
                                             <div class="mb-3">
                                                 <label for="prefix" class="form-label">Prefix</label>
-                                                <input type="text" class="form-control" id="prefix" name="prefix" required>
+                                                <input type="text" class="form-control" id="prefix" name="prefix"
+                                                    required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="mb-3">
                                                 <label for="padding" class="form-label">Number Padding</label>
-                                                <input type="number" class="form-control" id="padding" name="padding" min="1" max="6" required>
+                                                <input type="number" class="form-control" id="padding" name="padding"
+                                                    min="1" max="6" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
                                             <div class="mb-3">
                                                 <label for="start" class="form-label">Start From</label>
-                                                <input type="number" class="form-control" id="start" name="start" min="1" required>
+                                                <input type="number" class="form-control" id="start" name="start"
+                                                    min="1" required>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -171,53 +187,54 @@
                                         </div>
                                     </div>
                                     <div class="text-center">
-                                    <button type="submit" class="btn btn-primary" id="savePrefix">Save Prefix</button>
+                                        <button type="submit" class="btn btn-primary" id="savePrefix">Save
+                                            Prefix</button>
                                 </form>
-</div>
                             </div>
+                        </div>
 
-                        </div> {{-- tab-content --}}
-                    </div>
+                    </div> {{-- tab-content --}}
                 </div>
             </div>
         </div>
-    </section>
+</div>
+</section>
 </div>
 @endsection
 
 @push('styles')
 <style>
-/* 🔹 Custom glass-style tabs */
-.custom-tabs .nav-link {
-    border-radius: 12px;
-    margin-right: 8px;
-    padding: 10px 18px;
-    font-weight: 500;
-    background: rgba(255, 255, 255, 0.12);
-    color: #222;
-    backdrop-filter: blur(10px);
-    transition: all 0.3s ease;
-}
+    /* 🔹 Custom glass-style tabs */
+    .custom-tabs .nav-link {
+        border-radius: 12px;
+        margin-right: 8px;
+        padding: 10px 18px;
+        font-weight: 500;
+        background: rgba(255, 255, 255, 0.12);
+        color: #222;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
 
-.custom-tabs .nav-link:hover {
-    background: rgba(37, 99, 235, 0.12);
-    transform: translateY(-2px);
-    color: #2563eb;
-}
+    .custom-tabs .nav-link:hover {
+        background: rgba(37, 99, 235, 0.12);
+        transform: translateY(-2px);
+        color: #2563eb;
+    }
 
-.custom-tabs .nav-link.active {
-    background: linear-gradient(135deg, #2563eb, #1e40af);
-    color: #fff !important;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-}
+    .custom-tabs .nav-link.active {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        color: #fff !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
 
-/* 🔹 Glass effect for tab content */
-.glass-box {
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-}
+    /* 🔹 Glass effect for tab content */
+    .glass-box {
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
 </style>
 @endpush
 
@@ -271,13 +288,13 @@
             const selectedType = $('#employment_type').val();
 
             if (savedData.status === 'common') {
-                if (!selectedType) {
+                // if (selectedType) {
                     fillFormData(savedData.data);
                     enableForm(false);
-                } else {
-                    clearForm();
-                    enableForm(false);
-                }
+                // } else {
+                //     clearForm();
+                //     enableForm(false);
+                // }
             } else if (savedData.status === 'specific') {
                 if (!selectedType) {
                     clearForm();

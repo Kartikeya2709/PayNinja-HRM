@@ -68,8 +68,9 @@ class EmployeeController extends Controller
         return $prefixSetting->prefix . $formattedNumber;
     }
 
-    public function index($companyId)
+    public function index()
     {
+        $companyId = auth()->user()->company_id;
         $company = Company::findOrFail($companyId);
         
         $employees = Employee::with(['department', 'designation', 'user'])
@@ -82,8 +83,9 @@ class EmployeeController extends Controller
         return view('company.employees.index', compact('company', 'employees'));
     }
 
-    public function create($companyId)
+    public function create()
     {
+        $companyId = auth()->user()->company_id;
         $company = Company::findOrFail($companyId);
         $departments = Department::where('company_id', $companyId)->get();
         $designations = Designation::where('company_id', $companyId)->get();
@@ -91,8 +93,9 @@ class EmployeeController extends Controller
         return view('company.employees.create', compact('company', 'departments', 'designations'));
     }
 
-    public function store(Request $request, $companyId)
+    public function store(Request $request)
     {
+        $companyId = auth()->user()->company_id;
         $company = Company::findOrFail($companyId);
 
         // Validate user data
@@ -150,7 +153,7 @@ class EmployeeController extends Controller
             'employment_type' => $validated['employment_type']
         ]);
 
-        return redirect()->route('company.employees.index', $companyId)
+        return redirect()->route('company.employees.index')
             ->with('success', 'Employee created successfully');
     }
     public function show()
@@ -189,12 +192,14 @@ class EmployeeController extends Controller
         return view('employee.colleagues', compact('colleagues', 'currentUser', 'companyName'));
     }
 
-    public function edit($companyId, $employeeId)
+    public function edit($employeeId)
     {
+        $companyId = auth()->user()->company_id;
         $company = Company::findOrFail($companyId);
         
         // First check if the employee exists
         $employee = Employee::with(['department', 'designation', 'user', 'employeeDetail'])
+            ->where('company_id', $companyId)
             ->findOrFail($employeeId);
         
         // Get the associated user
@@ -215,9 +220,9 @@ class EmployeeController extends Controller
         return view('company.employees.edit', compact('company', 'employee', 'departments', 'designations'));
     }
 
-    public function update(Request $request, $companyId, $employeeId)
+    public function update(Request $request, $employeeId)
     {
-        // dd($request->all());
+        $companyId = auth()->user()->company_id;
         $company = Company::findOrFail($companyId);
         
         // First check if the employee exists
@@ -290,7 +295,7 @@ class EmployeeController extends Controller
             ]
         );
 
-        return redirect()->route('company.employees.index', $companyId)
+        return redirect()->route('company.employees.index')
             ->with('success', 'Employee updated successfully');
     }
     
@@ -301,11 +306,12 @@ class EmployeeController extends Controller
      * @param  int  $employeeId
      * @return \Illuminate\Http\Response
      */
-    public function destroy($companyId, $employeeId)
+    public function destroy($employeeId)
     {
         try {
+            $companyId = auth()->user()->company_id;
             // Find the employee record
-            $employee = Employee::findOrFail($employeeId);
+            $employee = Employee::where('company_id', $companyId)->findOrFail($employeeId);
             
             // Get the user ID before deleting the employee
             $userId = $employee->user_id;
@@ -342,8 +348,9 @@ class EmployeeController extends Controller
         }
     }
     
-    public function admins($companyId)
+    public function admins()
     {
+        $companyId = auth()->user()->company_id;
         $company = Company::findOrFail($companyId);
         
         $admins = Employee::with(['user', 'department', 'designation'])
@@ -362,12 +369,12 @@ class EmployeeController extends Controller
      */
     public function getNextEmployeeCode(Request $request)
     {
-        $companyId = $request->input('company_id');
+        $companyId = auth()->user()->company_id;
         $employmentType = $request->input('employment_type');
-        if (!$companyId || !$employmentType) {
-            return response()->json(['code' => null, 'error' => 'Missing parameters.'], 400);
+        if (!$employmentType) {
+            return response()->json(['code' => null, 'error' => 'Missing employment type parameter.'], 400);
         }
-        $company = \App\Models\Company::find($companyId);
+        $company = Company::find($companyId);
         if (!$company) {
             return response()->json(['code' => null, 'error' => 'Company not found.'], 404);
         }

@@ -22,8 +22,8 @@
                         <td>{{ $employee->user ? $employee->user->email : $employee->email }}</td>
                         <td>{{ $employee->department ? $employee->department->name : 'N/A' }}</td>
                         <td>
-                            <a href="{{ route('company.employees.edit', [$company->id, $employee->id]) }}" class="btn btn-warning">Edit</a>
-                            <form action="{{ route('company.employees.destroy', [$company->id, $employee->id]) }}" method="POST" style="display:inline;">
+                            <a href="{{ route('company.employees.edit', $employee->id) }}" class="btn btn-warning">Edit</a>
+                            <form action="{{ route('company.employees.destroy', $employee->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete</button>
