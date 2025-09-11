@@ -120,6 +120,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Attendance Management
     Route::middleware(['role:admin'])->prefix('admin/attendance')->name('admin.attendance.')->group(function () {
+        
         Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
         Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
         Route::post('/', [AdminAttendanceController::class, 'store'])->name('store');
@@ -452,5 +453,33 @@ Route::middleware(['auth'])->group(function () {
 
         // Employee code generation for company-admin (AJAX)
         Route::get('/employees/next-code', [\App\Http\Controllers\EmployeeController::class, 'getNextEmployeeCode'])->name('employees.next-code');
+    });
+
+    // Employee Resignation Routes
+    Route::middleware(['role:user,employee'])->prefix('employee')->name('employee.')->group(function () {
+        Route::resource('resignations', App\Http\Controllers\Employee\ResignationController::class)
+            ->only(['index', 'create', 'store', 'show', 'edit', 'update']);
+        Route::post('resignations/{resignation}/withdraw', [App\Http\Controllers\Employee\ResignationController::class, 'withdraw'])
+            ->name('resignations.withdraw');
+    });
+
+    // Admin Resignation Routes
+    Route::middleware(['role:admin,company_admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('resignations', App\Http\Controllers\Admin\ResignationController::class)
+            ->only(['index', 'show']);
+        Route::post('resignations/{resignation}/approve', [App\Http\Controllers\Admin\ResignationController::class, 'approve'])
+            ->name('resignations.approve');
+        Route::post('resignations/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])
+            ->name('resignations.reject');
+        
+        // Exit process management
+        Route::post('resignations/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])
+            ->name('resignations.complete-exit-interview');
+        Route::post('resignations/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])
+            ->name('resignations.complete-handover');
+        Route::post('resignations/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])
+            ->name('resignations.mark-assets-returned');
+        Route::post('resignations/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
+            ->name('resignations.complete-final-settlement');
     });
 }); // End of auth middleware group

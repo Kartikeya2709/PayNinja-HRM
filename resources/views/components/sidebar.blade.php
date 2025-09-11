@@ -188,6 +188,21 @@
                             </a>
                         </li>
                     @endif
+
+                    <!-- Resignations -->
+                    <li class="menu-header">Resignations</li>
+                    <li class="{{ Request::is('employee/resignations') && !Request::is('employee/resignations/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('employee.resignations.index') }}">
+                            <i class="fas fa-file-signature"></i>
+                            <span>My Resignations</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('employee/resignations/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('employee.resignations.create') }}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Submit Resignation</span>
+                        </a>
+                    </li>
                 @endif
 
                 {{-- Company Admin Routes --}}
@@ -207,6 +222,12 @@
                         <a class="nav-link" href="{{ route('company-admin.employees.index') }}">
                             <i class="fas fa-users"></i>
                             <span>Employee Management</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('admin/resignations') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.resignations.index') }}">
+                            <i class="fas fa-file-signature"></i>
+                            <span>Employee Resignations</span>
                         </a>
                     </li>
 
@@ -375,6 +396,13 @@
                                 <span>Employee Management</span>
                             </a>
                         </li>
+                        <!-- Resignation Management -->
+                        <li class="{{ Request::is('admin/resignations') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('admin.resignations.index') }}">
+                                <i class="fas fa-file-signature"></i>
+                                <span>Employee Resignations</span>
+                            </a>
+                        </li>
                     @endif
 
                     <!-- Team Management -->
@@ -483,7 +511,7 @@
 
                     <!-- Payroll Management -->
                     @if ($hasModuleAccess('payroll', 'admin'))
-                        <li class="menu-header">Payroll Management
+                        <li class="menu-header">Payroll Management</li>
                         <li class="nav-item dropdown {{ Request::is('admin/payroll*') ? 'active' : '' }}">
                             <a href="#" class="nav-link has-dropdown"><i
                                     class="fas fa-file-invoice-dollar"></i><span>Payroll</span></a>
@@ -509,8 +537,6 @@
                                             Payroll Configs</span></a>
                                 </li>
                             </ul>
-                        </li>
-
                         </li>
                         </li>
                     @endif

@@ -263,7 +263,16 @@ class AttendanceService
             'coordinates' => [$userLat, $userLng],
             'remarks' => $remarks
         ]);
-        
+
+        // Check if employee has resigned and passed last working date
+        if ($this->isEmployeeResigned($employee, $today)) {
+            return [
+                'success' => false,
+                'message' => 'Check-in not allowed. Your employment has ended.',
+                'error_type' => 'employment_ended'
+            ];
+        }
+
         // Check if already checked in today
         $existingAttendance = Attendance::where('employee_id', $employee->id)
             ->whereDate('date', $today)
@@ -897,6 +906,15 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
             $companyMarkedAbsent = 0;
                 
             foreach ($employees as $employee) {
+                // Skip resigned employees
+                if ($this->isEmployeeResigned($employee, $dateString)) {
+                    \Log::info('Skipping resigned employee', [
+                        'employee_id' => $employee->id,
+                        'date' => $dateString
+                    ]);
+                    continue;
+                }
+
                 // Check if employee is on leave
                 if ($this->isOnLeave($employee, $date)) {
                     // Create leave record instead of absent
@@ -1170,5 +1188,41 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
             ->whereDate('from_date', '<=', $dateString)
             ->whereDate('to_date', '>=', $dateString)
             ->exists();
-    }     
+    }
+
+    /**
+     * Check if employee has resigned and passed last working date
+     *
+     * @param Employee $employee
+     * @param string $date
+     * @return bool
+     */
+    protected function isEmployeeResigned($employee, $date)
+    {
+        $resignation = $employee->activeResignation;
+
+        if (!$resignation || $resignation->status !== 'approved') {
+            return false;
+        }
+
+        return Carbon::parse($date)->gt(Carbon::parse($resignation->last_working_date));
+    }
+
+    /**
+     * Check if employee has an active resignation that prevents attendance
+     *
+     * @param Employee $employee
+     * @param string $date
+     * @return bool
+     */
+    protected function hasActiveResignation($employee, $date)
+    {
+        $resignation = $employee->activeResignation;
+
+        if (!$resignation || $resignation->status !== 'approved') {
+            return false;
+        }
+
+        return Carbon::parse($date)->lte(Carbon::parse($resignation->last_working_date));
+    }
 }

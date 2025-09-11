@@ -14,7 +14,7 @@ class RoleMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
         // Log when middleware is triggered
         Log::info('RoleMiddleware triggered for request to: ' . $request->path());
@@ -31,7 +31,7 @@ class RoleMiddleware
         Log::info('Authenticated user: ' . $user->email . ' with role: ' . $user->role);
 
         // Define allowed roles
-        $roles = ['superadmin', 'admin', 'company_admin', 'user', 'employee'];
+        // $roles = ['superadmin', 'admin', 'company_admin', 'user', 'employee'];
 
         if (!in_array($user->role, $roles)) {
             // Log unauthorized access attempt

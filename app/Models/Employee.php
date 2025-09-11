@@ -317,4 +317,44 @@ class Employee extends Model
     {
         return $this->hasMany(AttendanceRegularization::class);
     }
+
+    /**
+     * Get all resignation requests for this employee.
+     */
+    public function resignations()
+    {
+        return $this->hasMany(EmployeeResignation::class);
+    }
+
+    /**
+     * Get the active resignation request for this employee.
+     */
+    public function activeResignation()
+    {
+        return $this->hasOne(EmployeeResignation::class)
+            ->whereIn('status', ['pending', 'hr_approved', 'manager_approved', 'approved'])
+            ->latest();
+    }
+
+    /**
+     * Check if employee has an active resignation.
+     */
+    public function hasActiveResignation()
+    {
+        return $this->activeResignation()->exists();
+    }
+
+    /**
+     * Check if employee has resigned and passed last working date.
+     */
+    public function hasResigned()
+    {
+        $activeResignation = $this->activeResignation;
+        
+        if (!$activeResignation || $activeResignation->status !== 'approved') {
+            return false;
+        }
+        
+        return now()->gt($activeResignation->last_working_date);
+    }
 }
