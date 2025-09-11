@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log; // Import the Log facade
+use App\Models\User;
+use App\Models\SuperAdmin;
 
 class LoginController extends Controller
 {
@@ -47,12 +49,23 @@ class LoginController extends Controller
         $remember = $request->has('remember') ? true : false;
         Log::info('Remember: '. $remember);
 
+        $email = $request->email;
+        $user = User::where('email', $email)->first();
+        $superadmin = SuperAdmin::where('email', $email)->first();
+
+        if (!$user && !$superadmin) {
+            Log::warning('Login failed: email not found for ' . $email);
+            return back()->withErrors([
+                'email' => 'This email is not registered.',
+            ])->onlyInput('email');
+        }
+
         // Attempt login with superadmin guard first
         if (Auth::guard('superadmin')->attempt($credentials, $remember)) {
             $user = Auth::guard('superadmin')->user();
             Log::info('Login successful as SuperAdmin for user: ' . $user->email);
             Log::info('Redirecting SuperAdmin to home');
-            return redirect()->route('home'); 
+            return redirect()->route('home');
         }
 
         // If superadmin login fails, attempt with default web guard (users)
@@ -74,9 +87,9 @@ class LoginController extends Controller
         }
 
         // If both attempts fail
-        Log::warning('Login failed for email: ' . $request->input('email'));
+        Log::warning('Login failed: incorrect password for ' . $email);
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'password' => 'Incorrect password.',
         ])->onlyInput('email');
     }
 

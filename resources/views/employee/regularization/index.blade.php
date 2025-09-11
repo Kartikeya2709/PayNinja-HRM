@@ -17,7 +17,7 @@
                     <div class="card">
                         <div class="card-1">
                 <h5 class="card-title mb-0">Attendance Regularization Requests</h5>
-                    
+                
                     <div class="">
                     @if (!is_null(Auth::user()->employee->reporting_manager_id))
                         <a href="{{ route('regularization.requests.create') }}" class="btn btn-primary">New Request</a></div>

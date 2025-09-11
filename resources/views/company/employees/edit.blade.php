@@ -14,7 +14,7 @@
             </div>
         @endif
 
-        <form action="{{ route('company.employees.update', [$company->id, $employee->id]) }}" method="POST">
+        <form action="{{ route('company.employees.update', $employee->id) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -98,7 +98,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary mt-3">Update Employee</button>
-            <a href="{{ route('company.employees.index', $company->id) }}" class="btn btn-secondary mt-3">Cancel</a>
+            <a href="{{ route('company.employees.index') }}" class="btn btn-secondary mt-3">Cancel</a>
         </form>
     </div>
 @endsection
