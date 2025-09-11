@@ -16,6 +16,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
+use function Symfony\Component\Translation\t;
 
 
 class AttendanceController extends Controller
@@ -29,10 +30,10 @@ class AttendanceController extends Controller
     public function index(Request $request)
     {
         $companyId = auth()->user()->company_id;
-        
+
         // Base query with company filter
         $query = Attendance::with(['employee.user', 'employee.department', 'employee.designation'])
-            ->whereHas('employee', function($q) use ($companyId) {
+            ->whereHas('employee', function ($q) use ($companyId) {
                 $q->where('company_id', $companyId);
             })
             ->latest('date');
@@ -41,17 +42,17 @@ class AttendanceController extends Controller
         if ($request->filled('date_range')) {
             try {
                 $dates = array_map('trim', explode(' - ', $request->date_range));
-                
+
                 // If only one date is provided, use it for both start and end
                 if (count($dates) === 1 && !empty($dates[0])) {
                     $startDate = Carbon::parse($dates[0])->startOfDay();
                     $endDate = $startDate->copy()->endOfDay();
-                } 
+                }
                 // If two dates are provided
                 elseif (count($dates) === 2) {
                     $startDate = Carbon::parse($dates[0])->startOfDay();
                     $endDate = Carbon::parse($dates[1])->endOfDay();
-                    
+
                     // Validate date range is not too large (max 1 year)
                     if ($endDate->diffInDays($startDate) > 365) {
                         return redirect()->route('admin.attendance.index')
@@ -60,9 +61,9 @@ class AttendanceController extends Controller
                 } else {
                     throw new \Exception('Invalid date range format');
                 }
-                
+
                 $query->whereBetween('date', [$startDate, $endDate]);
-                
+
             } catch (\Exception $e) {
                 return redirect()->route('admin.attendance.index')
                     ->with('error', 'Invalid date format. Please use YYYY-MM-DD format or select a date from the calendar.');
@@ -74,9 +75,9 @@ class AttendanceController extends Controller
         }
 
         if ($request->filled('department_id')) {
-            $query->whereHas('employee', function($q) use ($request, $companyId) {
+            $query->whereHas('employee', function ($q) use ($request, $companyId) {
                 $q->where('department_id', $request->department_id)
-                  ->where('company_id', $companyId);
+                    ->where('company_id', $companyId);
             });
         }
 
@@ -109,7 +110,7 @@ class AttendanceController extends Controller
     public function store(Request $request)
     {
         $companyId = auth()->user()->company_id;
-        
+
         $validated = $request->validate([
             'employee_id' => [
                 'required',
@@ -144,15 +145,15 @@ class AttendanceController extends Controller
         $attendance->date = $validated['date'];
         $attendance->status = $validated['status'];
         $attendance->remarks = $validated['remarks'];
-        
+
         if (!empty($validated['check_in'])) {
             $attendance->check_in = $validated['check_in'];
         }
-        
+
         if (!empty($validated['check_out'])) {
             $attendance->check_out = $validated['check_out'];
         }
-        
+
         $attendance->save();
 
         return redirect()->route('admin.attendance.index')
@@ -179,7 +180,7 @@ class AttendanceController extends Controller
             'status' => $attendance->status,
             'remarks' => $attendance->remarks
         ];
-        
+
         return response()->json($attendance);
     }
 
@@ -193,13 +194,13 @@ class AttendanceController extends Controller
     public function update(Request $request, $id)
     {
         $companyId = auth()->user()->company_id;
-        
+
         // Find the attendance record and ensure it belongs to the user's company
-        $attendance = Attendance::whereHas('employee', function($q) use ($companyId) {
-                $q->where('company_id', $companyId);
-            })
+        $attendance = Attendance::whereHas('employee', function ($q) use ($companyId) {
+            $q->where('company_id', $companyId);
+        })
             ->findOrFail($id);
-        
+
         $validated = $request->validate([
             // 'employee_id' => [
             //     'required',
@@ -222,19 +223,19 @@ class AttendanceController extends Controller
         $attendance->date = $validated['date'];
         $attendance->status = $validated['status'];
         $attendance->remarks = $validated['remarks'];
-        
+
         if (!empty($validated['check_in'])) {
             $attendance->check_in = $validated['check_in'];
         } else {
             $attendance->check_in = null;
         }
-        
+
         if (!empty($validated['check_out'])) {
             $attendance->check_out = $validated['check_out'];
         } else {
             $attendance->check_out = null;
         }
-        
+
         $attendance->save();
 
         return response()->json([
@@ -253,14 +254,14 @@ class AttendanceController extends Controller
     {
         try {
             $companyId = auth()->user()->company_id;
-            
+
             // Find the attendance record and ensure it belongs to the user's company
             $attendance = Attendance::withTrashed()
-                ->whereHas('employee', function($q) use ($companyId) {
+                ->whereHas('employee', function ($q) use ($companyId) {
                     $q->where('company_id', $companyId);
                 })
                 ->findOrFail($id);
-            
+
             // Force delete if already soft deleted, otherwise soft delete
             if ($attendance->trashed()) {
                 $attendance->forceDelete();
@@ -269,7 +270,7 @@ class AttendanceController extends Controller
                 $attendance->delete();
                 $message = 'Attendance record moved to trash successfully.';
             }
-            
+
             // Log the deletion
             \Log::info('Attendance deleted', [
                 'attendance_id' => $id,
@@ -277,7 +278,7 @@ class AttendanceController extends Controller
                 'deleted_at' => now(),
                 'method' => request()->method()
             ]);
-            
+
             // Return JSON response for AJAX requests
             if (request()->ajax()) {
                 return response()->json([
@@ -285,23 +286,23 @@ class AttendanceController extends Controller
                     'message' => $message
                 ]);
             }
-            
+
             return redirect()->back()->with('success', $message);
-            
+
         } catch (\Exception $e) {
             \Log::error('Error deleting attendance: ' . $e->getMessage(), [
                 'attendance_id' => $id,
                 'user_id' => auth()->id(),
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             if (request()->ajax()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Failed to delete attendance: ' . $e->getMessage()
                 ], 500);
             }
-            
+
             return redirect()->back()->with('error', 'Failed to delete attendance: ' . $e->getMessage());
         }
     }
@@ -315,23 +316,23 @@ class AttendanceController extends Controller
     public function export(Request $request)
     {
         $companyId = auth()->user()->company_id;
-        
+
         // Start with base query that filters by company
         $query = Attendance::with(['employee.user', 'employee.department', 'employee.designation'])
-            ->whereHas('employee', function($q) use ($companyId) {
+            ->whereHas('employee', function ($q) use ($companyId) {
                 $q->where('company_id', $companyId);
             });
 
         // Apply the same filters as the index method
         $filters = [];
-        
+
         if ($request->filled('date_range')) {
             $dates = explode(' - ', $request->date_range);
             $startDate = Carbon::parse($dates[0])->startOfDay();
-            $endDate = isset($dates[1]) 
-                ? Carbon::parse($dates[1])->endOfDay() 
+            $endDate = isset($dates[1])
+                ? Carbon::parse($dates[1])->endOfDay()
                 : $startDate->copy()->endOfDay();
-            
+
             $query->whereBetween('date', [$startDate, $endDate]);
             $filters[] = $startDate->format('M d, Y') . ' to ' . $endDate->format('M d, Y');
         }
@@ -346,7 +347,7 @@ class AttendanceController extends Controller
 
         if ($request->filled('department_id')) {
             $department = Department::find($request->department_id);
-            $query->whereHas('employee', function($q) use ($request) {
+            $query->whereHas('employee', function ($q) use ($request) {
                 $q->where('department_id', $request->department_id);
             });
             if ($department) {
@@ -370,13 +371,13 @@ class AttendanceController extends Controller
                 'filters' => $filters,
                 'date' => now()->format('d M, Y')
             ]);
-            
+
             return $pdf->download($fileName);
         }
-        
+
         // Default to Excel export
         return Excel::download(
-            new AdminAttendanceExport($attendances, $filters), 
+            new AdminAttendanceExport($attendances, $filters),
             $fileName
         );
     }
@@ -399,18 +400,18 @@ class AttendanceController extends Controller
             $overwrite = $request->boolean('overwrite_existing', false);
             // Get the file
             $file = $request->file('file');
-            
+
             // Read the file
             $data = Excel::toArray([], $file)[0];
-            
+
             if (count($data) <= 1) { // First row is header
                 return redirect()->back()
                     ->with('error', 'The uploaded file is empty.');
             }
-            
+
             $header = array_shift($data);
             $requiredHeaders = ['employee_id', 'date', 'status'];
-            
+
             // Validate headers
             foreach ($requiredHeaders as $required) {
                 if (!in_array(strtolower($required), array_map('strtolower', $header))) {
@@ -418,49 +419,49 @@ class AttendanceController extends Controller
                         ->with('error', "The uploaded file is missing required column: {$required}");
                 }
             }
-            
+
             $imported = 0;
             $updated = 0;
             $skipped = 0;
             $errors = [];
-            
+
             // Pre-fetch all valid employee IDs for this company
             $validEmployeeIds = Employee::where('company_id', $companyId)
                 ->pluck('id')
                 ->toArray();
-            
+
             foreach ($data as $index => $row) {
                 try {
                     $row = array_combine($header, $row);
-                    
+
                     // Convert Excel serial numbers to proper formats
                     try {
                         // Convert date from Excel serial if needed
                         if (isset($row['date']) && is_numeric($row['date'])) {
-                            $row['date'] = Carbon::create(1900, 1, 1)->addDays((int)$row['date'] - 2)->format('Y-m-d');
+                            $row['date'] = Carbon::create(1900, 1, 1)->addDays((int) $row['date'] - 2)->format('Y-m-d');
                         }
-                        
+
                         // Convert time from Excel fraction of day (0-1) to H:i:s
                         if (isset($row['check_in']) && is_numeric($row['check_in'])) {
-                            $hours = (float)$row['check_in'] * 24;
-                            $hour = (int)$hours;
-                            $minutes = (int)(($hours - $hour) * 60);
-                            $seconds = (int)(((($hours - $hour) * 60) - $minutes) * 60);
+                            $hours = (float) $row['check_in'] * 24;
+                            $hour = (int) $hours;
+                            $minutes = (int) (($hours - $hour) * 60);
+                            $seconds = (int) (((($hours - $hour) * 60) - $minutes) * 60);
                             $row['check_in'] = sprintf('%02d:%02d:%02d', $hour, $minutes, $seconds);
                         }
-                        
+
                         if (isset($row['check_out']) && is_numeric($row['check_out'])) {
-                            $hours = (float)$row['check_out'] * 24;
-                            $hour = (int)$hours;
-                            $minutes = (int)(($hours - $hour) * 60);
-                            $seconds = (int)(((($hours - $hour) * 60) - $minutes) * 60);
+                            $hours = (float) $row['check_out'] * 24;
+                            $hour = (int) $hours;
+                            $minutes = (int) (($hours - $hour) * 60);
+                            $seconds = (int) (((($hours - $hour) * 60) - $minutes) * 60);
                             $row['check_out'] = sprintf('%02d:%02d:%02d', $hour, $minutes, $seconds);
                         }
                     } catch (\Exception $e) {
                         $errors[] = "Row " . ($index + 2) . ": Error processing date/time values - " . $e->getMessage();
                         continue;
                     }
-                    
+
                     // Basic validation
                     $validator = Validator::make($row, [
                         'employee_id' => 'required|exists:employees,id',
@@ -473,7 +474,7 @@ class AttendanceController extends Controller
                         'status' => 'required|in:Present,Absent,Late,On Leave,Half Day,Holiday,Week-Off',
                         'remarks' => 'nullable|string|max:500',
                     ]);
-                    
+
                     if ($validator->fails()) {
                         $errors[] = "Row " . ($index + 2) . ": " . implode(' ', $validator->errors()->all());
                         continue;
@@ -485,7 +486,7 @@ class AttendanceController extends Controller
                         $errors[] = "Row " . ($index + 2) . ": Employee ID {$row['employee_id']} does not belong to your company.";
                         continue;
                     }
-                    
+
                     // Prepare data
                     try {
                         $attendanceData = [
@@ -496,7 +497,7 @@ class AttendanceController extends Controller
                             'check_out' => !empty($row['check_out']) ? $row['check_out'] : null,
                             'remarks' => $row['remarks'] ?? null,
                         ];
-                        
+
                         info('Processed attendance data:', $attendanceData);
                     } catch (\Exception $e) {
                         $errors[] = "Row " . ($index + 2) . ": Error preparing attendance data - " . $e->getMessage();
@@ -506,7 +507,7 @@ class AttendanceController extends Controller
                     $existing = Attendance::where('employee_id', $attendanceData['employee_id'])
                         ->whereDate('date', $attendanceData['date'])
                         ->first();
-                  
+
                     if ($existing) {
                         if ($overwrite) {
                             $existing->update($attendanceData);
@@ -523,7 +524,7 @@ class AttendanceController extends Controller
                     continue;
                 }
             }
-            
+
             // Store import results in session
             $results = [
                 'imported' => $imported,
@@ -542,20 +543,20 @@ class AttendanceController extends Controller
                 $message .= " and skipped {$skipped} records";
             }
             $message .= ".";
-            
+
             if (count($errors) > 0) {
                 $message .= " " . count($errors) . " records had errors.";
-                
+
                 // Store errors in session
                 return redirect()->route('admin.attendance.import-results')
                     ->with('warning', $message)
                     ->with('import_results', $results);
             }
-            
+
             return redirect()->route('admin.attendance.import-results')
                 ->with('success', $message)
                 ->with('import_results', $results);
-                
+
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Error importing file: ' . $e->getMessage());
@@ -570,9 +571,9 @@ class AttendanceController extends Controller
     public function template()
     {
         $fileName = 'attendance-import-template-' . now()->format('Y-m-d') . '.xlsx';
-        
+
         return Excel::download(
-            new AttendanceImportTemplate(), 
+            new AttendanceImportTemplate(),
             $fileName
         );
     }
@@ -597,40 +598,44 @@ class AttendanceController extends Controller
         $companyId = auth()->user()->company_id;
         $today = Carbon::today();
         $todayFormatted = $today->toDateString();
-        
+
         // Get department summary for the current company
-        $departmentSummary = Department::with(['employees' => function($query) use ($todayFormatted, $companyId) {
-            $query->where('employees.company_id', $companyId)
-                ->with(['user', 'designation'])
-                ->with(['attendances' => function($q) use ($todayFormatted) {
-                    $q->whereDate('date', $todayFormatted);
-                }])
-                ->orderBy('name');
-        }])
-        ->where('departments.company_id', $companyId)
-        ->select('departments.id', 'departments.name')
-        ->selectRaw('COUNT(DISTINCT employees.id) as total_employees')
-        ->selectRaw('COUNT(CASE WHEN attendances.status = "Present" THEN 1 END) as present_count')
-        ->selectRaw('COUNT(CASE WHEN attendances.status = "Absent" THEN 1 END) as absent_count')
-        ->selectRaw('COUNT(CASE WHEN attendances.status = "Late" THEN 1 END) as late_count')
-        ->leftJoin('employees', function($join) use ($companyId) {
-            $join->on('departments.id', '=', 'employees.department_id')
-                ->where('employees.company_id', $companyId);
-        })
-        ->leftJoin('attendances', function($join) use ($todayFormatted) {
-            $join->on('employees.id', '=', 'attendances.employee_id')
-                ->where('attendances.date', $todayFormatted);
-        })
-        ->groupBy('departments.id', 'departments.name')
-        ->orderBy('departments.name')
-        ->get();
-        
+        $departmentSummary = Department::with([
+            'employees' => function ($query) use ($todayFormatted, $companyId) {
+                $query->where('employees.company_id', $companyId)
+                    ->with(['user', 'designation'])
+                    ->with([
+                        'attendances' => function ($q) use ($todayFormatted) {
+                            $q->whereDate('date', $todayFormatted);
+                        }
+                    ])
+                    ->orderBy('name');
+            }
+        ])
+            ->where('departments.company_id', $companyId)
+            ->select('departments.id', 'departments.name')
+            ->selectRaw('COUNT(DISTINCT employees.id) as total_employees')
+            ->selectRaw('COUNT(CASE WHEN attendances.status = "Present" THEN 1 END) as present_count')
+            ->selectRaw('COUNT(CASE WHEN attendances.status = "Absent" THEN 1 END) as absent_count')
+            ->selectRaw('COUNT(CASE WHEN attendances.status = "Late" THEN 1 END) as late_count')
+            ->leftJoin('employees', function ($join) use ($companyId) {
+                $join->on('departments.id', '=', 'employees.department_id')
+                    ->where('employees.company_id', $companyId);
+            })
+            ->leftJoin('attendances', function ($join) use ($todayFormatted) {
+                $join->on('employees.id', '=', 'attendances.employee_id')
+                    ->where('attendances.date', $todayFormatted);
+            })
+            ->groupBy('departments.id', 'departments.name')
+            ->orderBy('departments.name')
+            ->get();
+
         // Calculate summary for all departments
         $totalEmployees = $departmentSummary->sum('total_employees');
         $totalPresent = $departmentSummary->sum('present_count');
         $totalAbsent = $departmentSummary->sum('absent_count');
         $totalLate = $departmentSummary->sum('late_count');
-        
+
         return view('admin.attendance.summary', compact(
             'departmentSummary',
             'today',
