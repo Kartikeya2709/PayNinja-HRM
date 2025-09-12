@@ -66,7 +66,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="form-label">Designation</label>
-                                            <p class="form-control-plaintext">{{ $resignation->employee->designation->name ?? 'N/A' }}</p>
+                                            <p class="form-control-plaintext">{{ $resignation->employee->designation->title ?? 'N/A' }}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -146,10 +146,10 @@
                         @if($resignation->remaining_days !== null)
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="alert alert-{{ $resignation->remaining_days > 0 ? 'info' : 'warning' }}">
+                                    <div class="alert alert-{{ ceil($resignation->remaining_days) > 0 ? 'info' : 'warning' }}">
                                         <i class="fas fa-clock"></i>
                                         @if($resignation->remaining_days > 0)
-                                            <strong>{{ $resignation->remaining_days }} days remaining</strong> until last working date.
+                                            <strong>{{ ceil($resignation->remaining_days) }} days remaining</strong> until last working date.
                                         @else
                                             Last working date has passed. Employment has ended.
                                         @endif

@@ -71,7 +71,7 @@
                                             {{ $resignation->status_label }}
                                         </span>
                                         @if($resignation->remaining_days !== null && $resignation->remaining_days > 0)
-                                            <br><small class="text-muted">{{ $resignation->remaining_days }} days remaining</small>
+                                            <br><small class="text-muted">{{ ceil($resignation->remaining_days) }} days remaining</small>
                                         @endif
                                     </td>
                                     <td>
