@@ -19,7 +19,7 @@ class ResignationController extends Controller
     public function index(Request $request)
     {
         $companyId = Auth::user()->company_id;
-        
+
         $query = EmployeeResignation::whereHas('employee', function ($query) use ($companyId) {
             $query->where('company_id', $companyId);
         })->with(['employee.department', 'employee.designation', 'reportingManager', 'approver']);
@@ -49,7 +49,7 @@ class ResignationController extends Controller
 
         $resignations = $query->latest()->paginate(15);
         $departments = Department::where('company_id', $companyId)->get();
-        
+
         // Get summary statistics
         $stats = [
             'total' => EmployeeResignation::whereHas('employee', function ($q) use ($companyId) {
@@ -65,7 +65,9 @@ class ResignationController extends Controller
                 $q->where('company_id', $companyId);
             })->whereMonth('resignation_date', now()->month)->count(),
         ];
-        
+
+
+
         return view('admin.resignations.index', compact('resignations', 'departments', 'stats'));
     }
 
@@ -78,15 +80,15 @@ class ResignationController extends Controller
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $resignation->load([
-            'employee.department', 
-            'employee.designation', 
-            'reportingManager', 
-            'hrAdmin', 
+            'employee.department',
+            'employee.designation',
+            'reportingManager',
+            'hrAdmin',
             'approver'
         ]);
-        
+
         return view('admin.resignations.show', compact('resignation'));
     }
 
@@ -108,7 +110,7 @@ class ResignationController extends Controller
 
         $user = Auth::user();
         $isHR = in_array($user->role, ['admin', 'company_admin']);
-        
+
         $validated = $request->validate([
             'remarks' => 'nullable|string|max:1000',
             'exit_interview_date' => 'nullable|date|after_or_equal:today|before_or_equal:' . $resignation->last_working_date,
@@ -116,7 +118,7 @@ class ResignationController extends Controller
 
         // Determine next status based on current status and user role
         $newStatus = $this->determineNextApprovalStatus($resignation, $user);
-        
+
         $updateData = [
             'status' => $newStatus,
             'approved_by' => $user->id,
@@ -125,20 +127,24 @@ class ResignationController extends Controller
 
         if ($isHR) {
             $updateData['hr_admin_id'] = $user->id;
-            $updateData['hr_remarks'] = $validated['remarks'];
-            if (isset($validated['exit_interview_date'])) {
+            if (!empty($validated['remarks'])) {
+                $updateData['hr_remarks'] = $validated['remarks'];
+            }
+            if (!empty($validated['exit_interview_date'])) {
                 $updateData['exit_interview_date'] = $validated['exit_interview_date'];
             }
         } else {
-            $updateData['manager_remarks'] = $validated['remarks'];
+            if (!empty($validated['remarks'])) {
+                $updateData['manager_remarks'] = $validated['remarks'];
+            }
         }
 
         $resignation->update($updateData);
 
         // TODO: Send notification to employee about approval
 
-        $message = $newStatus === 'approved' 
-            ? 'Resignation request has been fully approved.' 
+        $message = $newStatus === 'approved'
+            ? 'Resignation request has been fully approved.'
             : 'Resignation request has been approved and forwarded for final approval.';
 
         return redirect()->route('admin.resignations.index')
@@ -211,8 +217,8 @@ class ResignationController extends Controller
         $resignation->update([
             'exit_interview_completed' => true,
             'exit_interview_date' => $validated['exit_interview_date'],
-            'hr_remarks' => ($resignation->hr_remarks ? $resignation->hr_remarks . "\n\n" : '') . 
-                           'Exit Interview: ' . ($validated['exit_interview_remarks'] ?? 'Completed on ' . $validated['exit_interview_date'])
+            'hr_remarks' => ($resignation->hr_remarks ? $resignation->hr_remarks . "\n\n" : '') .
+                'Exit Interview: ' . ($validated['exit_interview_remarks'] ?? 'Completed on ' . $validated['exit_interview_date'])
         ]);
 
         return redirect()->back()
@@ -249,8 +255,8 @@ class ResignationController extends Controller
         }
 
         if (isset($validated['handover_remarks'])) {
-            $updateData['manager_remarks'] = ($resignation->manager_remarks ? $resignation->manager_remarks . "\n\n" : '') . 
-                                           'Handover: ' . $validated['handover_remarks'];
+            $updateData['manager_remarks'] = ($resignation->manager_remarks ? $resignation->manager_remarks . "\n\n" : '') .
+                'Handover: ' . $validated['handover_remarks'];
         }
 
         $resignation->update($updateData);
@@ -281,8 +287,8 @@ class ResignationController extends Controller
         $updateData = ['assets_returned' => true];
 
         if (isset($validated['assets_remarks'])) {
-            $updateData['hr_remarks'] = ($resignation->hr_remarks ? $resignation->hr_remarks . "\n\n" : '') . 
-                                       'Assets Return: ' . $validated['assets_remarks'];
+            $updateData['hr_remarks'] = ($resignation->hr_remarks ? $resignation->hr_remarks . "\n\n" : '') .
+                'Assets Return: ' . $validated['assets_remarks'];
         }
 
         $resignation->update($updateData);
@@ -337,7 +343,7 @@ class ResignationController extends Controller
     private function determineNextApprovalStatus(EmployeeResignation $resignation, $user)
     {
         $isHR = in_array($user->role, ['admin', 'company_admin']);
-        
+
         switch ($resignation->status) {
             case 'pending':
                 return $isHR ? 'hr_approved' : 'manager_approved';

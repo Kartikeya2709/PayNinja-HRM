@@ -74,7 +74,7 @@
                                     <div class="alert alert-{{ $resignation->remaining_days > 0 ? 'info' : 'warning' }}">
                                         <i class="fas fa-clock"></i>
                                         @if($resignation->remaining_days > 0)
-                                            <strong>{{ $resignation->remaining_days }} days remaining</strong> until your last working date.
+                                            <strong>{{ ceil($resignation->remaining_days) }} days remaining</strong> until your last working date.
                                         @else
                                             Your last working date has passed. Your employment has ended.
                                         @endif
