@@ -59,10 +59,20 @@
 
     <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
-
+                <!-- Add search input -->
+            <div class="sidebar-search px-4 pt-5">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="sidebar-menu-search" placeholder="Search menu...">
+                    <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
-                <li class="menu-header">Dashboard</li>
+                <li class="menu-header pt-0">Dashboard</li>
                 <li class="{{ Request::is('home') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ url('home') }}">
                         <i class="fas fa-fire"></i>

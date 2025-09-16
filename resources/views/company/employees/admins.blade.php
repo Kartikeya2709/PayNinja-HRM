@@ -1,7 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+<div class="container">
+    <section class="section">
+            <div class="section-header">
+                <h1>Company Admins</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Company Admins</div>
+                </div>
+            </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">

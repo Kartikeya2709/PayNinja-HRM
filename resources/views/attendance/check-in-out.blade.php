@@ -13,7 +13,7 @@
                 </div>
             </div>
 <div class="row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-6 check-in-col">
         <div class="card check-in-text">
             <div class="card-body text-center">
                 <h3 class="mb-4">
@@ -182,6 +182,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

@@ -71,6 +71,7 @@ position:fixed;
      background: #ff9705;
   color: white !important;
   box-shadow: 0 4px 12px rgba(255, 151, 5, 0.6); 
+      margin-bottom: 10px !important;
 }
 
 .sidebar-menu a {
@@ -278,24 +279,16 @@ position:fixed;
 }
 @media (max-width: 880px) {
       .main-content {
-        padding-top: 120px;
+        padding-top: 100px;
     }
     .left-side{
       left:20px;
-    
     }
-    .col-lg-3{
+    .emp-card .col-lg-3{
       width: 100%;
       padding-top: 10px;
     }
-    .col-6{
-      width: 100%; 
-        padding-top: 30px;
-    }
-     .col-4{
-      width: 100%;
-        padding-top: 30px;
-    }
+
 .main-sidebar {
         top: 60px;
     }
@@ -305,9 +298,7 @@ position:fixed;
   .navbar-bg {
     height: 65px;
   }
-  .quick-actions h5{
-    padding-bottom: 0px!important;
-  }
+ 
 #attendanceChart {
     height: 220px !important;
 }
@@ -336,8 +327,8 @@ position:fixed;
 
   
   .main-content {
-    padding: 16px !important;
-    padding-top: 120px !important;
+    padding: 5px !important;
+    padding-top: 90px !important;
     min-height: auto!important;
   }
   
@@ -347,9 +338,7 @@ position:fixed;
     width: calc(100% + 32px);
   }
 
-  .card {
-    margin-bottom: 1rem;
-  }
+ 
 
   .nav-link-user img {
     width: 32px;

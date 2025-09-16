@@ -13,7 +13,7 @@
 
     <div class="card">
         <div class="card-1">
-            <h5 class="card-title mb-0">Reimbursements</h5>
+            <h5 class="card-title margin-bottom mb-0">Reimbursements</h5>
 
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>

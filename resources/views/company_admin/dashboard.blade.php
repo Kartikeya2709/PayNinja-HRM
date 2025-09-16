@@ -100,7 +100,7 @@
         <div class="section-header">
             <h1>Dashboard Overview</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
                 <div class="breadcrumb-item"><a href="">Companies Users</a></div>
             </div>
         </div>
@@ -188,14 +188,16 @@
         <!-- Quick Actions Section -->
         
            
-            <div class="row mt-4">
- <div class="col-6 px-1">
+            <div class="row mt-0 mt-lg-4">
+ <div class="col-6 px-1 emp-dep-row mobile-space">
     <div class="card emp-department p-4">
       <h5 class="mb-3 text-center">Employee Distribution by Department</h5>
+      <div class="emp-dep-chart">
       <canvas id="departmentChart"></canvas>
     </div>
   </div>
-  <div class="col-lg-6 px-1">
+  </div>
+  <div class="col-lg-6 px-1 mobile-space">
          <div class="card emp-calender">
             <div class="card-header">
                 <h5>Calendar</h5>
@@ -262,15 +264,16 @@
                 </div>
             </div>
 </div>
-          <div class="col-4 px-1">
+          <div class="col-4 px-1 mobile-space">
     <div class="card p-4 attendance-height">
       <h5 class="mb-3 attendance-card">Attendance Overview</h5>
       <canvas id="attendanceChart"></canvas>
     </div>
   </div>
+  <div class="col-4 px-1 mobile-space">
 
 
-<div class="col-4 px-1">
+
   <div class="card card-glass new-old-emp">
     <h5 class="mb-4">Employee Movement</h5>
     <!-- New Joinees -->
@@ -302,7 +305,7 @@
  
   <div class="col-lg-6 px-1">
    <div class="card reg-req">
-        <h5 class="text-center">Today's Clock In</h5>
+        <h5 class="text-center">Today's Check In</h5>
         <div class="d-flex justify-content-center">
          <div class="card-body card p-0">
        <div class="table-responsive">
@@ -361,9 +364,9 @@
   </div>
   </div>
   </div>
- <div class="col-lg-6 px-1">
+ <div class="col-lg-6 px-1 mobile-space">
         <div class="card today-not">
-        <h5 class="text-center">Today's Not Clock In</h5>
+        <h5 class="text-center">Today's Not Check In</h5>
          <div class="table-responsive">
         <table class="table table-striped table-hover align-middle">
           <thead class="table-light">
@@ -442,7 +445,7 @@
      
     </div>
   </div>
-  <div class="col-lg-5 px-1">
+  <div class="col-lg-5 px-1 mobile-space">
    <div class="card reg-req">
         <h5 class="text-center">Regularization Requests</h5>
                <div class="d-flex justify-content-center">
@@ -506,8 +509,9 @@
     <h5 class>Upcoming Holidays</h5>
   </div>
   <div class="card-body p-0">
+    <div class="table-responsive">
   <table class="table table-hover table-bordered mb-0">
-    <thead class="table-light">
+    <thead>
       <tr>
         <th>Date</th>
         <th>Day</th>
@@ -544,10 +548,10 @@
     </tbody>
   </table>
 </div>
-
+  </div>
   </div>
     </div>
-    <div class="col-lg-7 px-1">
+    <div class="col-lg-7 px-1 mobile-space">
         <div class="card">
 <div class="card-body">
 <h5 class="text-center fw-bold">Department-wise Employee Count</h5>
@@ -721,11 +725,22 @@ grid: { display: false }
       }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false, // allows flexible height
       scales: {
         y: {
           beginAtZero: true,
           ticks: {
             stepSize: 5
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: {
+            font: {
+              size: window.innerWidth < 600 ? 10 : 14 // smaller text on mobile
+            }
           }
         }
       }

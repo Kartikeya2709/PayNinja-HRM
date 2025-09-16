@@ -6,7 +6,7 @@
         <div class="section-header">
             <h1>Employee Management</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
                 <div class="breadcrumb-item"><a href="">Employee Management</a></div>
             </div>
         </div>
@@ -18,7 +18,7 @@
                     {{-- <a href="{{ route('company.employees.create', ['companyId' => auth()->user()->company_id]) }}" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Create Employee
                     </a> --}}
-                    <a href="{{ route('company-admin.employees.create') }}" class="btn btn-primary d-flex align-items-center">
+                    <a href="{{ route('company-admin.employees.create') }}" class="btn btn-primary d-flex align-items-center justify-content-center">
 
                         <i class="fas fa-plus me-1"></i> Create Employee
                     </a>

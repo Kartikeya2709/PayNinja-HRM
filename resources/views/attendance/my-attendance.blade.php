@@ -132,7 +132,7 @@
 </div>
 
 <!-- Monthly Summary -->
-<div class="row mt-4">
+<div class="row mt-4 month-summary-row">
     <div class="col-8 px-1">
     
         <div class="card">
@@ -252,7 +252,7 @@
 </div>
 
 
-                    <div class="col-md-4 mb-3 px-1">
+                    <div class="col-4 mb-3 px-1 mobile-space">
                         <div class="card">
                             <div class="card-body">
                                 <h6 class="card-title">Attendance Rate</h6>

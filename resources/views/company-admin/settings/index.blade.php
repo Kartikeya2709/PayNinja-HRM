@@ -18,7 +18,7 @@
                         <h5 class="mb-0">Company Settings</h5>
                     </div>
 
-                    <div class="card-body">
+                    <div class="card-body mt-4">
                         @if(session('success'))
                         <div class="alert alert-success">{{ session('success') }}</div>
                         @endif
@@ -117,7 +117,7 @@
                                         @enderror
                                     </div>
 
-                                    <div class="mb-3 text-center">
+                                    <div class="text-center">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-save me-2"></i> Save Changes
                                         </button>
@@ -134,7 +134,7 @@
                                     @csrf
                                     <div class="row mb-4">
                                         <div class="col-12">
-                                            <div class="alert alert-info">
+                                            <div class="employee-id-clr">
                                                 <i class="fas fa-info-circle me-2"></i>
                                                 Employee ID settings can be common for all employment types or specific
                                                 to each type.

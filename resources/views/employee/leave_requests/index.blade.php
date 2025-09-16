@@ -30,7 +30,7 @@ use Carbon\Carbon;
         <div class="mt-4">
             <div class="col-12 px-1">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header btn-center">
                         <h4>Leave Balances</h4>
                     </div>
                     <div class="card-body">
@@ -64,7 +64,7 @@ use Carbon\Carbon;
                 </div>
 
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header btn-center">
                         <h4>Leave Requests</h4>
                     </div>
                     <div class="card-body">

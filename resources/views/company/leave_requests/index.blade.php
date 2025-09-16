@@ -23,7 +23,7 @@
 
                     {{-- Filter Card --}}
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header mb-2 leave-requests">
                             <h5>Filter Leave Requests</h5>
                         </div>
                         <div class="card-body">
@@ -64,7 +64,7 @@
                                            class="form-control" value="{{ request('date_to') }}">
                                 </div>
 
-                                <div class="col-12">
+                                <div class="col-12 mt-2 btn-center">
                                     <button type="submit" class="btn btn-primary">Filter</button>
                                     <a href="{{ route('company.leave-requests.index') }}" class="btn btn-secondary">Reset</a>
                                 </div>

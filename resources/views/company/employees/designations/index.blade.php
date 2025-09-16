@@ -6,7 +6,7 @@
         <div class="section-header">
             <h1>Designations</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
                 <div class="breadcrumb-item"><a href="">Designations</a></div>
             </div>
         </div>
@@ -23,7 +23,7 @@
                 </div>
                 <div class="card-body Designations-table">
                     @if(session('success'))
-                        <div class="alert alert-success">
+                        <div class="alert alert-success mb-2">
                             {{ session('success') }}
                         </div>
                     @endif

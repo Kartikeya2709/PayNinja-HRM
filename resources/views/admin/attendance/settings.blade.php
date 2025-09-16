@@ -50,9 +50,10 @@
                             <div class="card-header bg-light">
                                 <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Office Hours</h6>
                             </div>
+
                             <div class="card-body">
                                 <div class="row start-time">
-                                <div class="row">
+                                <div class="row mb-4">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="office_start_time" class="form-label">Office Start Time</label>
@@ -98,7 +99,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row mb-4">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="work_hours" class="form-label fw-medium">Minimum Work Hours (per day)</label>
@@ -135,7 +136,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row mb-4">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="auto_absent_time" class="form-label">Auto Absent Time</label>
@@ -161,7 +162,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+
                         <!-- End Office Hours Section -->
 
                         <!-- Attendance Settings Section -->
@@ -279,7 +280,7 @@
                             </div>
                             <div class="card-body">
                                 <p class="text-muted mb-3">Select the weekend days for your organization:</p>
-                                <div class="row">
+                                <div class="row mb-2">
                                     @php
                                         $weekendDays = [];
                                         if (isset($settings)) {
@@ -352,6 +353,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 </div>
 @endsection

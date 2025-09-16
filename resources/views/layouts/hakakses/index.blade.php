@@ -1,7 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="section container">
+    <div class="section-header">
+        <h1>User Access Rights</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+            <div class="breadcrumb-item"><a href="#">User Access Rights</a></div>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col-12">
             <div class="card">
@@ -21,7 +28,7 @@
 
                 <div class="card-body">
                     @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <div class="alert alert-success alert-dismissible fade show mb-2" role="alert">
                             {{ session('success') }}
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -30,7 +37,7 @@
                     @endif
 
                     @if (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <div class="alert alert-danger alert-dismissible fade show mb-2" role="alert">
                             {{ session('error') }}
                             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -56,7 +63,7 @@
                                         <td>{{ $user->name }}</td>
                                         <td>{{ $user->email }}</td>
                                         <td>
-                                            <span class="badge badge-{{ $user->role === 'superadmin' ? 'danger' : ($user->role === 'admin' ? 'warning' : 'info') }}">
+                                            <span class="badge badge-{{ $user->role === 'superadmin' ? 'danger' : ($user->role === 'admin' ? 'danger' : 'info') }}">
                                                 {{ ucfirst($user->role) }}
                                             </span>
                                         </td>

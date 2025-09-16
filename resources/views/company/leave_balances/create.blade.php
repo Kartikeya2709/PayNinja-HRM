@@ -3,7 +3,7 @@
 @section('title', 'Allocate Leave Balance')
 
 @section('content')
-<section class="section">
+<section class="section container">
     <div class="section-header">
         <h1>Allocate Leave Balance</h1>
         <div class="section-header-breadcrumb">
@@ -16,14 +16,14 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header mb-3 justify-content-center">
                         <h4>Individual Allocation</h4>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('company.leave-balances.store') }}" method="POST">
                             @csrf
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="employee_id">Employee <span class="text-danger">*</span></label>
                                 <select name="employee_id" 
                                         id="employee_id" 
@@ -43,7 +43,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="leave_type_id">Leave Type <span class="text-danger">*</span></label>
                                 <select name="leave_type_id" 
                                         id="leave_type_id" 
@@ -65,7 +65,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="total_days">Total Days <span class="text-danger">*</span></label>
                                 <input type="number" 
                                        name="total_days" 
@@ -81,7 +81,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="year">Year <span class="text-danger">*</span></label>
                                 <input type="number" 
                                        name="year" 
@@ -97,23 +97,23 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group text-center">
                                 <button type="submit" class="btn btn-primary">Allocate Leave Balance</button>
-                                <a href="{{ route('company.leave-balances.index') }}" class="btn btn-link">Cancel</a>
+                                <a href="{{ route('company.leave-balances.index') }}" class="btn btn-danger">Cancel</a>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
+                <div class="card mt-4">
+                    <div class="card-header justify-content-center mb-3">
                         <h4>Bulk Allocation</h4>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('company.leave-balances.bulk-allocate') }}" method="POST">
                             @csrf
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label>Select Employees <span class="text-danger">*</span></label>
                                 <select name="employee_ids[]" 
                                         class="form-control select2 @error('employee_ids') is-invalid @enderror" 
@@ -132,7 +132,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="bulk_leave_type_id">Leave Type <span class="text-danger">*</span></label>
                                 <select name="leave_type_id" 
                                         id="bulk_leave_type_id" 
@@ -153,7 +153,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="bulk_total_days">Total Days <span class="text-danger">*</span></label>
                                 <input type="number" 
                                        name="total_days" 
@@ -169,7 +169,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="bulk_year">Year <span class="text-danger">*</span></label>
                                 <input type="number" 
                                        name="year" 
@@ -185,7 +185,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group text-center">
                                 <button type="submit" class="btn btn-primary">Bulk Allocate Leave Balance</button>
                             </div>
                         </form>

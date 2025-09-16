@@ -33,17 +33,7 @@
              <div class="sidebar-brand logo">
                 <a href="#"><img alt="image" src="{{ asset('images/rocket-hr-logo.png') }}" width="120px"></a>
             
-            <!-- Add search input -->
-            <div class="sidebar-search px-4">
-                <div class="input-group">
-                    <input type="text" class="form-control" id="sidebar-menu-search" placeholder="Search menu...">
-                    <div class="input-group-append">
-                        <span class="input-group-text">
-                            <i class="fas fa-search"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
+        
 
             <!-- <div class="quick-actions quick-actions-header">
                 <div class="d-grid d-lg-flex gap-2">

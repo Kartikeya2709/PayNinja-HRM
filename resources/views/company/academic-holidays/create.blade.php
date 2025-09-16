@@ -5,18 +5,19 @@
 @endsection
 
 @section('content')
+<div class="section container">
     <div class="section-header">
         <h1>{{ isset($holiday) ? 'Edit Holiday' : 'Create Holiday' }}</h1>
         <div class="section-header-breadcrumb">
             <div class="breadcrumb-item"><a href="{{ route('company.academic-holidays.index') }}">Academic
                     Holidays</a></div>
-            <div class="breadcrumb-item">{{ isset($holiday) ? 'Edit' : 'Create' }}</div>
+            <div class="breadcrumb-item"><a href="#">Create</a></div>
         </div>
     </div>
 
     <div class="section-body">
-        <div class="row">
-            <div class="col-12">
+        <div class="row mt-3">
+            <div class="col-12 mx-auto">
                 <div class="card">
                     <div class="card-body">
                         @if (session('error'))
@@ -46,7 +47,7 @@
                             <div class="form-group row mb-4">
                                 <label for="name" class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Holiday
                                     Name <span class="text-danger">*</span></label>
-                                <div class="col-sm-12 col-md-7">
+                                <div class="col-sm-12 col-md-9">
                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
                                         id="name" name="name" value="{{ old('name', $holiday->name ?? '') }}"
                                         required>
@@ -59,7 +60,7 @@
                             <div class="form-group row mb-4">
                                 <label for="from_date" class="col-form-label text-md-right col-12 col-md-3 col-lg-3">From
                                     Date <span class="text-danger">*</span></label>
-                                <div class="col-sm-12 col-md-7"> <input type="date"
+                                <div class="col-sm-12 col-md-9"> <input type="date"
                                         class="form-control @error('from_date') is-invalid @enderror" id="from_date"
                                         name="from_date"
                                         value="{{ old('from_date', isset($holiday->from_date) && is_object($holiday->from_date) ? $holiday->from_date->format('Y-m-d') : '') }}" />
@@ -71,7 +72,7 @@
                             <div class="form-group row mb-4">
                                 <label for="to_date" class="col-form-label text-md-right col-12 col-md-3 col-lg-3">To Date
                                     <span class="text-danger">*</span></label>
-                                <div class="col-sm-12 col-md-7"> <input type="date"
+                                <div class="col-sm-12 col-md-9"> <input type="date"
                                         class="form-control @error('to_date') is-invalid @enderror" id="to_date"
                                         name="to_date"
                                         value="{{ old('to_date', isset($holiday->to_date) && is_object($holiday->to_date) ? $holiday->to_date->format('Y-m-d') : '') }}" />
@@ -87,7 +88,7 @@
                             <div class="form-group row mb-4">
                                 <label for="description"
                                     class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Description</label>
-                                <div class="col-sm-12 col-md-7">
+                                <div class="col-sm-12 col-md-9">
                                     <textarea class="form-control @error('description') is-invalid @enderror" id="description" name="description"
                                         rows="3">{{ old('description', $holiday->description ?? '') }}</textarea>
                                     @error('description')
@@ -98,7 +99,7 @@
 
                             <div class="form-group row mb-4">
                                 <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3"></label>
-                                <div class="col-sm-12 col-md-7">
+                                <div class="col-sm-12 col-md-9">
                                     <button type="submit"
                                         class="btn btn-primary">{{ isset($holiday) ? 'Update' : 'Create' }}
                                         Holiday</button>
@@ -112,6 +113,7 @@
             </div>
         </div>
     </div>
+</div>
 @endsection
 
 @push('scripts')

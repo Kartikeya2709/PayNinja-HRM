@@ -4,13 +4,25 @@
 
 @section('content')
 <div class="main-content-01">
-    <section class="section">
-        <div class="section-header d-flex justify-content-between align-items-center">
-            <h1>Assigned Company Admins</h1>
+    <div class="section container">
+    <div class="section-header">
+        <h1>Company Admins</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+            <div class="breadcrumb-item"><a href="#">Company Admins</a></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+           
+            <h5>Assigned Company Admins</h5>
             <a href="{{ route('superadmin.assign-company-admin.create') }}" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add Company Admin
             </a>
         </div>
+
         <div class="section-body">
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>

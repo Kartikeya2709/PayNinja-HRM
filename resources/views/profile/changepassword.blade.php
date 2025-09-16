@@ -3,17 +3,17 @@
 @section('title', 'Change Password')
 
 @section('content')
-<div class="main-content-01">
+<div class="main-content-01 container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-lg-6 col-md-10 col-sm-12 profile-form-col">
             <div class="card profile-form">
-                <div class="card-header">{{ __('Change Password') }}</div>
+                <div class="card-header mb-4">{{ __('Change Password') }}</div>
 
                 <div class="card-body">
                     <form method="POST" action="{{ route('profile.password') }}">
                         @csrf
                         @method('PUT')
-                        <div class="form-group row">
+                        <div class="form-group row mb-5">
                             @if (session('status'))
                                 <div class="alert alert-success">
                                     {{ session('status') }}
@@ -31,7 +31,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row mb-5">
                             <label for="new_password" class="col-md-12 col-form-label text-md-right">{{ __('New Password') }}</label>
 
                             <div class="col-md-12">
@@ -44,7 +44,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row mb-5">
                             <label for="new_password_confirmation" class="col-md-12 col-form-label text-md-right">{{ __('Confirm New Password') }}</label>
 
                             <div class="col-md-12">

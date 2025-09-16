@@ -103,7 +103,7 @@
 </script>
 @endpush
 
-<section class="section">
+<section class="section container">
     <div class="section-header">
         <h1>Edit Payroll Configuration for {{ $employee->user->name }}</h1>
     </div>
@@ -155,7 +155,7 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card mt-4">
             <div class="card-header">
                 <h4>Employee Salary Details</h4>
             </div>
@@ -201,7 +201,7 @@
         </div>
 
         <!-- CTC and Salary Update Form -->
-        <div class="card mb-4">
+        <div class="card mt-4">
             <div class="card-header">
                 <h4>Salary Configuration</h4>
             </div>
@@ -243,7 +243,7 @@
         </div>
 
         <!-- Beneficiary Badges Form -->
-        <div class="card">
+        <div class="card mt-4">
             <form action="{{ route('admin.employee-payroll-configurations.update', $employee) }}" method="POST" id="beneficiaryBadgesForm">
                 @csrf
                 @method('PUT')

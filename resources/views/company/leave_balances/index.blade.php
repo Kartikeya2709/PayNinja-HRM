@@ -22,7 +22,7 @@
 
     <div class="section-body">
         <div class="row">
-            <div class="col-12">
+            <div class="col-12 px-0">
                 <div class="card">
                     <div class="card-body">
                         @if(session('success'))
@@ -47,7 +47,7 @@
                             </div>
                         @endif
 
-                        <div class="row mb-4">
+                        <div class="row mb-4 leave-blnc">
                             <div class="col-md-12">
                                 <div class="filter-container bg-light p-3 rounded">
                                     <form action="{{ route('company.leave-balances.index') }}" method="GET" id="filterForm" class="row align-items-end">
@@ -55,7 +55,7 @@
                                             <label for="search">Search</label>
                                             <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}" placeholder="Search by name, email...">
                                         </div>
-                                        <div class="col-md-2 mb-3">
+                                        <div class="col-md-3 mb-3">
                                             <label for="department">Department</label>
                                             <select class="form-control select2" id="department" name="department">
                                                 <option value="">All Departments</option>
@@ -66,7 +66,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-2 mb-3">
+                                        <div class="col-md-3 mb-3">
                                             <label for="leaveType">Leave Type</label>
                                             <select class="form-control select2" id="leaveType" name="leaveType">
                                                 <option value="">All Leave Types</option>
@@ -77,7 +77,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-2 mb-3">
+                                        <div class="col-md-3 mb-3">
                                             <label for="year">Year</label>
                                             <select class="form-control" id="year" name="year">
                                                 <option value="">All Years</option>
@@ -88,7 +88,7 @@
                                                 @endfor
                                             </select>
                                         </div>
-                                        <div class="col-md-2 mb-3">
+                                        <div class="col-md-3 mb-3">
                                             <label for="balanceStatus">Balance Status</label>
                                             <select class="form-control" id="balanceStatus" name="balanceStatus">
                                                 <option value="">All Status</option>
@@ -96,7 +96,7 @@
                                                 <option value="exhausted">Exhausted</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-2 mb-3">
+                                        <div class="col-md-3 mb-3">
                                             <label for="balanceStatus">Balance Status</label>
                                             <select class="form-control" id="balanceStatus" name="balanceStatus">
                                                 <option value="">All Balances</option>

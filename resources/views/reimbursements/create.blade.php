@@ -10,10 +10,10 @@
                     <div class="breadcrumb-item"><a href="">Create Reimbursements</a></div>
                 </div>
             </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mt-3">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header justify-content-center mb-2 margin-bottom">
                     <h5>Create Reimbursement</h5>
                 </div>
                 <div class="card-body">
@@ -60,8 +60,8 @@
                             @enderror
                         </div>
 
-                        <div class="d-flex justify-content-start">
-                            <a href="{{ route('reimbursements.index') }}" class="btn btn-secondary me-2">Cancel</a>
+                        <div class="d-flex justify-content-center">
+                            <a href="{{ route('reimbursements.index') }}" class="btn btn-danger me-2">Cancel</a>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </div>
                     </form>

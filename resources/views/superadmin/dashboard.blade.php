@@ -38,6 +38,7 @@
 
 @section('content')
     <div class="main-content-01">
+        <div class="container">
         <section class="section">
             <div class="section-header">
                 <h1>Dashboard</h1>
@@ -49,9 +50,13 @@
             </div>
 
             <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1 card-hover">
-                        <div class="card-icon text-white">
+                <div class="col-lg-5 px-1">
+                      
+                          <div class="col-lg-12">
+                            <div class="quick-actions card">
+           <div class="action-icon sup-quick-action">
+            
+                        <div class="card-icon">
                             <i class="fas fa-building"></i>
                         </div>
                         <div class="card-wrap">
@@ -63,10 +68,12 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1 card-hover">
-                        <div class="card-icon text-white">
+                
+                <div class="col-lg-12">
+                     <div class="quick-actions card">
+           <div class="action-icon sup-quick-action">
+            
+                        <div class="card-icon">
                             <i class="fas fa-users"></i>
                         </div>
                         <div class="card-wrap">
@@ -79,9 +86,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1 card-hover">
-                        <div class="card-icon text-white">
+               <div class="col-lg-12">
+                     <div class="quick-actions card">
+           <div class="action-icon sup-quick-action">
+                        <div class="card-icon">
                             <i class="fas fa-sitemap"></i>
                         </div>
                         <div class="card-wrap">
@@ -94,9 +102,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1 card-hover">
-                        <div class="card-icon text-white">
+                <div class="col-lg-12">
+                     <div class="quick-actions card">
+           <div class="action-icon sup-quick-action">
+                        <div class="card-icon">
                             <i class="fas fa-user-shield"></i>
                         </div>
                         <div class="card-wrap">
@@ -111,10 +120,11 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1 card-hover">
-                        <div class="card-icon text-white">
+          
+                <div class="col-lg-12">
+                     <div class="quick-actions card">
+           <div class="action-icon sup-quick-action">
+                        <div class="card-icon">
                             <i class="fas fa-user-cog"></i>
                         </div>
                         <div class="card-wrap">
@@ -127,9 +137,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                    <div class="card card-statistic-1 card-hover">
-                        <div class="card-icon text-white">
+                <div class="col-lg-12">
+                     <div class="quick-actions card">
+           <div class="action-icon sup-quick-action">
+                        <div class="card-icon">
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="card-wrap">
@@ -144,11 +155,29 @@
                 </div>
                 {{-- Add more cards here for other roles if needed --}}
             </div>
-
-            <div class="row">
-                <div class="col-md-6">
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    </div>
+             <div class="col-lg-7 px-1 mobile-space">
+        <div class="card emp-calender">
+            <div class="card-header">
+                <h5>Calendar</h5>
+            </div>
+            <div class="card-body">
+                <div id="employeeCalendar"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+   
+  
+<div class="row mt-4 sup-desh-row">
+                <div class="col-md-6 px-1">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header justify-content-center">
                             <h4>User Roles Distribution</h4>
                         </div>
                         <div class="card-body">
@@ -156,9 +185,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
+                <div class="col-md-6 px-1 mobile-space">
+                    <div class="card company-admins">
+                        <div class="card-header justify-content-center">
                             <h4>Companies and Admins</h4>
                         </div>
                         <div class="card-body card-body-box">
@@ -191,48 +220,68 @@
 
         </section>
     </div>
+    </div>
 @endsection
 
 @push('scripts')
     <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> {{-- Added Chart.js CDN --}}
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 
     <!-- Page Specific JS File -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctx = document.getElementById('userRolesPieChart').getContext('2d');
-            var userRolesPieChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: ['Super Admins', 'Admins', 'Regular Users'],
-                    datasets: [{
-                        label: 'User Roles',
-                        data: [
-                            {{ $usersByRole['superadmin'] ?? 0 }},
-                            {{ $usersByRole['admin'] ?? 0 }},
-                            {{ $usersByRole['user'] ?? ($usersByRole['employee'] ?? 0) }}
-                        ],
-                        backgroundColor: [
-                            'rgba(54, 162, 235, 0.7)', // Blue
-                            'rgba(255, 206, 86, 0.7)', // Yellow
-                            'rgba(75, 192, 192, 0.7)' // Green
-                        ],
-                        borderColor: [
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('userRolesPieChart').getContext('2d');
+        var userRolesPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Super Admins', 'Admins', 'Regular Users'],
+                datasets: [{
+                    label: 'User Roles',
+                    data: [
+                        {{ $usersByRole['superadmin'] ?? 0 }},
+                        {{ $usersByRole['admin'] ?? 0 }},
+                        {{ $usersByRole['user'] ?? ($usersByRole['employee'] ?? 0) }}
+                    ],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)', // Blue
+                        'rgba(255, 206, 86, 0.7)', // Yellow
+                        'rgba(75, 192, 192, 0.7)' // Green
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
                     legend: {
-                        position: 'top',
+                        position: 'bottom', 
                     }
                 }
-            });
+            }
         });
-    </script>
+    });
+</script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('employeeCalendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'dayGridMonth',
+    height: 'auto',
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'dayGridMonth,timeGridWeek,timeGridDay'
+    },
+   
+  });
+  calendar.render();
+});
+</script>
 @endpush

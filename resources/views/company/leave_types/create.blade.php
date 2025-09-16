@@ -3,7 +3,7 @@
 @section('title', 'Create Leave Type')
 
 @section('content')
-<section class="section">
+<section class="section container">
     <div class="section-header">
         <h1>Create Leave Type</h1>
         <div class="section-header-breadcrumb">
@@ -14,13 +14,13 @@
 
     <div class="section-body">
         <div class="row">
-            <div class="col-12">
+            <div class="col-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
                         <form action="{{ route('company.leave-types.store') }}" method="POST">
                             @csrf
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="name">Name <span class="text-danger">*</span></label>
                                 <input type="text" 
                                        name="name" 
@@ -35,7 +35,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="description">Description</label>
                                 <textarea name="description" 
                                           id="description" 
@@ -48,7 +48,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="default_days">Default Days <span class="text-danger">*</span></label>
                                 <input type="number" 
                                        name="default_days" 
@@ -64,7 +64,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" 
                                            name="requires_attachment" 
@@ -78,7 +78,7 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" 
                                            name="is_active" 
@@ -92,9 +92,9 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group text-center">
                                 <button type="submit" class="btn btn-primary">Create Leave Type</button>
-                                <a href="{{ route('company.leave-types.index') }}" class="btn btn-link">Cancel</a>
+                                <a href="{{ route('company.leave-types.index') }}" class="btn btn-danger">Cancel</a>
                             </div>
                         </form>
                     </div>

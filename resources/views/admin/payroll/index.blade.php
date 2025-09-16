@@ -44,7 +44,7 @@
             </div>
         </div>
     <div class="card">
-        <div class="card-header">
+        <div class="card-header margin-bottom">
             <h3 class="card-title">List of Generated Payrolls</h3>
             <div class="card-tools">
                 <a href="{{ route('admin.payroll.create') }}" class="btn btn-primary btn-sm">
@@ -61,7 +61,7 @@
     @endif
 
     <div class="card shadow">
-        <div class="card-header py-3">
+        <div class="card-header py-3 justify-content-center mb-2">
             <h5 class="m-0">All Payrolls</h5>
         </div>
         <div class="card-body">

@@ -9,14 +9,14 @@
        <div class="section-header">
         <h1 class="mb-0">Generate New Payroll</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('home') }}"></a>Dashboard</div>
+            <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
             <div class="breadcrumb-item active"> <a href="">Generate New Payroll</a></div>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card-header d-flex justify-content-between align-items-center btn-center">
                     <h5 class="mb-0">Generate New Payroll</h5>
                     <a href="{{ route('admin.payroll.index') }}" class="btn btn-secondary btn-sm">Back to Payrolls</a>
                 </div>
@@ -92,7 +92,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="mt-4">
+                                    <div class="mt-4 text-center">
                                         <button type="submit" class="btn btn-primary">Generate Payroll</button>
                                         <a href="{{ route('admin.payroll.index') }}" class="btn btn-link btn-danger">Cancel</a>
                                     </div>
@@ -101,7 +101,7 @@
 
                             <!-- All Employees Tab -->
                             <div class="tab-pane fade" id="bulk" role="tabpanel" aria-labelledby="bulk-tab">
-                                <div class="alert alert-info">
+                                <div class="alert alert-info mb-3">
                                     <i class="fas fa-info-circle me-2"></i>
                                     This will generate payroll for all active employees in your company for the specified pay period.
                                 </div>
@@ -143,7 +143,7 @@
                                         This action will process payroll for all active employees. It may take several minutes to complete.
                                     </div>
 
-                                    <div class="mt-4">
+                                    <div class="mt-4 text-center">
                                         <button type="submit" class="btn btn-primary" id="process-bulk-payroll">
                                             <span class="spinner-border spinner-border-sm d-none me-1" role="status" aria-hidden="true"></span>
                                             Generate Payroll for All Employees

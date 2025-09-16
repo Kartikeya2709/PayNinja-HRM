@@ -6,7 +6,7 @@
        <div class="section-header">
         <h1 class="mb-0">Manage Shift</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('home') }}"></a>Dashboard</div>
+            <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
             <div class="breadcrumb-item active"> <a href="">Manage Shift</a></div>
         </div>
     </div>

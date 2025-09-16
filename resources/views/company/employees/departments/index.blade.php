@@ -8,7 +8,7 @@
         <div class="section-header">
             <h1>Manage Departments</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
                 <div class="breadcrumb-item"><a href="">Manage Departments</a></div>
             </div>
         </div>
@@ -28,7 +28,7 @@
                 </div>
                 <div class="card-body">
                     @if (session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
+                        <div class="alert alert-success mb-2">{{ session('success') }}</div>
                     @endif
 
                     <div class="table-responsive">
@@ -62,7 +62,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="text-center">No departments found.</td>
+                                        <td colspan="4" class="text-center mb-2">No departments found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

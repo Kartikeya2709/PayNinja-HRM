@@ -14,7 +14,7 @@
             </div>
 <div class="row">
     <!-- Today's Status Card -->
-    <div class="col-md-4 px-1">
+    <div class="col-md-4 px-1 tab-width">
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Today's Status</h5>
@@ -55,7 +55,7 @@
     </div>
 
     <!-- This Week's Summary -->
-    <div class="col-md-8 px-1">
+    <div class="col-md-8 px-1 mobile-space">
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">This Week's Summary</h5>

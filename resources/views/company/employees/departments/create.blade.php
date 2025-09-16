@@ -3,21 +3,26 @@
 @section('title', 'Create Department')
 
 @section('content')
-<div class="section-header">
-    <h1>Create Department</h1>
-</div>
+<div class="section container">
+     <div class="section-header">
+            <h1>Create Department</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="#">center Department</a></div>
+            </div>
+        </div>
 
 <div class="section-body">
     <div class="row">
-        <div class="col-12">
+        <div class="col-8 mx-auto">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header justify-content-center mb-2">
                     <h3 class="card-title">Create New Department</h3>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('company.departments.store', ['companyId' => Auth::user()->company_id]) }}" method="POST">
                         @csrf
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="name">Name</label>
                             <input type="text" 
                                 class="form-control @error('name') is-invalid @enderror" 
@@ -46,9 +51,9 @@
                             @enderror
                         </div>
 
-                        <div class="form-group mt-4">
+                        <div class="form-group mt-4 text-center">
                             <button type="submit" class="btn btn-primary">Create Department</button>
-                            <a href="{{ route('company.departments.index', ['companyId' => Auth::user()->company_id]) }}" class="btn btn-secondary">Cancel</a>
+                            <a href="{{ route('company.departments.index', ['companyId' => Auth::user()->company_id]) }}" class="btn btn-danger">Cancel</a>
                         </div>
                     </form>
                 </div>

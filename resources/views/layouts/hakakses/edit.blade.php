@@ -1,11 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<div class="section container">
+    <div class="section-header">
+        <h1>Edit User</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+            <div class="breadcrumb-item"><a href="#">Edit User</a></div>
+        </div>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header justify-content-center">
                     <h4>Edit User Role - {{ $user->name }}</h4>
                 </div>
 
@@ -24,27 +31,28 @@
                         @csrf
                         @method('PUT')
 
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="name">Name</label>
                             <input type="text" class="form-control" value="{{ $user->name }}" readonly>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="email">Email</label>
                             <input type="email" class="form-control" value="{{ $user->email }}" readonly>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="role">Role</label>
                             <select name="role" id="role" class="form-control" required>
-                                <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Super Admin</option>
+                                <!-- <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Super Admin</option> -->
+                                 <option value="company_admin" {{ $user->role === 'company_admin' ? 'selected' : '' }}>Company Admin</option>
                                 <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                 <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
                                 <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>
                             </select>
                         </div>
 
-                        <div class="form-group mb-0">
+                        <div class="form-group mb-0 text-center">
                             <button type="submit" class="btn btn-primary">Update Role</button>
                             <a href="{{ route('hakakses.index') }}" class="btn btn-secondary">Cancel</a>
                         </div>

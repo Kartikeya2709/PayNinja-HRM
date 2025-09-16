@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="main-content-01">
-    <section class="section">
+    <section class="section container">
         <div class="section-header">
             <h1>Manage Companies and Users</h1>
             <div class="section-header-breadcrumb">
@@ -15,7 +15,7 @@
 
         <div class="section-body">
             <h2 class="section-title">Companies</h2>
-            <p class="section-lead">You can manage all companies and their admins here.</p>
+            <p class="section-lead mt-2">You can manage all companies and their admins here.</p>
 
             @if (session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
@@ -69,7 +69,7 @@
             </div>
 
             <h2 class="section-title mt-5">Admins & Super Admins</h2>
-            <p class="section-lead">Below is the list of all Admins and Super Admins.</p>
+            <p class="section-lead mt-2">Below is the list of all Admins and Super Admins.</p>
 
             <div class="card">
                 <div class="card-header">

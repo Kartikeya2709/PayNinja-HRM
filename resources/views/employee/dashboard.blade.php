@@ -64,7 +64,7 @@
             </div>
 </div>
 
-            <div class="col-lg-3 px-1">
+            <div class="col-lg-3 px-1 mobile-space">
                 <div class="card income-breakdown">
                 <div class="chart-container">
     <h5>Income Breakdown</h5>
@@ -74,7 +74,7 @@
 
 </div>
 </div>
- <div class="col-lg-6 px-1">
+ <div class="col-lg-6 px-1 mobile-space">
         <div class="card emp-calender">
             <div class="card-header">
                 <h5>Employee Calendar</h5>
@@ -146,12 +146,7 @@
                                 </div>
                             </div>
                         </div>
-
-                
-
-                
-                  
-                        <div class="card emp-dash-h4">
+              <div class="card emp-dash-h4">
                             <h5>Leave Balance</h5>
                         </div>
                         <div class="card-body emp-dashboard">
@@ -172,10 +167,12 @@
                         </div>
                     </div>
 </div>
-                    <div class="col-lg-6 px-1 monthly-leave">
+                    <div class="col-lg-6 px-1 monthly-leave mobile-space">
                          <div class="card">
                             <h5>Monthly Leave Summary</h5>
-                            <canvas id="leaveChart"></canvas>
+                            <div class="leave-chart">
+  <canvas id="leaveChart"></canvas>
+</div>
                 </div>
             </div>
         </div>
@@ -191,19 +188,20 @@
 
      
       <div class="event-card">
-          <h6>Riya’s Birthday Celebration</h6>
-          <p>25th August 2025 at 4:00 PM </p>
+          <h6>Kartikeya Birthday Celebration</h6>
+          <p>27th August 2025</p>
       </div>
   </div>
 </div>
 </div>
-                <div class="col-lg-6 px-1">
+                <div class="col-lg-6 px-1 mobile-space">
    <div class="card holiday-table">
   <div class="card-header">
     <h5 class>Upcoming Holidays</h5>
   </div>
-  <div class="card-body p-0">
-  <table class="table table-hover table-bordered mb-0">
+  <div class="card-body card p-0">
+  <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
     <thead class="table-light">
       <tr>
         <th>Date</th>
@@ -241,7 +239,7 @@
     </tbody>
   </table>
 </div>
-
+</div>
   </div>
 </div>
 
@@ -250,11 +248,12 @@
             <div class="col-lg-8 px-1 cash-dep">
                 <div class="card">
                             <h5>Attendance summary</h5>
+                            <div class="attendance-chart">
             <canvas id="attendanceChart"></canvas>
-
 </div>
 </div>
- <div class="col-lg-4 px-1 cash-dep">
+</div>
+ <div class="col-lg-4 px-1 cash-dep mobile-space">
                 <div class="card leave">
                             <h5>Leave Taken vs Remaining</h5>
              <canvas id="leaveBalanceChart"></canvas>
@@ -426,97 +425,98 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Leave Chart (Bar)
     const leaveCtx = document.getElementById('leaveChart').getContext('2d');
-    new Chart(leaveCtx, {
-      type: 'bar',
-      data: {
-        labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-        datasets: [{
-          label: 'Leaves Taken',
-          data: [3,5,2,6,4,7,5,2,3,6,4,8],
-          backgroundColor: [
-            '#003f5c','#ff9705','#88d498','#845ec2','#00c9a7',
-            '#c34a36','#2cb6e2','#b9314f','#8bc34a','#6a4c93',
-            '#29b6f6','#ffb300'
-          ],
-          borderRadius: 8
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } }
-      }
-    });
-
+new Chart(leaveCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+    datasets: [{
+      label: 'Leaves Taken',
+      data: [3,5,2,6,4,7,5,2,3,6,4,8],
+      backgroundColor: [
+        '#003f5c','#ff9705','#88d498','#845ec2','#00c9a7',
+        '#c34a36','#2cb6e2','#b9314f','#8bc34a','#6a4c93',
+        '#29b6f6','#ffb300'
+      ],
+      borderRadius: 8
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,  
+    plugins: { legend: { display: false } }
+  }
+});
   
   // Attendance Summary (Line Chart with 4 metrics)
-  const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
-  new Chart(attendanceCtx, {
-    type: 'line',
-    data: {
-      labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'], // Months
-      datasets: [
-        {
-          label: 'Present',
-          data: [20, 22, 23, 21, 24, 22, 25, 26], // Example values
-          borderColor: '#22c55e',
-          backgroundColor: 'rgba(34,197,94,0.2)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: '#22c55e',
-          pointRadius: 4
-        },
-        {
-          label: 'Absent',
-          data: [2, 3, 1, 2, 1, 3, 2, 1],
-          borderColor: '#ef4444',
-          backgroundColor: 'rgba(239,68,68,0.2)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: '#ef4444',
-          pointRadius: 4
-        },
-        {
-          label: 'Late',
-          data: [1, 2, 2, 1, 3, 2, 1, 2],
-          borderColor: '#3b82f6',
-          backgroundColor: 'rgba(59,130,246,0.2)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: '#3b82f6',
-          pointRadius: 4
-        },
-        {
-          label: 'On Leave',
-          data: [1, 1, 2, 1, 2, 1, 2, 1],
-          borderColor: '#eab308',
-          backgroundColor: 'rgba(234,179,8,0.2)',
-          borderWidth: 2,
-          fill: true,
-          tension: 0.4,
-          pointBackgroundColor: '#eab308',
-          pointRadius: 4
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { 
-        legend: { position: 'bottom' },
-        title: { display: true, text: 'Monthly Attendance Trend (2025)' }
+const attendanceCtx = document.getElementById('attendanceChart').getContext('2d');
+new Chart(attendanceCtx, {
+  type: 'line',
+  data: {
+    labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'], 
+    datasets: [
+      {
+        label: 'Present',
+        data: [20, 22, 23, 21, 24, 22, 25, 26],
+        borderColor: '#22c55e',
+        backgroundColor: 'rgba(34,197,94,0.2)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#22c55e',
+        pointRadius: 4
       },
-      scales: {
-        x: { title: { display: true, text: 'Month' } },
-        y: {
-          title: { display: true, text: 'Number of Days' },
-          beginAtZero: true,
-          suggestedMax: 30
-        }
+      {
+        label: 'Absent',
+        data: [2, 3, 1, 2, 1, 3, 2, 1],
+        borderColor: '#ef4444',
+        backgroundColor: 'rgba(239,68,68,0.2)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#ef4444',
+        pointRadius: 4
+      },
+      {
+        label: 'Late',
+        data: [1, 2, 2, 1, 3, 2, 1, 2],
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.2)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#3b82f6',
+        pointRadius: 4
+      },
+      {
+        label: 'On Leave',
+        data: [1, 1, 2, 1, 2, 1, 2, 1],
+        borderColor: '#eab308',
+        backgroundColor: 'rgba(234,179,8,0.2)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+        pointBackgroundColor: '#eab308',
+        pointRadius: 4
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false, 
+    plugins: { 
+      legend: { position: 'bottom' },
+      title: { display: true, text: 'Monthly Attendance Trend (2025)' }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Month' } },
+      y: {
+        title: { display: true, text: 'Number of Days' },
+        beginAtZero: true,
+        suggestedMax: 30
       }
     }
-  });
+  }
+});
 
   </script>
 

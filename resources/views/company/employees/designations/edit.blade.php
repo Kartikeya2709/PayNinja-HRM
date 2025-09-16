@@ -1,11 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
+<div class="section container">
+     <div class="section-header">
+            <h1>Edit Designation</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="#">Edit Designation</a></div>
+            </div>
+        </div>
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header justify-content-center mb-2">
                     <h3 class="card-title">Edit Designation</h3>
                 </div>
                 <div class="card-body">
@@ -37,9 +44,9 @@
                             @enderror
                         </div>
 
-                        <div class="form-group mt-4">
+                        <div class="form-group mt-4 text-center">
                             <button type="submit" class="btn btn-primary">Update Designation</button>
-                            <a href="{{ route('company.designations.index') }}" class="btn btn-secondary">Cancel</a>
+                            <a href="{{ route('company.designations.index') }}" class="btn btn-danger">Cancel</a>
                         </div>
                     </form>
                 </div>

@@ -1,15 +1,22 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-10">
+<div class="section container">
+     <div class="section-header">
+            <h1>Employee Details</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="#">Employee Details</a></div>
+            </div>
+        </div>
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header mb-4 justify-content-center">
                     <h5 class="mb-0">View Employee Details</h5>
                 </div>
                 <div class="card-body">
-                    <ul class="nav nav-tabs" id="employeeTab" role="tablist">
+                    <ul class="nav nav-tabs justify-content-center" id="employeeTab" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="basic-tab" data-bs-toggle="tab" data-bs-target="#basic" type="button" role="tab" aria-controls="basic" aria-selected="true">Basic Information</button>
                         </li>
@@ -136,20 +143,20 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Bank Name</label>
                                     <input type="text" class="form-control" value="{{ $employee->currentSalary->bank_name ?? '' }}" readonly>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Account Number</label>
                                     <input type="text" class="form-control" value="{{ $employee->currentSalary->account_number ?? '' }}" readonly>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">IFSC Code</label>
                                     <input type="text" class="form-control text-uppercase" value="{{ $employee->currentSalary->ifsc_code ?? '' }}" readonly>
                                 </div>
-                            </div>
-                            <div class="row">
+                           
+                           
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">PAN Card Number</label>
                                     <input type="text" class="form-control text-uppercase" value="{{ $employee->currentSalary->pan_number ?? '' }}" readonly>
@@ -202,15 +209,15 @@
                         <!-- Other Details Tab -->
                         <div class="tab-pane fade" id="other" role="tabpanel" aria-labelledby="other-tab">
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Emergency Contact</label>
                                     <input type="text" class="form-control" value="{{ $employee->emergency_contact }}" readonly>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Emergency Contact Relation</label>
                                     <input type="text" class="form-control" value="{{ $employee->emergency_contact_relation }}" readonly>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-6 mb-3">
                                     <label class="form-label">Emergency Contact Name</label>
                                     <input type="text" class="form-control" value="{{ $employee->emergency_contact_name }}" readonly>
                                 </div>
@@ -218,12 +225,12 @@
                                     <label class="form-label">Blood Group</label>
                                     <input type="text" class="form-control" value="{{ $employee->blood_group }}" readonly>
                                 </div>
-                            </div>
-                            <div class="mb-3">
+                            
+                            <div class="mb-6">
                                 <label class="form-label">Nominee Details (For PF/ESIC)</label>
                                 <textarea class="form-control" rows="2" readonly>{{ $employee->nominee_details }}</textarea>
                             </div>
-                            <div class="d-flex justify-content-between mt-4">
+                            <div class="d-flex justify-content-center mt-4">
                                 <a href="{{ route('company-admin.employees.index') }}" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left me-1"></i> Back to List
                                 </a>
@@ -234,6 +241,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 @endsection

@@ -13,7 +13,7 @@
                 </div>
             </div>
 <section class="card">
-    <div class="card-1">
+    <div class="card-1 card-header">
         <h5 class="mb-0">Leave Types</h5>
         <div class="section-header-button">
             <a href="{{ route('company.leave-types.create') }}" class="btn btn-primary">Add New Leave Type</a>

@@ -17,7 +17,7 @@
         <div class="row">
             <div class="col-12 px-1">
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header btn-center">
                         <h4>Leave Balances</h4>
                     </div>
                     <div class="card-body">
@@ -51,14 +51,14 @@
                 </div>
 
                 <div class="card mt-4">
-                    <div class="card-header">
+                    <div class="card-header justify-content-center mb-3 btn-center margin-bottom">
                         <h4>Leave Request Form</h4>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('employee.leave-requests.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="leave_type_id">Leave Type <span class="text-danger">*</span></label>
                                 <select name="leave_type_id" 
                                         id="leave_type_id" 
@@ -80,7 +80,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="start_date">Start Date <span class="text-danger">*</span></label>
                                 <input type="date" 
                                        name="start_date" 
@@ -96,7 +96,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="end_date">End Date <span class="text-danger">*</span></label>
                                 <input type="date" 
                                        name="end_date" 
@@ -112,7 +112,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="reason">Reason <span class="text-danger">*</span></label>
                                 <textarea name="reason" 
                                           id="reason" 
@@ -126,7 +126,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group" id="attachmentGroup" style="display: none;">
+                            <div class="form-group mb-4" id="attachmentGroup" style="display: none;">
                                 <label for="attachment">Attachment 
                                     <span class="text-danger">*</span>
                                     <small class="text-muted">(Required for this leave type)</small>
@@ -143,7 +143,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group text-center">
                                 <button type="submit" class="btn btn-primary">Submit Leave Request</button>
                                 <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-link btn-danger">Cancel</a>
                             </div>

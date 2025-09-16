@@ -3,72 +3,88 @@
 @section('title', 'Attendance Settings - View')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
+<div class="section container">
+     <div class="section-header">
+            <h1>Attendance</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="#">Attendance</a></div>
+            </div>
+        </div>
+    <div class="row attendance-setting">
         <div class="col-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
+           
+                <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center px-2 py-2">
                     <h5 class="card-title mb-0">Attendance Settings</h5>
                     <a href="{{ route('admin.attendance.settings') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-edit me-1"></i> Edit Settings
                     </a>
                 </div>
+</div>
                 <div class="card-body">
                     @if($settings)
-                        <div class="row">
-                            <!-- Office Timings -->
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="card-header bg-light">
-                                        <h6 class="mb-0">Office Timings</h6>
-                                    </div>
-                                    <div class="card-body">
-                                        <dl class="row mb-0">
-                                            <dt class="col-sm-5">Office Start Time:</dt>
-                                            <dd class="col-sm-7">
-                                                @if($settings->office_start_time)
-                                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->office_start_time)->format('h:i A') }}
-                                                @else
-                                                    <span class="text-muted">Not set</span>
-                                                @endif
-                                            </dd>
-                                            
-                                            <dt class="col-sm-5">Office End Time:</dt>
-                                            <dd class="col-sm-7">
-                                                @if($settings->office_end_time)
-                                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->office_end_time)->format('h:i A') }}
-                                                @else
-                                                    <span class="text-muted">Not set</span>
-                                                @endif
-                                            </dd>
-                                            
-                                            <dt class="col-sm-5">Grace Period:</dt>
-                                            <dd class="col-sm-7">
-                                                @if($settings->grace_period)
-                                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->grace_period)->format('h:i A') }}
-                                                @else
-                                                    <span class="text-muted">Not set</span>
-                                                @endif
-                                            </dd>
-                                            
-                                            <dt class="col-sm-5">Work Hours:</dt>
-                                            <dd class="col-sm-7">{{ $settings->work_hours ?? 'Not set' }} hours</dd>
-                                            
-                                            <dt class="col-sm-5">Auto Mark Absent:</dt>
-                                            <dd class="col-sm-7">
-                                                @if($settings->auto_absent_time)
-                                                    {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->auto_absent_time)->format('h:i A') }}
-                                                @else
-                                                    <span class="text-muted">Disabled</span>
-                                                @endif
-                                            </dd>
-                                        </dl>
-                                    </div>
-                                </div>
-                            </div>
-                            
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header bg-light">
+            <h6 class="mb-0">Office Timings</h6>
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-bordered mb-0">
+                <tbody>
+                    <tr>
+                        <th style="width: 40%;">Office Start Time</th>
+                        <td>
+                            @if($settings->office_start_time)
+                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->office_start_time)->format('h:i A') }}
+                            @else
+                                <span class="text-muted">Not set</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Office End Time</th>
+                        <td>
+                            @if($settings->office_end_time)
+                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->office_end_time)->format('h:i A') }}
+                            @else
+                                <span class="text-muted">Not set</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Grace Period</th>
+                        <td>
+                            @if($settings->grace_period)
+                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->grace_period)->format('h:i A') }}
+                            @else
+                                <span class="text-muted">Not set</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Work Hours</th>
+                        <td>{{ $settings->work_hours ?? 'Not set' }} hours</td>
+                    </tr>
+                    <tr>
+                        <th>Auto Mark Absent</th>
+                        <td>
+                            @if($settings->auto_absent_time)
+                                {{ \Carbon\Carbon::createFromFormat('H:i:s', $settings->auto_absent_time)->format('h:i A') }}
+                            @else
+                                <span class="text-muted">Disabled</span>
+                            @endif
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
                             <!-- Location Settings -->
-                            <div class="col-md-6">
+                            <div class="col-md-12 mt-4">
                                 <div class="card">
                                     <div class="card-header bg-light">
                                         <h6 class="mb-0">Location Settings</h6>

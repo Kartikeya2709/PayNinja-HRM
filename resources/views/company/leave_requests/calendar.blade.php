@@ -3,138 +3,97 @@
 @section('title', 'Leave Calendar')
 
 @section('css')
+<!-- FullCalendar CSS -->
 <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+
+<!-- Font Awesome for arrows -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+
 <style>
+/* Calendar Layout */
 .fc {
     max-width: 100%;
     margin: 0 auto;
 }
 
+/* Header Toolbar - single line */
 .fc .fc-toolbar.fc-header-toolbar {
-    margin-bottom: 1.5em;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important; /* no line breaks */
+    gap: 10px !important;
+    margin-bottom: 1.2rem !important;
 }
 
-.fc .fc-button-primary {
-    background-color: #6777ef;
-    border-color: #6777ef;
+/* Buttons - Glassy Style */
+.fc .fc-button {
+    background: rgba(103, 119, 239, 0.9) !important;
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    color: #fff !important;
+    padding: 6px 14px !important;
+    border-radius: 8px !important;
+    margin: 0 3px !important;
+    font-size: 14px !important;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+.fc .fc-button:hover {
+    background: rgba(90, 103, 216, 1) !important;
+    transform: translateY(-1px);
+}
+.fc .fc-button:disabled {
+    background: rgba(149, 160, 244, 0.6) !important;
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
 }
 
-.fc .fc-button-primary:hover {
-    background-color: #5a67d8;
-    border-color: #5a67d8;
+/* Title Styling */
+.fc .fc-toolbar-title {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: #222 !important;
+    margin: 0 10px;
 }
 
-.fc .fc-button-primary:disabled {
-    background-color: #95a0f4;
-    border-color: #95a0f4;
-}
+/* Events */
+.fc-event { cursor: pointer; border-radius: 3px; padding: 2px 4px; }
+.fc-event-pending { background-color: #ffc107; color: #000; }
+.fc-event-approved { background-color: #28a745; color: #fff; }
+.fc-event-rejected { background-color: #dc3545; color: #fff; }
+.fc-event-cancelled { background-color: #6c757d; color: #fff; }
 
-.fc-event {
-    cursor: pointer;
-    padding: 2px 4px;
-    margin: 1px 0;
-    border-radius: 3px;
-}
-
-.fc-event-pending { 
-    background-color: #ffc107; 
-    border-color: #ffc107; 
-    color: #000;
-}
-
-.fc-event-approved { 
-    background-color: #28a745; 
-    border-color: #28a745;
-    color: #fff;
-}
-
-.fc-event-rejected { 
-    background-color: #dc3545; 
-    border-color: #dc3545;
-    color: #fff;
-}
-
-.fc-event-cancelled { 
-    background-color: #6c757d; 
-    border-color: #6c757d;
-    color: #fff;
-}
-
+/* Legend */
 .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: #f4f6f9;
-    border-radius: 4px;
+    display: flex; flex-wrap: wrap; gap: 1rem;
+    margin-bottom: 1.5rem; padding: 1rem;
+    background: #f4f6f9; border-radius: 4px;
 }
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-}
-
+.legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
 .legend-color {
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    width: 20px; height: 20px;
+    border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-.fc-day-today {
-    background-color: #f8f9fa !important;
-}
-
+/* Today Highlight */
+.fc-day-today { background-color: #f8f9fa !important; }
 .fc-day-today .fc-daygrid-day-number {
-    background-color: #6777ef;
-    color: white;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin: 4px;
-}
-
-/* Filter styles */
-.card-header {
-    background-color: #f4f6f9;
-    border-bottom: 1px solid #e3e6f0;
-}
-
-.form-group label {
-    font-weight: 600;
-    color: #34395e;
-}
-
-.select2-container--default .select2-selection--single {
-    border-color: #e4e6fc;
-    height: 42px;
-    padding: 6px 12px;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__rendered {
-    line-height: 28px;
-}
-
-.select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 40px;
+    background: #6777ef; color: #fff;
+    width: 24px; height: 24px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 4px auto;
 }
 </style>
 @endsection
 
 @section('content')
 <section class="section container">
-
     <div class="section-header">
         <h1>Leave Calendar</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('home') }}"></a>Dashboard</div>
-            <div class="breadcrumb-item active"> <a href="">Leave Calendar</a></div>
+            <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+            <div class="breadcrumb-item active">Leave Calendar</div>
         </div>
     </div>
 
@@ -142,11 +101,11 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h4>Filter</h4>
-                    </div>
+                    <!-- Filters -->
+                    <div class="card-header justify-content-center mb-3 margin-bottom"><h4>Filter</h4></div>
                     <div class="card-body">
                         <div class="row">
+                            <!-- Department -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="department_filter">Department</label>
@@ -158,6 +117,7 @@
                                     </select>
                                 </div>
                             </div>
+                            <!-- Status -->
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status_filter">Status</label>
@@ -172,25 +132,28 @@
                             </div>
                         </div>
 
-                        <div class="legend d-flex align-item-center gap-2">
-                            <div class="legend-item">
-                                <div class="legend-color"></div>
-                                <span style="background-color: #ffc107;">Pending</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color"></div>
-                                <span style="background-color: #28a745;">Approved</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color"></div>
-                                <span style="background-color: #dc3545;">Rejected</span>
-                            </div>
-                            <div class="legend-item">
-                                <div class="legend-color"></div>
-                                <span style="background-color: #6c757d;">Cancelled</span>
-                            </div>
-                        </div>
+                        <!-- Legend -->
+                       <div class="legend mt-4">
+  <div class="legend-item">
+    <span class="legend-dot pending"></span>
+    <span class="legend-label">Pending</span>
+  </div>
+  <div class="legend-item">
+    <span class="legend-dot approved"></span>
+    <span class="legend-label">Approved</span>
+  </div>
+  <div class="legend-item">
+    <span class="legend-dot rejected"></span>
+    <span class="legend-label">Rejected</span>
+  </div>
+  <div class="legend-item">
+    <span class="legend-dot cancelled"></span>
+    <span class="legend-label">Cancelled</span>
+  </div>
+</div>
 
+
+                        <!-- Calendar -->
                         <div id="calendar"></div>
                     </div>
                 </div>
@@ -199,190 +162,117 @@
     </div>
 </section>
 
-<!-- Leave Request Modal -->
+<!-- Modal -->
 <div class="modal fade" id="leaveRequestModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Leave Request Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <tr>
-                            <th>Employee</th>
-                            <td id="employeeName"></td>
-                        </tr>
-                        <tr>
-                            <th>Department</th>
-                            <td id="department"></td>
-                        </tr>
-                        <tr>
-                            <th>Leave Type</th>
-                            <td id="leaveType"></td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td><span id="status" class="badge"></span></td>
-                        </tr>
-                        <tr>
-                            <th>Start Date</th>
-                            <td id="startDate"></td>
-                        </tr>
-                        <tr>
-                            <th>End Date</th>
-                            <td id="endDate"></td>
-                        </tr>
-                        <tr>
-                            <th>Total Days</th>
-                            <td id="totalDays"></td>
-                        </tr>
-                        <tr>
-                            <th>Reason</th>
-                            <td id="reason"></td>
-                        </tr>
-                        <tr id="adminRemarksRow" style="display: none;">
-                            <th>Admin Remarks</th>
-                            <td id="adminRemarks"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div id="actionButtons" class="d-none">
-                    <form id="approveForm" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-success">Approve</button>
-                    </form>
-                    <form id="rejectForm" class="d-inline">
-                        @csrf
-                        <button type="submit" class="btn btn-danger">Reject</button>
-                    </form>
-                </div>
-                <a href="#" id="viewDetailsBtn" class="btn btn-primary">View Details</a>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Leave Request Details</h5>
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-striped">
+          <tr><th>Employee</th><td id="employeeName"></td></tr>
+          <tr><th>Department</th><td id="department"></td></tr>
+          <tr><th>Leave Type</th><td id="leaveType"></td></tr>
+          <tr><th>Status</th><td><span id="status" class="badge"></span></td></tr>
+          <tr><th>Start Date</th><td id="startDate"></td></tr>
+          <tr><th>End Date</th><td id="endDate"></td></tr>
+          <tr><th>Total Days</th><td id="totalDays"></td></tr>
+          <tr><th>Reason</th><td id="reason"></td></tr>
+          <tr id="adminRemarksRow" style="display:none;">
+            <th>Admin Remarks</th><td id="adminRemarks"></td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div id="actionButtons" class="d-none">
+          <form id="approveForm" class="d-inline">@csrf
+            <button type="submit" class="btn btn-success">Approve</button>
+          </form>
+          <form id="rejectForm" class="d-inline">@csrf
+            <button type="submit" class="btn btn-danger">Reject</button>
+          </form>
         </div>
+        <a href="#" id="viewDetailsBtn" class="btn btn-primary">View Details</a>
+        <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
     </div>
-</div>
+  </div>
 </div>
 @endsection
 
 @push('scripts')
+<!-- jQuery (needed for select2 + modal) -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- FullCalendar Core -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Select2
+document.addEventListener('DOMContentLoaded', function () {
     $('.select2').select2();
 
-    var calendarEl = document.getElementById('calendar');
-    var calendar = new FullCalendar.Calendar(calendarEl, {
+    var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
         initialView: 'dayGridMonth',
         headerToolbar: {
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth'
+            right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
         },
-        events: function(info, successCallback, failureCallback) {
-            var params = new URLSearchParams();
-            var departmentId = $('#department_filter').val();
-            var status = $('#status_filter').val();
-            
-            if (departmentId) params.append('department_id', departmentId);
-            if (status) params.append('status', status);
-            
+        buttonIcons: {
+  prev: 'fas fa-chevron-left',
+  next: 'fas fa-chevron-right'
+},
+        buttonText: {
+            today: 'Today',
+            month: 'Month',
+            week: 'Week',
+            day: 'Day',
+            list: 'List'
+        },
+        events: function (info, success, failure) {
+            let params = new URLSearchParams();
+            if ($('#department_filter').val()) params.append('department_id', $('#department_filter').val());
+            if ($('#status_filter').val()) params.append('status', $('#status_filter').val());
+
             fetch("{{ route('company.leave-requests.calendar-events') }}?" + params.toString())
-                .then(response => response.json())
-                .then(data => successCallback(data))
-                .catch(error => failureCallback(error));
+                .then(res => res.json())
+                .then(data => success(data))
+                .catch(err => failure(err));
         },
-        eventClick: function(info) {
-            var event = info.event;
-            var status = event.extendedProps.status;
-            
-            // Update modal content
-            $('#employeeName').text(event.extendedProps.employeeName);
-            $('#department').text(event.extendedProps.department);
-            $('#leaveType').text(event.extendedProps.leaveType);
-            $('#status')
-                .text(status.charAt(0).toUpperCase() + status.slice(1))
-                .removeClass()
-                .addClass('badge badge-' + event.extendedProps.statusColor);
-            $('#startDate').text(event.extendedProps.startDate);
-            $('#endDate').text(event.extendedProps.endDate);
-            $('#totalDays').text(event.extendedProps.totalDays);
-            $('#reason').text(event.extendedProps.reason);
-            
-            if (event.extendedProps.adminRemarks) {
-                $('#adminRemarksRow').show();
-                $('#adminRemarks').text(event.extendedProps.adminRemarks);
-            } else {
-                $('#adminRemarksRow').hide();
-            }
-            
-            // Show/hide action buttons for pending requests
-            if (status === 'pending') {
+        eventClick: function (info) {
+            var e = info.event.extendedProps;
+
+            $('#employeeName').text(e.employeeName);
+            $('#department').text(e.department);
+            $('#leaveType').text(e.leaveType);
+            $('#status').text(e.status.charAt(0).toUpperCase() + e.status.slice(1))
+                        .removeClass().addClass('badge badge-' + e.statusColor);
+            $('#startDate').text(e.startDate);
+            $('#endDate').text(e.endDate);
+            $('#totalDays').text(e.totalDays);
+            $('#reason').text(e.reason);
+
+            if (e.adminRemarks) { $('#adminRemarksRow').show(); $('#adminRemarks').text(e.adminRemarks); }
+            else { $('#adminRemarksRow').hide(); }
+
+            if (e.status === 'pending') {
                 $('#actionButtons').removeClass('d-none');
-                $('#approveForm').attr('action', "{{ url('company/leave-requests') }}/" + event.id + "/approve");
-                $('#rejectForm').attr('action', "{{ url('company/leave-requests') }}/" + event.id + "/reject");
+                $('#approveForm').attr('action', "{{ url('company/leave-requests') }}/" + info.event.id + "/approve");
+                $('#rejectForm').attr('action', "{{ url('company/leave-requests') }}/" + info.event.id + "/reject");
             } else {
                 $('#actionButtons').addClass('d-none');
             }
-            
+
             $('#viewDetailsBtn').attr('href', "{{ route('company.leave-requests.index') }}");
             $('#leaveRequestModal').modal('show');
         }
     });
     calendar.render();
 
-    // Handle filter changes with debounce
-    var filterTimeout;
-    $('#department_filter, #status_filter').change(function() {
-        clearTimeout(filterTimeout);
-        filterTimeout = setTimeout(function() {
-            calendar.refetchEvents();
-        }, 300);
-    });
-
-    // Handle approve/reject forms
-    $('#approveForm, #rejectForm').submit(function(e) {
-        e.preventDefault();
-        var form = $(this);
-        var submitBtn = form.find('button[type="submit"]');
-        var originalText = submitBtn.text();
-        
-        // Disable the button and show loading state
-        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...');
-        
-        $.ajax({
-            url: form.attr('action'),
-            type: 'POST',
-            data: form.serialize(),
-            success: function(response) {
-                $('#leaveRequestModal').modal('hide');
-                calendar.refetchEvents();
-                iziToast.success({
-                    title: 'Success',
-                    message: response.message,
-                    position: 'topRight'
-                });
-            },
-            error: function(xhr) {
-                iziToast.error({
-                    title: 'Error',
-                    message: xhr.responseJSON.message || 'An error occurred',
-                    position: 'topRight'
-                });
-            },
-            complete: function() {
-                // Reset button state
-                submitBtn.prop('disabled', false).text(originalText);
-            }
-        });
-    });
+    // Refetch when filters change
+    $('#department_filter, #status_filter').change(() => calendar.refetchEvents());
 });
 </script>
 @endpush

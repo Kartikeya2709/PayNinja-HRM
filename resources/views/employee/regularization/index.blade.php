@@ -15,11 +15,11 @@
         
                 
                     <div class="card">
-                        <div class="card-1">
-                <h5 class="card-title mb-0">Attendance Regularization Requests</h5>
+                        <div class="card-1 card-header">
+                <h5 class="mb-0">Attendance Regularization Requests</h5>
                     
                
-                    <div class="">
+                    <div class="btn-center">
                     @if (!is_null(Auth::user()->employee->reporting_manager_id))
                         <a href="{{ route('regularization.requests.create') }}" class="btn btn-primary">New Request</a></div>
 </div>
@@ -50,7 +50,7 @@
                     @endif
 
                     @if (isset($pending_requests))
-    <ul class="nav nav-tabs Attendance-Regularization" id="myTab" role="tablist">
+    <ul class="nav nav-tabs Attendance-Regularization pt-4" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending" type="button" role="tab" aria-controls="pending" aria-selected="true">Pending</button>
         </li>
