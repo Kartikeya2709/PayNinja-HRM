@@ -2,10 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicHoliday;
 use App\Models\Company; // Added
+use App\Models\LeaveRequest;
+use App\Models\LeaveType;
+use App\Models\Reimbursement;
 use App\Models\User;    // Added
 use App\Models\Department; // Added
+use App\Models\Attendance; // Added
+use Carbon\Carbon; // Added for date handling
 use Illuminate\Http\Request;
+use App\Models\AttendanceRegularization;
+use App\Models\Employee;
 use Illuminate\Support\Facades\DB; // Added for role breakdown
 use Illuminate\Support\Facades\Auth;
 
@@ -53,25 +61,34 @@ class HomeController extends Controller
     //     ));
     // }
 
-    public function index(){
+    public function index()
+    {
         $user = Auth::user();
         $loggedInUser = $user;
-        
+
         // Common data for all roles
         $employeeRoles = User::whereNotNull('role')
             ->select('role', DB::raw('count(*) as total'))
             ->groupBy('role')
             ->orderBy('total', 'desc')
             ->get();
-            
+
         // Prepare data for charts
         $roleLabels = $employeeRoles->pluck('role');
         $roleData = $employeeRoles->pluck('total');
         $roleColors = [
-            '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', 
-            '#5a5c69', '#858796', '#e83e8c', '#fd7e14', '#20c9a6'
+            '#4e73df',
+            '#1cc88a',
+            '#36b9cc',
+            '#f6c23e',
+            '#e74a3b',
+            '#5a5c69',
+            '#858796',
+            '#e83e8c',
+            '#fd7e14',
+            '#20c9a6'
         ];
-        
+
         // Sample upcoming holidays (replace with actual data from your database)
         $upcomingHolidays = [
             [
@@ -96,16 +113,16 @@ class HomeController extends Controller
             $totalUsers = User::count();
             $totalDepartments = Department::count();
             $usersByRole = User::select('role', DB::raw('count(*) as total'))
-                                ->groupBy('role')
-                                ->pluck('total', 'role');
+                ->groupBy('role')
+                ->pluck('total', 'role');
             $companiesWithAdmins = Company::with('admin')->get();
-            
+
             return view('superadmin.dashboard', compact(
-                'totalCompanies', 
-                'totalUsers', 
-                'totalDepartments', 
-                'usersByRole', 
-                'companiesWithAdmins', 
+                'totalCompanies',
+                'totalUsers',
+                'totalDepartments',
+                'usersByRole',
+                'companiesWithAdmins',
                 'loggedInUser',
                 'roleLabels',
                 'roleData',
@@ -114,17 +131,17 @@ class HomeController extends Controller
         } elseif ($user->role === 'company_admin') {
             // For company admin, show data for their company only
             $companyId = $user->company_id;
-            
+
             // Get employee distribution by role
             $companyEmployees = User::where('company_id', $companyId)
                 ->select('role', DB::raw('count(*) as total'))
                 ->groupBy('role')
                 ->orderBy('total', 'desc')
                 ->get();
-            
+
             // Get department count
             $departmentCount = Department::where('company_id', $companyId)->count();
-            
+
             // Get today's attendance
             $today = now()->format('Y-m-d');
             $todayAttendanceCount = DB::table('attendances as a')
@@ -133,16 +150,16 @@ class HomeController extends Controller
                 ->whereDate('a.created_at', $today)
                 ->where('e.company_id', $companyId)
                 ->count();
-            
+
             $totalEmployees = $companyEmployees->sum('total');
-            
+
             // Get pending leave requests count
-            $pendingLeaves = \App\Models\LeaveRequest::whereHas('employee', function($q) use ($companyId) {
-                    $q->where('company_id', $companyId);
-                })
+            $pendingLeaves = \App\Models\LeaveRequest::whereHas('employee', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            })
                 ->where('status', 'pending')
                 ->count();
-            
+
             // Sample recent activities (replace with actual activities from your system)
             $recentActivities = [
                 [
@@ -171,14 +188,104 @@ class HomeController extends Controller
                     'description' => 'Scheduled customer service training for next week'
                 ]
             ];
-            
+
+            //Presentee_count
+            $presentees_count = Attendance::whereDate('date', Carbon::today())
+                ->count();
+
             $companyRoleLabels = $companyEmployees->pluck('role');
             $companyRoleData = $companyEmployees->pluck('total');
-            
-            return view('company_admin.dashboard', compact(
-                'roleLabels', 
-                'roleData', 
+
+            //Absentees data
+
+            $today = Carbon::today();
+            $total_employees = Employee::select('id', 'name', 'department_id')->with('department')->get();
+            $present_employees = Attendance::whereDate('date', $today)
+                ->pluck('employee_id')
+                ->toArray();
+
+            $absentees = $total_employees->filter(function ($employee) use ($present_employees) {
+                return !in_array($employee->id, $present_employees);
+            })->values();
+
+            $absentees_count = $absentees->count();
+
+            //ClockIn data
+
+            $attendances = Attendance::with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name');
+                }
+            ])
+                ->select('id', 'employee_id', 'date', 'status')
+                ->whereDate('date', $today)
+                ->get();
+
+            $newJoineesCount = Employee::whereMonth('joining_date', Carbon::now()->month)
+                ->whereYear('joining_date', Carbon::now()->year)
+                ->count();
+
+
+
+            $companyID = auth()->user()->company_id;
+
+            $departments = Department::where('company_id', $companyID)
+                ->withCount('employees')
+                ->get();
+
+            $labels = $departments->pluck('name');
+            $data = $departments->pluck('employees_count');
+            $colors = ['#ffcd56', '#ff6384', '#4bc0c0', '#36a2eb', '#9966ff', '#ff9f40'];
+
+            $academic_holidays = AcademicHoliday::where('company_id', $companyID)
+                ->whereDate('from_date', '>=', Carbon::today())
+                ->orderBy('from_date', 'asc')
+                ->take(5)
+                ->get();
+
+            $reimbursements = Reimbursement::where('company_id', $companyID)
+                ->where('status', 'pending')
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get();
+
+            $pending_regularization_requests = AttendanceRegularization::where('reporting_manager_id', $user->employee->id)
+                ->where('status', '=', 'pending')
+                ->with('employee', 'approver')
+                ->latest()
+                ->paginate(10, ['*'], 'pending_page');
+
+            // Attendance status counts for today
+            $todaysAttendance = Attendance::whereDate('date', Carbon::today())
+                ->with('employee')
+                ->select('id', 'employee_id', 'date', 'status')
+                ->get();
+
+            $attendanceCounts = [
+                'Present' => $todaysAttendance->where('status', 'Present')->count(),
+                'Absent' => $todaysAttendance->where('status', 'Absent')->count(),
+                'On Leave' => $todaysAttendance->where('status', 'On Leave')->count(),
+                'Half Day' => $todaysAttendance->where('status', 'Half Day')->count(),
+                'Late' => $todaysAttendance->where('status', 'Late')->count(),
+            ];
+
+            return view('company_admin.dashboard', [
+                'labels' => $labels,
+                'data' => $data,
+                'colors' => $colors,
+            ], compact(
+                'roleLabels',
+                'roleData',
                 'roleColors',
+                'pending_regularization_requests',
+                'reimbursements',
+                'newJoineesCount',
+                'academic_holidays',
+                'attendances',
+                'attendanceCounts',
+                'absentees',
+                'absentees_count',
+                'presentees_count',
                 'companyRoleLabels',
                 'companyRoleData',
                 'departmentCount',
@@ -200,10 +307,10 @@ class HomeController extends Controller
                 ->withCount('employees')
                 ->orderBy('employees_count', 'desc')
                 ->get();
-                
+
             $departmentNames = $departments->pluck('name')->toArray();
             $departmentCounts = $departments->pluck('employees_count')->toArray();
-            
+
             $departmentData = [
                 'names' => $departmentNames,
                 'counts' => $departmentCounts
@@ -217,20 +324,20 @@ class HomeController extends Controller
                 ->whereNull('a.deleted_at')
                 ->where('e.company_id', $user->company_id)
                 ->count();
-                
+
             // Get employees on leave today
-            $onLeaveCount = \App\Models\LeaveRequest::whereHas('employee', function($q) use ($user) {
-                    $q->where('company_id', $user->company_id);
-                })
+            $onLeaveCount = \App\Models\LeaveRequest::whereHas('employee', function ($q) use ($user) {
+                $q->where('company_id', $user->company_id);
+            })
                 ->whereDate('start_date', '<=', $today)
                 ->whereDate('end_date', '>=', $today)
                 ->where('status', 'approved')
                 ->count();
 
             // Get pending leave requests count
-            $pendingRequests = \App\Models\LeaveRequest::whereHas('employee', function($q) use ($user) {
-                    $q->where('company_id', $user->company_id);
-                })
+            $pendingRequests = \App\Models\LeaveRequest::whereHas('employee', function ($q) use ($user) {
+                $q->where('company_id', $user->company_id);
+            })
                 ->where('status', 'pending')
                 ->count();
 
@@ -250,7 +357,6 @@ class HomeController extends Controller
         } else {
             // Employee dashboard
             $employee = $user->employee;
-            
             if (!$employee) {
                 return redirect()->route('home')->with('error', 'Employee record not found.');
             }
@@ -260,26 +366,113 @@ class HomeController extends Controller
                 ->whereDate('date', now()->toDateString())
                 ->first();
 
+            // $attendanceChartData = $employee->attendances();
+
+            // $currentYear = Carbon::now()->year;
+            // $attendance = Attendance::where('employee_id', $employee->id)
+            //     ->whereYear('date', $currentYear)
+            //     ->get();
+
+            // $present_count = $attendance->where('status', 'Present')->count();
+            // $absent_count = $attendance->where('status', 'Absent')->count();
+            // $leave_count = $attendance->where('status', 'On Leave')->count();
+            // $late_count = $attendance->where('status', 'Late')->count();
+            // $half_day_count = $attendance->where('status', 'Half Day')->count();
+
             // Calculate total available leave balance
             $leaveBalance = 0;
             $currentYear = now()->year;
-            
+
             // Get all leave balances for the current year
             $leaveBalances = $employee->leaveBalances()
                 ->where('year', $currentYear)
                 ->get();
-                
+
+            $academic_holidays = AcademicHoliday::where('company_id', $employee->company_id)
+                ->whereDate('from_date', '>=', Carbon::today())
+                ->orderBy('from_date', 'asc')
+                ->take(5)
+                ->get();
+
             // Sum up all available leave days (total_days - used_days)
             foreach ($leaveBalances as $balance) {
                 $leaveBalance += ($balance->total_days - $balance->used_days);
             }
 
+            $employee = auth()->user()->employee;
+            $currentYear = Carbon::now()->year;
+
+            // Group attendance by month and status
+            $attendanceData = Attendance::where('employee_id', $employee->id)
+                ->whereYear('date', $currentYear)
+                ->get()
+                ->groupBy(function ($attendance) {
+                    return Carbon::parse($attendance->date)->format('m'); // group by month number (01–12)
+                });
+
+            // Prepare arrays for Chart.js
+            $monthlyData = [
+                'Present' => array_fill(1, 12, 0),
+                'Absent' => array_fill(1, 12, 0),
+                'Late' => array_fill(1, 12, 0),
+                'On Leave' => array_fill(1, 12, 0),
+                'Half Day' => array_fill(1, 12, 0),
+            ];
+
+
+            foreach ($attendanceData as $month => $records) {
+                $monthlyData['Present'][(int) $month] = $records->where('status', 'Present')->count();
+                $monthlyData['Absent'][(int) $month] = $records->where('status', 'Absent')->count();
+                $monthlyData['Late'][(int) $month] = $records->where('status', 'Late')->count();
+                $monthlyData['On Leave'][(int) $month] = $records->where('status', 'On Leave')->count();
+                $monthlyData['Half Day'][(int) $month] = $records->where('status', 'Half Day')->count();
+            }
+
+            // dd($monthlyData);
+
+            $upcoming_birthday = Employee::where('company_id', $employee->company_id)
+                ->whereMonth('dob', '>=', Carbon::now()->month) // current or future month
+                ->whereDay('dob', '>=', Carbon::now()->day)     // current or future day
+                ->orderByRaw("DATE_FORMAT(dob, '%m-%d') ASC")
+                ->select('dob', 'name') // sort by month-day
+                ->first();
+
+            $total_leaves = LeaveType::where('company_id', $employee->company_id)
+                ->select('default_days')
+                ->sum('default_days');
+
+            $leaves_taken = LeaveRequest::where('employee_id', $employee->id)
+                ->whereYear('start_date', $currentYear)
+                ->where('status', 'approved')
+                ->select('total_days')
+                ->sum('total_days');
+
+            $leave_balance = $total_leaves - $leaves_taken;
+
+            $monthlyLeavesTaken = [];
+            for ($m = 1; $m <= 12; $m++) {
+                $monthlyLeavesTaken[] = LeaveRequest::where('employee_id', $employee->id)
+                    ->whereYear('start_date', $currentYear)
+                    ->whereMonth('start_date', $m)
+                    ->where('status', 'approved')
+                    ->sum('total_days');
+            }
+
             return view('employee.dashboard', compact(
                 'loggedInUser',
                 'todayAttendance',
-                'leaveBalance'
+                'monthlyData',
+                'monthlyLeavesTaken',
+                'leaves_taken',
+                'leave_balance',
+                'currentYear',
+                'leaveBalance',
+                'upcoming_birthday',
+                'academic_holidays'
             ));
+
         }
+
     }
 
     public function blank()

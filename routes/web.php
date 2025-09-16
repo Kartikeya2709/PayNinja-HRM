@@ -23,6 +23,7 @@ use App\Http\Controllers\Admin\AttendanceAdjustmentController;
 use App\Http\Controllers\Admin\BeneficiaryBadgeController;
 use App\Http\Controllers\Admin\EmployeePayrollConfigController;
 use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Admin\AttendanceController;
 // Test logging route - can be removed after testing
 require __DIR__ . '/test-logging.php';
 
@@ -58,7 +59,15 @@ Route::get('/run-attendance/{date?}', function ($date = null) {
     }
 });
 
+Route::get('/department-chart-data', [DepartmentManagementController::class, 'getDepartmentChartData'])
+    ->name('department.chart.data')
+    ->middleware(['auth', 'role:admin']);
 
+
+    
+Route::get('/employee/joining-date', [EmployeeController::class, 'getEmployeeJoiningDate'])
+    ->name('employee.joiningdate')
+    ->middleware(['auth', 'role:admin']);
 
 Route::get('/', function () {
     return redirect()->route('login');

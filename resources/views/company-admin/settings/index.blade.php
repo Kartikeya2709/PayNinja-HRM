@@ -189,6 +189,7 @@
                                     <div class="text-center">
                                         <button type="submit" class="btn btn-primary" id="savePrefix">Save
                                             Prefix</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -197,8 +198,7 @@
                 </div>
             </div>
         </div>
-</div>
-</section>
+    </section>
 </div>
 @endsection
 

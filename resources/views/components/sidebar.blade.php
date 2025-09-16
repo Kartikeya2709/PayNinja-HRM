@@ -353,7 +353,7 @@
                 @endif {{-- END of Company Admin role block --}}
 
                 {{-- Employee Payslip --}}
-                @if ($hasModuleAccess('payroll', 'employee'))
+                {{-- @if ($hasModuleAccess('payroll', 'employee'))
                     @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
                         <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
@@ -362,7 +362,7 @@
                             </a>
                         </li>
                     @endif
-                @endif
+                @endif --}}
 
                 <!-- Employee Routes -->
                 {{--  Admin Routes --}}
