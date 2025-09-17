@@ -504,74 +504,75 @@
               </table>
             </div>
 
-          </div>
-        </div>
-        <div class="col-lg-7 px-1">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="text-center fw-bold">Department-wise Employee Count</h5>
-              <div class="chart-wrap">
-                <canvas id="payrollChart"></canvas>
-              </div>
-            </div>
-          </div>
+  </div>
+    </div>
+    <div class="col-lg-7 px-1">
+        <div class="card">
+<div class="card-body">
+<h5 class="text-center fw-bold">Department-wise Employee Count</h5>
+<div class="chart-wrap">
+<canvas id="payrollChart"></canvas>
+</div>
+</div>
+</div>
+</div>
+</div>
+ <div class="row mt-4">
+            <div class="col-lg-12 px-1 cash-dep">
+                <div class="card">
+                            <h5>Announcement List</h5>
+             <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse ($announcements as $announcement)
+                <tr>
+                  <td>{{ $loop->iteration }}</td>
+                  <td>{{ $announcement->title }}</td>
+                  <td>{{ Str::limit($announcement->description, 50) }}</td>
+                  <td>{{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d') : '-' }}</td>
+                  <td>
+                    @php
+                      $now = \Carbon\Carbon::now();
+                      if ($announcement->publish_date && $now->lt($announcement->publish_date)) {
+                          $status = ['Upcoming', 'info'];
+                      } elseif ($announcement->expires_at && $now->gt($announcement->expires_at)) {
+                          $status = ['Completed', 'success'];
+                      } else {
+                          $status = ['Ongoing', 'warning'];
+                      }
+                    @endphp
+                    <span class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
+                  </td>
+                  <td>
+                    <a href="{{ route('company-admin.announcements.show', $announcement->id) }}" class="btn btn-sm btn-info">Show</a>
+                    <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}" class="btn btn-sm btn-primary ms-1">Edit</a>
+                    <form action="{{ route('company-admin.announcements.destroy', $announcement->id) }}" method="POST" style="display:inline;">
+                      @csrf
+                      @method('DELETE')
+                      <button class="btn btn-sm btn-danger ms-1" onclick="return confirm('Delete this announcement?')">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              @empty
+                <tr>
+                  <td colspan="6" class="text-center">No announcements found.</td>
+                </tr>
+              @endforelse
+             </tbody>
+          </table>
         </div>
       </div>
-      <div class="row mt-4">
-        <div class="col-lg-12 px-1 cash-dep">
-          <div class="card">
-            <h5>Announcement List</h5>
-            <div class="card-body p-0">
-              <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th>#</th>
-                      <th>Title</th>
-                      <th>Description</th>
-                      <th>Date</th>
-                      <th>Status</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Holiday Notice</td>
-                      <td>Office will remain closed on 15th August for Independence Day.</td>
-                      <td>2025-08-10</td>
-                      <td><span class="badge bg-info">Upcoming</span></td>
-                      <td>
-                        <button class="btn btn-sm btn-primary">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>New HR Policy</td>
-                      <td>Updated leave policy effective from September 1st.</td>
-                      <td>2025-08-05</td>
-                      <td><span class="badge bg-warning text-dark">Ongoing</span></td>
-                      <td>
-                        <button class="btn btn-sm btn-primary">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>Team Outing</td>
-                      <td>Annual team outing scheduled for September 15th.</td>
-                      <td>2025-07-30</td>
-                      <td><span class="badge bg-success">Completed</span></td>
-                      <td>
-                        <button class="btn btn-sm btn-primary">Edit</button>
-                        <button class="btn btn-sm btn-danger">Delete</button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
 
           </div>
         </div>
