@@ -44,8 +44,6 @@
                         <div class="form-group mb-4">
                             <label for="role">Role</label>
                             <select name="role" id="role" class="form-control" required>
-                                <!-- <option value="superadmin" {{ $user->role === 'superadmin' ? 'selected' : '' }}>Super Admin</option> -->
-                                 <option value="company_admin" {{ $user->role === 'company_admin' ? 'selected' : '' }}>Company Admin</option>
                                 <option value="admin" {{ $user->role === 'admin' ? 'selected' : '' }}>Admin</option>
                                 <option value="employee" {{ $user->role === 'employee' ? 'selected' : '' }}>Employee</option>
                                 <option value="user" {{ $user->role === 'user' ? 'selected' : '' }}>User</option>

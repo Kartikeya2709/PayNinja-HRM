@@ -10,7 +10,7 @@ class DesignationManagementController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:admin']);
+        $this->middleware(['auth', 'role:admin,company_admin']);
     }
 
     /**

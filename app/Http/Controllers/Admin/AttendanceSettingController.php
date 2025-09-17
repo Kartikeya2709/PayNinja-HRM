@@ -263,8 +263,7 @@ class AttendanceSettingController extends Controller
                     $day = trim($day);
                     return in_array($day, $validWeekDays);
                 })
-            ));
-            
+            ));     
             // Encode the array to JSON for storage
             $validated['weekend_days'] = json_encode($validated['weekend_days']);
             

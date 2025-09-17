@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\PayrollController as AdminPayrollController;
 use App\Http\Controllers\Employee\PayrollController as EmployeePayrollController;
 use App\Http\Controllers\Admin\AttendanceAdjustmentController;
 use App\Http\Controllers\Admin\BeneficiaryBadgeController;
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\EmployeePayrollConfigController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\AttendanceController;
@@ -59,16 +60,10 @@ Route::get('/run-attendance/{date?}', function ($date = null) {
     }
 });
 
-Route::get('/department-chart-data', [DepartmentManagementController::class, 'getDepartmentChartData'])
-    ->name('department.chart.data')
-    ->middleware(['auth', 'role:admin']);
-
-
+Route::prefix('company-admin')->name('company-admin.')->group(function () {
+    Route::resource('announcements',AnnouncementController::class)->middleware('auth');
+});
     
-Route::get('/employee/joining-date', [EmployeeController::class, 'getEmployeeJoiningDate'])
-    ->name('employee.joiningdate')
-    ->middleware(['auth', 'role:admin']);
-
 Route::get('/', function () {
     return redirect()->route('login');
     // return view('welcome');
@@ -128,7 +123,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Admin Attendance Management
-    Route::middleware(['role:admin'])->prefix('admin/attendance')->name('admin.attendance.')->group(function () {
+    Route::middleware(['role:admin,company_admin'])->prefix('admin/attendance')->name('admin.attendance.')->group(function () {
         
         Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
         Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
@@ -153,7 +148,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Admin Regularization Management
-    Route::middleware(['role:admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
+    Route::middleware(['role:admin,company_admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
         Route::resource('requests', \App\Http\Controllers\Admin\AttendanceRegularizationController::class);
         Route::put('requests/{id}/approve', [\App\Http\Controllers\Admin\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
         Route::post('requests/bulk-update', [\App\Http\Controllers\Admin\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
@@ -194,7 +189,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Shift Management
-    Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::middleware(['auth', 'role:admin,company_admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::resource('shifts', '\App\Http\Controllers\Admin\ShiftController');
 
         // Additional shift routes
@@ -214,7 +209,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Admin Payroll Management
-    Route::middleware(['role:admin'])->prefix('admin/payroll')->name('admin.payroll.')->group(function () {
+    Route::middleware(['role:admin,company_admin'])->prefix('admin/payroll')->name('admin.payroll.')->group(function () {
         Route::get('/', [AdminPayrollController::class, 'index'])->name('index'); // List all payrolls, or payrolls for a company
 
         // Beneficiary Badges
@@ -252,7 +247,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Admin Beneficiary Badges Management
-    Route::middleware(['role:admin'])
+    Route::middleware(['role:admin,company_admin'])
         ->prefix('admin/beneficiary-badges')
         ->name('admin.beneficiary-badges.') // Ensured trailing dot for consistency
         ->group(function () {
@@ -269,7 +264,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
     // Admin Employee Payroll Configurations Management
-    Route::middleware(['role:admin'])->prefix('admin/employee-payroll-configurations')->name('admin.employee-payroll-configurations.')->group(function () {
+    Route::middleware(['role:admin,company_admin'])->prefix('admin/employee-payroll-configurations')->name('admin.employee-payroll-configurations.')->group(function () {
         Route::get('/', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'index'])->name('index');
         Route::get('/{employee}/edit', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'edit'])->name('edit');
         Route::put('/{employee}', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'update'])->name('update');
@@ -277,7 +272,7 @@ Route::middleware(['auth'])->group(function () {
         // Add other resource routes (create, store, show, destroy) here later if needed
     });
 
-    Route::middleware(['auth', 'role:admin', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
+    Route::middleware(['auth', 'role:admin,company_admin', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
         // Academic Holidays Management
         Route::get('academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
         Route::get('academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');

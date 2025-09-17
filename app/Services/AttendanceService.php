@@ -389,14 +389,14 @@ class AttendanceService
             ? array_map('strtolower', $settings->weekend_days)
             : [];
             
-        if (in_array($todayDay, $weekendDays)) {
+        // if (in_array($todayDay, $weekendDays)) {
             
-            return [
-                'success' => false,
-                'message' => 'Check-ins are not allowed on weekends.',
-                'error_type' => 'weekend_checkin'
-            ];
-        }
+        //     return [
+        //         'success' => false,
+        //         'message' => 'Check-ins are not allowed on weekends.',
+        //         'error_type' => 'weekend_checkin'
+        //     ];
+        // }
         
         // Initialize status and remarks
         $status = 'Present';

@@ -16,6 +16,7 @@ use App\Models\AttendanceRegularization;
 use App\Models\Employee;
 use Illuminate\Support\Facades\DB; // Added for role breakdown
 use Illuminate\Support\Facades\Auth;
+use App\Models\Announcement;
 
 class HomeController extends Controller
 {
@@ -196,6 +197,13 @@ class HomeController extends Controller
             $companyRoleLabels = $companyEmployees->pluck('role');
             $companyRoleData = $companyEmployees->pluck('total');
 
+            $companyId = $user->employee->company_id ?? null;
+
+            $announcements = Announcement::where('company_id', $companyId)
+                ->whereIn('audience', ['admins','employees', 'both'])
+                ->latest()
+                ->get();
+
             //Absentees data
 
             $today = Carbon::today();
@@ -276,6 +284,7 @@ class HomeController extends Controller
             ], compact(
                 'roleLabels',
                 'roleData',
+                'announcements',
                 'roleColors',
                 'pending_regularization_requests',
                 'reimbursements',
@@ -341,6 +350,12 @@ class HomeController extends Controller
                 ->where('status', 'pending')
                 ->count();
 
+
+            $announcements = Announcement::where('company_id', $user->employee->company_id)
+                ->whereIn('audience', ['admins', 'both'])
+                ->latest()
+                ->get();
+
             return view('admin.dashboard', [
                 'totalEmployees' => $totalEmployees,
                 'departmentCount' => count($departmentData['names']),
@@ -351,6 +366,7 @@ class HomeController extends Controller
                 'roleLabels' => $roleLabels,
                 'roleData' => $roleData,
                 'roleColors' => $roleColors,
+                'announcements' => $announcements,
             ]);
         } elseif ($user->role === 'user') {
             return view('user.dashboard', compact('loggedInUser'));
@@ -428,14 +444,28 @@ class HomeController extends Controller
                 $monthlyData['Half Day'][(int) $month] = $records->where('status', 'Half Day')->count();
             }
 
-            // dd($monthlyData);
+            // dd(Carbon::now()->format('Y-m-d'));
 
+            $now = Carbon::now();
             $upcoming_birthday = Employee::where('company_id', $employee->company_id)
-                ->whereMonth('dob', '>=', Carbon::now()->month) // current or future month
-                ->whereDay('dob', '>=', Carbon::now()->day)     // current or future day
-                ->orderByRaw("DATE_FORMAT(dob, '%m-%d') ASC")
-                ->select('dob', 'name') // sort by month-day
+                ->where(function($q) use ($now) {
+                    $q->where(function($q2) use ($now) {
+                        $q2->whereMonth('dob', $now->month)
+                           ->whereDay('dob', '>=', $now->day);
+                    })->orWhere(function($q2) use ($now) {
+                        $q2->whereMonth('dob', '>', $now->month);
+                    });
+                })
+                ->orderByRaw("MONTH(dob), DAY(dob)")
+                ->select('dob', 'name')
                 ->first();
+
+            if (!$upcoming_birthday) {
+                $upcoming_birthday = Employee::where('company_id', $employee->company_id)
+                    ->orderByRaw("MONTH(dob), DAY(dob)")
+                    ->select('dob', 'name')
+                    ->first();
+            }
 
             $total_leaves = LeaveType::where('company_id', $employee->company_id)
                 ->select('default_days')
@@ -458,9 +488,15 @@ class HomeController extends Controller
                     ->sum('total_days');
             }
 
+            $announcements = Announcement::where('company_id', $user->employee->company_id)
+                ->whereIn('audience', ['employees', 'both'])
+                ->latest()
+                ->get();
+
             return view('employee.dashboard', compact(
                 'loggedInUser',
                 'todayAttendance',
+                'announcements',
                 'monthlyData',
                 'monthlyLeavesTaken',
                 'leaves_taken',
