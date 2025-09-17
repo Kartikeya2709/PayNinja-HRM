@@ -27,7 +27,7 @@
             <div class="section-body">
                 @if ($currentUser && $currentUser->company_id)
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header mobile-space">
                             <h4>Employee List</h4>
                         </div>
                         <div class="card-body">

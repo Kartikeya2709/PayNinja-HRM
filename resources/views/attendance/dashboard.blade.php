@@ -125,7 +125,7 @@
                                 <i class="bi bi-check-circle-fill"></i></div>
                                 <div class="text">
                                 <h6 class="card-title">Present</h6>
-                                <h2>{{ $monthlySummary['present'] ?? 0 }}</h2>
+                                <p>{{ $monthlySummary['present'] ?? 0 }}</p>
 </div>
                             </div>
 
@@ -139,7 +139,7 @@
 </div>
 <div class="text">
                                 <h6 class="card-title">Absent</h6>
-                                <h2>{{ $monthlySummary['absent'] ?? 0 }}</h2>
+                                <p>{{ $monthlySummary['absent'] ?? 0 }}</p>
                             </div>
 </div>
                         </div>
@@ -152,7 +152,7 @@
 </div>
 <div class="text">
                                 <h6 class="card-title">Late</h6>
-                                <h2>{{ $monthlySummary['late'] ?? 0 }}</h2>
+                                <p>{{ $monthlySummary['late'] ?? 0 }}</p>
 </div>
                             </div>
                         </div>
@@ -164,7 +164,7 @@
                                     <i class="bi bi-calendar-event-fill"></i></div>
                                     <div class="text">
                                 <h6 class="card-title">On Leave</h6>
-                                <h2>{{ $monthlySummary['on_leave'] ?? 0 }}</h2>
+                                <p>{{ $monthlySummary['on_leave'] ?? 0 }}</p>
                             </div>
                         </div>
                     </div>
