@@ -184,8 +184,7 @@
                     <!-- Reimbursements -->
                     @if ($hasModuleAccess('reimbursement', 'employee'))
                         <li class="menu-header">Reimbursements</li>
-                        <li
-                            class="{{ Request::is('reimbursements') && !Request::is('reimbursements/create') ? 'active' : '' }}">
+                        <li class="{{ Request::is('reimbursements') && !Request::is('reimbursements/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('reimbursements.index') }}">
                                 <i class="fas fa-receipt"></i>
                                 <span>My Reimbursements</span>
@@ -201,7 +200,8 @@
 
                     <!-- Resignations -->
                     <li class="menu-header">Resignations</li>
-                    <li class="{{ Request::is('employee/resignations') && !Request::is('employee/resignations/create') ? 'active' : '' }}">
+                    <li
+                        class="{{ Request::is('employee/resignations') && !Request::is('employee/resignations/create') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('employee.resignations.index') }}">
                             <i class="fas fa-file-signature"></i>
                             <span>My Resignations</span>
@@ -238,6 +238,18 @@
                         <a class="nav-link" href="{{ route('admin.resignations.index') }}">
                             <i class="fas fa-file-signature"></i>
                             <span>Employee Resignations</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('company-admin/announcements') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{route('company-admin.announcements.index')}}">
+                            <i class="fas fa-bullhorn"></i>
+                            <span>Announcements</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{route('company-admin.announcements.create')}}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create Announcement</span>
                         </a>
                     </li>
 
@@ -299,8 +311,8 @@
                             <span>Check In/Out</span></a>
                     </li>
                     <li class="{{ Request::is('attendance/my-attendance') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('attendance.my-attendance') }}"><i
-                                class="fas fa-calendar-check"></i> <span>My Attendance</span></a>
+                        <a class="nav-link" href="{{ route('attendance.my-attendance') }}"><i class="fas fa-calendar-check"></i>
+                            <span>My Attendance</span></a>
                     </li>
                     <li class="{{ Request::is('admin/attendance/settings*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin.attendance.settings') }}"><i class="fas fa-cog"></i>
@@ -363,10 +375,9 @@
                                 <a class="nav-link" href="{{ route('admin.beneficiary-badges.index') }}">Beneficiary
                                     Badges</a>
                             </li>
-                            <li
-                                class="{{ Request::routeIs('admin.employee-payroll-configurations.index') ? 'active' : '' }}">
-                                <a class="nav-link"
-                                    href="{{ route('admin.employee-payroll-configurations.index') }}">Employee Payroll
+                            <li class="{{ Request::routeIs('admin.employee-payroll-configurations.index') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('admin.employee-payroll-configurations.index') }}">Employee
+                                    Payroll
                                     Configs</a>
                             </li>
                         </ul>
@@ -375,18 +386,18 @@
 
                 {{-- Employee Payslip --}}
                 {{-- @if ($hasModuleAccess('payroll', 'employee'))
-                    @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
-                        <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
-                                <i class="fas fa-file-pdf"></i>
-                                <span>My Payslips</span>
-                            </a>
-                        </li>
-                    @endif
+                @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
+                <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>My Payslips</span>
+                    </a>
+                </li>
+                @endif
                 @endif --}}
 
                 <!-- Employee Routes -->
-                {{--  Admin Routes --}}
+                {{-- Admin Routes --}}
                 @if (Auth::user()->hasRole('admin'))
                     @if ($hasModuleAccess('team', 'admin'))
                         <!-- Holiday Management -->
@@ -411,6 +422,18 @@
                             <a class="nav-link" href="{{ route('admin.resignations.index') }}">
                                 <i class="fas fa-file-signature"></i>
                                 <span>Employee Resignations</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('company-admin/announcements') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('company-admin.announcements.index')}}">
+                                <i class="fas fa-bullhorn"></i>
+                                <span>Announcements</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('company-admin.announcements.create')}}">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Create Announcement</span>
                             </a>
                         </li>
                     @endif
@@ -472,17 +495,15 @@
                             </a>
                         </li>
                         <li class="{{ Request::is('attendance/check-in-out') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('attendance.check-in') }}"><i
-                                    class="fas fa-sign-in-alt"></i>
+                            <a class="nav-link" href="{{ route('attendance.check-in') }}"><i class="fas fa-sign-in-alt"></i>
                                 <span>Check In/Out</span></a>
                         </li>
                         <li class="{{ Request::is('attendance/my-attendance') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('attendance.my-attendance') }}"><i
-                                    class="fas fa-calendar-check"></i> <span>My Attendance</span></a>
+                            <a class="nav-link" href="{{ route('attendance.my-attendance') }}"><i class="fas fa-calendar-check"></i>
+                                <span>My Attendance</span></a>
                         </li>
                         <li class="{{ Request::is('admin/attendance/settings*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('admin.attendance.settings') }}"><i
-                                    class="fas fa-cog"></i>
+                            <a class="nav-link" href="{{ route('admin.attendance.settings') }}"><i class="fas fa-cog"></i>
                                 <span>Attendance Settings</span></a>
                         </li>
                         <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
@@ -495,8 +516,8 @@
                     @if ($hasModuleAccess('leave', 'admin'))
                         <li class="menu-header">Leave Management</li>
                         <li class="{{ Request::is('company/leave-types*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('company.leave-types.index') }}"><i
-                                    class="fas fa-calendar-alt"></i> <span>Leave Types</span></a>
+                            <a class="nav-link" href="{{ route('company.leave-types.index') }}"><i class="fas fa-calendar-alt"></i>
+                                <span>Leave Types</span></a>
                         </li>
                         <li class="{{ Request::is('company/leave-balances*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.leave-balances.index') }}"><i
@@ -540,10 +561,9 @@
                                     <a class="nav-link" href="{{ route('admin.beneficiary-badges.index') }}">
                                         <span>Beneficiary Badges</span></a>
                                 </li>
-                                <li
-                                    class="{{ Request::routeIs('admin.employee-payroll-configurations.index') ? 'active' : '' }}">
-                                    <a class="nav-link"
-                                        href="{{ route('admin.employee-payroll-configurations.index') }}"> <span>Employee
+                                <li class="{{ Request::routeIs('admin.employee-payroll-configurations.index') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('admin.employee-payroll-configurations.index') }}">
+                                        <span>Employee
                                             Payroll Configs</span></a>
                                 </li>
                             </ul>
@@ -568,11 +588,10 @@
                         <li class="menu-header">Reimbursements</li>
 
                         <li class="{{ Request::is('reimbursements/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('reimbursements.create') }}"><i
-                                    class="fas fa-plus-circle"></i> <span>Request Reimbursement</span></a>
+                            <a class="nav-link" href="{{ route('reimbursements.create') }}"><i class="fas fa-plus-circle"></i>
+                                <span>Request Reimbursement</span></a>
                         </li>
-                        <li
-                            class="{{ Request::is('reimbursements') && !Request::is('reimbursements/create') ? 'active' : '' }}">
+                        <li class="{{ Request::is('reimbursements') && !Request::is('reimbursements/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('reimbursements.index') }}"><i class="fas fa-tasks"></i>
                                 <span>Pending Approvals</span></a>
                         </li>

@@ -38,7 +38,8 @@ class RoleMiddleware
             Log::warning('Unauthorized access attempt by user: ' . $user->email . ' with role: ' . $user->role);
 
             // Redirect to home with error message
-            return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+            // return redirect()->route('home')->with('error', 'You do not have permission to access this page.');
+            abort(403, 'You do not have permission to access this page.');
         }
 
         // Allow the request to continue
