@@ -151,7 +151,9 @@
 #app .paginate_button{
   padding: 0px 10px!important;
 }
-
+.monthly-leave{
+  height: 100%;
+}
 .search-btn{
   background-color: rgb(6, 58, 125) !important;
     border-radius: 0px 20px 20px 0px;
@@ -159,15 +161,24 @@
     height: 100%;
 }
 .card-link i{
-         height: 50px;
+      height: 50px;
     width: 50px;
     align-content: center;
-    background: #ffff;
+    background: #ff9705;
     border-radius: 10px;
     margin: 0px !important;
-    border: 1px solid #f5f5f5;
+   
     transition: 0.4s;
+    color: #FFF;
 }
+.salary-details .card{
+    
+    margin-bottom: 0px!important;
+}
+ #leaveChart {
+    width: 100% !important;
+    height: 350px !important; /* Adjust for mobile */
+  }
 .card-link{
   text-decoration: none;
 }
@@ -309,6 +320,10 @@ padding-left: 0px !important;
 .sup-quick-action .card-icon{
       margin-right: 10px;
 }
+ #attendanceChart {
+    width: 100% !important;
+    height: 400px !important;
+  }
 .sidebar-menu a{
   margin: 0px!important;
 }
@@ -510,6 +525,10 @@ align-items: center;
   font-size: 15px;
   font-weight: 500;
   color: #222;
+}
+.attendance-card .card-hover p{
+  margin-bottom: 0px!important;
+  color: #000;
 }
 
 .legend-dot {
@@ -1541,21 +1560,33 @@ color: #fff;
 }
 .alert.alert-primary {
   background-color: #6777ef;
+   margin-bottom: 10px;
+    margin-top: 10px;
 }
 .alert.alert-secondary {
   background-color: #cdd3d8;
+   margin-bottom: 10px;
+    margin-top: 10px;
 }
 .alert.alert-success {
   background-color: #47c363;
+   margin-bottom: 10px;
+    margin-top: 10px;
 }
 .alert.alert-info {
   background-color: #3abaf4;
+   margin-bottom: 10px;
+    margin-top: 10px;
 }
 .alert.alert-warning {
   background-color: #ffa426;
+   margin-bottom: 10px;
+    margin-top: 10px;
 }
 .alert.alert-danger {
   background-color: #fc544b;
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 .alert.alert-light {
   background-color: #e3eaef;
@@ -2280,6 +2311,10 @@ table tr:hover .table-links {
 .badge.badge-danger {
   background-color: #fc544b;
 } 
+.badge.badge-warning{
+  background-color: #fc544b;
+  color:#fff;
+}
 .badge.badge-light {
   background-color: #e3eaef;
   color: #191d21;
@@ -4436,11 +4471,11 @@ html,body{
   margin-top: 10px;
 }
 #attendanceChart{
-  height: 280px!important;
+  height: 336px!important;
 }
-.cash-dep #attendanceChart{
+/* .cash-dep #attendanceChart{
   height: 100%!important;
-}
+} */
 .attendance-height #attendanceChart{
   height: 100%!important;
 }
@@ -4454,6 +4489,8 @@ html,body{
   letter-spacing: 0.3px;
   color: #000!important;
   text-decoration: none;
+      margin-bottom: 10px !important;
+      
 }
 .profile-form input{
   border-bottom: 1px solid #000;
@@ -4465,7 +4502,7 @@ html,body{
     height: auto!important;
 }
 .profile-form .form-group .button{
-  border-radius: 0px;
+  border-radius: 10px!important;
 }
 .pro-form{
   height: 100%;
@@ -4999,7 +5036,29 @@ body.layout-3 .main-wrapper {
   #process-bulk-payroll{
      margin-bottom: 10px;
   }
-  
+  .emp-dashboard .col-4 i {
+    font-size: 20px;
+}
+ #leaveChart {
+      height: 250px !important;
+    }
+     .cash-dep #attendanceChart {
+      height: 280px !important;
+    }
+    .mobile-space h4{
+      text-align: center;
+      padding-bottom: 15px!important;
+    }
+.employee-check-in a{
+  padding: 0px 10px;
+      margin-bottom: 10px;
+}
+.employee-check-in .card-body {
+    padding-bottom: 10px !important;
+}
+.employee-check-in{
+      padding: 10px 0px;
+}
     #app .margin-bottom{
     margin-bottom: 10px!important;
             text-align: center;
@@ -5413,8 +5472,8 @@ margin: 0px!important;
  text-align: center;
   }
   .emp-dashboard .col-4 {
-    height: 60px;
-    width: 60px;}
+    height: 50px;
+    width: 50px;}
   .section-header{
     justify-content: center;
   }

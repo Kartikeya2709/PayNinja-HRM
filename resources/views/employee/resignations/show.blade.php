@@ -47,23 +47,23 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div class="row mt-4">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Resignation Date</label>
-                                    <p class="form-control-plaintext">{{ $resignation->resignation_date->format('M d, Y') }}</p>
+                                    <p class="form-control-plaintext form-control">{{ $resignation->resignation_date->format('M d, Y') }}</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Last Working Date</label>
-                                    <p class="form-control-plaintext">{{ $resignation->last_working_date->format('M d, Y') }}</p>
+                                    <p class="form-control-plaintext form-control">{{ $resignation->last_working_date->format('M d, Y') }}</p>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Notice Period</label>
-                                    <p class="form-control-plaintext">{{ $resignation->notice_period_days }} days</p>
+                                    <p class="form-control-plaintext form-control">{{ $resignation->notice_period_days }} days</p>
                                 </div>
                             </div>
                         </div>
@@ -82,23 +82,24 @@
                                 </div>
                             </div>
                         @endif
-
+                <div class="row mt-4">
+                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label">Reason for Resignation</label>
-                            <p class="form-control-plaintext">{{ $resignation->reason }}</p>
+                            <p class="form-control-plaintext form-control">{{ $resignation->reason }}</p>
                         </div>
 
                         @if($resignation->employee_remarks)
                             <div class="form-group">
                                 <label class="form-label">Your Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->employee_remarks }}</p>
+                                <p class="form-control-plaintext form-control">{{ $resignation->employee_remarks }}</p>
                             </div>
                         @endif
 
                         @if($resignation->attachment_path)
                             <div class="form-group">
                                 <label class="form-label">Supporting Document</label>
-                                <p class="form-control-plaintext">
+                                <p class="form-control-plaintext form-control">
                                     <a href="{{ Storage::url($resignation->attachment_path) }}" target="_blank" class="btn btn-sm btn-info">
                                         <i class="fas fa-download"></i> Download Document
                                     </a>
@@ -108,11 +109,11 @@
 
                         <!-- Approval Information -->
                         @if($resignation->reportingManager)
-                            <div class="row">
+                           </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="form-label">Reporting Manager</label>
-                                        <p class="form-control-plaintext">{{ $resignation->reportingManager->name }}</p>
+                                        <p class="form-control-plaintext form-control">{{ $resignation->reportingManager->name }}</p>
                                     </div>
                                 </div>
                                 @if($resignation->hrAdmin)
@@ -233,7 +234,7 @@
                         @endif
 
                         <!-- Action Buttons -->
-                        <div class="form-group mt-4">
+                        <div class="form-group mt-4 text-center">
                             @if($resignation->canBeWithdrawn())
                                 <button type="button" class="btn btn-danger"
                                         onclick="withdrawResignation({{ $resignation->id }})">

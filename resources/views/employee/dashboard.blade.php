@@ -51,7 +51,7 @@
                 </a>
               </div>
 
-              <div class="col-lg-12">
+              <div class="col-lg-12 salary-details">
                 <a href="{{ route('employee.salary.details') }}" class="card card-link">
                   <div class="card-body text-center d-flex align-items-center">
 
@@ -172,10 +172,12 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-6 px-1 monthly-leave">
+          <div class="col-lg-6 px-1 monthly-leave mobile-space">
             <div class="card">
               <h5>Monthly Leave Summary</h5>
+              
               <canvas id="leaveChart"></canvas>
+              
             </div>
           </div>
         </div>
@@ -190,20 +192,29 @@
                 <div class="background" id="eventBackground"></div>
 
 
-                <div class="event-card">
-                  <h6>🎉 {{ ucwords($upcoming_birthday->name)}}’s Birthday Celebration</h6>
-                  <p>{{ Carbon\Carbon::parse($upcoming_birthday->dob)->format('d F')}} </p>
-                </div>
+                @if($upcoming_birthday)
+                  <div class="event-card">
+                    <h6>🎉 {{ ucwords($upcoming_birthday->name) }}’s Birthday Celebration</h6>
+                    <p>{{ \Carbon\Carbon::parse($upcoming_birthday->dob)->format('d F') }}</p>
+                  </div>
+                @else
+                  <div class="event-card">
+                    <h6>😅 Oops!</h6>
+                    <p>No upcoming birthdays 🎂</p>
+                  </div>
+                @endif
+
               </div>
             </div>
           </div>
-          <div class="col-lg-6 px-1">
+          <div class="col-lg-6 px-1 mobile-space">
             <div class="card holiday-table">
               <div class="card-header">
                 <h5 class>Upcoming Holidays</h5>
               </div>
               <div class="card-body p-0">
-                <table class="table table-hover table-bordered mb-0">
+                <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
                   <thead class="table-light">
                     <tr>
                       <th>Date</th>
@@ -230,6 +241,7 @@
           </div>
 
         </div>
+        </div>
         <div class="row mt-4">
           <div class="col-lg-8 px-1 cash-dep">
             <div class="card">
@@ -238,7 +250,7 @@
 
             </div>
           </div>
-          <div class="col-lg-4 px-1 cash-dep">
+          <div class="col-lg-4 px-1 cash-dep mobile-space">
             <div class="card leave">
               <h5>Leave Taken vs Remaining</h5>
               <canvas id="leaveBalanceChart"></canvas>
@@ -314,7 +326,7 @@
     const totalLeaves = {{ $total_leaves ?? 0 }};
     const leavesTaken = {{ $leaves_taken ?? 0 }};
     const remainingLeaves = {{ $leave_balance ?? 0 }};
-    
+
     new Chart(leaveBalanceCtx, {
       type: 'doughnut',
       data: {
@@ -332,7 +344,7 @@
           legend: { position: 'bottom' },
           tooltip: {
             callbacks: {
-              label: function(context) {
+              label: function (context) {
                 return context.label + ': ' + context.raw + ' days';
               }
             }
@@ -416,36 +428,43 @@
 
     // Leave Chart (Bar)
     const leaveCtx = document.getElementById('leaveChart').getContext('2d');
-            // Ensure leave data is always integer
-            const monthlyLeavesTaken = @json($monthlyLeavesTaken ?? array_fill(0,12,0)).map(x => Math.round(x));
-            new Chart(leaveCtx, {
-              type: 'bar',
-              data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-                datasets: [{
-                  label: 'Leaves Taken',
-                  data: monthlyLeavesTaken,
-                  backgroundColor: [
-                    '#003f5c', '#ff9705', '#88d498', '#845ec2', '#00c9a7',
-                    '#c34a36', '#2cb6e2', '#b9314f', '#8bc34a', '#6a4c93',
-                    '#29b6f6', '#ffb300'
-                  ],
-                  borderRadius: 8
-                }]
-              },
-              options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    ticks: {
-                      precision: 0 // Force integer ticks
-                    }
-                  }
-                }
-              }
-            });
+    // Ensure leave data is always integer
+    const monthlyLeavesTaken = @json($monthlyLeavesTaken ?? array_fill(0, 12, 0)).map(x => Math.round(x));
+    new Chart(leaveCtx, {
+      type: 'bar',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+        datasets: [{
+          label: 'Leaves Taken',
+          data: monthlyLeavesTaken,
+          backgroundColor: [
+            '#003f5c', '#ff9705', '#88d498', '#845ec2', '#00c9a7',
+            '#c34a36', '#2cb6e2', '#b9314f', '#8bc34a', '#6a4c93',
+            '#29b6f6', '#ffb300'
+          ],
+          borderRadius: 8
+        }]
+      },
+       options: {
+      responsive: true,
+      maintainAspectRatio: false, // ✅ allows chart to stretch on smaller screens
+      plugins: { 
+        legend: { display: false } 
+      },
+      scales: {
+        x: {
+          ticks: {
+            maxRotation: 45, // ✅ rotate labels on mobile for better fit
+            minRotation: 30
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: { precision: 0 } // ✅ integer ticks
+        }
+      }
+    }
+  });
 
 
     // Attendance Summary (Line Chart with 4 metrics)
@@ -515,6 +534,7 @@
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom' },
           title: { display: true, text: 'Monthly Attendance Trend (' + currentYear + ')' }
