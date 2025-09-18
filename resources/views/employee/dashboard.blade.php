@@ -209,9 +209,9 @@
           </div>
           <div class="col-lg-6 px-1 mobile-space">
             <div class="card holiday-table">
-              <div class="card-header">
-                <h5 class>Upcoming Holidays</h5>
-              </div>
+            
+                <h5 class="text-center">Upcoming Holidays</h5>
+              
               <div class="card-body p-0">
                 <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle mb-0">

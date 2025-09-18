@@ -3,7 +3,7 @@
 @section('title', 'View Leave Request')
 
 @section('content')
-<section class="section">
+<section class="section container">
     <div class="section-header">
         <h1>View Leave Request</h1>
         <div class="section-header-breadcrumb">
@@ -21,27 +21,27 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Leave Type</label>
-                                    <p class="form-control-static">{{ $leaveRequest->leaveType->name }}</p>
+                                    <p class="form-control-static form-control">{{ $leaveRequest->leaveType->name }}</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Start Date</label>
-                                    <p class="form-control-static">{{ $leaveRequest->start_date->format('Y-m-d') }}</p>
+                                    <p class="form-control-static form-control">{{ $leaveRequest->start_date->format('Y-m-d') }}</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>End Date</label>
-                                    <p class="form-control-static">{{ $leaveRequest->end_date->format('Y-m-d') }}</p>
+                                    <p class="form-control-static form-control">{{ $leaveRequest->end_date->format('Y-m-d') }}</p>
                                 </div>
 
                                 <div class="form-group">
                                     <label>Total Calendar Days</label>
-                                    <p class="form-control-static">{{ $totalCalendarDays }} days</p>
+                                    <p class="form-control-static form-control">{{ $totalCalendarDays }} days</p>
                                 </div>
                                 
                                 <div class="form-group">
                                     <label>Working Days ({{ count($workingDays) }})</label>
-                                    <p class="form-control-static">
+                                    <p class="form-control-static form-control">
                                         @if(count($workingDays) > 0)
                                             @foreach($workingDays as $date)
                                                 <span class="badge badge-primary mr-1 mb-1">
@@ -56,7 +56,7 @@
                                 
                                 <div class="form-group">
                                     <label>Weekend Days ({{ count($weekendDays) }})</label>
-                                    <p class="form-control-static">
+                                    <p class="form-control-static form-control">
                                         @if(count($weekendDays) > 0)
                                             @foreach($weekendDays as $date)
                                                 <span class="badge badge-secondary mr-1 mb-1">
@@ -71,7 +71,7 @@
                                 
                                 <div class="form-group">
                                     <label>Holiday Days ({{ count($holidayDates) }})</label>
-                                    <p class="form-control-static">
+                                    <p class="form-control-static form-control">
                                         @if(count($holidayDates) > 0)
                                             @foreach($holidayDates as $date)
                                                 <span class="badge badge-success mr-1 mb-1">
@@ -88,7 +88,7 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label>Status</label>
-                                    <p class="form-control-static">
+                                    <p class="form-control-static form-control">
                                         @php
                                             $statusColors = [
                                                 'pending' => 'warning',
@@ -107,13 +107,13 @@
 
                                 <div class="form-group">
                                     <label>Reason</label>
-                                    <p class="form-control-static">{{ $leaveRequest->reason }}</p>
+                                    <p class="form-control-static form-control">{{ $leaveRequest->reason }}</p>
                                 </div>
 
                                 @if($leaveRequest->attachment)
                                     <div class="form-group">
                                         <label>Attachment</label>
-                                        <p class="form-control-static">
+                                        <p class="form-control-static form-control">
                                             <a href="{{ Storage::url($leaveRequest->attachment) }}" 
                                                target="_blank" 
                                                class="btn btn-sm btn-info">
@@ -126,7 +126,7 @@
                                 @if($leaveRequest->status === 'rejected' && $leaveRequest->rejection_reason)
                                     <div class="form-group">
                                         <label>Rejection Reason</label>
-                                        <p class="form-control-static">{{ $leaveRequest->rejection_reason }}</p>
+                                        <p class="form-control-static form-control">{{ $leaveRequest->rejection_reason }}</p>
                                     </div>
                                 @endif
                             </div>

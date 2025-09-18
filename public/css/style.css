@@ -62,6 +62,10 @@
   box-shadow: none !important;
   outline: none;
 }
+.check-in-col .alert.alert-success {
+     margin-bottom: 0px!important;
+     margin-top:0px!important; 
+}
 .fc .fc-toolbar-title{
   font-size: 16px!important;
 }
@@ -102,7 +106,7 @@
   justify-content: space-between;
       align-items: center;
 }
-.check-in-text h3{
+.check-in-text h5{
   color: #000;
 
     font-weight: 800;
@@ -110,7 +114,7 @@
         padding-bottom: 10px;
         display: inline-block;
 }
-.check-in-text h3:before{
+.check-in-text h5:before{
    content: "";
     position: absolute;
     display: block;
@@ -241,7 +245,7 @@ font-weight: 400;
 #app .check-in h5{
   color: #191d21 !important;
 }
-.check-in-text h3:after{
+.check-in-text h5:after{
   content: "";
     position: absolute;
     display: block;
@@ -4788,9 +4792,7 @@ body:not(.sidebar-mini) .sidebar-style-1 .sidebar-menu li.active ul.dropdown-men
     font-size: 14px!important;}
   .table:not(.table-sm):not(.table-md):not(.dataTable) td, .table:not(.table-sm):not(.table-md):not(.dataTable) th {
     font-size: 12px!important;}
-    .card .card-header h3, .card .card-header h5 {
-    font-size: 18px!important;
-  line-height: 30px;}
+ 
   
  body.sidebar-gone .main-sidebar {
     left: -300px;
@@ -4914,6 +4916,10 @@ body.layout-3 .main-wrapper {
 .table {
       min-width: 900px;
 }
+
+.mobile-space .card-title{
+  text-align: center;
+}
 .tab-width{
   width: 100%;
 }
@@ -4928,7 +4934,7 @@ body.layout-3 .main-wrapper {
 .attendance-card .card{
   padding: 10px;
 }
-.attendance-card .card-title{
+.attendance-card .text .card-title{
   font-size: 14px;
 }
 .profile-form-col{
@@ -5125,9 +5131,9 @@ text-align: center!important;
 .emp-calender{
   padding: 15px!important; 
 }
-  .section p{
+  /* .section p{
     text-align: center;
-  }
+  } */
       .leave-blnc .col-md-3{
     width: 100%;
   }
@@ -5226,9 +5232,7 @@ padding: 0px !important;
   padding-bottom: 0px!important;
   padding-right: 0px!important;
 }
-  .emp-dashboard .badge {
-    padding: 0px!important;
-  }
+
   .check-in-text {
     padding: 20px !important;
 }

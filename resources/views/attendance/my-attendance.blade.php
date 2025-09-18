@@ -16,7 +16,7 @@
 <div class="row">
     <div class="col-12 px-1">
         <div class="card my-attendance">
-            <div class="card-header py-3 d-flex flex-wrap justify-content-between align-items-center">
+            <div class="d-flex flex-wrap justify-content-between align-items-center">
                 <h5>My Attendance</h5>
                 <div class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
                     <form method="GET" class="d-flex gap-2">
@@ -136,7 +136,7 @@
     <div class="col-8 px-1">
     
         <div class="card">
-            <div class="card-header">
+            <div class="justify-content-center text-center">
                 <h5 class="mb-0">Monthly Summary - {{ \Carbon\Carbon::parse($month ?? now())->format('F Y') }}</h5>
             </div>
             <div class="card-body">
@@ -255,7 +255,7 @@
                     <div class="col-4 mb-3 px-1 mobile-space">
                         <div class="card">
                             <div class="card-body">
-                                <h6 class="card-title">Attendance Rate</h6>
+                                <h5 class="text-center">Attendance Rate</h5>
                                 @php
                                     $workingDays = $monthlySummary['total_working_days'] ?? 0;
                                     $daysWorked = $monthlySummary['days_worked'] ?? 0;

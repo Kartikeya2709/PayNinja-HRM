@@ -202,7 +202,7 @@
 
 
       <div class="row mt-4">
-        <div class="col-6 px-1">
+        <div class="col-lg-6 col-sm-12 px-1">
           <div class="card emp-department p-4">
             <h5 class="mb-3 text-center">Employee Distribution by Department</h5>
             <canvas id="departmentChart"></canvas>
