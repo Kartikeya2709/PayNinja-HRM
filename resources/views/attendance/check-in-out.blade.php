@@ -16,7 +16,7 @@
     <div class="col-md-6 check-in-col">
         <div class="card check-in-text">
             <div class="card-body text-center">
-                <h3 class="mb-4">
+                <h5 class="mb-4">
                     @if(!$todayAttendance || !$todayAttendance->check_in)
                         Check In
                     @elseif(!$todayAttendance->check_out)
@@ -24,7 +24,7 @@
                     @else
                         Attendance Recorded
                     @endif
-                </h3>
+                </h5>
                 
                 <!-- Current Time -->
                 <div class="mb-4">
@@ -128,7 +128,7 @@
                         <h5>Today's Attendance Status</h5>
                         <div class="d-flex justify-content-center">
                             <div class="text-start w-100">
-                                <div class="card mb-3 mt-3">
+                                <div class="mb-3 mt-3">
                                     <div class="card-body">
                                         @if($todayAttendance->check_in)
                                             <div class="d-flex justify-content-center align-items-center mb-2">

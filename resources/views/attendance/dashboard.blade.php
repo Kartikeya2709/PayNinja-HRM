@@ -17,9 +17,9 @@
     <div class="col-md-4 px-1 tab-width">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">Today's Status</h5>
+                <h5 class="card-title text-center">Today's Status</h5>
                 @if($todayAttendance)
-                    <div class="text-center my-4">
+                    <div class="text-center mt-3">
                         @if($todayAttendance->check_in && $todayAttendance->check_out)
                             <span class="badge bg-success p-3">
                                 <i class="bi bi-check-circle-fill me-2"></i>
@@ -58,7 +58,7 @@
     <div class="col-md-8 px-1 mobile-space">
         <div class="card h-100">
             <div class="card-body">
-                <h5 class="card-title">This Week's Summary</h5>
+                <h5 class="card-title text-center">This Week's Summary</h5>
                 <div class="table-responsive">
                     <table class="table table-hover">
                         <thead>

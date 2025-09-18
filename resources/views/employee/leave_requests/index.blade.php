@@ -31,7 +31,7 @@ use Carbon\Carbon;
             <div class="col-12 px-1">
                 <div class="card">
                     <div class="card-header btn-center">
-                        <h4>Leave Balances</h4>
+                        <h5>Leave Balances</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -65,7 +65,7 @@ use Carbon\Carbon;
 
                 <div class="card mt-4">
                     <div class="card-header btn-center">
-                        <h4>Leave Requests</h4>
+                        <h5>Leave Requests</h5>
                     </div>
                     <div class="card-body">
                         @if(session('success'))
@@ -111,7 +111,7 @@ use Carbon\Carbon;
                                             <td>{{ $request->end_date->format('Y-m-d') }}</td>
                                             <td>{{ $request->working_days_count }}</td>
                                             <td>
-                                                <div class="text-center">
+                                                <div class="text-left">
                                                     @if(is_array($request->working_days))
                                                         <span class="badge badge-info">{{ count($request->working_days) }} working days</span>
                                                         <div class="mt-1 small">
