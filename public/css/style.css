@@ -179,10 +179,7 @@
     
     margin-bottom: 0px!important;
 }
- #leaveChart {
-    width: 100% !important;
-    height: 350px !important; /* Adjust for mobile */
-  }
+
 .card-link{
   text-decoration: none;
 }
@@ -324,10 +321,7 @@ padding-left: 0px !important;
 .sup-quick-action .card-icon{
       margin-right: 10px;
 }
- #attendanceChart {
-    width: 100% !important;
-    height: 400px !important;
-  }
+
 .sidebar-menu a{
   margin: 0px!important;
 }
@@ -647,6 +641,8 @@ tbody, td, tfoot, th, thead, tr{
   transition: all 0.3s ease;
   animation: pulseGreen 2.5s infinite;
 }
+.chart-height{
+height: 400px!important;}
 
 /* ✅ Check Out Button */
 .check-outt {
@@ -4474,9 +4470,7 @@ html,body{
 .main-sidebar .sidebar-menu li.menu-header:not(:first-child) {
   margin-top: 10px;
 }
-#attendanceChart{
-  height: 336px!important;
-}
+
 /* .cash-dep #attendanceChart{
   height: 100%!important;
 } */
@@ -5045,12 +5039,13 @@ body.layout-3 .main-wrapper {
   .emp-dashboard .col-4 i {
     font-size: 20px;
 }
- #leaveChart {
-      height: 250px !important;
-    }
-     .cash-dep #attendanceChart {
-      height: 280px !important;
-    }
+ .chart-height {
+    height: 400px !important;
+}
+.chart-height canvas{
+  height: 330px!important;
+}
+   
     .mobile-space h4{
       text-align: center;
       padding-bottom: 15px!important;

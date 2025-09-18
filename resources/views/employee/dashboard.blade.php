@@ -173,7 +173,7 @@
             </div>
           </div>
           <div class="col-lg-6 px-1 monthly-leave mobile-space">
-            <div class="card">
+            <div class="card chart-height">
               <h5>Monthly Leave Summary</h5>
               
               <canvas id="leaveChart"></canvas>
@@ -244,7 +244,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-lg-8 px-1 cash-dep">
-            <div class="card">
+            <div class="card chart-height">
               <h5>Attendance summary</h5>
               <canvas id="attendanceChart"></canvas>
 
@@ -447,7 +447,7 @@
       },
        options: {
       responsive: true,
-      maintainAspectRatio: false, // ✅ allows chart to stretch on smaller screens
+      maintainAspectRatio: false,
       plugins: { 
         legend: { display: false } 
       },
