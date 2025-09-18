@@ -173,7 +173,7 @@
             </div>
           </div>
           <div class="col-lg-6 px-1 monthly-leave mobile-space">
-            <div class="card chart-height">
+            <div class="card">
               <h5>Monthly Leave Summary</h5>
               
               <canvas id="leaveChart"></canvas>
@@ -244,7 +244,7 @@
         </div>
         <div class="row mt-4">
           <div class="col-lg-8 px-1 cash-dep">
-            <div class="card chart-height">
+            <div class="card">
               <h5>Attendance summary</h5>
               <canvas id="attendanceChart"></canvas>
 
@@ -447,7 +447,6 @@
       },
        options: {
       responsive: true,
-      maintainAspectRatio: false,
       plugins: { 
         legend: { display: false } 
       },
@@ -534,7 +533,6 @@
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
         plugins: {
           legend: { position: 'bottom' },
           title: { display: true, text: 'Monthly Attendance Trend (' + currentYear + ')' }

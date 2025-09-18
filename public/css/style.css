@@ -641,8 +641,7 @@ tbody, td, tfoot, th, thead, tr{
   transition: all 0.3s ease;
   animation: pulseGreen 2.5s infinite;
 }
-.chart-height{
-height: 400px!important;}
+
 
 /* ✅ Check Out Button */
 .check-outt {
@@ -5039,12 +5038,7 @@ body.layout-3 .main-wrapper {
   .emp-dashboard .col-4 i {
     font-size: 20px;
 }
- .chart-height {
-    height: 400px !important;
-}
-.chart-height canvas{
-  height: 330px!important;
-}
+
    
     .mobile-space h4{
       text-align: center;
