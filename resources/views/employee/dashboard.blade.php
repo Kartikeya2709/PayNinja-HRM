@@ -95,10 +95,10 @@
               </div>
               <div class="card-body emp-dashboard">
                 <div class="row align-items-center today-status">
-                  <div class="col-4 text-center">
+                  <div class="col-lg-4 col-sm-12 text-center dash-icon">
                     <i class="fas fa-user-clock fa-3x"></i>
                   </div>
-                  <div class="col-8">
+                  <div class="col-lg-8 col-sm-12">
                     <div class="mb-2">
                       <strong>Check In Time:</strong>
                       @if(isset($todayAttendance) && $todayAttendance->check_in)
@@ -155,11 +155,11 @@
                 <h5>Leave Balance</h5>
               </div>
               <div class="card-body emp-dashboard">
-                <div class="row align-items-center">
-                  <div class="col-4 text-center">
+                <div class="row align-items-center today-status">
+                  <div class="col-lg-4 col-sm-12 text-center dash-icon">
                     <i class="fas fa-calendar-alt fa-3x"></i>
                   </div>
-                  <div class="col-8">
+                  <div class="col-lg-8 col-sm-12">
                     <div class="mb-2">
                       <strong>Available Leaves:</strong>
                       <span class="ml-2">{{ $leaveBalance ?? 0 }} Days</span>

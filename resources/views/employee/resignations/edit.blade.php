@@ -16,7 +16,7 @@
 
         <div class="card">
             <div class="card-header">
-                <h4>Edit Resignation Details</h4>
+                <h5>Edit Resignation Details</h5>
                 <div class="card-header-action">
                     <span class="badge badge-{{ $resignation->status_color }}">
                         {{ $resignation->status_label }}
@@ -39,9 +39,9 @@
                     @csrf
                     @method('PUT')
 
-                    <div class="row">
+                    <div class="row mt-4">
                         <div class="col-md-6">
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="resignation_type" class="form-label">Resignation Type <span class="text-danger">*</span></label>
                                 <select name="resignation_type" id="resignation_type" class="form-control @error('resignation_type') is-invalid @enderror" required>
                                     <option value="">Select Type</option>
@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="resignation_date" class="form-label">Resignation Date <span class="text-danger">*</span></label>
                                 <input type="date" name="resignation_date" id="resignation_date"
                                        class="form-control @error('resignation_date') is-invalid @enderror"
@@ -71,7 +71,7 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="last_working_date" class="form-label">Last Working Date <span class="text-danger">*</span></label>
                                 <input type="date" name="last_working_date" id="last_working_date"
                                        class="form-control @error('last_working_date') is-invalid @enderror"
@@ -84,7 +84,7 @@
                         </div>
 
                         <div class="col-md-6">
-                            <div class="form-group">
+                            <div class="form-group mb-4">
                                 <label for="notice_period_days" class="form-label">Notice Period (Days) <span class="text-danger">*</span></label>
                                 <input type="number" name="notice_period_days" id="notice_period_days"
                                        class="form-control @error('notice_period_days') is-invalid @enderror"
@@ -98,7 +98,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <label for="reason" class="form-label">Reason for Resignation <span class="text-danger">*</span></label>
                         <textarea name="reason" id="reason" rows="4"
                                   class="form-control @error('reason') is-invalid @enderror"
@@ -109,7 +109,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <label for="attachment" class="form-label">Supporting Document (Optional)</label>
                         @if($resignation->attachment_path)
                             <div class="mb-2">
@@ -133,7 +133,7 @@
                         </small>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <label for="employee_remarks" class="form-label">Additional Remarks (Optional)</label>
                         <textarea name="employee_remarks" id="employee_remarks" rows="3"
                                   class="form-control @error('employee_remarks') is-invalid @enderror"
@@ -144,7 +144,7 @@
                     </div>
 
                     <div class="alert alert-warning">
-                        <h6><i class="fas fa-exclamation-triangle"></i> Important Notes</h6>
+                        <h6 style="text-align: left;"><i class="fas fa-exclamation-triangle"></i> Important Notes</h6>
                         <ul class="mb-0">
                             <li>You can only edit resignation requests that are in <strong>pending</strong> status.</li>
                             <li>Once approved by HR or management, the resignation cannot be modified.</li>
@@ -153,7 +153,7 @@
                         </ul>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Update Resignation
                         </button>
@@ -169,40 +169,40 @@
         </div>
 
         <!-- Current Resignation Information -->
-        <div class="card">
-            <div class="card-header">
-                <h4>Current Resignation Information</h4>
+        <div class="card mt-4">
+            <div class="card-header mb-2">
+                <h5>Current Resignation Information</h5>
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
+                    <div class="col-lg-3 col-md-4">
+                        <div class="form-group mb-4">
                             <label class="form-label">Current Type</label>
-                            <p class="form-control-plaintext">
+                            <p class="form-control-plaintext form-control">
                                 <span class="badge badge-info">{{ $resignation->resignation_type_label }}</span>
                             </p>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
+                    <div class="col-lg-3 col-md-4">
+                        <div class="form-group mb-4">
                             <label class="form-label">Current Status</label>
-                            <p class="form-control-plaintext">
+                            <p class="form-control-plaintext form-control">
                                 <span class="badge badge-{{ $resignation->status_color }}">
                                     {{ $resignation->status_label }}
                                 </span>
                             </p>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
+                    <div class="col-lg-3 col-md-4">
+                        <div class="form-group mb-4">
                             <label class="form-label">Submitted On</label>
-                            <p class="form-control-plaintext">{{ $resignation->created_at->format('M d, Y H:i') }}</p>
+                            <p class="form-control-plaintext form-control">{{ $resignation->created_at->format('M d, Y H:i') }}</p>
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
+                    <div class="col-lg-3 col-md-4">
+                        <div class="form-group mb-4">
                             <label class="form-label">Last Updated</label>
-                            <p class="form-control-plaintext">{{ $resignation->updated_at->format('M d, Y H:i') }}</p>
+                            <p class="form-control-plaintext form-control">{{ $resignation->updated_at->format('M d, Y H:i') }}</p>
                         </div>
                     </div>
                 </div>

@@ -18,7 +18,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Resignation Information</h4>
+                        <h5>Resignation Information</h5>
                         <div class="card-header-action">
                             <a href="{{ route('employee.resignations.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to List
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="row">
+                        <div class="row Resignation-Information">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label class="form-label">Resignation Type</label>
@@ -47,7 +47,7 @@
                             </div>
                         </div>
 
-                        <div class="row mt-4">
+                        <div class="row mt-4 Resignation-Date">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label class="form-label">Resignation Date</label>
@@ -234,7 +234,7 @@
                         @endif
 
                         <!-- Action Buttons -->
-                        <div class="form-group mt-4 text-center">
+                        <div class="form-group mt-4 text-center Resignation-Date">
                             @if($resignation->canBeWithdrawn())
                                 <button type="button" class="btn btn-danger"
                                         onclick="withdrawResignation({{ $resignation->id }})">

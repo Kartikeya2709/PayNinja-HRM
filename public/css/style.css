@@ -286,11 +286,11 @@ padding-left: 0px !important;
   color: #000;
   margin: 0px;
 }
-.emp-dashboard .col-4 i{
+.emp-dashboard .dash-icon i{
   color: #fff;
   font-size: 30px;
 }
-.emp-dashboard .col-4{
+.emp-dashboard .dash-icon{
       background: rgb(6, 58, 125);
     height: 80px;
     width: 80px;
@@ -5035,7 +5035,26 @@ body.layout-3 .main-wrapper {
   #process-bulk-payroll{
      margin-bottom: 10px;
   }
+  .today-check-in .today-status{
+    justify-content: center;
+  }
   .emp-dashboard .col-4 i {
+    font-size: 20px;
+}
+.emp-dashboard .dash-icon{
+  height: 50px;
+    width: 50px;
+    margin-left: 0px;
+            margin-bottom: 10px;
+}
+.Resignation-Information{
+  padding-top: 25px;
+}
+.Resignation-Date{
+  margin-top: 0px!important;
+}
+.emp-dashboard .dash-icon i {
+    
     font-size: 20px;
 }
 #employeeCalendar .fc-header-toolbar{
@@ -5164,6 +5183,7 @@ text-align: center!important;
   }
   .card .card-header h3, .card .card-header h5{
         padding-right: 0px;
+                padding-bottom: 20px;
   }
   .card-1{
     display: block;
