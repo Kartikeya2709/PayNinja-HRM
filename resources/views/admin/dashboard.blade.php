@@ -3,7 +3,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.css">
-<style>
+{{-- <style>
 /* Stats Cards */
 .card-statistic-1 {
     border-radius: 10px;
@@ -169,7 +169,7 @@
         padding: 1.5rem 1rem;
     }
 }
-</style>
+</style> --}}
 @endpush
 
 @section('content')

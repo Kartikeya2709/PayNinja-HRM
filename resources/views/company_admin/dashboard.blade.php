@@ -2,7 +2,7 @@
 @section('title', 'Company Admin Dashboard')
 
 @push('styles')
-  <style>
+  {{-- <style>
     .card-statistic {
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -104,7 +104,7 @@
       background: #6777ef;
       border-radius: 3px;
     }
-  </style>
+  </style> --}}
 @endpush
 
 @section('content')

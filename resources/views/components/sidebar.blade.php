@@ -219,7 +219,7 @@
                 @if (Auth::user()->hasRole('company_admin'))
                     <!-- Holiday Management -->
                     <li class="menu-header">Holiday Management</li>
-                    <li class="{{ Request::is('company/*/academic-holidays*') ? 'active' : '' }}">
+                    <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
                             <i class="fas fa-calendar"></i>
                             <span>Academic Holidays</span>
@@ -402,7 +402,7 @@
                     @if ($hasModuleAccess('team', 'admin'))
                         <!-- Holiday Management -->
                         <li class="menu-header">Holiday Management</li>
-                        <li class="{{ Request::is('company/*/academic-holidays*') ? 'active' : '' }}">
+                        <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
                                 <i class="fas fa-calendar"></i>
                                 <span>Academic Holidays</span>
