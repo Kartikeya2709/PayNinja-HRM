@@ -48,10 +48,43 @@ class AttendanceSetting extends Model
         'office_end_time' => '18:00:00',
         'work_hours' => 8,
         'grace_period' => '00:15:00',
-        'enable_geolocation' => false,
+    
+     'enable_geolocation' => false,
         'geofence_radius' => 100,
     ];
 
+    
+    // Relationship for departments exempted from geolocation
+    public function exemptedDepartments()
+    {
+        return $this->belongsToMany(Department::class, 'department_geolocation_exemptions')
+            ->withTimestamps();
+    }
+
+    // Relationship for employees exempted from geolocation
+    public function exemptedEmployees()
+    {
+        return $this->belongsToMany(Employee::class, 'employee_geolocation_exemptions')
+            ->withTimestamps();
+    }
+
+    // Helper method to check if an employee is exempted from geolocation
+    public function isEmployeeExemptFromGeolocation($employeeId)
+    {
+        // Check if employee is directly exempted
+        if ($this->exemptedEmployees()->where('employee_id', $employeeId)->exists()) {
+            return true;
+        }
+
+        // Check if employee's department is exempted
+        $employee = Employee::find($employeeId);
+        if ($employee && $this->exemptedDepartments()->where('department_id', $employee->department_id)->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+       
     public function company()
     {
         return $this->belongsTo(Company::class);

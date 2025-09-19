@@ -2,6 +2,10 @@
 
 @section('title', 'Attendance Settings')
 
+@push('styles')
+
+@endpush
+
 @section('content')
 <div class="container">
     <section class="section">
@@ -267,6 +271,47 @@
                                     <!-- Map Container -->
                                     <div class="mb-3">
                                         <div id="map" style="height: 300px; width: 100%; border: 1px solid #dee2e6; border-radius: 4px;"></div>
+                                    </div>
+
+                                    <hr class="my-4">
+
+                                    <!-- Geolocation Exemptions -->
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <h6 class="mb-3">Geolocation Exemptions</h6>
+                                            <div class="alert alert-info mb-4">
+                                                <i class="fas fa-info-circle me-2"></i>
+                                                Select departments or employees that are exempted from location-based attendance
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">Exempt Departments</label>
+                                                <select class="form-control select2" name="exempted_departments[]" multiple id="exempted_departments">
+                                                    @foreach($departments as $department)
+                                                        <option value="{{ $department->id }}" 
+                                                            {{ isset($settings) && $settings->exemptedDepartments->contains($department->id) ? 'selected' : '' }}>
+                                                            {{ $department->name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="text-muted">All employees in selected departments will be exempted</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label class="form-label">Exempt Individual Employees</label>
+                                                <select class="form-control select2" name="exempted_employees[]" multiple id="exempted_employees">
+                                                    @foreach($employees as $employee)
+                                                        <option value="{{ $employee->id }}" data-department="{{ $employee->department_id }}"
+                                                            {{ isset($settings) && $settings->exemptedEmployees->contains($employee->id) ? 'selected' : '' }}>
+                                                            {{ $employee->name }}  ({{ $employee->employee_id }})
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <small class="text-muted">Select specific employees to exempt from location check</small>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -643,6 +688,73 @@
             toggleAltSaturdays();
             toggleRegularSaturday();
         }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            width: '100%'
+        });
+
+        // Filter employees based on selected departments
+        function filterEmployeesByDepartments() {
+            const selectedDepartments = $('#exempted_departments').val() || [];
+            const employeeSelect = $('#exempted_employees');
+            
+            console.log('Filtering employees for departments:', selectedDepartments);
+            
+            // Get currently selected employees to preserve them
+            const currentlySelected = employeeSelect.val() || [];
+            console.log('Currently selected employees:', currentlySelected);
+            
+            if (selectedDepartments.length === 0) {
+                // If no departments selected, enable all employees
+                console.log('No departments selected, enabling all employees');
+                employeeSelect.find('option').prop('disabled', false);
+            } else {
+                // Disable all employees first
+                employeeSelect.find('option').prop('disabled', true);
+                
+                // Enable only employees from selected departments
+                let enabledCount = 0;
+                employeeSelect.find('option').each(function() {
+                    const departmentId = $(this).data('department');
+                    if (selectedDepartments.includes(departmentId.toString())) {
+                        $(this).prop('disabled', false);
+                        enabledCount++;
+                    }
+                });
+                console.log('Enabled', enabledCount, 'employees from selected departments');
+            }
+            
+            // Remove any selected employees that are now disabled
+            const validSelections = currentlySelected.filter(function(value) {
+                return !employeeSelect.find('option[value="' + value + '"]').prop('disabled');
+            });
+            
+            console.log('Valid selections after filtering:', validSelections);
+            
+            // Update selections
+            employeeSelect.val(validSelections).trigger('change');
+        }
+
+        // Initial filter on page load
+        filterEmployeesByDepartments();
+
+        // Filter when departments selection changes
+        $('#exempted_departments').on('change', function() {
+            console.log('Department selection changed:', $(this).val());
+            filterEmployeesByDepartments();
+        });
+        
+        // Also listen for select2 events
+        $('#exempted_departments').on('select2:select select2:unselect', function() {
+            console.log('Department select2 event triggered:', $(this).val());
+            filterEmployeesByDepartments();
+        });
     });
 </script>
 @endpush

@@ -162,16 +162,33 @@ class AttendanceService
      * @param float $longitude
      * @return array
      */
-    public function validateLocation($latitude, $longitude)
+    public function validateLocation($latitude, $longitude, $employeeId = null)
     {
         $settings = $this->getAttendanceSettings();
         
-        // If geolocation is not required, return success
-        if (!$settings->enable_geolocation) {
+        // Determine exemption using the Eloquent model, not the stdClass returned by getAttendanceSettings
+        $isExempt = false;
+        if ($employeeId) {
+            try {
+                $companyId = $this->companyId ?? (Auth::check() ? Auth::user()->company_id : null);
+                if ($companyId) {
+                    $settingsModel = \App\Models\AttendanceSetting::where('company_id', $companyId)
+                        ->latest('updated_at')
+                        ->withoutGlobalScopes()
+                        ->first();
+                    $isExempt = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employeeId) : false;
+                }
+            } catch (\Throwable $t) {
+                \Log::warning('Failed to resolve geolocation exemption in validateLocation: ' . $t->getMessage());
+            }
+        }
+
+        // If geolocation is not required or employee is exempted, return success
+        if (!$settings->enable_geolocation || $isExempt) {
             return [
                 'success' => true,
                 'within_allowed_area' => true,
-                'message' => 'Location validation is not required.'
+                'message' => 'Location validation is not required or employee is exempted.'
             ];
         }
         
@@ -292,6 +309,18 @@ class AttendanceService
         
         // Check geolocation if enabled
         if ($settings->enable_geolocation) {
+            // If employee is exempt, we still require coordinates but skip radius enforcement
+            $isExempt = false;
+            try {
+                $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
+                    ->latest('updated_at')
+                    ->withoutGlobalScopes()
+                    ->first();
+                $isExempt = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id) : false;
+            } catch (\Throwable $t) {
+                \Log::warning('Failed checking geolocation exemption: ' . $t->getMessage());
+            }
+
             if ($userLat === null || $userLng === null) {
                 return [
                     'success' => false,
@@ -299,19 +328,21 @@ class AttendanceService
                 ];
             }
             
-            $locationCheck = $this->isWithinAllowedRadius(
-                $userLat, 
-                $userLng, 
-                $settings->office_latitude, 
-                $settings->office_longitude, 
-                $settings->geofence_radius
-            );
-            
-            if (!$locationCheck['success']) {
-                return [
-                    'success' => false,
-                    'message' => $locationCheck['message']
-                ];
+            if (!$isExempt) {
+                $locationCheck = $this->isWithinAllowedRadius(
+                    $userLat, 
+                    $userLng, 
+                    $settings->office_latitude, 
+                    $settings->office_longitude, 
+                    $settings->geofence_radius
+                );
+                
+                if (!$locationCheck['success']) {
+                    return [
+                        'success' => false,
+                        'message' => $locationCheck['message']
+                    ];
+                }
             }
             
             // Store the exact location with coordinates
@@ -555,6 +586,18 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
         
         // Check geolocation if enabled
         if ($settings->enable_geolocation) {
+            // If employee is exempt, still require coordinates but skip radius enforcement
+            $isExempt = false;
+            try {
+                $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
+                    ->latest('updated_at')
+                    ->withoutGlobalScopes()
+                    ->first();
+                $isExempt = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id) : false;
+            } catch (\Throwable $t) {
+                \Log::warning('Failed checking geolocation exemption (checkout): ' . $t->getMessage());
+            }
+
             if ($userLat === null || $userLng === null) {
                 return [
                     'success' => false,
@@ -562,19 +605,21 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
                 ];
             }
             
-            $locationCheck = $this->isWithinAllowedRadius(
-                $userLat, 
-                $userLng, 
-                $settings->office_latitude, 
-                $settings->office_longitude, 
-                $settings->geofence_radius
-            );
-            
-            if (!$locationCheck['success']) {
-                return [
-                    'success' => false,
-                    'message' => $locationCheck['message']
-                ];
+            if (!$isExempt) {
+                $locationCheck = $this->isWithinAllowedRadius(
+                    $userLat, 
+                    $userLng, 
+                    $settings->office_latitude, 
+                    $settings->office_longitude, 
+                    $settings->geofence_radius
+                );
+                
+                if (!$locationCheck['success']) {
+                    return [
+                        'success' => false,
+                        'message' => $locationCheck['message']
+                    ];
+                }
             }
             
             // Store the exact location with coordinates
