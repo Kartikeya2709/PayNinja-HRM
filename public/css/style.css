@@ -5038,7 +5038,9 @@ body.layout-3 .main-wrapper {
   .emp-dashboard .col-4 i {
     font-size: 20px;
 }
-
+#employeeCalendar .fc-header-toolbar{
+  padding-top: 20px;
+}
    
     .mobile-space h4{
       text-align: center;

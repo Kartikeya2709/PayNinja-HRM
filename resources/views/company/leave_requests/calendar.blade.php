@@ -93,7 +93,7 @@
         <h1>Leave Calendar</h1>
         <div class="section-header-breadcrumb">
             <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
-            <div class="breadcrumb-item active">Leave Calendar</div>
+            <div class="breadcrumb-item active"><a href="">Leave Calendar</a></div>
         </div>
     </div>
 

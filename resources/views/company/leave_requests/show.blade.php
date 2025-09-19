@@ -8,7 +8,7 @@
         <h1>View Leave Request</h1>
         <div class="section-header-breadcrumb">
             <div class="breadcrumb-item"><a href="{{ route('company.leave-requests.index') }}">Leave Requests</a></div>
-            <div class="breadcrumb-item active">View</div>
+            <div class="breadcrumb-item active"><a href="">View</a></div>
         </div>
     </div>
 

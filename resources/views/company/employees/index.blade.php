@@ -7,7 +7,7 @@
                 <h1>Employees</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="">Employees</div>
+                    <div class="breadcrumb-item"><a href="">Employees</a></div>
                 </div>
             </div>
              <div class="row">

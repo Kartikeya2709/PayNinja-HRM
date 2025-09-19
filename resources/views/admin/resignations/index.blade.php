@@ -9,7 +9,7 @@
             <h1>Manage Resignations</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item">Resignations</div>
+                <div class="breadcrumb-item"><a href="">Resignations</a></div>
             </div>
         </div>
 

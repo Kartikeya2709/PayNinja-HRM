@@ -7,7 +7,7 @@
                 <h1>Edit Employee</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="">Edit Employee</div>
+                    <div class="breadcrumb-item"><a href="">Edit Employee</a></div>
                 </div>
             </div>
              <div class="row">

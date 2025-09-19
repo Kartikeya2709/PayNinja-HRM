@@ -8,7 +8,7 @@
         <h1>Edit Leave Balance</h1>
         <div class="section-header-breadcrumb">
             <div class="breadcrumb-item"><a href="{{ route('company.leave-balances.index') }}">Leave Balances</a></div>
-            <div class="breadcrumb-item active">Edit</div>
+            <div class="breadcrumb-item active"><a href="">Edit</a></div>
         </div>
     </div>
 
