@@ -17,8 +17,8 @@
         <div class="row">
             <div class="col-12 px-1">
                 <div class="card">
-                    <div class="card-header btn-center">
-                        <h4>Leave Balances</h4>
+                    <div class="card-header btn-center justify-content-center">
+                        <h5>Leave Balances</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -52,7 +52,7 @@
 
                 <div class="card mt-4">
                     <div class="card-header justify-content-center mb-3 btn-center margin-bottom">
-                        <h4>Leave Request Form</h4>
+                        <h5>Leave Request Form</h5>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('employee.leave-requests.store') }}" method="POST" enctype="multipart/form-data">

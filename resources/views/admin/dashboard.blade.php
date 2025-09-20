@@ -182,7 +182,7 @@
         <!-- Stats Row -->
         <div class="row emp-card">
             <!-- Total Employees -->
-            <div class="col-lg-3 px-1">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
                 <div class="card card-statistic-1 card-str-1">
 
                     <div class="card-wrap">
@@ -202,7 +202,7 @@
             </div>
 
             <!-- Departments -->
-            <div class="col-lg-3 px-1">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space-01">
                 <div class="card card-statistic-1 card-str-2">
 
                     <div class="card-wrap">
@@ -220,7 +220,7 @@
                 </div>
             </div>
             <!-- Today's Attendance -->
-            <div class="col-lg-3 px-1">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space">
                 <div class="card card-statistic-1 card-str-3">
 
                     <div class="card-wrap">
@@ -239,7 +239,7 @@
             </div>
 
             <!-- Pending Requests -->
-            <div class="col-lg-3 px-1">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space">
                 <div class="card card-statistic-1 card-str-4">
 
                     <div class="card-wrap">
@@ -393,7 +393,7 @@
 
 <div class="row mt-4">
     <div class="col-lg-6 px-1">
-        <div class="card">
+        <div class="card adnc-chart">
             <h5 class="text-center">Attendance Overview</h5>
             <div class="d-flex justify-content-center">
                 <canvas id="attendanceChart"></canvas>

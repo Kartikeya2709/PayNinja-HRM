@@ -112,7 +112,32 @@
     font-weight: 800;
     position: relative;
         padding-bottom: 10px;
+       
         display: inline-block;
+}
+.detail-label {
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #000;
+    font-size: 20px;
+}
+.card-statistic-1{
+  overflow: hidden;
+}
+.adnc-chart #attendanceChart{
+  height: 300px!important;
+}
+.detail-label p{
+  margin-bottom: 0px;
+  margin-left: 10px;
+  font-size: 16px;
+}
+.detail-label i {
+       color: #ff9705;
+    font-size: 20px;
+    margin-right: 10px;
 }
 .check-in-text h5:before{
    content: "";
@@ -1637,11 +1662,17 @@ color: #fff;
   border-bottom: 1px solid #f5f5f5!important;
      border-radius: 0px !important;
     padding: 0px 20px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   
 }
+.fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus{
+  box-shadow: none!important;
+}
+.fc .fc-button-primary:focus{
+   box-shadow: none!important;
+}
 .employee-check-in .card-body{
-  padding-bottom: 20px !important;
+  padding-bottom: 15px !important;
 }
 .card-hover .card-title{
   margin: 0px;
@@ -4909,7 +4940,10 @@ body.layout-3 .main-wrapper {
 .table {
       min-width: 900px;
 }
-
+.employee-check-in .card-body {
+   
+            display: block !important;
+}
 .mobile-space .card-title{
   text-align: center;
 }
@@ -4988,9 +5022,7 @@ body.layout-3 .main-wrapper {
     .leave-blnc .col-md-2{
     width: 50%;
   }
-  .mobile-space{
-    width: 100%;
-  }
+ 
   .attendance-height #attendanceChart{
     height: auto!important;
   }
@@ -5016,26 +5048,7 @@ body.layout-3 .main-wrapper {
             text-align: center;
                     padding-left: 0px !important;
   }
-  .btn-center{
-    text-align: center!important;
-  }
-}
-@media (max-width: 575.98px) {
-  .card.card-large-icons {
-    display: inline-block;
-  }
-  .card.card-large-icons .card-icon {
-    width: 100%;
-    height: 200px;
-  }
- 
-
-}
-@media (max-width: 767.98px) {
-  #process-bulk-payroll{
-     margin-bottom: 10px;
-  }
-  .today-check-in .today-status{
+   .today-check-in .today-status{
     justify-content: center;
   }
   .emp-dashboard .col-4 i {
@@ -5047,16 +5060,51 @@ body.layout-3 .main-wrapper {
     margin-left: 0px;
             margin-bottom: 10px;
 }
+  .today-status{
+  text-align: center;
+ }
+  .btn-center{
+    text-align: center!important;
+  }
+  .emp-dashboard .dash-icon i {
+    
+    font-size: 20px;
+}
+.employee-check-in h6{
+  margin-left: 0px!important;
+  margin-top: 10px!important;
+}
+}
+@media (max-width: 575.98px) {
+  .card.card-large-icons {
+    display: inline-block;
+  }
+  .card.card-large-icons .card-icon {
+    width: 100%;
+    height: 200px;
+  }
+
+
+}
+@media (max-width: 767.98px) {
+  #process-bulk-payroll{
+     margin-bottom: 10px;
+  }
+   .mobile-space{
+    width: 100%;
+  }
+  .mobile-space-01{
+padding-top: 20px;;
+  }
+ .employee-check-in .card-body {
+    padding-bottom: 10px !important;}
 .Resignation-Information{
   padding-top: 25px;
 }
 .Resignation-Date{
   margin-top: 0px!important;
 }
-.emp-dashboard .dash-icon i {
-    
-    font-size: 20px;
-}
+
 #employeeCalendar .fc-header-toolbar{
   padding-top: 20px;
 }
@@ -5069,9 +5117,7 @@ body.layout-3 .main-wrapper {
   padding: 0px 10px;
       margin-bottom: 10px;
 }
-.employee-check-in .card-body {
-    padding-bottom: 10px !important;
-}
+
 .employee-check-in{
       padding: 10px 0px;
 }
@@ -5183,7 +5229,7 @@ text-align: center!important;
   }
   .card .card-header h3, .card .card-header h5{
         padding-right: 0px;
-                padding-bottom: 20px;
+                
   }
   .card-1{
     display: block;
@@ -5247,9 +5293,7 @@ padding: 0px !important;
   .check-in-text {
     padding: 20px !important;
 }
- .today-status{
-  text-align: center;
- }
+
   .quick-actions .mb-3{
 margin-bottom: 0px!important;
   }

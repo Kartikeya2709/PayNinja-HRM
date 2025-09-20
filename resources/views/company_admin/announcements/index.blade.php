@@ -1,7 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row mt-4">
+<div class="container">
+    <section class="section">
+        <div class="section-header">
+            <h1>Announcement</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Announcement</a></div>
+            </div>
+        </div>
+<div class="row">
     <div class="col-lg-12 px-1 cash-dep">
         <div class="card">
             <h5 class="card-header">Announcement List</h5>

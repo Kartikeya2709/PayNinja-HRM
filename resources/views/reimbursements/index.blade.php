@@ -14,7 +14,10 @@
     <div class="card">
         <div class="card-1">
             <h5 class="card-title margin-bottom mb-0">Reimbursements</h5>
-
+            <div class="mb-3">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+            </div>
+          </div>
             @if(session('success'))
                 <div class="alert alert-success">{{ session('success') }}</div>
             @endif
@@ -23,10 +26,8 @@
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
 
-            <div class="mb-3">
-                <input type="text" class="form-control" id="searchInput" placeholder="Search...">
-            </div>
-</div>
+            
+
 <div class="Reimburs-table">
             <table class="table table-bordered Reimbursements-table">
                 <thead>

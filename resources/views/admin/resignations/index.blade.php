@@ -16,67 +16,67 @@
         <!-- Statistics Cards -->
         <div class="row">
             <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon bg-primary">
+                <div class="card card-statistic-1 bg-primary">
+                    <div class="card-icon">
                         <i class="fas fa-file-signature"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Total Requests</h4>
                         </div>
-                        <div class="card-body">{{ $stats['total'] }}</div>
+                        <div class="card-body text-white">{{ $stats['total'] }}</div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon bg-warning">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space-01">
+                <div class="card card-statistic-1 bg-warning">
+                    <div class="card-icon">
                         <i class="fas fa-clock"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Pending</h4>
                         </div>
-                        <div class="card-body">{{ $stats['pending'] }}</div>
+                        <div class="card-body text-white">{{ $stats['pending'] }}</div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon bg-success">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space">
+                <div class="card card-statistic-1 bg-success">
+                    <div class="card-icon ">
                         <i class="fas fa-check"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>Approved</h4>
                         </div>
-                        <div class="card-body">{{ $stats['approved'] }}</div>
+                        <div class="card-body text-white">{{ $stats['approved'] }}</div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 col-12">
-                <div class="card card-statistic-1">
-                    <div class="card-icon bg-info">
+            <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space">
+                <div class="card card-statistic-1 bg-info">
+                    <div class="card-icon ">
                         <i class="fas fa-calendar"></i>
                     </div>
                     <div class="card-wrap">
                         <div class="card-header">
                             <h4>This Month</h4>
                         </div>
-                        <div class="card-body">{{ $stats['this_month'] }}</div>
+                        <div class="card-body text-white">{{ $stats['this_month'] }}</div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Filters -->
-        <div class="card">
+        <div class="card mt-4">
             <div class="card-header">
-                <h4>Filter Resignations</h4>
+                <h5>Filter Resignations</h5>
             </div>
             <div class="card-body">
                 <form method="GET" action="{{ route('admin.resignations.index') }}" class="row g-3">
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <label for="department_id" class="form-label">Department</label>
                         <select name="department_id" id="department_id" class="form-control">
                             <option value="">All Departments</option>
@@ -87,7 +87,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <label for="status" class="form-label">Status</label>
                         <select name="status" id="status" class="form-control">
                             <option value="">All Status</option>
@@ -99,7 +99,7 @@
                             <option value="withdrawn" {{ request('status') == 'withdrawn' ? 'selected' : '' }}>Withdrawn</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <label for="resignation_type" class="form-label">Type</label>
                         <select name="resignation_type" id="resignation_type" class="form-control">
                             <option value="">All Types</option>
@@ -108,7 +108,7 @@
                             <option value="contract_end" {{ request('resignation_type') == 'contract_end' ? 'selected' : '' }}>Contract End</option>
                         </select>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-lg-3 col-md-4 col-sm-12">
                         <label class="form-label">Date Range</label>
                         <div class="input-group">
                             <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">
@@ -128,9 +128,9 @@
         </div>
 
         <!-- Resignations Table -->
-        <div class="card">
+        <div class="card mt-4">
             <div class="card-header">
-                <h4>Resignation Requests</h4>
+                <h5>Resignation Requests</h5>
             </div>
             <div class="card-body">
                 @if(session('success'))

@@ -1,10 +1,19 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row mt-4">
+<div class="container">
+    <section class="section">
+        <div class="section-header">
+            <h1>Edit Announcement</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Edit Announcement</a></div>
+            </div>
+        </div>
+<div class="row">
 	<div class="col-lg-8 mx-auto">
 		<div class="card">
-			<div class="card-header">
+			<div class="card-header justify-content-center mb-2">
 				<h5>Edit Announcement</h5>
 			</div>
 			<div class="card-body">
@@ -35,8 +44,10 @@
 						<label for="expires_at" class="form-label">Expires At</label>
 						<input type="date" name="expires_at" id="expires_at" class="form-control" value="{{ old('expires_at', $announcement->expires_at ? \Carbon\Carbon::parse($announcement->expires_at)->format('Y-m-d') : '') }}">
 					</div>
+					<div class="text-center">
 					<button type="submit" class="btn btn-primary">Update Announcement</button>
 					<a href="{{ route('company-admin.announcements.index') }}" class="btn btn-secondary ms-2">Back to List</a>
+					</div>
 				</form>
 			</div>
 		</div>

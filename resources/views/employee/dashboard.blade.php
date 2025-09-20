@@ -51,7 +51,28 @@
                 </a>
               </div>
 
-              <div class="col-lg-12 salary-details">
+              <div class="col-lg-12">
+                <a href="{{ route('regularization.requests.index') }}" class="card card-link">
+                  <div class="card-body text-center d-flex align-items-center">
+
+                    <i class="fas fa-calendar-plus fa-3x"></i>
+
+                    <h6 class="card-title mb-0 ms-2">Regularization Requests</h6>
+                  </div>
+                </a>
+              </div>
+              <div class="col-lg-12">
+                <a href="{{ route('employee.resignations.index') }}" class="card card-link">
+                  <div class="card-body text-center d-flex align-items-center">
+
+                    <i class="fas fa-calendar-plus fa-3x"></i>
+
+                    <h6 class="card-title mb-0 ms-2">My Resignations</h6>
+                  </div>
+                </a>
+              </div>
+
+              <!-- <div class="col-lg-12 salary-details">
                 <a href="{{ route('employee.salary.details') }}" class="card card-link">
                   <div class="card-body text-center d-flex align-items-center">
 
@@ -60,11 +81,11 @@
                     <h6 class="card-title mb-0 ms-2">Salary Details</h6>
                   </div>
                 </a>
-              </div>
+              </div> -->
             </div>
           </div>
 
-          <div class="col-lg-3 px-1 mobile-space">
+          <!-- <div class="col-lg-3 px-1 mobile-space">
             <div class="card income-breakdown">
               <div class="chart-container">
                 <h5>Income Breakdown</h5>
@@ -73,7 +94,20 @@
               </div>
 
             </div>
-          </div>
+          </div> -->
+          <div class="col-lg-3 px-1 cash-dep mobile-space">
+            <div class="card leave">
+              <h5 class="mb-4">Leave Taken vs Remaining</h5>
+              <canvas id="leaveBalanceChart"></canvas>
+              <div class="text-center">
+              <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-sm btn-warning mt-4">
+                      View Leave History
+                    </a>
+                    </div>
+
+</div>
+</div>
+
           <div class="col-lg-6 px-1 mobile-space">
             <div class="card emp-calender">
               <div class="card-header">
@@ -85,180 +119,8 @@
             </div>
           </div>
         </div>
-
-        <!-- Status Cards -->
-        <div class="row mt-4">
-          <div class="col-lg-6 px-1">
-            <div class="today-check-in">
-              <div class="card emp-dash-h4">
-                <h5>Today's Status</h5>
-              </div>
-              <div class="card-body emp-dashboard">
-                <div class="row align-items-center today-status">
-                  <div class="col-lg-4 col-sm-12 text-center dash-icon">
-                    <i class="fas fa-user-clock fa-3x"></i>
-                  </div>
-                  <div class="col-lg-8 col-sm-12">
-                    <div class="mb-2">
-                      <strong>Check In Time:</strong>
-                      @if(isset($todayAttendance) && $todayAttendance->check_in)
-                        <span class="ml-2">{{ \Carbon\Carbon::parse($todayAttendance->check_in)->format('h:i A') }}</span>
-                      @else
-                        <span class="ml-2 text-muted">Not checked in</span>
-                      @endif
-                    </div>
-                    <div class="mb-2">
-                      <strong>Check Out Time:</strong>
-                      @if(isset($todayAttendance) && $todayAttendance->check_out)
-                        <span class="ml-2">{{ \Carbon\Carbon::parse($todayAttendance->check_out)->format('h:i A') }}</span>
-                      @else
-                        <span class="ml-2 text-muted">Not checked out</span>
-                      @endif
-                    </div>
-                    <div>
-                      <strong>Status:</strong>
-                      @if(isset($todayAttendance))
-                        @if($todayAttendance->status === 'Present')
-                          <span class="badge badge-success">Present</span>
-                        @elseif($todayAttendance->status === 'Late')
-                          <span class="badge badge-warning">Late</span>
-                        @elseif($todayAttendance->status === 'Absent')
-                          <span class="badge badge-danger">Absent</span>
-                        @elseif($todayAttendance->status === 'On Leave')
-                          <span class="badge badge-info">On Leave</span>
-                        @else
-                          <span class="badge badge-secondary">{{ $todayAttendance->status }}</span>
-                        @endif
-
-                        @if($todayAttendance->check_in && $todayAttendance->check_out)
-                          @php
-                            $checkIn = \Carbon\Carbon::parse($todayAttendance->check_in);
-                            $checkOut = \Carbon\Carbon::parse($todayAttendance->check_out);
-                            $hours = $checkOut->diffInHours($checkIn);
-                            $minutes = $checkOut->diffInMinutes($checkIn) % 60;
-                          @endphp
-                          <span class="ml-2 text-muted">({{ sprintf('%d:%02d', $hours, $minutes) }} hrs)</span>
-                        @endif
-                      @else
-                        <span class="badge badge-warning">Not Checked In</span>
-                      @endif
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-
-
-
-
-              <div class="card emp-dash-h4">
-                <h5>Leave Balance</h5>
-              </div>
-              <div class="card-body emp-dashboard">
-                <div class="row align-items-center today-status">
-                  <div class="col-lg-4 col-sm-12 text-center dash-icon">
-                    <i class="fas fa-calendar-alt fa-3x"></i>
-                  </div>
-                  <div class="col-lg-8 col-sm-12">
-                    <div class="mb-2">
-                      <strong>Available Leaves:</strong>
-                      <span class="ml-2">{{ $leaveBalance ?? 0 }} Days</span>
-                    </div>
-                    <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-sm btn-warning">
-                      View Leave History
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6 px-1 monthly-leave mobile-space">
-            <div class="card">
-              <h5>Monthly Leave Summary</h5>
-              
-              <canvas id="leaveChart"></canvas>
-              
-            </div>
-          </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-lg-6 px-1">
-            <div class="card birthday-text">
-              <h5>Upcoming events</h5>
-
-
-              <div class="event-wrapper">
-
-                <div class="background" id="eventBackground"></div>
-
-
-                @if($upcoming_birthday)
-                  <div class="event-card">
-                    <h6>🎉 {{ ucwords($upcoming_birthday->name) }}’s Birthday Celebration</h6>
-                    <p>{{ \Carbon\Carbon::parse($upcoming_birthday->dob)->format('d F') }}</p>
-                  </div>
-                @else
-                  <div class="event-card">
-                    <h6>😅 Oops!</h6>
-                    <p>No upcoming birthdays 🎂</p>
-                  </div>
-                @endif
-
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6 px-1 mobile-space">
-            <div class="card holiday-table">
-            
-                <h5 class="text-center">Upcoming Holidays</h5>
-              
-              <div class="card-body p-0">
-                <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle mb-0">
-                  <thead class="table-light">
-                    <tr>
-                      <th>Date</th>
-                      <th>Day</th>
-                      <th>Holiday</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @forelse ($academic_holidays as $holiday)
-                      <tr>
-                        <td>{{ \Carbon\Carbon::parse($holiday->from_date)->format('d M Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($holiday->from_date)->format('l') }}</td>
-                        <td>{{ $holiday->name }}</td>
-                      </tr>
-                    @empty
-
-                    @endforelse
-
-                  </tbody>
-                </table>
-              </div>
-
-            </div>
-          </div>
-
-        </div>
-        </div>
-        <div class="row mt-4">
-          <div class="col-lg-8 px-1 cash-dep">
-            <div class="card">
-              <h5>Attendance summary</h5>
-              <canvas id="attendanceChart"></canvas>
-
-            </div>
-          </div>
-          <div class="col-lg-4 px-1 cash-dep mobile-space">
-            <div class="card leave">
-              <h5>Leave Taken vs Remaining</h5>
-              <canvas id="leaveBalanceChart"></canvas>
-
-</div>
-</div>
-</div>
- <div class="row mt-4">
+         <!--Announcement List -->
+         <div class="row mt-4">
             <div class="col-lg-12 px-1 cash-dep">
                 <div class="card">
                             <h5>Announcement List</h5>
@@ -314,6 +176,183 @@
           </div>
 
         </div>
+        <div class="row mt-4">
+          <div class="col-lg-6 px-1">
+            <div class="card birthday-text">
+              <h5>Upcoming events</h5>
+
+
+              <div class="event-wrapper">
+
+                <div class="background" id="eventBackground"></div>
+
+
+                @if($upcoming_birthday)
+                  <div class="event-card">
+                    <h6>🎉 {{ ucwords($upcoming_birthday->name) }}’s Birthday Celebration</h6>
+                    <p>{{ \Carbon\Carbon::parse($upcoming_birthday->dob)->format('d F') }}</p>
+                  </div>
+                @else
+                  <div class="event-card">
+                    <h6>😅 Oops!</h6>
+                    <p>No upcoming birthdays 🎂</p>
+                  </div>
+                @endif
+
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 px-1 mobile-space">
+            <div class="today-check-in">
+              <div class="card emp-dash-h4">
+                <h5>Today's Status</h5>
+              </div>
+              <div class="card-body emp-dashboard">
+                <div class="row align-items-center today-status">
+                  <div class="col-lg-4 col-md-12 text-center dash-icon">
+                    <i class="fas fa-user-clock fa-3x"></i>
+                  </div>
+                  <div class="col-lg-8 col-md-12">
+                    <div class="mb-2">
+                      <strong>Check In Time:</strong>
+                      @if(isset($todayAttendance) && $todayAttendance->check_in)
+                        <span class="ml-2">{{ \Carbon\Carbon::parse($todayAttendance->check_in)->format('h:i A') }}</span>
+                      @else
+                        <span class="ml-2 text-muted">Not checked in</span>
+                      @endif
+                    </div>
+                    <div class="mb-2">
+                      <strong>Check Out Time:</strong>
+                      @if(isset($todayAttendance) && $todayAttendance->check_out)
+                        <span class="ml-2">{{ \Carbon\Carbon::parse($todayAttendance->check_out)->format('h:i A') }}</span>
+                      @else
+                        <span class="ml-2 text-muted">Not checked out</span>
+                      @endif
+                    </div>
+                    <div>
+                      <strong>Status:</strong>
+                      @if(isset($todayAttendance))
+                        @if($todayAttendance->status === 'Present')
+                          <span class="badge badge-success">Present</span>
+                        @elseif($todayAttendance->status === 'Late')
+                          <span class="badge badge-warning">Late</span>
+                        @elseif($todayAttendance->status === 'Absent')
+                          <span class="badge badge-danger">Absent</span>
+                        @elseif($todayAttendance->status === 'On Leave')
+                          <span class="badge badge-info">On Leave</span>
+                        @else
+                          <span class="badge badge-secondary">{{ $todayAttendance->status }}</span>
+                        @endif
+
+                        @if($todayAttendance->check_in && $todayAttendance->check_out)
+                          @php
+                            $checkIn = \Carbon\Carbon::parse($todayAttendance->check_in);
+                            $checkOut = \Carbon\Carbon::parse($todayAttendance->check_out);
+                            $hours = $checkOut->diffInHours($checkIn);
+                            $minutes = $checkOut->diffInMinutes($checkIn) % 60;
+                          @endphp
+                          <span class="ml-2 text-muted">({{ sprintf('%d:%02d', $hours, $minutes) }} hrs)</span>
+                        @endif
+                      @else
+                        <span class="badge badge-warning">Not Checked In</span>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+              </div>
+             
+             
+                    
+                 
+
+
+
+
+
+              <div class="card emp-dash-h4">
+                <h5>Leave Balance</h5>
+              </div>
+              <div class="card-body emp-dashboard">
+                <div class="row align-items-center today-status">
+                  <div class="col-lg-4 col-sm-12 text-center dash-icon">
+                    <i class="fas fa-calendar-alt fa-3x"></i>
+                  </div>
+                  <div class="col-lg-8 col-sm-12">
+                    <div class="mb-2">
+                      <strong>Available Leaves:</strong>
+                      <span class="ml-2">{{ $leaveBalance ?? 0 }} Days</span>
+                    </div>
+                    <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-sm btn-warning">
+                      View Leave History
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+         
+
+        <!-- Status Cards -->
+        <div class="row mt-4">
+          <div class="col-lg-6 px-1 cash-dep">
+            <div class="card">
+              <h5>Attendance summary</h5>
+              <canvas id="attendanceChart"></canvas>
+
+            </div>
+          </div>
+          
+          <div class="col-lg-6 px-1 monthly-leave mobile-space">
+            <div class="card">
+              <h5>Monthly Leave Summary</h5>
+              
+              <canvas id="leaveChart"></canvas>
+              
+            </div>
+          </div>
+        </div>
+        </div>
+       
+        
+        <div class="row mt-4">
+          
+           <div class="col-lg-12 px-1 mobile-space">
+            <div class="card holiday-table">
+            
+                <h5 class="text-center">Upcoming Holidays</h5>
+              
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle mb-0">
+                  <thead class="table-light">
+                    <tr>
+                      <th>Date</th>
+                      <th>Day</th>
+                      <th>Holiday</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @forelse ($academic_holidays as $holiday)
+                      <tr>
+                        <td>{{ \Carbon\Carbon::parse($holiday->from_date)->format('d M Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($holiday->from_date)->format('l') }}</td>
+                        <td>{{ $holiday->name }}</td>
+                      </tr>
+                    @empty
+
+                    @endforelse
+
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        </div>
+
     </section>
   </div>
 @endsection
@@ -408,23 +447,23 @@
   </script>
   <script>
     // Income Chart (Pie)
-    const incomeCtx = document.getElementById('incomeChart').getContext('2d');
-    new Chart(incomeCtx, {
-      type: 'pie',
-      data: {
-        labels: ['HR', 'Development', 'Sales', 'Marketing'],
-        datasets: [{
-          data: [25, 35, 20, 20],
-          backgroundColor: ['#003366', '#ff9705', '#28a745', '#f1c40f'],
-          borderColor: '#fff',
-          borderWidth: 2
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom' } }
-      }
-    });
+    // const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+    // new Chart(incomeCtx, {
+    //   type: 'pie',
+    //   data: {
+    //     labels: ['HR', 'Development', 'Sales', 'Marketing'],
+    //     datasets: [{
+    //       data: [25, 35, 20, 20],
+    //       backgroundColor: ['#003366', '#ff9705', '#28a745', '#f1c40f'],
+    //       borderColor: '#fff',
+    //       borderWidth: 2
+    //     }]
+    //   },
+    //   options: {
+    //     responsive: true,
+    //     plugins: { legend: { position: 'bottom' } }
+    //   }
+    // });
 
     // Leave Chart (Bar)
     const leaveCtx = document.getElementById('leaveChart').getContext('2d');

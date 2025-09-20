@@ -1,9 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-
+<section class="section container">
+        <div class="section-header">
+            <h1>Create Announcement</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Create Announcement</a></div>
+            </div>
+        </div>
 <div class="card mb-4">
-            <div class="card-header">
+            <div class="card-header justify-content-center mb-2">
                 <h5>Create Announcement</h5>
             </div>
             <div class="card-body">
@@ -33,9 +40,13 @@
                         <label for="expires_at" class="form-label">Expires At</label>
                         <input type="date" name="expires_at" id="expires_at" class="form-control">
                     </div>
+                    <div class="text-center">
                     <button type="submit" class="btn btn-primary">Create Announcement</button>
+                    </div>
                 </form>
             </div>
         </div>
+        </section>
+    
 
 @endsection

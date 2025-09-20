@@ -1,36 +1,44 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
-    <div class="container mt-5">
+    <section class="section">
+            <div class="section-header">
+                <h1>Reimbursements</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                    <div class="breadcrumb-item"><a href="">Reimbursements</a></div>
+                </div>
+            </div>
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Reimbursement Details</h3>
+                        <h5 class="mb-3">Reimbursement Details</h5>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Employee:</label>
+                        <div class="mb-3 detail-label">
+                             <label><i class="fas fa-user"></i> Employee:</label>
                             <p>{{ $reimbursement->employee->name ?? 'N/A' }}</p>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Amount:</label>
+                        <div class="mb-3 detail-label">
+                            
+                            <label> <i class="fas fa-wallet"></i>Amount:</label>
                             <p>₹{{ number_format($reimbursement->amount, 2) }}</p>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Title:</label>
+                        <div class="mb-3 detail-label">
+                            <label> <i class="fas fa-tag"></i>Title:</label>
                             <p>{{ $reimbursement->title }}</p>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Description:</label>
+                        <div class="mb-3 detail-label">
+                            <label> <i class="fas fa-align-left"></i>Description:</label>
                             <p>{{ $reimbursement->description }}</p>
                         </div>
 
                         @if($reimbursement->receipt_path)
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Receipt:</label>
+                        <div class="mb-3 detail-label">
+                            <label> <i class="fas fa-receipt"></i>Receipt:</label>
                             @php
                                 $extension = strtolower(pathinfo($reimbursement->receipt_path, PATHINFO_EXTENSION));
                                 $receiptUrl = asset('storage/' . $reimbursement->receipt_path);
@@ -46,12 +54,12 @@
                             <a href="{{ $receiptUrl }}" download class="btn btn-outline-secondary mt-2">Download Receipt</a>
                         </div>
                         @endif
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Expense Date:</label>
+                        <div class="mb-3 detail-label">
+                            <label> <i class="fas fa-calendar-alt"></i>Expense Date:</label>
                             <p>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('M d, Y') }}</p>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Status:</label>
+                        <div class="mb-3 detail-label">
+                            <label><i class="fas fa-flag"></i>Status:</label>
                             @php
                                 $statusColors = [
                                     'pending' => 'warning',
@@ -72,8 +80,8 @@
                                 {{ $statusText[$reimbursement->status] ?? ucfirst($reimbursement->status) }}
                             </span>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Created At:</label>
+                        <div class="mb-3 detail-label">
+                            <label><i class="fas fa-calendar-plus"></i>Created At:</label>
                             <p>{{ $reimbursement->created_at->format('Y-m-d H:i:s') }}</p>
                         </div>
                         
