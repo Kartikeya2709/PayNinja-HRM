@@ -198,6 +198,21 @@
                         </li>
                     @endif
 
+                    <!-- Field Visits -->
+                    <li class="menu-header">Field Visits</li>
+                    <li class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('field-visits.index') }}">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>My Field Visits</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('field-visits/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('field-visits.create') }}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Schedule Visit</span>
+                        </a>
+                    </li>
+
                     <!-- Resignations -->
                     <li class="menu-header">Resignations</li>
                     <li
@@ -381,6 +396,21 @@
                                     Configs</a>
                             </li>
                         </ul>
+                    </li>
+
+                    <!-- Field Visits -->
+                    <li class="menu-header">Field Visits</li>
+                    <li class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('field-visits.index') }}">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Field Visits</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('field-visits/pending') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('field-visits.pending') }}">
+                            <i class="fas fa-clock"></i>
+                            <span>Pending Approvals</span>
+                        </a>
                     </li>
                 @endif {{-- END of Company Admin role block --}}
 
@@ -597,6 +627,21 @@
                         </li>
                         </li>
                     @endif
+
+                    <!-- Field Visits -->
+                    <li class="menu-header">Field Visits</li>
+                    <li class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('field-visits.index') }}">
+                            <i class="fas fa-map-marked-alt"></i>
+                            <span>Field Visits</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('field-visits/pending') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('field-visits.pending') }}">
+                            <i class="fas fa-clock"></i>
+                            <span>Pending Approvals</span>
+                        </a>
+                    </li>
 
                 @endif
 
