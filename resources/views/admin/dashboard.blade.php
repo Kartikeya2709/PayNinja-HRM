@@ -203,13 +203,19 @@
                 <div class="breadcrumb-item active">
                     <form action="{{ route('dashboard.switch') }}" method="POST" class="d-inline">
                         @csrf
-                        <div class="form-check form-switch d-inline-block">
-                            <input class="form-check-input" type="checkbox" id="dashboardSwitch" 
+                        <label class="form-check-label">
+                            <span class="switch-label">
+                                Admin View
+                            </span>
+                        </label>
+                        <div class="form-check form-switch d-inline-block ms-2"> 
+                            <input class="form-check-input" style="width: 35px" type="checkbox" id="dashboardSwitch" 
                                    onchange="this.form.submit()" 
                                    {{ session('dashboard_mode') === 'employee' ? 'checked' : '' }}>
                             <label class="form-check-label" for="dashboardSwitch">
                                 <span class="switch-label">
-                                    {{ session('dashboard_mode') === 'employee' ? 'Employee View' : 'Admin View' }}
+                                    {{-- {{ session('dashboard_mode') === 'employee' ? 'Employee View' : 'Admin View' }} --}}
+                                    Employee View
                                 </span>
                             </label>
                         </div>
