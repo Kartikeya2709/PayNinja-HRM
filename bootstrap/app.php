@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         Commands\MarkLeavesCommand::class,
         Commands\MarkWeekendAsWeekoff::class,
         Commands\MarkHolidayAttendance::class,
+        Commands\MarkExpiredAnnouncements::class,
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -71,6 +72,21 @@ return Application::configure(basePath: dirname(__DIR__))
         ->timezone('Asia/Kolkata')
         ->withoutOverlapping()
         ->description('Run all attendance marking commands in order');
+
+        $schedule->call(function () {
+            // Log internally (Laravel log)
+            \Log::info('✅ Expired announcements cron triggered at: ' . now()->toDateTimeString());
+
+            // Run the command manually
+            \Artisan::call('app:mark-expired-announcements');
+
+            // Optionally: log output from the command (useful for debugging)
+            \Log::info(Artisan::output());
+
+        })->name('mark-expired-announcements')
+        ->dailyAt('00:10')
+        ->timezone('Asia/Kolkata')
+        ->description('Soft delete expired announcements automatically');
 
 
 

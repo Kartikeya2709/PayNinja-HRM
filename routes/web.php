@@ -25,6 +25,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\EmployeePayrollConfigController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\AttendanceController;
+use App\Http\Controllers\FieldVisitController;
 // Test logging route - can be removed after testing
 require __DIR__ . '/test-logging.php';
 
@@ -61,9 +62,9 @@ Route::get('/run-attendance/{date?}', function ($date = null) {
 });
 
 Route::prefix('company-admin')->name('company-admin.')->group(function () {
-    Route::resource('announcements',AnnouncementController::class)->middleware('auth');
+    Route::resource('announcements', AnnouncementController::class)->middleware('auth');
 });
-    
+
 Route::get('/', function () {
     return redirect()->route('login');
     // return view('welcome');
@@ -124,7 +125,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Attendance Management
     Route::middleware(['role:admin,company_admin'])->prefix('admin/attendance')->name('admin.attendance.')->group(function () {
-        
+
         Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
         Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
         Route::post('/', [AdminAttendanceController::class, 'store'])->name('store');
@@ -475,7 +476,7 @@ Route::middleware(['auth'])->group(function () {
             ->name('resignations.approve');
         Route::post('resignations/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])
             ->name('resignations.reject');
-        
+
         // Exit process management
         Route::post('resignations/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])
             ->name('resignations.complete-exit-interview');
@@ -486,4 +487,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('resignations/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
             ->name('resignations.complete-final-settlement');
     });
+
+
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/field-visits/pending', [FieldVisitController::class, 'pendingApprovals'])->name('field-visits.pending');
+        Route::resource('field-visits', FieldVisitController::class)->except(['store']);
+        Route::post('/field-visits', [FieldVisitController::class, 'store'])->name('field-visits.store');
+        Route::post('/field-visits/{fieldVisit}/approve', [FieldVisitController::class, 'approve'])->name('field-visits.approve');
+        Route::post('/field-visits/{fieldVisit}/reject', [FieldVisitController::class, 'reject'])->name('field-visits.reject');
+        Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
+        Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
+    });
+
 }); // End of auth middleware group

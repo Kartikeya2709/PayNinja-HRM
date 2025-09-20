@@ -30,8 +30,10 @@
 					<dt class="col-sm-4">Created At</dt>
 					<dd class="col-sm-8">{{ $announcement->created_at->format('Y-m-d H:i') }}</dd>
 				</dl>
-				<a href="{{ route('company-admin.announcements.index') }}" class="btn btn-secondary mt-3">Back to List</a>
-				<a href="{{ route('company-admin.announcements.edit', $announcement->id) }}" class="btn btn-primary mt-3 ms-2">Edit</a>
+				<a href="{{ route('company-admin.announcements.index') }}" class="btn btn-secondary mt-3">Back</a>
+				@if(auth()->id() === $announcement->created_by || auth()->user()->hasRole('company_admin'))
+					<a href="{{ route('company-admin.announcements.edit', $announcement->id) }}" class="btn btn-primary mt-3 ms-2">Edit</a>
+				@endif
 			</div>
 		</div>
 	</div>
