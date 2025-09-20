@@ -165,14 +165,14 @@ class ReimbursementController extends Controller
             ]);
             
             // Check if user is the reporter
-            $isReporter = $reimbursement->reporter_id === $employee->id;
-            Log::debug('User permissions', [
-                'user_id' => $user->id,
-                'is_admin' => $isAdmin,
-                'is_company_admin' => $isCompanyAdmin,
-                'is_reporter' => $isReporter,
-                'reimbursement_status' => $reimbursement->status
-            ]);
+            // $isReporter = $reimbursement->reporter_id === $employee->id;
+            // Log::debug('User permissions', [
+            //     'user_id' => $user->id,
+            //     'is_admin' => $isAdmin,
+            //     'is_company_admin' => $isCompanyAdmin,
+            //     'is_reporter' => $isReporter,
+            //     'reimbursement_status' => $reimbursement->status
+            // ]);
 
             // Validate the correct status based on who is approving
             // if ($isAdmin) {
@@ -204,28 +204,28 @@ class ReimbursementController extends Controller
 
             // Update reimbursement with approval details
             if ($isAdmin || $isCompanyAdmin) {
-                $teamMember = DB::table('team_members')
-                    ->where('employee_id', $employee->id)
-                    ->first();
+                // $teamMember = DB::table('team_members')
+                //     ->where('employee_id', $employee->id)
+                //     ->first();
                 
-                if (!$teamMember) {
-                    // If no team member record exists, create one for company admins
-                    if ($isCompanyAdmin) {
-                        $teamMember = (object)['employee_id' => $employee->id];
-                    } else {
-                        Log::error('Employee not found in team_members table', [
-                            'employee_id' => $employee->id,
-                            'user_id' => $user->id
-                        ]);
-                        return redirect()->back()->with('error', 'Your employee record is not properly set up in the system.');
-                    }
-                }
+                // if (!$teamMember) {
+                //     // If no team member record exists, create one for company admins
+                //     if ($isCompanyAdmin) {
+                //         $teamMember = (object)['employee_id' => $employee->id];
+                //     } else {
+                //         Log::error('Employee not found in team_members table', [
+                //             'employee_id' => $employee->id,
+                //             'user_id' => $user->id
+                //         ]);
+                //         return redirect()->back()->with('error', 'Your employee record is not properly set up in the system.');
+                //     }
+                // }
                 
                 $reimbursement->update([
                     'status' => 'admin_approved',
                     'admin_remarks' => $validated['remarks'],
                     'admin_approved_at' => now(),
-                    'admin_id' => $teamMember->employee_id
+                    
                 ]);
                 $message = 'Reimbursement approved by ' . ($isCompanyAdmin ? 'company admin' : 'admin') . ' successfully.';
             } else if ($isReporter) {
@@ -606,13 +606,13 @@ class ReimbursementController extends Controller
                     ->where('employee_id', $employee->id)
                     ->first();
                 
-                if (!$teamMember) {
-                    Log::error('Employee not found in team_members table', [
-                        'employee_id' => $employee->id,
-                        'user_id' => $user->id
-                    ]);
-                    return redirect()->back()->with('error', 'Your employee record is not properly set up in the system.');
-                }
+            //     if (!$teamMember) {
+            //         Log::error('Employee not found in team_members table', [
+            //             'employee_id' => $employee->id,
+            //             'user_id' => $user->id
+            //         ]);
+            //         return redirect()->back()->with('error', 'Your employee record is not properly set up in the system.');
+            //     }
             }
             
             // Start database transaction
@@ -631,9 +631,9 @@ class ReimbursementController extends Controller
                 ];
                 
                 // Only set admin_id if the user is an admin
-                if ($isAdmin) {
-                    $updateData['admin_id'] = $teamMember->employee_id;
-                }
+                // if ($isAdmin) {
+                //     $updateData['admin_id'] = $teamMember->employee_id;
+                // }
                 
                 $reimbursement->update($updateData);
                 

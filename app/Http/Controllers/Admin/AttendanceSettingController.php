@@ -92,6 +92,7 @@ class AttendanceSettingController extends Controller
         
         // Only fetch settings for the current user's company
         $settings = AttendanceSetting::where('company_id', $companyId)
+            ->with(['exemptedDepartments', 'exemptedEmployees'])
             ->latest('updated_at')
             ->withoutGlobalScopes()
             ->first();

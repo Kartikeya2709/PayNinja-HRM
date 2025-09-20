@@ -1,13 +1,56 @@
 @extends('layouts.app')
 @section('title', 'Employee Dashboard')
 
+@push('styles')
+<style>
+/* Dashboard Switch Styling */
+.form-check-input:checked {
+    background-color: #6777ef;
+    border-color: #6777ef;
+}
+
+.switch-label {
+    font-weight: 500;
+    color: #6777ef;
+    font-size: 0.9rem;
+}
+
+.form-check-input {
+    width: 2.5rem;
+    height: 1.25rem;
+}
+
+.form-check-label {
+    margin-left: 0.5rem;
+}
+</style>
+@endpush
+
 @section('content')
   <div class="main-content-01 container">
     <section class="section">
       <div class="section-header">
         <h1>Employee Dashboard</h1>
         <div class="section-header-breadcrumb">
-          <div class="breadcrumb-item active">Welcome, {{ auth()->user()->name }}!</div>
+          <div class="breadcrumb-item active">
+            Welcome, {{ auth()->user()->name }}!
+            @if(in_array(auth()->user()->role, ['admin', 'company_admin']))
+              <form action="{{ route('dashboard.switch') }}" method="POST" class="d-inline ms-3">
+                @csrf
+                <div class="form-check form-switch d-inline-block">
+                  <input class="form-check-input" type="checkbox" id="dashboardSwitch" 
+                         onchange="this.form.submit()" 
+                         {{ session('dashboard_mode') === 'employee' ? 'checked' : '' }}>
+                  <label class="form-check-label" for="dashboardSwitch">
+                    <span class="switch-label">
+                      {{ session('dashboard_mode') === 'employee' ? 'Employee View' : 'Admin View' }}
+                    </span>
+                  </label>
+                </div>
+                <input type="hidden" name="mode" value="{{ session('dashboard_mode') === 'employee' ? 'default' : 'employee' }}">
+              </form>
+            @endif
+          </div>
         </div>
       </div>
 

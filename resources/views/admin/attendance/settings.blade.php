@@ -170,7 +170,7 @@
                         <!-- End Office Hours Section -->
 
                         <!-- Attendance Settings Section -->
-                        <div class="card mb-4 px-0 py-0">
+                        {{-- <div class="card mb-4 px-0 py-0">
                             <div class="card-header bg-light">
                                 <h6 class="mb-0"><i class="fas fa-user-clock me-2"></i>Attendance Settings</h6>
                             </div>
@@ -204,7 +204,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- End Attendance Settings Section -->
 
                         <!-- Geolocation Settings Section -->

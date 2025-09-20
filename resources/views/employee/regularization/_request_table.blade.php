@@ -18,12 +18,13 @@
             </thead>
             <tbody>
                 @foreach ($requests as $key => $request)
+                   
                     <tr>
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $request->employee->name }}</td>
                         <td>{{ $request->date }}</td>
-                        <td>{{ $request->clock_in }}</td>
-                        <td>{{ $request->clock_out }}</td>
+                        <td>{{ $request->check_in }}</td>
+                        <td>{{ $request->check_out }}</td>
                         <td>{{ $request->reason }}</td>
                         <td><span
                                 class="badge @if ($request->status == 'pending') bg-warning @elseif($request->status == 'approved') bg-success @else bg-danger @endif">{{ $request->status }}</span>

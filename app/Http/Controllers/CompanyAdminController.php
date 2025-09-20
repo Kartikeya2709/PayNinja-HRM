@@ -21,7 +21,7 @@ class CompanyAdminController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:company_admin');
+        $this->middleware('role:admin,company_admin');
     }
 
     /**
@@ -338,7 +338,21 @@ class CompanyAdminController extends Controller
     public function employees(Request $request)
     {
         $user = Auth::user();
-        $company = $user->employee->company;
+        
+        // Handle both admin and company_admin roles
+        if ($user->role === 'admin') {
+            // For admin, get company from user's company_id
+            $companyId = $user->company_id;
+            if (!$companyId) {
+                abort(403, 'Admin user must be assigned to a company.');
+            }
+            // Get company object for admin
+            $company = \App\Models\Company::find($companyId);
+        } else {
+            // For company_admin, get company from employee relationship
+            $company = $user->employee->company;
+            $companyId = $company->id;
+        }
 
         // Get departments and designations for filters
         $departments = Department::where('company_id', $company->id)->get();
@@ -346,7 +360,7 @@ class CompanyAdminController extends Controller
 
         // Build query with filters
         $query = Employee::with(['user', 'department', 'designation'])
-            ->where('company_id', $company->id);
+            ->where('company_id', $companyId);
 
         // Apply search filter
         if ($request->filled('search')) {

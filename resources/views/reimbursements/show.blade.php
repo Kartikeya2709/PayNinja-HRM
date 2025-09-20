@@ -167,11 +167,7 @@
                       method="POST">
                     @csrf
                     <div class="modal-body">
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Please provide any additional remarks for this approval.
-                        </div>
-                        <div class="mb-3">
+                                               <div class="mb-3">
                             <label for="approvalRemarks" class="form-label">Remarks <span class="text-danger">*</span></label>
                             <textarea name="remarks" id="approvalRemarks" 
                                     class="form-control" 
@@ -207,10 +203,10 @@
                 <form id="rejectForm" action="{{ route('reimbursements.reject', ['reimbursement' => $reimbursement->id]) }}" method="POST">
                     @csrf
                     <div class="modal-body">
-                        <div class="alert alert-warning">
+                        {{-- <div class="alert alert-warning">
                             <i class="fas fa-exclamation-triangle me-2"></i>
                             Please provide a clear reason for rejecting this reimbursement.
-                        </div>
+                        </div> --}}
                         <div class="mb-3">
                             <label for="rejectionRemarks" class="form-label">Reason for Rejection <span class="text-danger">*</span></label>
                             <textarea name="remarks" id="rejectionRemarks" 

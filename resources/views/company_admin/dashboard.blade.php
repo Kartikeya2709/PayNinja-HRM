@@ -2,7 +2,29 @@
 @section('title', 'Company Admin Dashboard')
 
 @push('styles')
-  {{-- <style>
+<style>
+/* Dashboard Switch Styling */
+.form-check-input:checked {
+    background-color: #6777ef;
+    border-color: #6777ef;
+}
+
+.switch-label {
+    font-weight: 500;
+    color: #6777ef;
+    font-size: 0.9rem;
+}
+
+.form-check-input {
+    width: 2.5rem;
+    height: 1.25rem;
+}
+
+.form-check-label {
+    margin-left: 0.5rem;
+}
+</style>
+{{-- <style>
     .card-statistic {
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -113,9 +135,28 @@
       <div class="section-header">
         <h1>Dashboard Overview</h1>
         <div class="section-header-breadcrumb">
-          <div class="breadcrumb-item active"><a href="http://127.0.0.1:8000/home">Dashboard</a></div>
-          <div class="breadcrumb-item"><a href="">Companies Users</a></div>
+          @if(auth()->user()->role === 'admin')
+          <div class="breadcrumb-item active">
+            <a href="http://127.0.0.1:8000/home">Dashboard</a>
+            <form action="{{ route('dashboard.switch') }}" method="POST" class="d-inline ms-3">
+              @csrf
+              <div class="form-check form-switch d-inline-block">
+                <input class="form-check-input" type="checkbox" id="dashboardSwitch" 
+                       onchange="this.form.submit()" 
+                       {{ session('dashboard_mode') === 'employee' ? 'checked' : '' }}>
+                <label class="form-check-label" for="dashboardSwitch">
+                  <span class="switch-label">
+                    {{ session('dashboard_mode') === 'employee' ? 'Employee View' : 'Admin View' }}
+                  </span>
+                </label>
+              </div>
+              <input type="hidden" name="mode" value="{{ session('dashboard_mode') === 'employee' ? 'default' : 'employee' }}">
+            </form>
+          </div>
+          @endif
+          <div class="breadcrumb-item">Companies Users</div>
         </div>
+       
       </div>
 
       <div class="row emp-card">

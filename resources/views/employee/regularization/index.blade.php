@@ -76,18 +76,18 @@
             @include('employee.regularization._request_table', ['requests' => $rejected_requests, 'show_actions' => false, 'pagination_name' => 'rejected_page'])
         </div>
     </div>
-@else
-    @include('employee.regularization._request_table', ['requests' => $requests, 'show_actions' => false])
-@endif
+                    @else
+                        @include('employee.regularization._request_table', ['requests' => $requests, 'show_actions' => false])
+                    @endif
 
                     @if(is_null(Auth::user()->employee->reporting_manager_id))
                     </form>
                     @endif
 
-                    @if (isset($requests) && $requests instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                    {{-- @if (isset($requests) && $requests instanceof \Illuminate\Pagination\LengthAwarePaginator)
                         {{ $requests->links() }}
-                    @endif
-
+                    @endif --}}
+                    
 <!-- Approval Modal -->
 <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
   <div class="modal-dialog">

@@ -74,6 +74,7 @@ Auth::routes();
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::post('/dashboard/switch', [App\Http\Controllers\HomeController::class, 'switchDashboard'])->name('dashboard.switch');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.change-password');
@@ -422,8 +423,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/pending', [ReimbursementController::class, 'pending'])->name('pending');
     });
 
-    // Company Admin Routes
-    Route::middleware(['role:company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
+    // Company Admin Routes (accessible to company_admin and admin roles)
+    Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
         // Dashboard
         Route::get('/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'dashboard'])->name('dashboard');
 

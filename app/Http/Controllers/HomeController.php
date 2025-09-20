@@ -66,6 +66,14 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         $loggedInUser = $user;
+        
+        // Check if user wants to switch to employee dashboard
+        $dashboardMode = session('dashboard_mode', 'default');
+        
+        // For admin users, check if they want to view as employee
+        if (in_array($user->role, ['admin']) && $dashboardMode === 'employee') {
+            return $this->showEmployeeDashboard($user);
+        }
 
         // Common data for all roles
         $employeeRoles = User::whereNotNull('role')
@@ -509,6 +517,152 @@ class HomeController extends Controller
 
         }
 
+    }
+
+    /**
+     * Switch dashboard mode for admin users
+     */
+    public function switchDashboard(Request $request)
+    {
+        $user = Auth::user();
+        
+        // Only allow admin and company_admin to switch dashboards
+        if (!in_array($user->role, ['admin'])) {
+            return redirect()->route('home')->with('error', 'You do not have permission to switch dashboards.');
+        }
+        
+        $mode = $request->input('mode', 'default');
+        
+        // Validate mode
+        if (!in_array($mode, ['default', 'employee'])) {
+            return redirect()->route('home')->with('error', 'Invalid dashboard mode.');
+        }
+        
+        // Set the dashboard mode in session
+        session(['dashboard_mode' => $mode]);
+        
+        $message = $mode === 'employee' ? 'Switched to Employee Dashboard' : 'Switched to Admin Dashboard';
+        
+        return redirect()->route('home')->with('success', $message);
+    }
+
+    /**
+     * Show employee dashboard for admin users
+     */
+    private function showEmployeeDashboard($user)
+    {
+        $employee = $user->employee;
+        if (!$employee) {
+            return redirect()->route('home')->with('error', 'Employee record not found. Cannot switch to employee dashboard.');
+        }
+
+        // Get today's attendance
+        $todayAttendance = $employee->attendances()
+            ->whereDate('date', now()->toDateString())
+            ->first();
+
+        // Calculate total available leave balance
+        $leaveBalance = 0;
+        $currentYear = now()->year;
+
+        // Get all leave balances for the current year
+        $leaveBalances = $employee->leaveBalances()
+            ->where('year', $currentYear)
+            ->get();
+
+        $academic_holidays = AcademicHoliday::where('company_id', $employee->company_id)
+            ->whereDate('from_date', '>=', Carbon::today())
+            ->orderBy('from_date', 'asc')
+            ->take(5)
+            ->get();
+
+        // Sum up all available leave days (total_days - used_days)
+        foreach ($leaveBalances as $balance) {
+            $leaveBalance += ($balance->total_days - $balance->used_days);
+        }
+
+        $employee = auth()->user()->employee;
+        $currentYear = Carbon::now()->year;
+
+        // Get current month attendance
+        $currentMonth = Carbon::now()->month;
+        $currentYear = Carbon::now()->year;
+
+        $attendance = Attendance::where('employee_id', $employee->id)
+            ->whereMonth('date', $currentMonth)
+            ->whereYear('date', $currentYear)
+            ->get();
+
+        $present_count = $attendance->where('status', 'Present')->count();
+        $absent_count = $attendance->where('status', 'Absent')->count();
+        $leave_count = $attendance->where('status', 'On Leave')->count();
+        $late_count = $attendance->where('status', 'Late')->count();
+        $half_day_count = $attendance->where('status', 'Half Day')->count();
+
+        // Get upcoming birthday
+        $upcoming_birthday = null;
+        if ($employee->date_of_birth) {
+            $birthday = Carbon::parse($employee->date_of_birth);
+            $thisYearBirthday = $birthday->copy()->year(now()->year);
+            
+            if ($thisYearBirthday->isPast()) {
+                $thisYearBirthday->addYear();
+            }
+            
+            if ($thisYearBirthday->isToday()) {
+                $upcoming_birthday = 'Today!';
+            } elseif ($thisYearBirthday->diffInDays(now()) <= 7) {
+                $upcoming_birthday = $thisYearBirthday->diffForHumans();
+            }
+        }
+
+        // Get leaves taken this year
+        $leaves_taken = LeaveRequest::where('employee_id', $employee->id)
+            ->whereYear('start_date', $currentYear)
+            ->where('status', 'approved')
+            ->get()
+            ->sum(function ($leave) {
+                return Carbon::parse($leave->start_date)->diffInDays(Carbon::parse($leave->end_date)) + 1;
+            });
+
+        // Get announcements for employees
+        $announcements = Announcement::where('company_id', $employee->company_id)
+            ->whereIn('audience', ['employees', 'both'])
+            ->latest()
+            ->get();
+
+        // Get monthly attendance data for charts
+        $monthlyData = [];
+        $statuses = ['Present', 'Absent', 'Late', 'Half Day', 'On Leave'];
+        
+        foreach ($statuses as $status) {
+            $monthlyData[$status] = [];
+            for ($month = 1; $month <= 12; $month++) {
+                $count = Attendance::where('employee_id', $employee->id)
+                    ->whereYear('date', $currentYear)
+                    ->whereMonth('date', $month)
+                    ->where('status', $status)
+                    ->count();
+                $monthlyData[$status][$month] = $count;
+            }
+        }
+
+        return view('employee.dashboard', compact(
+            'employee',
+            'todayAttendance',
+            'present_count',
+            'absent_count',
+            'leave_count',
+            'late_count',
+            'half_day_count',
+            'leaves_taken',
+            'currentYear',
+            'leaveBalance',
+            'upcoming_birthday',
+            'academic_holidays',
+            'announcements',
+            'monthlyData'
+        ));
     }
 
     public function blank()

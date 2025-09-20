@@ -32,6 +32,8 @@
             <table class="table table-bordered Reimbursements-table">
                 <thead>
                     <tr>
+                        <th>Serial No.</th>
+                        <th>Date</th>
                         <th>Title</th>
                         <th>Employee</th>
                         <th>Company</th>
@@ -43,6 +45,8 @@
                 <tbody id="reimbursementTable">
                     @foreach($reimbursements as $reimbursement)
                         <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('d M Y') }}</td>
                             <td>{{ $reimbursement->title }}</td>
                             <td>{{ $reimbursement->employee->user->name }}</td>
                             <td>{{ $reimbursement->company->name }}</td>

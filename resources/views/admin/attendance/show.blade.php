@@ -119,9 +119,99 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
+                            <!-- Weekend Days -->
+                            <div class="col-md-12 mt-4">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Weekend Days</h6>
+                                    </div>
+                                    
+                                    <div class="card-body">
+                                        <dl class="row mb-0">
+                                            <dt class="col-sm-5">Weekend Days:</dt>
+                                            <dd class="col-sm-7">
+                                                @php
+                                                    $weekendDays = $settings->weekend_days;
+                                                    // Ensure weekend_days is an array
+                                                    if (is_string($weekendDays)) {
+                                                        $weekendDays = json_decode($weekendDays, true) ?: [];
+                                                    } elseif (!is_array($weekendDays)) {
+                                                        $weekendDays = [];
+                                                    }
+                                                @endphp
+                                                @if(!empty($weekendDays))
+                                                    @foreach($weekendDays as $day)
+                                                        <span class="badge badge-dark mr-1 mb-1">
+                                                            {{ $day }}
+                                                        </span>
+                                                    @endforeach
+                                                @else
+                                                    <span class="text-muted">No weekend days in this period</span>
+                                                @endif
+                                            </dd>   
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                             <!-- Exempted Departments -->
+                             <div class="col-md-12 mt-4">
+                                 <div class="card">
+                                     <div class="card-header bg-light">
+                                         <h6 class="mb-0">Exempted Departments</h6>
+                                     </div>
+
+                                     <div class="card-body">
+                                         <dl class="row mb-0">
+                                             <dt class="col-sm-5">Exempted Departments:</dt>
+                                             <dd class="col-sm-7">
+                                                 @if($settings->exemptedDepartments && $settings->exemptedDepartments->count() > 0)
+                                                     @foreach($settings->exemptedDepartments as $department)
+                                                         <span class="badge badge-dark mr-1 mb-1">
+                                                             {{ $department->name }}
+                                                         </span>
+                                                     @endforeach
+                                                 @else
+                                                     <span class="text-muted">No exempted departments</span>
+                                                 @endif
+                                             </dd>
+                                         </dl>
+                                     </div>
+                                 </div>
+                             </div>
+                             <!-- Exempted Employees -->
+                             <div class="col-md-12 mt-4">
+                                 <div class="card">
+                                     <div class="card-header bg-light">
+                                         <h6 class="mb-0">Exempted Employees</h6>
+                                     </div>
+                             
+                                     <div class="card-body">
+                                         <dl class="row mb-0">
+                                             <dt class="col-sm-5">Exempted Employees:</dt>
+                                             <dd class="col-sm-7">
+                                                 @if($settings->exemptedEmployees && $settings->exemptedEmployees->count() > 0)
+                                                     @foreach($settings->exemptedEmployees as $employee)
+                                                         <span class="badge badge-dark mr-1 mb-1">
+                                                             {{ $employee->name }} ({{ $employee->employee_code }})
+                                                         </span>
+                                                     @endforeach
+                                                 @else
+                                                     <span class="text-muted">No exempted employees</span>
+                                                 @endif
+                                             </dd>
+                                         </dl>
+                                     </div>
+                                 </div>
+                             </div>
+                           
+
+
+
                             <!-- Additional Settings -->
-                            <div class="col-12 mt-4">
+                            {{-- <div class="col-12 mt-4">
                                 <div class="card">
                                     <div class="card-header bg-light">
                                         <h6 class="mb-0">Additional Settings</h6>
@@ -151,7 +241,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     @else
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle me-2"></i> No attendance settings found. 

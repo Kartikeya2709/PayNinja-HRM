@@ -3,6 +3,28 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.css">
+<style>
+/* Dashboard Switch Styling */
+.form-check-input:checked {
+    background-color: #6777ef;
+    border-color: #6777ef;
+}
+
+.switch-label {
+    font-weight: 500;
+    color: #6777ef;
+    font-size: 0.9rem;
+}
+
+.form-check-input {
+    width: 2.5rem;
+    height: 1.25rem;
+}
+
+.form-check-label {
+    margin-left: 0.5rem;
+}
+</style>
 {{-- <style>
 /* Stats Cards */
 .card-statistic-1 {
@@ -177,6 +199,24 @@
     <section class="section">
         <div class="section-header">
             <h1>Admin Dashboard</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active">
+                    <form action="{{ route('dashboard.switch') }}" method="POST" class="d-inline">
+                        @csrf
+                        <div class="form-check form-switch d-inline-block">
+                            <input class="form-check-input" type="checkbox" id="dashboardSwitch" 
+                                   onchange="this.form.submit()" 
+                                   {{ session('dashboard_mode') === 'employee' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="dashboardSwitch">
+                                <span class="switch-label">
+                                    {{ session('dashboard_mode') === 'employee' ? 'Employee View' : 'Admin View' }}
+                                </span>
+                            </label>
+                        </div>
+                        <input type="hidden" name="mode" value="{{ session('dashboard_mode') === 'employee' ? 'default' : 'employee' }}">
+                    </form>
+                </div>
+            </div>
         </div>
 
         <!-- Stats Row -->

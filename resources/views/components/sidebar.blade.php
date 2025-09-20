@@ -398,6 +398,21 @@
                         </ul>
                     </li>
 
+                     <!-- reimbursement Management -->
+                     @if ($hasModuleAccess('reimbursement', 'admin'))
+                     <li class="menu-header">Reimbursements</li>
+
+                     <li class="{{ Request::is('reimbursements/create') ? 'active' : '' }}">
+                         <a class="nav-link" href="{{ route('reimbursements.create') }}"><i class="fas fa-plus-circle"></i>
+                             <span>Request Reimbursement</span></a>
+                     </li>
+                     <li class="{{ Request::is('reimbursements') && !Request::is('reimbursements/create') ? 'active' : '' }}">
+                         <a class="nav-link" href="{{ route('reimbursements.index') }}"><i class="fas fa-tasks"></i>
+                             <span>Pending Approvals</span></a>
+                     </li>
+                     </li>
+                 @endif
+
                     <!-- Field Visits -->
                     <li class="menu-header">Field Visits</li>
                     <li class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
@@ -412,6 +427,7 @@
                             <span>Pending Approvals</span>
                         </a>
                     </li>
+
                 @endif {{-- END of Company Admin role block --}}
 
                 {{-- Employee Payslip --}}
@@ -536,10 +552,10 @@
                             <a class="nav-link" href="{{ route('admin.attendance.settings') }}"><i class="fas fa-cog"></i>
                                 <span>Attendance Settings</span></a>
                         </li>
-                        <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('admin.shifts.index') }}"><i class="fas fa-clock"></i>
                                 <span>Manage Shifts</span></a>
-                        </li>
+                        </li> --}}
                     @endif
 
                     <!-- Leave Management -->
@@ -562,16 +578,16 @@
                             <a class="nav-link" href="{{ route('company.leave-requests.index') }}"><i
                                     class="fas fa-clipboard-list"></i> <span>Leave Requests</span></a>
                         </li>
-                        <li class="{{ Request::is('company/leave-requests/calendar') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::is('company/leave-requests/calendar') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.leave-requests.calendar') }}"><i
                                     class="fas fa-calendar-alt"></i> <span>Leave Calendar</span></a>
-                        </li>
+                        </li> --}}
                     @endif
 
 
 
                     <!-- Payroll Management -->
-                    @if ($hasModuleAccess('payroll', 'admin'))
+                    {{-- @if ($hasModuleAccess('payroll', 'admin'))
                         <li class="menu-header">Payroll Management</li>
                         <li class="nav-item dropdown {{ Request::is('admin/payroll*') ? 'active' : '' }}">
                             <a href="#" class="nav-link has-dropdown"><i
@@ -599,10 +615,10 @@
                             </ul>
                         </li>
                         </li>
-                    @endif
+                    @endif --}}
 
                     <!-- Payslip Management -->
-                    @if ($hasModuleAccess('payroll', 'employee'))
+                    {{-- @if ($hasModuleAccess('payroll', 'employee'))
                         @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
                             <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
@@ -611,7 +627,7 @@
                                 </a>
                             </li>
                         @endif
-                    @endif
+                    @endif --}}
 
                     <!-- reimbursement Management -->
                     @if ($hasModuleAccess('reimbursement', 'admin'))
