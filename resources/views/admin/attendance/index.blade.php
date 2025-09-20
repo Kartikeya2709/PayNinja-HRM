@@ -9,7 +9,7 @@
             <h1>Attendance Records</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="">Attendance Records</div>
+                <div class="breadcrumb-item"><a href="">Attendance Records</a></div>
             </div>
         </div>
         @if(session('error'))
@@ -138,7 +138,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Employee</th>
-                                        <th>Employee ID</th>
+                                        <th>Department</th>
                                         <th>Date</th>
                                         <th>Check In</th>
                                         <th>Check Out</th>
@@ -150,23 +150,29 @@
                                 <tbody>
                                     @forelse($attendances as $attendance)
                                     <tr>
-                                        <td>{{ $loop->iteration + (($attendances->currentPage() - 1) * $attendances->perPage()) }}
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar avatar-sm me-2">
-                                                    <img src="{{ $attendance->employee->user->profile_photo_url ?? asset('images/avatar.png') }}"
-                                                        alt="{{ $attendance->employee->user->name }}"
-                                                        class="rounded-circle">
-                                                </div>
-                                                <div>
-                                                    <h6 class="mb-0">{{ $attendance->employee->user->name }}</h6>
-                                                    <small
-                                                        class="text-muted">{{ $attendance->employee->designation->name ?? 'N/A' }}</small>
-                                                </div>
+                                        <td>{{ $loop->iteration + (($attendances->currentPage() - 1) * $attendances->perPage()) }}</td>
+                                        <td class="d-flex align-items-center h-100">
+                                            <div class="me-3">
+                                                @if($attendance->employee->profile_image)
+                                                    <img src="{{ asset('storage/' . $attendance->employee->profile_image) }}"
+                                                        alt="Profile"
+                                                        class="rounded-circle"
+                                                        width="40"
+                                                        height="40"
+                                                        style="object-fit: cover;">
+                                                @else
+                                                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                        style="width: 40px; height: 40px; font-size: 16px; font-weight: bold;">
+                                                        {{ substr($attendance->employee->name, 0, 1) }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ $attendance->employee->name }}</div>
+                                                <small class="text-muted">{{ $attendance->employee->employee_code ?? 'N/A' }}</small>
                                             </div>
                                         </td>
-                                        <td>{{ $attendance->employee->employee_id }}</td>
+                                        <td>{{ $attendance->employee->department->name ?? 'N/A' }}</td>
                                         <td>{{ \Carbon\Carbon::parse($attendance->date)->format('d M Y') }}</td>
                                         <td>
                                             @if($attendance->check_in)
@@ -220,7 +226,7 @@
                                                 <button type="button" class="btn btn-outline-primary edit-attendance"
                                                     data-id="{{ $attendance->id }}" data-bs-toggle="tooltip"
                                                     data-bs-placement="top" title="Edit Record" aria-label="Edit">
-                                                    <span class="btn-content">Edit
+                                                    <span class="btn-content">
                                                         <i class="bi bi-pencil"></i>
                                                     </span>
                                                     <span class="spinner-border spinner-border-sm d-none" role="status"
@@ -232,7 +238,7 @@
                                                     data-date="{{ $attendance->date->format('M d, Y') }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                                     title="Delete Record" aria-label="Delete">
-                                                    <span class="btn-content">Delete
+                                                    <span class="btn-content">
                                                         <i class="bi bi-trash"></i>
                                                     </span>
                                                     <span class="spinner-border spinner-border-sm d-none" role="status"

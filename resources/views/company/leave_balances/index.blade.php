@@ -9,7 +9,7 @@
                 <h1>Leave Balances</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="">Leave Balances</div>
+                    <div class="breadcrumb-item"><a href="">Leave Balances</a></div>
                 </div>
             </div>
 <section class="card">

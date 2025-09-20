@@ -335,16 +335,54 @@ class CompanyAdminController extends Controller
         }
     } // Added the missing closing brace here
 
-    public function employees()
+    public function employees(Request $request)
     {
         $user = Auth::user();
         $company = $user->employee->company;
-        
-        $employees = Employee::with(['user', 'department'])
-            ->where('company_id', $company->id)
-            ->paginate(10);
 
-        return view('company-admin.employees.index', compact('employees'));
+        // Get departments and designations for filters
+        $departments = Department::where('company_id', $company->id)->get();
+        $designations = Designation::where('company_id', $company->id)->get();
+
+        // Build query with filters
+        $query = Employee::with(['user', 'department', 'designation'])
+            ->where('company_id', $company->id);
+
+        // Apply search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('employee_code', 'like', '%' . $search . '%')
+                  ->orWhere('email', 'like', '%' . $search . '%')
+                  ->orWhereHas('user', function($userQuery) use ($search) {
+                      $userQuery->where('name', 'like', '%' . $search . '%')
+                               ->orWhere('email', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        // Apply department filter
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        // Apply designation filter
+        if ($request->filled('designation_id')) {
+            $query->where('designation_id', $request->designation_id);
+        }
+
+        $employees = $query->paginate(10)->appends($request->query());
+
+        // Return JSON for AJAX requests
+        if ($request->ajax()) {
+            return response()->json([
+                'html' => view('company-admin.employees._table', compact('employees'))->render(),
+                'pagination' => $employees->links('pagination::bootstrap-5')->render()
+            ]);
+        }
+
+        return view('company-admin.employees.index', compact('employees', 'departments', 'designations'));
     }
 
     /**

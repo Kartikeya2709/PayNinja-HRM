@@ -9,7 +9,7 @@
                 <h1>Attendance Dashboard</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="">Attendance Dashboard</div>
+                    <div class="breadcrumb-item"><a href="">Attendance Dashboard</a></div>
                 </div>
             </div>
 <div class="row">
@@ -36,7 +36,7 @@
                         @endif
                     </div>
                 @else
-                    <p class="text-muted my-4 today-status">Not checked in today</p>
+                    <p class="text-muted my-4 today-status text-center">Not checked in today</p>
                 @endif
                 
                 <div class="d-grid gap-2">

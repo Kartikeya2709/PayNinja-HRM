@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AttendanceSetting;
 use App\Models\Company;
+use App\Models\Department;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class AttendanceSettingController extends Controller
 {
@@ -22,6 +26,7 @@ class AttendanceSettingController extends Controller
             ->latest('updated_at')
             ->withoutGlobalScopes()
             ->first();
+            
         // Set default values if settings don't exist
         if (!$settings) {
             $settings = new AttendanceSetting([
@@ -38,14 +43,27 @@ class AttendanceSettingController extends Controller
             ]);
             $settings->save();
         }
-        // echo "<pre>";print_r($settings);die;
+
         // Only fetch the current company, not all companies
         $company = Company::findOrFail($companyId);
+        
+        // Get all departments and employees for the company
+        $departments = Department::where('company_id', $companyId)->get();
+        $employees = Employee::where('company_id', $companyId)
+            ->with('department') // Eager load department relationship
+            ->get();
+        
+        // Load existing exemptions if settings exist
+        if ($settings) {
+            $settings->load(['exemptedDepartments', 'exemptedEmployees']);
+        }
         
         return view('admin.attendance.settings', [
             'settings' => $settings,
             'company' => $company,
-            'companies' => collect([$company]) // Only pass current company to view
+            'companies' => collect([$company]),
+            'departments' => $departments,
+            'employees' => $employees,
         ]);
     }
 
@@ -103,8 +121,12 @@ class AttendanceSettingController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    /**
+     * Update the attendance settings including geolocation exemptions.
+     */
     public function update(Request $request, $id = null)
     {
+        
         try {
             // Check if this is an AJAX request
             $isAjax = $request->ajax() || $request->wantsJson();
@@ -173,6 +195,11 @@ class AttendanceSettingController extends Controller
                 'office_longitude' => 'nullable|required_if:enable_geolocation,1|numeric|between:-180,180',
                 'geofence_radius' => 'nullable|required_if:enable_geolocation,1|numeric|min:20|max:1000',
                 'weekend_days' => 'sometimes|array',
+                // Exemption fields
+                'exempted_departments' => 'sometimes|array',
+                'exempted_departments.*' => 'integer|exists:departments,id',
+                'exempted_employees' => 'sometimes|array',
+                'exempted_employees.*' => 'integer|exists:employees,id',
             ]);
 
             // Convert boolean fields
@@ -270,31 +297,57 @@ class AttendanceSettingController extends Controller
             // Ensure we're only updating settings for the user's company
             $settings = null;
             
-            if ($id) {
-                // For updates, first find the setting and verify it belongs to the user's company
-                $settings = AttendanceSetting::where('id', $id)
-                    ->where('company_id', $userCompanyId)
-                    ->first();
-                    
-                if (!$settings) {
-                    if ($isAjax) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Settings not found or you do not have permission to update them.'
-                        ], 404);
+            // Persist settings and sync exemptions in a transaction
+            \DB::beginTransaction();
+            try {
+                if ($id) {
+                    // For updates, first find the setting and verify it belongs to the user's company
+                    $settings = AttendanceSetting::where('id', $id)
+                        ->where('company_id', $userCompanyId)
+                        ->first();
+                        
+                    if (!$settings) {
+                        if ($isAjax) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Settings not found or you do not have permission to update them.'
+                            ], 404);
+                        }
+                        return redirect()->back()->with('error', 'Settings not found or you do not have permission to update them.');
                     }
-                    return redirect()->back()->with('error', 'Settings not found or you do not have permission to update them.');
+                    
+                    // Update existing settings
+                    $settings->update($validated);
+                    $settings->updated_by = Auth::id();
+                    $settings->save();
+                } else {
+                    // Create new settings for the company
+                    $validated['created_by'] = Auth::id();
+                    $validated['updated_by'] = Auth::id();
+                    $settings = AttendanceSetting::create($validated);
                 }
-                
-                // Update existing settings
-                $settings->update($validated);
-                $settings->updated_by = Auth::id();
-                $settings->save();
-            } else {
-                // Create new settings for the company
-                $validated['created_by'] = Auth::id();
-                $validated['updated_by'] = Auth::id();
-                $settings = AttendanceSetting::create($validated);
+
+                // Sync exemptions if provided
+                $departmentIds = (array)($data['exempted_departments'] ?? []);
+                $employeeIds = (array)($data['exempted_employees'] ?? []);
+
+                if (!empty($departmentIds)) {
+                    $settings->exemptedDepartments()->sync($departmentIds);
+                } else {
+                    // If no departments provided, detach all to reflect clearing selection
+                    $settings->exemptedDepartments()->detach();
+                }
+
+                if (!empty($employeeIds)) {
+                    $settings->exemptedEmployees()->sync($employeeIds);
+                } else {
+                    $settings->exemptedEmployees()->detach();
+                }
+
+                \DB::commit();
+            } catch (\Throwable $t) {
+                \DB::rollBack();
+                throw $t;
             }
 
             if ($isAjax) {

@@ -24,6 +24,47 @@
                     </a>
                 </div>
 
+                <!-- Filters and Search -->
+                <div class="card-body mb-5">
+                    <form id="filterForm" method="GET" action="{{ route('company-admin.employees.index') }}">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="department_id" class="form-label">Department</label>
+                                <select class="form-select" id="department_id" name="department_id">
+                                    <option value="">All Departments</option>
+                                    @foreach($departments as $department)
+                                        <option value="{{ $department->id }}" {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                            {{ $department->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="designation_id" class="form-label">Designation</label>
+                                <select class="form-select" id="designation_id" name="designation_id">
+                                    <option value="">All Designations</option>
+                                    @foreach($designations as $designation)
+                                        <option value="{{ $designation->id }}" {{ request('designation_id') == $designation->id ? 'selected' : '' }}>
+                                            {{ $designation->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="search" class="form-label">Search</label>
+                                <input type="text" class="form-control" id="search" name="search"
+                                       value="{{ request('search') }}"
+                                       placeholder="Search by name, email, or employee ID">
+                            </div>
+                            <div class="col-md-1 d-flex align-items-end">
+                                <button type="button" id="resetFilters" class="btn btn-outline-secondary me-2">
+                                    <i class="fas fa-undo"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
                 <div class="card-body">
                     @if(session('success'))
                         <div class="alert alert-success">{{ session('success') }}</div>
@@ -37,50 +78,22 @@
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
+                                    <th>S.No</th>
+                                    <th>Employee</th>
                                     <th>Email</th>
                                     <th>Department</th>
+                                    <th>Designation</th>
                                     <th>Current Role</th>
-                                    <th>Actions</th>
+                                    <th style="min-width: 160px;">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                @foreach($employees as $employee)
-                                    <tr>
-                                        <td>{{ $employee->user->name }}</td>
-                                        <td>{{ $employee->user->email }}</td>
-                                        <td>{{ $employee->department->name ?? 'N/A' }}</td>
-                                        <td>
-                                            <span class="badge bg-info">
-                                                {{ ucfirst($employee->user->role_name) }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('company-admin.employees.view', $employee->id) }}" class="btn btn-info btn-sm me-1" title="View Employee">
-                                                <i class="fas fa-eye"></i> View
-                                            </a>
-                                            <a href="{{ route('company-admin.employees.edit', $employee->id) }}" class="btn btn-warning btn-sm me-1" title="Edit Employee">
-                                                <i class="fas fa-edit"></i> Edit
-                                            </a>
-                                            @if($employee->user->role !== 'company_admin')
-                                            <button type="button" class="btn btn-primary btn-sm change-role-btn" 
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#roleModal"
-                                                data-employee-id="{{ $employee->id }}"
-                                                data-employee-name="{{ $employee->user->name }}"
-                                                data-current-role="{{ $employee->user->role }}"
-                                                data-update-url="{{ route('company-admin.employees.update-role', $employee->id) }}">
-                                                <i class="fas fa-user-edit me-1"></i>Change Role
-                                            </button>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforeach
+                            <tbody id="employeesTableBody">
+                                @include('company-admin.employees._table')
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="d-flex justify-content-center mt-3">
+                    <div id="paginationContainer" class="d-flex justify-content-center mt-3">
                         {{ $employees->links('pagination::bootstrap-5') }}
                     </div>
                 </div>
@@ -135,6 +148,121 @@ document.addEventListener('DOMContentLoaded', function () {
             roleSelect.value = currentRole;
             roleChangeForm.action = updateUrl;
         });
+    });
+
+    // AJAX filtering functionality
+    const filterForm = document.getElementById('filterForm');
+    const searchInput = document.getElementById('search');
+    const departmentSelect = document.getElementById('department_id');
+    const designationSelect = document.getElementById('designation_id');
+    const resetFiltersBtn = document.getElementById('resetFilters');
+    const employeesTableBody = document.getElementById('employeesTableBody');
+    const paginationContainer = document.getElementById('paginationContainer');
+
+    let filterTimeout;
+
+    // Function to perform AJAX filtering
+    function performFiltering() {
+        const formData = new FormData(filterForm);
+        const params = new URLSearchParams();
+
+        for (let [key, value] of formData.entries()) {
+            if (value.trim() !== '') {
+                params.append(key, value);
+            }
+        }
+
+        const url = '{{ route("company-admin.employees.index") }}' + (params.toString() ? '?' + params.toString() : '');
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            employeesTableBody.innerHTML = data.html;
+            paginationContainer.innerHTML = data.pagination;
+
+            // Update URL
+            window.history.replaceState({}, '', url);
+
+            // Re-bind role change buttons after AJAX update
+            bindRoleChangeButtons();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    // Function to bind role change buttons
+    function bindRoleChangeButtons() {
+        var changeRoleButtons = document.querySelectorAll('.change-role-btn');
+        changeRoleButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                var employeeName = this.getAttribute('data-employee-name');
+                var currentRole = this.getAttribute('data-current-role');
+                var updateUrl = this.getAttribute('data-update-url');
+
+                modalEmployeeName.textContent = employeeName;
+                roleSelect.value = currentRole;
+                roleChangeForm.action = updateUrl;
+            });
+        });
+    }
+
+    // Search input with debounce
+    searchInput.addEventListener('input', function() {
+        clearTimeout(filterTimeout);
+        filterTimeout = setTimeout(performFiltering, 500);
+    });
+
+    // Department and designation select changes
+    departmentSelect.addEventListener('change', performFiltering);
+    designationSelect.addEventListener('change', performFiltering);
+
+    // Reset filters
+    resetFiltersBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        departmentSelect.value = '';
+        designationSelect.value = '';
+
+        // Update URL without query parameters
+        window.history.replaceState({}, '', '{{ route("company-admin.employees.index") }}');
+
+        performFiltering();
+    });
+
+    // Handle pagination links
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.pagination a')) {
+            e.preventDefault();
+            const url = e.target.closest('.pagination a').href;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                employeesTableBody.innerHTML = data.html;
+                paginationContainer.innerHTML = data.pagination;
+
+                // Re-bind role change buttons after AJAX update
+                bindRoleChangeButtons();
+
+                // Update URL
+                window.history.replaceState({}, '', url);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     });
 });
 </script>

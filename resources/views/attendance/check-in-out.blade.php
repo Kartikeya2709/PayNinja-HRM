@@ -197,6 +197,7 @@ $(document).ready(function() {
     let currentPosition = null;
     let isLocationValid = false;
     let geolocationRequired = {{ $settings->enable_geolocation ? 'true' : 'false' }};
+    let isExempt = {{ isset($isExemptFromGeolocation) && $isExemptFromGeolocation ? 'true' : 'false' }};
     
     // Initialize Ola Maps
     const olaMaps = new OlaMaps({
@@ -354,6 +355,17 @@ $(document).ready(function() {
         if (!geolocationRequired) {
             isLocationValid = true;
             $('#checkInBtn, #checkOutBtn').prop('disabled', false);
+            return;
+        }
+        // If employee is exempt, require location capture but skip geofence enforcement
+        if (isExempt) {
+            isLocationValid = true;
+            $status.removeClass('alert-info alert-danger').addClass('alert-success').html(`
+                <i class="bi bi-check-circle-fill me-2"></i>
+                <span>Location captured. Geofence not required due to exemption.</span>
+            `);
+            $('#checkInBtn, #checkOutBtn').prop('disabled', false);
+            $btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-2"></i> Update Location');
             return;
         }
         

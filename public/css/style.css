@@ -179,10 +179,7 @@
     
     margin-bottom: 0px!important;
 }
- #leaveChart {
-    width: 100% !important;
-    height: 350px !important; /* Adjust for mobile */
-  }
+
 .card-link{
   text-decoration: none;
 }
@@ -289,11 +286,11 @@ padding-left: 0px !important;
   color: #000;
   margin: 0px;
 }
-.emp-dashboard .col-4 i{
+.emp-dashboard .dash-icon i{
   color: #fff;
   font-size: 30px;
 }
-.emp-dashboard .col-4{
+.emp-dashboard .dash-icon{
       background: rgb(6, 58, 125);
     height: 80px;
     width: 80px;
@@ -324,10 +321,7 @@ padding-left: 0px !important;
 .sup-quick-action .card-icon{
       margin-right: 10px;
 }
- #attendanceChart {
-    width: 100% !important;
-    height: 400px !important;
-  }
+
 .sidebar-menu a{
   margin: 0px!important;
 }
@@ -647,6 +641,7 @@ tbody, td, tfoot, th, thead, tr{
   transition: all 0.3s ease;
   animation: pulseGreen 2.5s infinite;
 }
+
 
 /* ✅ Check Out Button */
 .check-outt {
@@ -4474,9 +4469,7 @@ html,body{
 .main-sidebar .sidebar-menu li.menu-header:not(:first-child) {
   margin-top: 10px;
 }
-#attendanceChart{
-  height: 336px!important;
-}
+
 /* .cash-dep #attendanceChart{
   height: 100%!important;
 } */
@@ -5042,15 +5035,32 @@ body.layout-3 .main-wrapper {
   #process-bulk-payroll{
      margin-bottom: 10px;
   }
+  .today-check-in .today-status{
+    justify-content: center;
+  }
   .emp-dashboard .col-4 i {
     font-size: 20px;
 }
- #leaveChart {
-      height: 250px !important;
-    }
-     .cash-dep #attendanceChart {
-      height: 280px !important;
-    }
+.emp-dashboard .dash-icon{
+  height: 50px;
+    width: 50px;
+    margin-left: 0px;
+            margin-bottom: 10px;
+}
+.Resignation-Information{
+  padding-top: 25px;
+}
+.Resignation-Date{
+  margin-top: 0px!important;
+}
+.emp-dashboard .dash-icon i {
+    
+    font-size: 20px;
+}
+#employeeCalendar .fc-header-toolbar{
+  padding-top: 20px;
+}
+   
     .mobile-space h4{
       text-align: center;
       padding-bottom: 15px!important;
@@ -5173,6 +5183,7 @@ text-align: center!important;
   }
   .card .card-header h3, .card .card-header h5{
         padding-right: 0px;
+                padding-bottom: 20px;
   }
   .card-1{
     display: block;

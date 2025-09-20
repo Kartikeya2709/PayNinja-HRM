@@ -149,9 +149,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Regularization Management
     Route::middleware(['role:admin,company_admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
-        Route::resource('requests', \App\Http\Controllers\Admin\AttendanceRegularizationController::class);
-        Route::put('requests/{id}/approve', [\App\Http\Controllers\Admin\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
-        Route::post('requests/bulk-update', [\App\Http\Controllers\Admin\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
+        Route::resource('requests', \App\Http\Controllers\Employee\AttendanceRegularizationController::class);
+        Route::put('requests/{id}/approve', [\App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
+        Route::post('requests/bulk-update', [\App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
     });
 
     // Employee Leave Management

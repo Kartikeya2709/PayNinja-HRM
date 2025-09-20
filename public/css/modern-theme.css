@@ -246,9 +246,7 @@ position:fixed;
         padding: 5px!important;
 
   }
-  .attendance-height #attendanceChart{
-        height: 280px !important;
-  }
+ 
   .sidebar-brand.logo img{
     display: none;
   }
@@ -299,9 +297,7 @@ position:fixed;
     height: 65px;
   }
  
-#attendanceChart {
-    height: 220px !important;
-}
+
   .navbar-brand .brand-text {
     font-size: 1.25rem;
   }

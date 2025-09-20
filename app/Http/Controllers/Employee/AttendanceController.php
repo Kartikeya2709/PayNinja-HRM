@@ -87,11 +87,22 @@ class AttendanceController extends Controller
             ->first();
         // Get attendance settings
         $settings = $this->attendanceService->getAttendanceSettings();
+
+        // Determine if the employee is exempt from geolocation
+        $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
+            ->latest('updated_at')
+            ->withoutGlobalScopes()
+            ->first();
+        $isExemptFromGeolocation = $settingsModel
+            ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id)
+            : false;
+
         return view('attendance.check-in-out', [
             'todayAttendance' => $todayAttendance,
             'settings' => $settings,
             'isWeekend' => $isWeekend,
             'today' => $today,
+            'isExemptFromGeolocation' => $isExemptFromGeolocation,
         ]);
     }
     
@@ -157,9 +168,30 @@ class AttendanceController extends Controller
             'longitude' => 'required|numeric',
         ]);
 
+        $user = Auth::user();
+        $employee = $user->employee;
+        
+        if (!$employee) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Employee record not found.'
+            ], 404);
+        }
+
+        $user = Auth::user();
+        $employee = $user->employee;
+
+        if (!$employee) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Employee record not found.'
+            ], 404);
+        }
+
         $result = $this->attendanceService->validateLocation(
-            $request->latitude,
-            $request->longitude
+            $request->input('latitude'),
+            $request->input('longitude'),
+            $employee->id
         );
 
         return response()->json($result);
@@ -199,7 +231,6 @@ class AttendanceController extends Controller
                 $latitude = trim($latitude);
                 $longitude = trim($longitude);
             }
-            
             // If geolocation is required but not provided
             if ($settings->enable_geolocation && (!$latitude || !$longitude)) {
                 return response()->json([
@@ -210,22 +241,43 @@ class AttendanceController extends Controller
             
             // If geolocation is provided, validate it
             if ($settings->enable_geolocation && $latitude && $longitude) {
-                $locationCheck = $this->attendanceService->validateLocation(
-                    (float)$latitude,
-                    (float)$longitude
-                );
-                
-                if (!$locationCheck['success']) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => $locationCheck['message'],
-                        'error_type' => 'location_validation_failed'
-                    ], 400);
+                // Check if employee is exempt from geolocation validation
+                $isExempt = false;
+                try {
+                    $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
+                        ->latest('updated_at')
+                        ->withoutGlobalScopes()
+                        ->first();
+                    $isExempt = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id) : false;
+                } catch (\Throwable $t) {
+                    \Log::warning('Failed checking geolocation exemption (checkin): ' . $t->getMessage());
                 }
-                
-                // Use reverse geocoded address if no location provided
-                if (empty($location) && !empty($locationCheck['address'])) {
-                    $location = $locationCheck['address'];
+
+                // Only validate location if employee is not exempt
+                if (!$isExempt) {
+                    $locationCheck = $this->attendanceService->validateLocation(
+                        (float)$latitude,
+                        (float)$longitude,
+                        $employee->id
+                    );
+                    
+                    if (!$locationCheck['success']) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => $locationCheck['message'],
+                            'error_type' => 'location_validation_failed'
+                        ], 400);
+                    }
+                    
+                    // Use reverse geocoded address if no location provided
+                    if (empty($location) && !empty($locationCheck['address'])) {
+                        $location = $locationCheck['address'];
+                    }
+                } else {
+                    \Log::info('Employee exempt from geolocation validation', [
+                        'employee_id' => $employee->id,
+                        'coordinates' => [$latitude, $longitude]
+                    ]);
                 }
             }
             
@@ -310,22 +362,43 @@ class AttendanceController extends Controller
             
             // If geolocation is provided, validate it
             if ($settings->enable_geolocation && $latitude && $longitude) {
-                $locationCheck = $this->attendanceService->validateLocation(
-                    (float)$latitude,
-                    (float)$longitude
-                );
-                
-                if (!$locationCheck['success']) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => $locationCheck['message'],
-                        'error_type' => 'location_validation_failed'
-                    ], 400);
+                // Check if employee is exempt from geolocation validation
+                $isExempt = false;
+                try {
+                    $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
+                        ->latest('updated_at')
+                        ->withoutGlobalScopes()
+                        ->first();
+                    $isExempt = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id) : false;
+                } catch (\Throwable $t) {
+                    \Log::warning('Failed checking geolocation exemption (checkout): ' . $t->getMessage());
                 }
-                
-                // Use reverse geocoded address if no location provided
-                if (empty($location) && !empty($locationCheck['address'])) {
-                    $location = $locationCheck['address'];
+
+                // Only validate location if employee is not exempt
+                if (!$isExempt) {
+                    $locationCheck = $this->attendanceService->validateLocation(
+                        (float)$latitude,
+                        (float)$longitude,
+                        $employee->id
+                    );
+                    
+                    if (!$locationCheck['success']) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => $locationCheck['message'],
+                            'error_type' => 'location_validation_failed'
+                        ], 400);
+                    }
+                    
+                    // Use reverse geocoded address if no location provided
+                    if (empty($location) && !empty($locationCheck['address'])) {
+                        $location = $locationCheck['address'];
+                    }
+                } else {
+                    \Log::info('Employee exempt from geolocation validation', [
+                        'employee_id' => $employee->id,
+                        'coordinates' => [$latitude, $longitude]
+                    ]);
                 }
             }
             
