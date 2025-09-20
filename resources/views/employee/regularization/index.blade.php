@@ -7,11 +7,7 @@
                 <h1>Regularization Requests</h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-<<<<<<< Updated upstream
                     <div class="breadcrumb-item"><a href="">Regularization Requests</a></div>
-=======
-                    <div class="breadcrumb-item"><a href="">Regularization Requests </a></div>
->>>>>>> Stashed changes
                 </div>
             </div>
     <div class="row">
