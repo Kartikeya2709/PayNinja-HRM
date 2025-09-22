@@ -371,7 +371,7 @@
                         <th>Status</th>
                       </tr>
                     </thead>
-                    <tbody id="attendanceTableBody">
+                    <tbody>
                       @forelse ($attendances as $index => $attendance)
                         <tr>
                           <td>{{ $index + 1 }}</td>
@@ -684,9 +684,8 @@
           }
         }
       });
-    </script>
 
-    <script>
+                 // Attendance Pie Chart
       const ctxAttend = document.getElementById('attendanceChart').getContext('2d');
       new Chart(ctxAttend, {
         type: 'doughnut',

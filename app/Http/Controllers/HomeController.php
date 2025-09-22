@@ -66,14 +66,14 @@ class HomeController extends Controller
     {
         $user = Auth::user();
         $loggedInUser = $user;
-        
+
         // Check if user wants to switch to employee dashboard
         $dashboardMode = session('dashboard_mode', 'default');
-        
+
         $employeeView = false;
         // For admin users, check if they want to view as employee
         if (in_array($user->role, ['admin']) && $dashboardMode === 'employee') {
-            $employeeView = true;    
+            $employeeView = true;
         }
 
         // Common data for all roles
@@ -149,6 +149,7 @@ class HomeController extends Controller
                 ->orderBy('total', 'desc')
                 ->get();
 
+
             // Get department count
             $departmentCount = Department::where('company_id', $companyId)->count();
 
@@ -209,7 +210,7 @@ class HomeController extends Controller
             $companyId = $user->employee->company_id ?? null;
 
             $announcements = Announcement::where('company_id', $companyId)
-                ->whereIn('audience', ['admins','employees', 'both'])
+                ->whereIn('audience', ['admins', 'employees', 'both'])
                 ->latest()
                 ->get();
 
@@ -315,6 +316,13 @@ class HomeController extends Controller
             ));
         } elseif ($user->role === 'admin' && !$employeeView) {
             // Get total employees in the company
+            // Get employee distribution by role
+            $companyId = $user->company_id;
+            $companyEmployees = User::where('company_id', $companyId)
+                ->select('role', DB::raw('count(*) as total'))
+                ->groupBy('role')
+                ->orderBy('total', 'desc')
+                ->get();
             $totalEmployees = User::where('company_id', $user->company_id)
                 ->where('role', '!=', 'superadmin')
                 ->where('role', '!=', 'company_admin')
@@ -365,17 +373,98 @@ class HomeController extends Controller
                 ->latest()
                 ->get();
 
+            $academic_holidays = AcademicHoliday::where('company_id', $user->company_id)
+                ->whereDate('from_date', '>=', Carbon::today())
+                ->orderBy('from_date', 'asc')
+                ->take(5)
+                ->get();
+
+            //Absentees data
+
+            $today = Carbon::today();
+            $total_employees = Employee::select('id', 'name', 'department_id')->with('department')->get();
+            $present_employees = Attendance::whereDate('date', $today)
+                ->pluck('employee_id')
+                ->toArray();
+
+            $absentees = $total_employees->filter(function ($employee) use ($present_employees) {
+                return !in_array($employee->id, $present_employees);
+            })->values();
+
+            $absentees_count = $absentees->count();
+
+            //pending regularization requests
+
+            $pending_regularization_requests = AttendanceRegularization::where('reporting_manager_id', $user->employee->id)
+                ->where('status', '=', 'pending')
+                ->with('employee', 'approver')
+                ->latest()
+                ->paginate(10, ['*'], 'pending_page');
+
+            // Attendance status counts for today
+            $attendances = Attendance::with([
+                'employee' => function ($query) {
+                    $query->select('id', 'name');
+                }
+            ])
+                ->select('id', 'employee_id', 'date', 'status')
+                ->whereDate('date', $today)
+                ->get();
+
+            // Get today's attendance
+            $today = now()->format('Y-m-d');
+            $todayAttendanceCount = DB::table('attendances as a')
+                ->join('employees as e', 'a.employee_id', '=', 'e.id')
+                ->whereNull('a.deleted_at')
+                ->whereDate('a.created_at', $today)
+                ->where('e.company_id', $companyId)
+                ->count();
+
+            $totalEmployees = $companyEmployees->sum('total');
+
+            // Attendance status counts for today
+            $todaysAttendance = Attendance::whereDate('date', Carbon::today())
+                ->with('employee')
+                ->select('id', 'employee_id', 'date', 'status')
+                ->get();
+
+
+            $attendanceCounts = [
+                'Present' => $todaysAttendance->where('status', 'Present')->count(),
+                'Absent' => $todaysAttendance->where('status', 'Absent')->count(),
+                'On Leave' => $todaysAttendance->where('status', 'On Leave')->count(),
+                'Half Day' => $todaysAttendance->where('status', 'Half Day')->count(),
+                'Late' => $todaysAttendance->where('status', 'Late')->count(),
+            ];
+
+            $departments = Department::where('company_id', $companyId)
+                ->withCount('employees')
+                ->get();
+
+            $labels = $departments->pluck('name');
+            $data = $departments->pluck('employees_count');
+            $colors = ['#ffcd56', '#ff6384', '#4bc0c0', '#36a2eb', '#9966ff', '#ff9f40'];
+
+
             return view('admin.dashboard', [
                 'totalEmployees' => $totalEmployees,
                 'departmentCount' => count($departmentData['names']),
                 'departmentData' => $departmentData,
                 'todayAttendanceCount' => $todayAttendanceCount,
                 'onLeaveCount' => $onLeaveCount,
+                'absentees' => $absentees,
                 'pendingRequests' => $pendingRequests,
                 'roleLabels' => $roleLabels,
                 'roleData' => $roleData,
+                'pending_regularization_requests' => $pending_regularization_requests,
                 'roleColors' => $roleColors,
                 'announcements' => $announcements,
+                'academic_holidays' => $academic_holidays,
+                'attendances' => $attendances,
+                'attendanceCounts' => $attendanceCounts,
+                'labels' => $labels,
+                'data' => $data,
+                'colors' => $colors,
             ]);
         } elseif ($user->role === 'employee' || $employeeView) {
             // Employee dashboard
@@ -455,11 +544,11 @@ class HomeController extends Controller
 
             $now = Carbon::now();
             $upcoming_birthday = Employee::where('company_id', $employee->company_id)
-                ->where(function($q) use ($now) {
-                    $q->where(function($q2) use ($now) {
+                ->where(function ($q) use ($now) {
+                    $q->where(function ($q2) use ($now) {
                         $q2->whereMonth('dob', $now->month)
-                           ->whereDay('dob', '>=', $now->day);
-                    })->orWhere(function($q2) use ($now) {
+                            ->whereDay('dob', '>=', $now->day);
+                    })->orWhere(function ($q2) use ($now) {
                         $q2->whereMonth('dob', '>', $now->month);
                     });
                 })
@@ -500,6 +589,7 @@ class HomeController extends Controller
                 ->latest()
                 ->get();
 
+
             return view('employee.dashboard', compact(
                 'loggedInUser',
                 'todayAttendance',
@@ -515,7 +605,7 @@ class HomeController extends Controller
             ));
         } elseif ($user->role === 'user') {
             return view('user.dashboard', compact('loggedInUser'));
-        }else {
+        } else {
             abort(403, 'Unauthorized action.');
         }
 
@@ -527,24 +617,24 @@ class HomeController extends Controller
     public function switchDashboard(Request $request)
     {
         $user = Auth::user();
-        
+
         // Only allow admin and company_admin to switch dashboards
         if (!in_array($user->role, ['admin'])) {
             return redirect()->route('home')->with('error', 'You do not have permission to switch dashboards.');
         }
-        
+
         $mode = $request->input('mode', 'default');
-        
+
         // Validate mode
         if (!in_array($mode, ['default', 'employee'])) {
             return redirect()->route('home')->with('error', 'Invalid dashboard mode.');
         }
-        
+
         // Set the dashboard mode in session
         session(['dashboard_mode' => $mode]);
-        
+
         $message = $mode === 'employee' ? 'Switched to Employee Dashboard' : 'Switched to Admin Dashboard';
-        
+
         return redirect()->route('home')->with('success', $message);
     }
 
