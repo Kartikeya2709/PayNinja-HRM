@@ -2,21 +2,21 @@
 @section('title', 'Field Visits')
 
 @section('content')
-    <div class="main-content-01 container">
-        <section class="section">
-            <div class="section-header">
-                <h1>Field Visits</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active">Field Visits</div>
-                </div>
-            </div>
+  <section class="section container">
+    <div class="section-header">
+        <h1>Field Visits</h1>
+        <div class="section-header-breadcrumb">
+            <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+            <div class="breadcrumb-item active"><a href="">Field Visits</a></div>
+        </div>
+    </div>
 
             <div class="section-body">
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Field Visits List</h4>
+                                <h5 class="">Field Visits List</h5>
                                 <div class="card-header-action">
                                     <a href="{{ route('field-visits.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Schedule New Visit
@@ -47,8 +47,8 @@
                                 @endif
 
                                 <!-- Filters -->
-                                <div class="row mb-3">
-                                    <div class="col-md-3">
+                                <div class="row mt-2">
+                                    <div class="col-md-3 mb-4">
                                         <select class="form-control" id="statusFilter">
                                             <option value="">All Status</option>
                                             <option value="scheduled">Scheduled</option>
@@ -57,7 +57,7 @@
                                             <option value="cancelled">Cancelled</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 mb-4">
                                         <select class="form-control" id="approvalFilter">
                                             <option value="">All Approvals</option>
                                             <option value="pending">Pending</option>
@@ -65,10 +65,10 @@
                                             <option value="rejected">Rejected</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 mb-4">
                                         <input type="date" class="form-control" id="dateFrom" placeholder="From Date">
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 mb-4">
                                         <input type="date" class="form-control" id="dateTo" placeholder="To Date">
                                     </div>
                                 </div>

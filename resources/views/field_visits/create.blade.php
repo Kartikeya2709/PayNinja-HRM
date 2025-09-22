@@ -17,14 +17,17 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h4>Visit Details</h4>
+                            <h5>Visit Details</h5>
                         </div>
 
+
+
+                        
                         <div class="card-body">
                             <form action="{{ route('field-visits.store') }}" method="POST" id="fieldVisitForm">
                                 @csrf
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12 mb-4">
                                         <div class="form-group">
                                             <label for="reporting_manager">Reporting Manager</label>
                                             <input type="text" class="form-control"
@@ -33,10 +36,10 @@
                                             <small class="form-text text-muted">From your employee profile</small>
                                         </div>
                                     </div>
-                                </div>
+                                
 
-                                <div class="row">
-                                    <div class="col-md-12">
+                               
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="visit_title">Visit Title <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('visit_title') is-invalid @enderror"
@@ -46,10 +49,10 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
+                               
 
-                                <div class="row">
-                                    <div class="col-md-12">
+                                
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="visit_description">Visit Description</label>
                                             <textarea class="form-control @error('visit_description') is-invalid @enderror"
@@ -59,10 +62,10 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
+                          
 
-                                <div class="row">
-                                    <div class="col-md-6">
+                             
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="location_name">Location Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('location_name') is-invalid @enderror"
@@ -73,7 +76,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="location_address">Location Address <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('location_address') is-invalid @enderror"
@@ -83,10 +86,10 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
+                               
 
-                                <div class="row">
-                                    <div class="col-md-6">
+                               
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="latitude">Latitude</label>
                                             <input type="number" step="any" class="form-control @error('latitude') is-invalid @enderror"
@@ -98,7 +101,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="longitude">Longitude</label>
                                             <input type="number" step="any" class="form-control @error('longitude') is-invalid @enderror"

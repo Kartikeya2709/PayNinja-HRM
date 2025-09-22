@@ -315,7 +315,7 @@
 
                         <!-- Employee Management -->
                         <div class="col-xl-12">
-                            <a href="{{ route('company.employees.index', ['companyId' => auth()->user()->company_id]) }}"
+                            <a href="{{ route('company-admin.employees.index', ['companyId' => auth()->user()->company_id]) }}"
                                 class="action-card">
                                 <div class="card-body p-3">
                                     <div class="action-icon">
@@ -360,12 +360,12 @@
 
                         <!-- Reports -->
                         <div class="col-xl-12">
-                            <a href="#" class="action-card" onclick="alert('Reports feature coming soon!'); return false;">
+                            <a href="{{ route('company-admin.announcements.index') }}" class="action-card">
                                 <div class="card-body p-3">
                                     <div class="action-icon">
                                         <i class="fas fa-chart-bar"></i>
                                         <div class="action-des ms-3">
-                                            <h6>Reports</h6>
+                                            <h6>Announcements</h6>
 
                                             <span class="text-muted small">Generate detailed reports</span>
                                         </div>
@@ -388,7 +388,77 @@
         </div>
     </div>
     </div>
+<div class="row mt-4">
+        <div class="col-lg-12 px-1 cash-dep">
+            <div class="card">
+                <h5>Announcement List</h5>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php $filtered = $announcements->filter(function ($a) {
+                                return $a->audience === 'both' || $a->audience === 'admins'; }); @endphp
+                                @forelse ($filtered as $announcement)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $announcement->title }}</td>
+                                        <td>{{ Str::limit($announcement->description, 50) }}</td>
+                                        <td>{{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d') : '-' }}
+                                        </td>
+                                        <td>
+                                            @php
+                                                $now = \Carbon\Carbon::now();
+                                                if ($announcement->publish_date && $now->lt($announcement->publish_date)) {
+                                                    $status = ['Upcoming', 'info'];
+                                                } elseif ($announcement->expires_at && $now->gt($announcement->expires_at)) {
+                                                    $status = ['Completed', 'success'];
+                                                } else {
+                                                    $status = ['Ongoing', 'warning'];
+                                                }
+                                            @endphp
+                                            <span
+                                                class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
+                                                class="btn btn-sm btn-info">Show</a>
+                                            @if($announcement->created_by === auth()->id())
+                                                <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
+                                                    class="btn btn-sm btn-primary ms-1">Edit</a>
+                                                <form action="{{ route('company-admin.announcements.destroy', $announcement->id) }}"
+                                                    method="POST" style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-sm btn-danger ms-1"
+                                                        onclick="return confirm('Delete this announcement?')">Delete</button>
+                                                </form>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="6" class="text-center">No announcements found.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
+            </div>
+        </div>
+
+    </div>
     <div class="row mt-4">
 
         <div class="col-lg-8 px-1">
@@ -466,52 +536,31 @@
 
 
     <div class="row mt-4">
-        <div class="col-lg-6 px-1">
-            <div class="card reg-req">
-                <h5 class="text-center">Today's Clock In</h5>
-                <div class="d-flex justify-content-center">
-                    <div class="card-body card p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover align-middle mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                      @forelse ($attendances as $index => $attendance)
-                        <tr>
-                          <td>{{ $index + 1 }}</td>
-                          <td>{{ $attendance->employee->name ?? 'N/A' }}</td>
-                          <td>
-                            @if ($attendance->status === 'Present')
-                              <span class="badge bg-success">Present</span>
-                            @elseif ($attendance->status === 'Half Day')
-                              <span class="badge bg-info">Half Day</span>
-                            @elseif ($attendance->status === 'On Leave')
-                              <span class="badge bg-warning text-dark">On Leave</span>
-                            @elseif ($attendance->status === 'Late')
-                              <span class="badge bg-primary">Late</span>
-                            @else
-                              <span class="badge bg-danger">Absent</span>
-                            @endif
-                          </td>
-                        </tr>
-                      @empty
-                        <tr>
-                          <td colspan="3" class="text-center">No attendance records found for today.</td>
-                        </tr>
-                      @endforelse
-                    </tbody>
-                            </table>
+           <div class="col-lg-6 px-1">
+                        <div class="card birthday-text">
+                            <h5>Upcoming events</h5>
+
+
+                            <div class="event-wrapper">
+
+                                <div class="background" id="eventBackground"></div>
+
+
+                                @if ($upcoming_birthday)
+                                    <div class="event-card">
+                                        <h6>🎉 {{ ucwords($upcoming_birthday->name) }}’s Birthday Celebration</h6>
+                                        <p>{{ \Carbon\Carbon::parse($upcoming_birthday->dob)->format('d F') }}</p>
+                                    </div>
+                                @else
+                                    <div class="event-card">
+                                        <h6>😅 Oops!</h6>
+                                        <p>No upcoming birthdays 🎂</p>
+                                    </div>
+                                @endif
+
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
 
 
 
@@ -548,80 +597,11 @@
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-lg-12 px-1 cash-dep">
-            <div class="card">
-                <h5>Announcement List</h5>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-striped table-hover align-middle mb-0">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php $filtered = $announcements->filter(function ($a) {
-                                return $a->audience === 'both' || $a->audience === 'admins'; }); @endphp
-                                @forelse ($filtered as $announcement)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $announcement->title }}</td>
-                                        <td>{{ Str::limit($announcement->description, 50) }}</td>
-                                        <td>{{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d') : '-' }}
-                                        </td>
-                                        <td>
-                                            @php
-                                                $now = \Carbon\Carbon::now();
-                                                if ($announcement->publish_date && $now->lt($announcement->publish_date)) {
-                                                    $status = ['Upcoming', 'info'];
-                                                } elseif ($announcement->expires_at && $now->gt($announcement->expires_at)) {
-                                                    $status = ['Completed', 'success'];
-                                                } else {
-                                                    $status = ['Ongoing', 'warning'];
-                                                }
-                                            @endphp
-                                            <span
-                                                class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
-                                                class="btn btn-sm btn-info">Show</a>
-                                            @if($announcement->created_by === auth()->id())
-                                                <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
-                                                    class="btn btn-sm btn-primary ms-1">Edit</a>
-                                                <form action="{{ route('company-admin.announcements.destroy', $announcement->id) }}"
-                                                    method="POST" style="display:inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-sm btn-danger ms-1"
-                                                        onclick="return confirm('Delete this announcement?')">Delete</button>
-                                                </form>
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="6" class="text-center">No announcements found.</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
+    
 
     </section>
     </div>
+    
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.js"></script>
@@ -699,6 +679,41 @@
                 calendar.render();
             });
         </script>
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const bg = document.getElementById("eventBackground");
+
+            // Balloons
+            for (let i = 0; i < 8; i++) {
+                let balloon = document.createElement("div");
+                balloon.classList.add("balloon");
+                balloon.style.left = Math.random() * 90 + "%";
+                balloon.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                balloon.style.animationDuration = (5 + Math.random() * 5) + "s";
+                bg.appendChild(balloon);
+            }
+
+            // Stars
+            for (let i = 0; i < 25; i++) {
+                let star = document.createElement("div");
+                star.classList.add("star");
+                star.style.left = Math.random() * 100 + "%";
+                star.style.top = Math.random() * 100 + "%";
+                star.style.animationDuration = (1 + Math.random() * 2) + "s";
+                bg.appendChild(star);
+            }
+
+            // Confetti
+            for (let i = 0; i < 15; i++) {
+                let conf = document.createElement("div");
+                conf.classList.add("confetti");
+                conf.style.left = Math.random() * 100 + "%";
+                conf.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+                conf.style.animationDuration = (3 + Math.random() * 3) + "s";
+                bg.appendChild(conf);
+            }
+        });
+    </script>
 
     @endpush
 

@@ -348,9 +348,7 @@ position:fixed;
   justify-content: center;
 }
   /* Better spacing for mobile forms */
-  .form-group {
-    margin-bottom: 1.25rem;
-  }
+ 
 
   .form-control {
     font-size: 16px; /* Prevent zoom on iOS */

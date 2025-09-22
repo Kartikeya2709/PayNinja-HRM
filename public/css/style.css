@@ -502,6 +502,9 @@ align-items: center;
 .emp-card .col-lg-3{
   overflow: hidden;
 } 
+.form-select{
+  padding: 10px 15px!important;
+}
 .reg-req{
   height: 100%;
 }
@@ -570,6 +573,12 @@ align-items: center;
 
 .emp-calender{
   height: 100%;
+}
+.form-group textarea{
+      padding: 10px 15px !important;
+    height: auto!important;
+    margin-top: 0px!important;
+    margin-left: 0px!important;
 }
  .event-item {
       display: flex;
@@ -5144,7 +5153,7 @@ text-align: center!important;
    display: block!important;
         text-align: left;
     padding-bottom: 0px!important;
-    margin-bottom: 0px!important;
+    margin-bottom: 10px!important;
   }
   #bulk-action-form{
     text-align: center;

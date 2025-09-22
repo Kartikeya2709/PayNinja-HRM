@@ -3,22 +3,28 @@
 @section('title', 'Edit Team')
 
 @section('content')
-<div class="section-header">
-    <h1>Edit Team</h1>
-</div>
+<div class="container">
+    <section class="section">
+        <div class="section-header">
+            <h1>Edit Team</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Edit Team</a></div>
+            </div>
+        </div>
 
 <div class="section-body">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Edit Team</h3>
+                    <h5>Edit Team</h5>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('company.teams.update', ['companyId' => Auth::user()->company_id, 'team' => $team]) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="name">Team Name</label>
                             <input type="text" 
                                 class="form-control @error('name') is-invalid @enderror" 
@@ -33,7 +39,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="department_id">Department</label>
                             <select class="form-control @error('department_id') is-invalid @enderror" 
                                 id="department_id" 
@@ -53,7 +59,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="description">Description</label>
                             <textarea 
                                 class="form-control @error('description') is-invalid @enderror" 
@@ -67,7 +73,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="reporter_id">Team Reporter</label>
                             <select class="form-control @error('reporter_id') is-invalid @enderror" 
                                 id="reporter_id" 
@@ -87,7 +93,7 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mb-4">
                             <label for="reportee_ids">Team Members (Reportees)</label>
                             <select class="form-control @error('reportee_ids') is-invalid @enderror" 
                                 id="reportee_ids" 
@@ -108,7 +114,7 @@
                             <small class="form-text text-muted">Hold Ctrl/Cmd to select multiple members</small>
                         </div>
 
-                        <div class="form-group mt-4">
+                        <div class="form-group">
                             <button type="submit" class="btn btn-primary">Update Team</button>
                             <a href="{{ route('company.teams.index', ['companyId' => Auth::user()->company_id]) }}" class="btn btn-secondary">Cancel</a>
                         </div>

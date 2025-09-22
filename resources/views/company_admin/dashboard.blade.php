@@ -358,51 +358,30 @@
       </div>
       <div class="row mt-4">
         <div class="col-lg-6 px-1">
-          <div class="card reg-req">
-            <h5 class="text-center">Today's Clock In</h5>
-            <div class="d-flex justify-content-center">
-              <div class="card-body card p-0">
-                <div class="table-responsive">
-                  <table id="attendanceTable" class="table table-striped table-hover align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @forelse ($attendances as $index => $attendance)
-                        <tr>
-                          <td>{{ $index + 1 }}</td>
-                          <td>{{ $attendance->employee->name ?? 'N/A' }}</td>
-                          <td>
-                            @if ($attendance->status === 'Present')
-                              <span class="badge bg-success">Present</span>
-                            @elseif ($attendance->status === 'Half Day')
-                              <span class="badge bg-info">Half Day</span>
-                            @elseif ($attendance->status === 'On Leave')
-                              <span class="badge bg-warning text-dark">On Leave</span>
-                            @elseif ($attendance->status === 'Late')
-                              <span class="badge bg-primary">Late</span>
-                            @else
-                              <span class="badge bg-danger">Absent</span>
-                            @endif
-                          </td>
-                        </tr>
-                      @empty
-                        <tr>
-                          <td colspan="3" class="text-center">No attendance records found for today.</td>
-                        </tr>
-                      @endforelse
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+                        <div class="card birthday-text">
+                            <h5>Upcoming events</h5>
 
-          </div>
-        </div>
+
+                            <div class="event-wrapper">
+
+                                <div class="background" id="eventBackground"></div>
+
+
+                                @if ($upcoming_birthday)
+                                    <div class="event-card">
+                                        <h6>🎉 {{ ucwords($upcoming_birthday->name) }}’s Birthday Celebration</h6>
+                                        <p>{{ \Carbon\Carbon::parse($upcoming_birthday->dob)->format('d F') }}</p>
+                                    </div>
+                                @else
+                                    <div class="event-card">
+                                        <h6>😅 Oops!</h6>
+                                        <p>No upcoming birthdays 🎂</p>
+                                    </div>
+                                @endif
+
+                            </div>
+                        </div>
+                    </div>
         <div class="col-lg-6 px-1">
           <div class="card today-not">
             <h5 class="text-center">Today's Not Clock In</h5>
@@ -792,6 +771,41 @@
           cutout: '70%',
         }
       });
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const bg = document.getElementById("eventBackground");
+
+            // Balloons
+            for (let i = 0; i < 8; i++) {
+                let balloon = document.createElement("div");
+                balloon.classList.add("balloon");
+                balloon.style.left = Math.random() * 90 + "%";
+                balloon.style.background = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                balloon.style.animationDuration = (5 + Math.random() * 5) + "s";
+                bg.appendChild(balloon);
+            }
+
+            // Stars
+            for (let i = 0; i < 25; i++) {
+                let star = document.createElement("div");
+                star.classList.add("star");
+                star.style.left = Math.random() * 100 + "%";
+                star.style.top = Math.random() * 100 + "%";
+                star.style.animationDuration = (1 + Math.random() * 2) + "s";
+                bg.appendChild(star);
+            }
+
+            // Confetti
+            for (let i = 0; i < 15; i++) {
+                let conf = document.createElement("div");
+                conf.classList.add("confetti");
+                conf.style.left = Math.random() * 100 + "%";
+                conf.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+                conf.style.animationDuration = (3 + Math.random() * 3) + "s";
+                bg.appendChild(conf);
+            }
+        });
     </script>
   @endpush
 @endsection

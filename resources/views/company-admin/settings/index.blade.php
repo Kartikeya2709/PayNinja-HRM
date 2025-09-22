@@ -45,7 +45,7 @@
                             </li>
                         </ul>
 
-                        <div class="tab-content p-4 glass-box" id="companySettingsTabContent">
+                        <div class="tab-content p-4" id="companySettingsTabContent">
 
                             {{-- 🔹 Company Info Tab --}}
                             <div class="tab-pane fade show active" id="company-info" role="tabpanel"

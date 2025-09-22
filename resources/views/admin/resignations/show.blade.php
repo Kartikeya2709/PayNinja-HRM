@@ -18,7 +18,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h4>Employee Information</h4>
+                        <h5>Employee Information</h5>
                         <div class="card-header-action">
                             <a href="{{ route('admin.resignations.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to List
@@ -32,8 +32,8 @@
                                     <img src="{{ asset('storage/' . $resignation->employee->profile_image) }}"
                                          class="img-fluid rounded" alt="Profile Image">
                                 @else
-                                    <div class="text-center">
-                                        <div class="avatar avatar-xl mb-3">
+                                    <div class="text-left">
+                                        <div class="avatar avatar-xl mb-3 align-content-center text-center">
                                             <span class="avatar-title rounded-circle bg-primary" style="width: 80px; height: 80px; font-size: 32px;">
                                                 {{ substr($resignation->employee->name, 0, 1) }}
                                             </span>
@@ -90,9 +90,9 @@
                 </div>
 
                 <!-- Resignation Details -->
-                <div class="card">
+                <div class="card mt-4">
                     <div class="card-header">
-                        <h4>Resignation Details</h4>
+                        <h5>Resignation Details</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -184,9 +184,9 @@
                 </div>
 
                 <!-- Approval Information -->
-                <div class="card">
+                <div class="card mt-4">
                     <div class="card-header">
-                        <h4>Approval Information</h4>
+                        <h5>Approval Information</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
@@ -343,7 +343,7 @@
                 @endif
 
                 <!-- Action Buttons -->
-                <div class="card">
+                <div class="card mt-4">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12">

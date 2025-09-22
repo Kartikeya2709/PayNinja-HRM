@@ -287,6 +287,30 @@ class HomeController extends Controller
                 'Late' => $todaysAttendance->where('status', 'Late')->count(),
             ];
 
+            //upcoming birthday
+            $employee = auth()->user()->employee;
+            $now = Carbon::now();
+            $upcoming_birthday = Employee::where('company_id', $employee->company_id)
+                ->where(function ($q) use ($now) {
+                    $q->where(function ($q2) use ($now) {
+                        $q2->whereMonth('dob', $now->month)
+                            ->whereDay('dob', '>=', $now->day);
+                    })->orWhere(function ($q2) use ($now) {
+                        $q2->whereMonth('dob', '>', $now->month);
+                    });
+                })
+                ->orderByRaw("MONTH(dob), DAY(dob)")
+                ->select('dob', 'name')
+                ->first();
+
+            if (!$upcoming_birthday) {
+                $upcoming_birthday = Employee::where('company_id', $employee->company_id)
+                    ->orderByRaw("MONTH(dob), DAY(dob)")
+                    ->select('dob', 'name')
+                    ->first();
+            }
+
+
             return view('company_admin.dashboard', [
                 'labels' => $labels,
                 'data' => $data,
@@ -306,6 +330,7 @@ class HomeController extends Controller
                 'absentees_count',
                 'presentees_count',
                 'companyRoleLabels',
+                'upcoming_birthday',
                 'companyRoleData',
                 'departmentCount',
                 'todayAttendanceCount',
@@ -445,6 +470,28 @@ class HomeController extends Controller
             $data = $departments->pluck('employees_count');
             $colors = ['#ffcd56', '#ff6384', '#4bc0c0', '#36a2eb', '#9966ff', '#ff9f40'];
 
+            //upcoming_birthday
+            $employee = auth()->user()->employee;
+            $now = Carbon::now();
+            $upcoming_birthday = Employee::where('company_id', $employee->company_id)
+                ->where(function ($q) use ($now) {
+                    $q->where(function ($q2) use ($now) {
+                        $q2->whereMonth('dob', $now->month)
+                            ->whereDay('dob', '>=', $now->day);
+                    })->orWhere(function ($q2) use ($now) {
+                        $q2->whereMonth('dob', '>', $now->month);
+                    });
+                })
+                ->orderByRaw("MONTH(dob), DAY(dob)")
+                ->select('dob', 'name')
+                ->first();
+
+            if (!$upcoming_birthday) {
+                $upcoming_birthday = Employee::where('company_id', $employee->company_id)
+                    ->orderByRaw("MONTH(dob), DAY(dob)")
+                    ->select('dob', 'name')
+                    ->first();
+            }
 
             return view('admin.dashboard', [
                 'totalEmployees' => $totalEmployees,
@@ -465,6 +512,7 @@ class HomeController extends Controller
                 'labels' => $labels,
                 'data' => $data,
                 'colors' => $colors,
+                'upcoming_birthday' => $upcoming_birthday,
             ]);
         } elseif ($user->role === 'employee' || $employeeView) {
             // Employee dashboard

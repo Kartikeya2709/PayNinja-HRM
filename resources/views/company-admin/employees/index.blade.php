@@ -25,10 +25,10 @@
                 </div>
 
                 <!-- Filters and Search -->
-                <div class="card-body mb-5">
+                <div class="card-body mb-4">
                     <form id="filterForm" method="GET" action="{{ route('company-admin.employees.index') }}">
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-4">
                                 <label for="department_id" class="form-label">Department</label>
                                 <select class="form-select" id="department_id" name="department_id">
                                     <option value="">All Departments</option>
@@ -39,7 +39,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-lg-3 col-md-4">
                                 <label for="designation_id" class="form-label">Designation</label>
                                 <select class="form-select" id="designation_id" name="designation_id">
                                     <option value="">All Designations</option>
@@ -50,7 +50,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-lg-4 col-md-4">
                                 <label for="search" class="form-label">Search</label>
                                 <input type="text" class="form-control" id="search" name="search"
                                        value="{{ request('search') }}"
