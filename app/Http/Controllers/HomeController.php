@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AcademicHoliday;
 use App\Models\Company; // Added
+use App\Models\LeaveBalance;
 use App\Models\LeaveRequest;
 use App\Models\LeaveType;
 use App\Models\Reimbursement;
@@ -611,15 +612,14 @@ class HomeController extends Controller
                     ->first();
             }
 
-            $total_leaves = LeaveType::where('company_id', $employee->company_id)
-                ->select('default_days')
-                ->sum('default_days');
-
-            $leaves_taken = LeaveRequest::where('employee_id', $employee->id)
-                ->whereYear('start_date', $currentYear)
-                ->where('status', 'approved')
+            $total_leaves = LeaveBalance::where('employee_id', $employee->id)
                 ->select('total_days')
                 ->sum('total_days');
+
+            $leaves_taken = LeaveBalance::where('employee_id', $employee->id)
+                ->whereYear('year', $currentYear)
+                ->select('used_days')
+                ->sum('used_days');
 
             $leave_balance = $total_leaves - $leaves_taken;
 

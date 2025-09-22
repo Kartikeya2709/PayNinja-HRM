@@ -52,7 +52,7 @@
 								</tbody>
 							</table>
 						</div>
-						<a href="{{ route('company-admin.announcements.index') }}" class="btn btn-secondary mt-3">Back</a>
+						<a href="{{ url()->previous() }}" class="btn btn-secondary mt-3">Back</a>
 						@if(auth()->id() === $announcement->created_by || auth()->user()->hasRole('company_admin'))
 							<a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
 								class="btn btn-primary mt-3 ms-2">Edit</a>
