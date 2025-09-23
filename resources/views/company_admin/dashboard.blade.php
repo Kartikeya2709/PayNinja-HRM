@@ -162,9 +162,9 @@
 
             <div class="row emp-card">
 
-                <!-- Employees Card -->
-                <div class="col-lg-3 px-1">
-                    <div class="card card-statistic-1 card-hover card-str-1">
+        <!-- Employees Card -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1">
+          <div class="card card-statistic-1 card-hover card-str-1">
 
                         <div class="card-wrap">
                             <div class="card-header">
@@ -183,9 +183,9 @@
                     </div>
                 </div>
 
-                <!-- Departments Card -->
-                <div class="col-lg-3 px-1">
-                    <div class="card card-statistic-1 card-hover card-str-2">
+        <!-- Departments Card -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1">
+          <div class="card card-statistic-1 card-hover card-str-2">
 
                         <div class="card-wrap">
                             <div class="card-header">
@@ -203,26 +203,26 @@
                 </div>
 
 
-                <!-- Today's Attendance -->
-                <div class="col-lg-3 px-1">
-                    <div class="card card-statistic-1 card-hover card-str-3">
+        <!-- Today's Attendance -->
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1 mobile-space">
+          <div class="card card-statistic-1 card-hover card-str-3">
 
                         <div class="card-wrap">
                             <div class="card-header">
                                 <h4>Today's Attendance</h4>
 
-                                <div id="presentCount" class="card-body">
-                                    {{ $presentees_count }}
-                                </div>
-                            </div>
-                            <div class="card-icon">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                        </div>
-                    </div>
+                <div id="presentCount" class="card-body">
+                  {{ $presentees_count }}
                 </div>
-                <div class="col-lg-3 px-1">
-                    <div class="card card-statistic-1 card-hover card-str-4">
+              </div>
+              <div class="card-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1 mobile-space">
+          <div class="card card-statistic-1 card-hover card-str-4">
 
                         <div class="card-wrap">
                             <div class="card-header">
@@ -250,7 +250,7 @@
             <canvas id="departmentChart"></canvas>
           </div>
         </div>
-        <div class="col-lg-6 px-1">
+        <div class="col-lg-6 px-1 mobile-space">
           <div class="card emp-calender">
             <div class="card-header">
               <h5>Calendar</h5>
@@ -371,37 +371,37 @@
                   <div class="action-icon">
                     <i class="fas fa-users"></i>
 
-                                        <h6>Employees</h6>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    <h6>Employees</h6>
+                  </div>
                 </div>
-                <div class="col-4 px-1">
-                    <div class="card p-4 attendance-height">
-                        <h5 class="mb-3 attendance-card">Attendance Overview</h5>
-                        <canvas id="attendanceChart"></canvas>
-                    </div>
-                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 px-1 mobile-space">
+          <div class="card p-4 attendance-height">
+            <h5 class="mb-3 attendance-card">Attendance Overview</h5>
+            <canvas id="attendanceChart"></canvas>
+          </div>
+        </div>
 
 
-                <div class="col-4 px-1">
-                    <div class="card card-glass new-old-emp">
-                        <h5 class="mb-4">Employee Movement</h5>
-                        <!-- New Joinees -->
-                        <div class="mb-4 joinee-resign">
-                            <div class="icon">
-                                <i class="bi bi-person-plus-fill fs-1"></i>
-                            </div>
-                            <div class="joinee">
-                                <h6>New Joinees</h6>
-                                <h2>
-                                    {{ $newJoineesCount }}
-                                </h2>
-                                <small class="text-muted">Employees joined</small>
-                            </div>
-                        </div>
+        <div class="col-lg-4 col-md-6 px-1 mobile-space">
+          <div class="card card-glass new-old-emp">
+            <h5 class="mb-4">Employee Movement</h5>
+            <!-- New Joinees -->
+            <div class="mb-4 joinee-resign">
+              <div class="icon">
+                <i class="bi bi-person-plus-fill fs-1"></i>
+              </div>
+              <div class="joinee">
+                <h6>New Joinees</h6>
+                <h2>
+                  {{ $newJoineesCount }}
+                </h2>
+                <small class="text-muted">Employees joined</small>
+              </div>
+            </div>
 
                         <!-- Resigned Employees -->
                         <div class="joinee-resign">
@@ -440,30 +440,30 @@
                                 </div>
                             @endif
 
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-6 px-1">
-                    <div class="card today-not">
-                        <h5 class="text-center">Today's Not Clock In</h5>
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Employee Name</th>
-                                        <th scope="col">Department</th>
-                                        <th scope="col">Expected Shift</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse ($absentees as $index => $employee)
-                                        <tr>
-                                            <th scope="row">{{ $employee->id }}</th>
-                                            <td>{{ $employee->name }}</td>
-                                            <td>{{ $employee->department->name ?? 'N/A' }}</td>
-                                            <td>10:00 AM - 06:30 PM</td>
-                                        </tr>
+        <div class="col-lg-6 px-1 mobile-space">
+          <div class="card today-not">
+            <h5 class="text-center">Today's Not Clock In</h5>
+            <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Employee Name</th>
+                    <th scope="col">Department</th>
+                    <th scope="col">Expected Shift</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($absentees as $index => $employee)
+                    <tr>
+                      <th scope="row">{{ $employee->id }}</th>
+                      <td>{{ $employee->name }}</td>
+                      <td>{{ $employee->department->name ?? 'N/A' }}</td>
+                      <td>10:00 AM - 06:30 PM</td>
+                    </tr>
 
                                     @empty
                                     @endforelse
@@ -522,7 +522,7 @@
 </div>
 </div>
         </div>
-        <div class="col-lg-5 px-1">
+        <div class="col-lg-5 px-1 mobile-space">
           <div class="card reg-req">
             <h5 class="text-center">Regularization Requests</h5>
             <div class="d-flex justify-content-center">
@@ -565,7 +565,8 @@
               <h5 class>Upcoming Holidays</h5>
             </div>
             <div class="card-body p-0">
-              <table class="table table-hover table-bordered mb-0">
+              <div class="table-responsive">
+              <table class="table table-striped table-hover align-middle mb-0">
                 <thead class="table-light">
                   <tr>
                     <th>Date</th>
@@ -590,7 +591,9 @@
 
   </div>
     </div>
-    <div class="col-lg-6 px-1">
+    </div>
+    
+    <div class="col-lg-6 px-1 mobile-space">
         <div class="card">
 <div class="card-body">
 <h5 class="text-center fw-bold">Field Approvals</h5>

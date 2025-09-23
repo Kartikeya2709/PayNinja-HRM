@@ -4520,9 +4520,7 @@ html,body{
 /* .cash-dep #attendanceChart{
   height: 100%!important;
 } */
-.attendance-height #attendanceChart{
-  height: 100%!important;
-}
+
 .main-sidebar .sidebar-menu li a {
   position: relative;
   display: flex;
