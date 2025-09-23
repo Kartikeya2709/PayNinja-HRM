@@ -260,6 +260,66 @@
           </div>
         </div>
       </div>
+       <div class="row mt-4">
+            <div class="col-lg-12 px-1 cash-dep">
+                <div class="card">
+                            <h5>Announcement List</h5>
+             <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-striped table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse ($announcements as $announcement)
+                <tr>
+                  <td>{{ $loop->iteration }}</td>
+                  <td>{{ $announcement->title }}</td>
+                  <td>{{ Str::limit($announcement->description, 50) }}</td>
+                  <td>{{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d') : '-' }}</td>
+                  <td>
+                    @php
+                      $now = \Carbon\Carbon::now();
+                      if ($announcement->publish_date && $now->lt($announcement->publish_date)) {
+                          $status = ['Upcoming', 'info'];
+                      } elseif ($announcement->expires_at && $now->gt($announcement->expires_at)) {
+                          $status = ['Completed', 'success'];
+                      } else {
+                          $status = ['Ongoing', 'warning'];
+                      }
+                    @endphp
+                    <span class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
+                  </td>
+                  <td>
+                    <a href="{{ route('company-admin.announcements.show', $announcement->id) }}" class="btn btn-sm btn-info">Show</a>
+                    <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}" class="btn btn-sm btn-primary ms-1">Edit</a>
+                    <form action="{{ route('company-admin.announcements.destroy', $announcement->id) }}" method="POST" style="display:inline;">
+                      @csrf
+                      @method('DELETE')
+                      <button class="btn btn-sm btn-danger ms-1" onclick="return confirm('Delete this announcement?')">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              @empty
+                <tr>
+                  <td colspan="6" class="text-center">No announcements found.</td>
+                </tr>
+              @endforelse
+             </tbody>
+          </table>
+        </div>
+      </div>
+
+          </div>
+        </div>
+        </div>
       <div class="row mt-4">
         <div class="col-lg-4 px-1">
           <div class="quick-actions card">
@@ -304,7 +364,7 @@
 
             <!-- Employee Management Card -->
             <div class="col-xl-12">
-              <a href="{{ route('company.employees.index', ['companyId' => auth()->user()->company_id]) }}"
+              <a href="{{ route('company-admin.employees.index', ['companyId' => auth()->user()->company_id]) }}"
                 class="action-card h-100">
                 <div class="card-body p-3">
                   <div class="action-icon">
@@ -421,41 +481,46 @@
 
         <div class="col-lg-7 px-1">
           <div class="card today-not">
-            <h5 class="text-center">Meeting Schedule</h5>
-            <div class="table-responsive">
-              <table class="table table-striped table-hover align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Title</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">Time</th>
-                  </tr>
+            <h5 class="text-center">Reimbursement Approvals</h5>
+          <div class="Reimburs-table">
+            <table class="table table-bordered Reimbursements-table">
+                <thead>
+                    <tr>
+                        <th>S No.</th>
+                        <th>Date</th>
+                        
+                        <th>Employee</th>
+                        
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
                 </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>New Technology</td>
-                    <td>Apr 12, 2025</td>
-                    <td>3:20 PM</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>Team Meeting</td>
-                    <td>May 26, 2025</td>
-                    <td>5:00 PM</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">3</th>
-                    <td>Event Related</td>
-                    <td>Jun 10, 2025</td>
-                    <td>2:25 PM</td>
-                  </tr>
+                <tbody id="reimbursementTable">
+                    @foreach($reimbursements as $reimbursement)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('d M Y') }}</td>
+                            
+                            <td>{{ $reimbursement->employee->user->name }}</td>
+                            
+                            <td>₹{{ number_format($reimbursement->amount, 2) }}</td>
+                            <td>
+                                <span class="badge bg-{{ $reimbursement->status === 'pending' ? 'warning' : ($reimbursement->status === 'reporter_approved' ? 'info' : ($reimbursement->status === 'admin_approved' ? 'success' : 'danger')) }}">
+                                    {{ ucfirst($reimbursement->status) }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ route('reimbursements.show', $reimbursement->id) }}" class="btn btn-outline-info btn-sm me-1">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
-              </table>
-            </div>
-
-          </div>
+            </table>
+</div>
+</div>
         </div>
         <div class="col-lg-5 px-1">
           <div class="card reg-req">
@@ -495,7 +560,7 @@
       </div>
 
       <div class="row mt-4">
-        <div class="col-lg-5 px-1">
+        <div class="col-lg-6 px-1">
           <div class="card holiday-table">
             <div class="card-header">
               <h5 class>Upcoming Holidays</h5>
@@ -526,76 +591,57 @@
 
   </div>
     </div>
-    <div class="col-lg-7 px-1">
+    <div class="col-lg-6 px-1">
         <div class="card">
 <div class="card-body">
-<h5 class="text-center fw-bold">Department-wise Employee Count</h5>
-<div class="chart-wrap">
-<canvas id="payrollChart"></canvas>
+<h5 class="text-center fw-bold">Field Approvals</h5>
+<div class="card-body p-0">
+             <div class="table-responsive">
+  <table class="table table-hover table-bordered mb-0">
+    <thead class="table-light">
+      <tr>
+        <th>Employee</th>
+        <th>Location</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ruchi Bisht</td>
+        <td>New Delhi</td>
+        <td>
+          <button class="btn btn-sm btn-primary">View</button>
+          <button class="btn btn-sm btn-warning">Edit</button>
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Rahul Sharma</td>
+        <td>Mumbai</td>
+        <td>
+          <button class="btn btn-sm btn-primary">View</button>
+          <button class="btn btn-sm btn-warning">Edit</button>
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Anita Verma</td>
+        <td>Bangalore</td>
+        <td>
+          <button class="btn btn-sm btn-primary">View</button>
+          <button class="btn btn-sm btn-warning">Edit</button>
+          <button class="btn btn-sm btn-danger">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </div>
-</div>
-</div>
-</div>
-</div>
- <div class="row mt-4">
-            <div class="col-lg-12 px-1 cash-dep">
-                <div class="card">
-                            <h5>Announcement List</h5>
-             <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-striped table-hover align-middle mb-0">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse ($announcements as $announcement)
-                <tr>
-                  <td>{{ $loop->iteration }}</td>
-                  <td>{{ $announcement->title }}</td>
-                  <td>{{ Str::limit($announcement->description, 50) }}</td>
-                  <td>{{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d') : '-' }}</td>
-                  <td>
-                    @php
-                      $now = \Carbon\Carbon::now();
-                      if ($announcement->publish_date && $now->lt($announcement->publish_date)) {
-                          $status = ['Upcoming', 'info'];
-                      } elseif ($announcement->expires_at && $now->gt($announcement->expires_at)) {
-                          $status = ['Completed', 'success'];
-                      } else {
-                          $status = ['Ongoing', 'warning'];
-                      }
-                    @endphp
-                    <span class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
-                  </td>
-                  <td>
-                    <a href="{{ route('company-admin.announcements.show', $announcement->id) }}" class="btn btn-sm btn-info">Show</a>
-                    <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}" class="btn btn-sm btn-primary ms-1">Edit</a>
-                    <form action="{{ route('company-admin.announcements.destroy', $announcement->id) }}" method="POST" style="display:inline;">
-                      @csrf
-                      @method('DELETE')
-                      <button class="btn btn-sm btn-danger ms-1" onclick="return confirm('Delete this announcement?')">Delete</button>
-                    </form>
-                  </td>
-                </tr>
-              @empty
-                <tr>
-                  <td colspan="6" class="text-center">No announcements found.</td>
-                </tr>
-              @endforelse
-             </tbody>
-          </table>
-        </div>
-      </div>
 
-          </div>
-        </div>
+</div>
+</div>
+</div>
+</div>
+
 
       </div>
     </section>
@@ -605,64 +651,64 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
     <script>
-      const ctx = document.getElementById('payrollChart');
+      // const ctx = document.getElementById('payrollChart');
 
 
-      const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
-      gradient.addColorStop(0, 'rgba(255, 99, 132, 0.4)');
-      gradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
+      // const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+      // gradient.addColorStop(0, 'rgba(255, 99, 132, 0.4)');
+      // gradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
 
 
-      new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-          datasets: [{
-            label: 'Payroll Expense (₹ in Lakhs)',
-            data: [12, 15, 13, 14, 16, 18, 17, 19, 20, 18, 17, 21],
-            fill: true,
-            backgroundColor: gradient,
-            borderColor: '#ff5c5c',
-            borderWidth: 2,
-            tension: 0.3,
-            pointBackgroundColor: '#fff',
-            pointBorderColor: '#ff5c5c',
-            pointBorderWidth: 2,
-            pointRadius: 5,
-            pointHoverRadius: 7,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: true,
-              labels: {
-                boxWidth: 20,
-                usePointStyle: false,
-                font: {
-                  size: 13,
-                  weight: 'bold'
-                }
-              },
-              position: 'top',
-            },
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                callback: (val) => `₹${val}L`
-              },
-              grid: { drawBorder: false }
-            },
-            x: {
-              grid: { display: false }
-            }
-          }
-        }
-      });
+      // new Chart(ctx, {
+      //   type: 'line',
+      //   data: {
+      //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      //     datasets: [{
+      //       label: 'Payroll Expense (₹ in Lakhs)',
+      //       data: [12, 15, 13, 14, 16, 18, 17, 19, 20, 18, 17, 21],
+      //       fill: true,
+      //       backgroundColor: gradient,
+      //       borderColor: '#ff5c5c',
+      //       borderWidth: 2,
+      //       tension: 0.3,
+      //       pointBackgroundColor: '#fff',
+      //       pointBorderColor: '#ff5c5c',
+      //       pointBorderWidth: 2,
+      //       pointRadius: 5,
+      //       pointHoverRadius: 7,
+      //     }]
+      //   },
+      //   options: {
+      //     responsive: true,
+      //     maintainAspectRatio: false,
+      //     plugins: {
+      //       legend: {
+      //         display: true,
+      //         labels: {
+      //           boxWidth: 20,
+      //           usePointStyle: false,
+      //           font: {
+      //             size: 13,
+      //             weight: 'bold'
+      //           }
+      //         },
+      //         position: 'top',
+      //       },
+      //     },
+      //     scales: {
+      //       y: {
+      //         beginAtZero: true,
+      //         ticks: {
+      //           callback: (val) => `₹${val}L`
+      //         },
+      //         grid: { drawBorder: false }
+      //       },
+      //       x: {
+      //         grid: { display: false }
+      //       }
+      //     }
+      //   }
+      // });
 
                  // Attendance Pie Chart
       const ctxAttend = document.getElementById('attendanceChart').getContext('2d');

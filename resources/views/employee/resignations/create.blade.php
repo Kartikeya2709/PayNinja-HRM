@@ -23,7 +23,7 @@
                     @csrf
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-4">
                             <div class="form-group">
                                 <label for="resignation_type" class="form-label">Resignation Type <span class="text-danger">*</span></label>
                                 <select name="resignation_type" id="resignation_type" class="form-control @error('resignation_type') is-invalid @enderror" required>
@@ -38,7 +38,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-4">
                             <div class="form-group">
                                 <label for="resignation_date" class="form-label">Resignation Date <span class="text-danger">*</span></label>
                                 <input type="date" name="resignation_date" id="resignation_date"
@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-4">
                             <div class="form-group">
                                 <label for="last_working_date" class="form-label">Last Working Date <span class="text-danger">*</span></label>
                                 <input type="date" name="last_working_date" id="last_working_date"
@@ -66,7 +66,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 mb-4">
                             <div class="form-group">
                                 <label for="notice_period_days" class="form-label">Notice Period (Days) <span class="text-danger">*</span></label>
                                 <input type="number" name="notice_period_days" id="notice_period_days"
@@ -81,7 +81,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <label for="reason" class="form-label">Reason for Resignation <span class="text-danger">*</span></label>
                         <textarea name="reason" id="reason" rows="4"
                                   class="form-control @error('reason') is-invalid @enderror"
@@ -92,7 +92,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mb-4">
                         <label for="attachment" class="form-label">Supporting Document (Optional)</label>
                         <input type="file" name="attachment" id="attachment"
                                class="form-control @error('attachment') is-invalid @enderror"

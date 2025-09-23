@@ -13,7 +13,9 @@
 <div class="row">
     <div class="col-lg-12 px-1 cash-dep">
         <div class="card">
-            <h5 class="card-header">Announcement List</h5>
+           <div class="card-header">
+            <h5>Announcement List</h5>
+            </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-striped table-hover align-middle mb-0">
@@ -71,5 +73,8 @@
             </div>
         </div>
     </div>
-</div>
+    </div>
+    </section>
+    </div>
+
 @endsection

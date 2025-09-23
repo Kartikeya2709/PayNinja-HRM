@@ -432,6 +432,13 @@ padding: 10px;
 .btn.disabled, .btn:disabled, fieldset:disabled .btn{
   opacity: 1;
 }
+.avatar.avatar-sm{
+        justify-content: center;
+    display: flex;
+    align-items: center;
+        margin-right: 10px;
+        font-weight: 800;
+  }
 .fc-scrollgrid-section-header th{
   padding: 0px!important;
 }
@@ -5098,6 +5105,11 @@ body.layout-3 .main-wrapper {
 @media (max-width: 767.98px) {
   #process-bulk-payroll{
      margin-bottom: 10px;
+  }
+  
+  .pagination 
+{
+    justify-content: center!important;
   }
    .mobile-space{
     width: 100%;
