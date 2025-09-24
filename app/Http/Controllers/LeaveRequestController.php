@@ -206,7 +206,7 @@ class LeaveRequestController extends Controller
             $query->where('end_date', '<=', $request->date_to);
         }
 
-        $leaveRequests = $query->latest()->get()->map(function ($request) {
+        $leaveRequests = $query->latest()->paginate(15)->through(function ($request) {
             // Ensure working_days is properly cast to an array
             if (is_string($request->working_days)) {
                 $request->working_days = json_decode($request->working_days, true) ?? [];
@@ -291,6 +291,56 @@ class LeaveRequestController extends Controller
     }
 
     /**
+     * Show the form for creating a new leave request (Admin/Company Admin).
+     * Allows administrators to initiate a leave request within their company context.
+     *
+     * Route usage (inside the company admin/admin route group):
+     * Route::get('leave-requests/create', [LeaveRequestController::class, 'adminCreate'])->name('leave-requests.create');
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function adminCreate()
+    {
+        $user = Auth::user();
+        
+        // Check if user has admin or company_admin role
+        if (!in_array($user->role, ['admin', 'company_admin'])) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Get the logged-in employee
+        $employee = Employee::where('user_id', $user->id)->first();
+        
+        if (!$employee) {
+            abort(403, 'Employee record not found.');
+        }
+
+        $currentYear = Carbon::now()->year;
+        
+        // Get leave balances and types for the logged-in employee
+        $leaveBalances = LeaveBalance::where('employee_id', $employee->id)
+            ->where('year', $currentYear)
+            ->with('leaveType')
+            ->get();
+            
+        // Get active leave types that the employee has balances for
+        $leaveTypeIds = $leaveBalances->pluck('leave_type_id')->toArray();
+        $leaveTypes = LeaveType::whereIn('id', $leaveTypeIds)
+            ->where('is_active', true)
+            ->get();
+
+        // Pass only the logged-in employee
+        $employees = collect([$employee]);
+
+        return view('company.leave_requests.create', [
+            'employees' => $employees,
+            'leaveTypes' => $leaveTypes,
+            'leaveBalances' => $leaveBalances,
+            'currentEmployee' => $employee
+        ]);
+    }
+
+    /**
      * Store a newly created leave request in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -302,44 +352,120 @@ class LeaveRequestController extends Controller
      * @param Carbon $date
      * @return bool
      */
-    protected function isWeekend($date)
-    {
-        $companyId = Auth::user()->company_id;
-        // dd($companyId);
+    // protected function isWeekend($date)
+    // {
+    //     $companyId = Auth::user()->company_id;
+    //     // dd($companyId);
         
-        // Get company's weekend configuration
-        $settings = AttendanceSetting::where('company_id', $companyId)
-            ->latest('updated_at')
-            ->first();
+    //     // Get company's weekend configuration
+    //     $settings = AttendanceSetting::where('company_id', $companyId)
+    //         ->latest('updated_at')
+    //         ->first();
             
-            Log::info($settings);
+    //         Log::info($settings);
 
-            // dd($settings);
-        $weekendDays = $settings ? json_decode($settings->weekend_days, true) : ['Saturday', 'Sunday'];
+    //         // dd($settings);
+    //     $weekendDays = $settings ? json_decode($settings->weekend_days, true) : ['Saturday', 'Sunday'];
 
-        $dayOfWeek = ucfirst($date->format('l')); // Get full day name (e.g., 'Monday')
+    //     $dayOfWeek = ucfirst($date->format('l')); // Get full day name (e.g., 'Monday')
         
-        // Check if it's a regular weekend day
-        if (in_array($dayOfWeek, $weekendDays)) {
-            return true;
+    //     // Check if it's a regular weekend day
+    //     if (in_array($dayOfWeek, $weekendDays)) {
+    //         return true;
+    //     }
+
+    //     // Handle special weekend patterns (e.g., 'saturday_1_3', 'saturday_2_4')
+    //     foreach ($weekendDays as $pattern) {
+    //         if (strpos($pattern, '_') !== false) {
+    //             list($day, $weeks) = explode('_', $pattern);
+    //             if (strtolower($dayOfWeek) === strtolower($day)) {
+    //                 $weekNumber = (int)ceil($date->day / 7);
+    //                 $allowedWeeks = explode(',', $weeks);
+    //                 if (in_array($weekNumber, $allowedWeeks)) {
+    //                     return true;
+    //                 }
+    //             }
+    //         }
+    //     }
+
+    //     return false;
+    // }
+
+/**
+ * Check if a date is a weekend based on company settings
+ * 
+ * @param \Carbon\Carbon $date
+ * @return bool
+ */
+protected function isWeekend($date)
+{
+    $companyId = Auth::user()->company_id;
+    // $settings = CompanySetting::where('company_id', $companyId)->first();
+     // Get company's weekend configuration
+    $settings = AttendanceSetting::where('company_id', $companyId)
+        ->latest('updated_at')
+        ->first();
+    
+    if (!$settings) {
+        // Default to Saturday and Sunday if no settings found
+        return in_array($date->dayOfWeek, [Carbon::SATURDAY, Carbon::SUNDAY]);
+    }
+
+    // Decode the JSON string to an array
+    $weekendDays = json_decode($settings->weekend_days, true) ?? ['Sunday'];
+    
+    // If it's not an array, convert it to an array
+    if (!is_array($weekendDays)) {
+        $weekendDays = [$weekendDays];
+    }
+
+    $dayOfWeek = $date->format('l'); // Full day name (e.g., 'Monday')
+    $dayOfMonth = $date->day;
+    $weekNumber = (int)ceil($dayOfMonth / 7); // Get week number in month (1-5)
+    $isSaturday = (strtolower($dayOfWeek) === 'saturday');
+
+    foreach ($weekendDays as $pattern) {
+        $pattern = trim($pattern);
+        
+        // Handle simple day names (e.g., "Sunday", "Saturday")
+        if (in_array(ucfirst($pattern), ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'])) {
+            if (strtolower($pattern) === strtolower($dayOfWeek)) {
+                return true;
+            }
+            continue;
         }
 
-        // Handle special weekend patterns (e.g., 'saturday_1_3', 'saturday_2_4')
-        foreach ($weekendDays as $pattern) {
-            if (strpos($pattern, '_') !== false) {
-                list($day, $weeks) = explode('_', $pattern);
-                if (strtolower($dayOfWeek) === strtolower($day)) {
-                    $weekNumber = (int)ceil($date->day / 7);
-                    $allowedWeeks = explode(',', $weeks);
-                    if (in_array($weekNumber, $allowedWeeks)) {
-                        return true;
-                    }
+        // Handle patterns like "1st & 3rd Saturday", "2nd & 4th Saturday", "1st, 3rd & 5th Saturday"
+        if (preg_match('/(\d+)(?:st|nd|rd|th)(?:\s*[,&]\s*(\d+)(?:st|nd|rd|th))*(?:\s*&\s*(\d+)(?:st|nd|rd|th))?\s+([a-z]+)/i', $pattern, $matches)) {
+            $day = ucfirst($matches[4]); // e.g., "Saturday"
+            $weeks = array_slice($matches, 1, -1); // Get all week numbers
+            $weeks = array_filter($weeks, 'is_numeric'); // Filter out non-numeric values
+            $weeks = array_map('intval', $weeks); // Convert to integers
+
+            // Check if current day matches and is one of the specified weeks
+            if (strtolower($day) === strtolower($dayOfWeek) && in_array($weekNumber, $weeks)) {
+                return true;
+            }
+            continue;
+        }
+
+        // Handle simple patterns like "saturday_2_4" (backward compatibility)
+        if (preg_match('/^([a-z]+)_(\d+)(?:_(\d+))?$/i', $pattern, $matches)) {
+            $day = ucfirst($matches[1]);
+            $week1 = (int)$matches[2];
+            $week2 = isset($matches[3]) ? (int)$matches[3] : null;
+            
+            if (strtolower($day) === strtolower($dayOfWeek)) {
+                if ($weekNumber === $week1 || ($week2 !== null && $weekNumber === $week2)) {
+                    return true;
                 }
             }
+            continue;
         }
-
-        return false;
     }
+
+    return false;
+}
 
     /**
      * Check if a date is a holiday
@@ -378,6 +504,141 @@ class LeaveRequestController extends Controller
         return $workingDays;
     }
 
+    /**
+     * Store a newly created leave request for an employee by admin.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function adminStore(Request $request)
+    {
+        $admin = Auth::user();
+        
+        $validated = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'leave_type_id' => 'required|exists:leave_types,id',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+            'reason' => 'required|string',
+        ]);
+        
+        // Get employee and company
+        $employee = Employee::findOrFail($validated['employee_id']);
+        $companyId = $employee->company_id;
+        
+        // Check if admin has access to this company
+        if ($admin->company_id && $admin->company_id != $companyId) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        // Check if leave type belongs to the company
+        $leaveType = LeaveType::where('id', $validated['leave_type_id'])
+            ->where('company_id', $companyId)
+            ->firstOrFail();
+        
+        // Parse dates
+        $startDate = Carbon::parse($validated['start_date']);
+        $endDate = Carbon::parse($validated['end_date']);
+        
+        // Adjust for half day if needed
+        if ($request->has('is_half_day') && $request->boolean('is_half_day')) {
+            $endDate = $startDate->copy(); // Set end date same as start date for half day
+        }
+        
+        // Get all dates in the leave period
+        $period = CarbonPeriod::create($startDate, $endDate);
+        
+        $workingDays = [];
+        $weekendDays = [];
+        $holidayDates = [];
+        
+        // Categorize each day in the period
+        foreach ($period as $date) {
+            if ($this->isHoliday($date, $companyId)) {
+                $holidayDates[] = $date->format('Y-m-d');
+            } elseif ($this->isWeekend($date)) {
+                $weekendDays[] = $date->format('Y-m-d');
+            } else {
+                $workingDays[] = $date->format('Y-m-d');
+            }
+        }
+        
+        $totalWorkingDays = count($workingDays);
+        $totalCalendarDays = $startDate->diffInDays($endDate) + 1;
+        
+        if ($totalWorkingDays <= 0) {
+            return redirect()->back()
+                ->with('error', 'The selected date range only includes weekends and/or holidays. No leave days will be deducted.')
+                ->withInput();
+        }
+        
+        // Check for overlapping approved or pending leaves (excluding the current request if updating)
+        if ($this->hasOverlappingLeaves($employee->id, $startDate->format('Y-m-d'), $endDate->format('Y-m-d'), $request->id ?? null)) {
+            return redirect()->back()->with('error', 'This employee already has an approved or pending leave request that overlaps with these dates.');
+        }
+        
+        // Check leave balance (only for paid leave types)
+        if ($leaveType->is_paid) {
+            $currentYear = $startDate->year;
+            $leaveBalance = LeaveBalance::firstOrCreate(
+                [
+                    'employee_id' => $employee->id,
+                    'leave_type_id' => $validated['leave_type_id'],
+                    'year' => $currentYear
+                ],
+                [
+                    'total_days' => $leaveType->default_days,
+                    'used_days' => 0,
+                    'carried_over_days' => 0
+                ]
+            );
+            
+            $remainingDays = $leaveBalance->total_days - $leaveBalance->used_days;
+            
+            if ($totalWorkingDays > $remainingDays) {
+                return redirect()->back()
+                    ->with('error', "Insufficient leave balance. Employee has only {$remainingDays} days remaining for this leave type.")
+                    ->withInput();
+            }
+            
+            // Update used days if approved
+            if ($request->status === 'approved') {
+                $leaveBalance->increment('used_days', $totalWorkingDays);
+            }
+        }
+        
+        // Handle attachment upload
+        $attachmentPath = null;
+        if ($request->hasFile('attachment')) {
+            $attachmentPath = $request->file('attachment')->store('leave-attachments', 'public');
+        }
+        
+        // Determine status (default to approved for admin unless specified)
+        $status = $request->status ?? 'approved';
+        
+        // Create the leave request
+        $leaveRequest = LeaveRequest::create([
+            'employee_id' => $employee->id,
+            'leave_type_id' => $validated['leave_type_id'],
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'total_days' => $totalWorkingDays,
+            'working_days' => $workingDays,
+            'weekend_days' => $weekendDays,
+            'holiday_days' => $holidayDates,
+            'reason' => $validated['reason']
+        ]);
+        
+        return redirect()->route('company.leave-requests.index')
+            ->with('success', 'Leave request has been created successfully.');
+    }
+
+    /**
+     * Store a newly created leave request in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
         $employee = Employee::where('user_id', Auth::id())->first();
@@ -749,14 +1010,20 @@ class LeaveRequestController extends Controller
      */
     public function approve(Request $request, LeaveRequest $leaveRequest)
     {
+        $user = Auth::user();
+        $employee = Employee::with('user')->findOrFail($leaveRequest->employee_id);
+        
         // Check if user is admin or company admin
-        if (!in_array(Auth::user()->role, ['admin', 'company_admin'])) {
-            abort(403, 'Unauthorized action. Only administrators can approve leave requests.');
+        if (!in_array($user->role, ['admin', 'company_admin'])) {
+            return redirect()->back()
+                ->with('error', 'Unauthorized action. Only administrators can approve leave requests.');
         }
         
-        // Check if leave request belongs to an employee in the company
-        if ($leaveRequest->employee->company_id !== Auth::user()->company_id) {
-            abort(403, 'Unauthorized action.');
+        // If request is from a company admin, only the same company admin can approve it
+        if ($employee->user->role === 'company_admin') {
+            if ($user->id !== $employee->user_id) {
+                abort(403, 'Unauthorized action. Only the requestor can approve this leave request.');
+            }
         }
         
         // Check if leave request is pending
@@ -804,20 +1071,29 @@ class LeaveRequestController extends Controller
      */
     public function reject(Request $request, LeaveRequest $leaveRequest)
     {
+        $user = Auth::user();
+        $employee = Employee::with('user')->findOrFail($leaveRequest->employee_id);
+        
         // Check if user is admin or company admin
-        if (!in_array(Auth::user()->role, ['admin', 'company_admin'])) {
+        if (!in_array($user->role, ['admin', 'company_admin'])) {
             if ($request->ajax()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized action. Only administrators can reject leave requests.'], 403);
+                return response()->json([
+                    'success' => false, 
+                    'message' => 'Unauthorized action. Only administrators can reject leave requests.'
+                ]);
             }
-            abort(403, 'Unauthorized action. Only administrators can reject leave requests.');
+            return redirect()->back()
+                ->with('error', 'Unauthorized action. Only administrators can reject leave requests.');
         }
         
-        // Check if leave request belongs to an employee in the company
-        if ($leaveRequest->employee->company_id !== Auth::user()->company_id) {
-            if ($request->ajax()) {
-                return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
+        // If request is from a company admin, only the same company admin can reject it
+        if ($employee->user->role === 'company_admin') {
+            if ($user->id !== $employee->user_id) {
+                if ($request->ajax()) {
+                    return response()->json(['success' => false, 'message' => 'Unauthorized action. Only the requestor can reject this leave request.'], 403);
+                }
+                abort(403, 'Unauthorized action. Only the requestor can reject this leave request.');
             }
-            abort(403, 'Unauthorized action.');
         }
         
         // Check if leave request is pending
@@ -830,15 +1106,15 @@ class LeaveRequestController extends Controller
                 ->with('error', $message);
         }
         
-        $validated = $request->validate([
-            'rejection_reason' => 'required|string',
-        ]);
+        // $validated = $request->validate([
+        //     'rejection_reason' => 'required|string',
+        // ]);
         
         try {
             // Reject leave request
             $leaveRequest->update([
                 'status' => 'rejected',
-                'admin_remarks' => $validated['rejection_reason'],
+                'admin_remarks' => 'Rejected',
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
             ]);

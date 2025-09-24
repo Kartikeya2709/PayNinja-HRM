@@ -340,9 +340,16 @@ class AttendanceController extends Controller
             $filters[] = $startDate->format('M d, Y') . ' to ' . $endDate->format('M d, Y');
         }
 
-        if ($request->filled('employee_id')) {
-            $query->where('employee_id', $request->employee_id);
-            $employee = Employee::find($request->employee_id);
+        if ($request->filled('employee_code')) {
+            $employeeCode = trim($request->employee_code);
+            $query->whereHas('employee', function ($q) use ($employeeCode) {
+                $q->where('employee_code', $employeeCode);
+            });
+            $filters[] = 'Employee Code: ' . $employeeCode;
+        } elseif ($request->filled('employee_id')) {
+            $employeeId = (int) $request->employee_id;
+            $query->where('employee_id', $employeeId);
+            $employee = Employee::find($employeeId);
             if ($employee) {
                 $filters[] = 'Employee: ' . ($employee->user->name ?? 'N/A');
             }
@@ -369,7 +376,7 @@ class AttendanceController extends Controller
         $fileName = 'attendance-export-' . now()->format('Y-m-d') . ($exportType === 'pdf' ? '.pdf' : '.xlsx');
 
         if ($exportType === 'pdf') {
-            $pdf = PDF::loadView('admin.attendance.exports.pdf', [
+            $pdf = Pdf::loadView('admin.attendance.exports.pdf', [
                 'attendances' => $attendances,
                 'filters' => $filters,
                 'date' => now()->format('d M, Y')

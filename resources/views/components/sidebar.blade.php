@@ -351,9 +351,10 @@
                         </a>
                     </li>
                     <li class="{{ Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('leave-management.leave-requests.create') }}">
-                            <i class="fas fa-calendar-plus"></i>
-                            <span>Apply for Leave</span>
+                        <a class="nav-link" href="{{ route('company.leave-requests.create') }}">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Apply for Leave</span>
+                            </i>
                         </a>
                     </li>
                     <li
@@ -552,10 +553,10 @@
                             <a class="nav-link" href="{{ route('admin.attendance.settings') }}"><i class="fas fa-cog"></i>
                                 <span>Attendance Settings</span></a>
                         </li>
-                        {{-- <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
+                        <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('admin.shifts.index') }}"><i class="fas fa-clock"></i>
                                 <span>Manage Shifts</span></a>
-                        </li> --}}
+                        </li> 
                     @endif
 
                     <!-- Leave Management -->
@@ -570,7 +571,7 @@
                                     class="fas fa-balance-scale"></i> <span>Leave Balances</span></a>
                         </li>
                         <li class="{{ Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-management.leave-requests.create') }}"><i
+                            <a class="nav-link" href="{{ route('company.leave-requests.create') }}"><i
                                     class="fas fa-calendar-plus"></i> <span>Apply for Leave</span></a>
                         </li>
                         <li

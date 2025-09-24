@@ -98,9 +98,10 @@
                             @endif
 
                             <div class="table-responsive">
-                                <table class="table table-striped" id="leaveRequestsTable">
+                                <table class="table table-striped">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>Employee</th>
                                             <th>Department</th>
                                             <th>Leave Type</th>
@@ -112,8 +113,9 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach($leaveRequests as $request)
+                                        @forelse($leaveRequests as $request)
                                             <tr>
+                                                <td>{{ ($leaveRequests->currentPage() - 1) * $leaveRequests->perPage() + $loop->iteration }}</td>
                                                 <td>{{ $request->employee->name }}</td>
                                                 <td>{{ $request->employee->department->name ?? '-' }}</td>
                                                 <td>{{ $request->leaveType->name }}</td>
@@ -148,13 +150,21 @@
                                                     @endif
                                                 </td>
                                             </tr>
-                                        @endforeach
+                                        @empty
+                                            <tr>
+                                                <td colspan="9" class="text-center">No leave requests found.</td>
+                                            </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
+                                
+                                <!-- Pagination -->
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $leaveRequests->withQueryString()->links() }}
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -167,13 +177,6 @@
 $(document).ready(function() {
     // Initialize select2
     $('.select2').select2();
-
-    // Initialize DataTables
-    $('#leaveRequestsTable').DataTable({
-        order: [[3, 'desc']],
-        pageLength: 25,
-        stateSave: true
-    });
 });
 </script>
 @endpush

@@ -150,8 +150,8 @@
                                 <div class="col-md-6">
                                     <button type="button" 
                                             class="btn btn-danger" 
-                                            data-toggle="modal" 
-                                            data-target="#rejectModal">
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#rejectModal">
                                         <i class="fas fa-times"></i> Reject Leave Request
                                     </button>
                                 </div>
@@ -174,34 +174,26 @@
 
 @if($leaveRequest->status === 'pending')
     <!-- Reject Modal -->
-    <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <form action="{{ route('company.leave-requests.reject', $leaveRequest->id) }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="rejectModalLabel">Reject Leave Request</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="rejection_reason">Rejection Reason <span class="text-danger">*</span></label>
+                            <label for="rejection_reason">Rejection Reason (Optional)</label>
                             <textarea name="rejection_reason" 
                                       id="rejection_reason" 
-                                      class="form-control @error('rejection_reason') is-invalid @enderror" 
-                                      rows="3" 
-                                      required>{{ old('rejection_reason') }}</textarea>
-                            @error('rejection_reason')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
-                            @enderror
+                                      class="form-control" 
+                                      rows="3">{{ old('rejection_reason') }}</textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-danger">Reject</button>
                     </div>
                 </form>

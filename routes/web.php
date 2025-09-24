@@ -326,6 +326,8 @@ Route::middleware(['auth'])->group(function () {
         // Leave Requests
         Route::get('leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('leave-requests.index');
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
+        Route::get('leave-requests/create', [LeaveRequestController::class, 'adminCreate'])->name('leave-requests.create');
+        Route::post('leave-requests', [LeaveRequestController::class, 'adminStore'])->name('leave-requests.store');
         Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'adminCalendarEvents'])->name('leave-requests.calendar-events');
         Route::get('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'adminShow'])->name('leave-requests.show');
         Route::post('leave-requests/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('leave-requests.approve');

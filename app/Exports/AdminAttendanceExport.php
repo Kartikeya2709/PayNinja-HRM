@@ -28,7 +28,7 @@ class AdminAttendanceExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
-            'Employee ID',
+            'Employee Code',
             'Employee Name',
             'Department',
             'Designation',
@@ -45,7 +45,7 @@ class AdminAttendanceExport implements FromCollection, WithHeadings, WithMapping
     public function map($attendance): array
     {
         return [
-            $attendance->employee->employee_id ?? 'N/A',
+            $attendance->employee->employee_code ?? 'N/A',
             $attendance->employee->user->name ?? 'N/A',
             $attendance->employee->department->name ?? 'N/A',
             $attendance->employee->designation->title ?? 'N/A',

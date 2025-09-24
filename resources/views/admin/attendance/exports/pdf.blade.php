@@ -92,7 +92,7 @@
         <thead>
             <tr>
                 <th>#</th>
-                <th>Employee ID</th>
+                <th>Employee Code</th>
                 <th>Employee Name</th>
                 <th>Department</th>
                 <th>Designation</th>
@@ -109,7 +109,7 @@
             @forelse($attendances as $index => $attendance)
                 <tr>
                     <td>{{ $index + 1 }}</td>
-                    <td>{{ $attendance->employee->employee_id ?? 'N/A' }}</td>
+                    <td>{{ $attendance->employee->employee_code ?? 'N/A' }}</td>
                     <td>{{ $attendance->employee->user->name ?? 'N/A' }}</td>
                     <td>{{ $attendance->employee->department->name ?? 'N/A' }}</td>
                     <td>{{ $attendance->employee->designation->title ?? 'N/A' }}</td>
