@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 
 class ReimbursementController extends Controller
 {
-    public function index()
+    public function index(Request $request)
 {
     try {
         $user = Auth::user();
@@ -50,8 +50,32 @@ class ReimbursementController extends Controller
             }
         }
 
+        // Apply filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('expense_date', '>=', $request->date_from);
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('expense_date', '<=', $request->date_to);
+        }
+
+        if ($request->filled('min_amount')) {
+            $query->where('amount', '>=', $request->min_amount);
+        }
+
+        if ($request->filled('max_amount')) {
+            $query->where('amount', '<=', $request->max_amount);
+        }
+
+        // Order by created date (newest first)
+        $query->orderBy('created_at', 'desc');
+
         // Get paginated results
-        $reimbursements = $query->latest()->paginate(10);
+        $reimbursements = $query->paginate(15)->withQueryString();
 
         return view('reimbursements.index', compact('reimbursements'));
 
@@ -165,14 +189,14 @@ class ReimbursementController extends Controller
             ]);
             
             // Check if user is the reporter
-            // $isReporter = $reimbursement->reporter_id === $employee->id;
-            // Log::debug('User permissions', [
-            //     'user_id' => $user->id,
-            //     'is_admin' => $isAdmin,
-            //     'is_company_admin' => $isCompanyAdmin,
-            //     'is_reporter' => $isReporter,
-            //     'reimbursement_status' => $reimbursement->status
-            // ]);
+            $isReporter = $reimbursement->reporter_id === $employee->id;
+            Log::debug('User permissions', [
+                'user_id' => $user->id,
+                'is_admin' => $isAdmin,
+                'is_company_admin' => $isCompanyAdmin,
+                'is_reporter' => $isReporter,
+                'reimbursement_status' => $reimbursement->status
+            ]);
 
             // Validate the correct status based on who is approving
             // if ($isAdmin) {

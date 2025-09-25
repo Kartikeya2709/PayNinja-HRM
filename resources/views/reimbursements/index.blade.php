@@ -14,8 +14,33 @@
             <div class="card">
                 <div class="card-1">
                     <h5 class="card-title margin-bottom mb-0">Reimbursements</h5>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+                </div>
+
+                <!-- Filters -->
+                <div class="row mt-3 mb-4">
+                    <div class="col-md-2 mb-3">
+                        <select class="form-control" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="reporter_approved">Reporter Approved</option>
+                            <option value="admin_approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <input type="date" class="form-control" id="dateFromFilter" placeholder="From Date">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <input type="date" class="form-control" id="dateToFilter" placeholder="To Date">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <input type="number" class="form-control" id="minAmountFilter" placeholder="Min Amount" step="0.01">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <input type="number" class="form-control" id="maxAmountFilter" placeholder="Max Amount" step="0.01">
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <button type="button" class="btn btn-secondary w-100" id="clearFilters">Clear Filters</button>
                     </div>
                 </div>
                 @if(session('success'))
@@ -76,21 +101,46 @@
     </div>
 
     <script>
-        const searchInput = document.getElementById('searchInput');
-        const tableRows = document.querySelectorAll('#reimbursementTable tr');
+        $(document).ready(function () {
+            // Set current filter values from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            $('#statusFilter').val(urlParams.get('status') || '');
+            $('#dateFromFilter').val(urlParams.get('date_from') || '');
+            $('#dateToFilter').val(urlParams.get('date_to') || '');
+            $('#minAmountFilter').val(urlParams.get('min_amount') || '');
+            $('#maxAmountFilter').val(urlParams.get('max_amount') || '');
 
-        searchInput.addEventListener('input', function () {
-            const filter = searchInput.value.toLowerCase();
-            tableRows.forEach(row => {
-                const cells = row.getElementsByTagName('td');
-                let match = false;
-                Array.from(cells).forEach(cell => {
-                    if (cell.textContent.toLowerCase().includes(filter)) {
-                        match = true;
-                    }
-                });
-                row.style.display = match ? '' : 'none';
+            // Filter functionality
+            $('#statusFilter, #dateFromFilter, #dateToFilter, #minAmountFilter, #maxAmountFilter').change(function () {
+                applyFilters();
             });
+
+            // Clear filters
+            $('#clearFilters').click(function () {
+                $('#statusFilter').val('');
+                $('#dateFromFilter').val('');
+                $('#dateToFilter').val('');
+                $('#minAmountFilter').val('');
+                $('#maxAmountFilter').val('');
+                applyFilters();
+            });
+
+            function applyFilters() {
+                const status = $('#statusFilter').val();
+                const dateFrom = $('#dateFromFilter').val();
+                const dateTo = $('#dateToFilter').val();
+                const minAmount = $('#minAmountFilter').val();
+                const maxAmount = $('#maxAmountFilter').val();
+
+                let url = '{{ route("reimbursements.index") }}?';
+                if (status) url += 'status=' + status + '&';
+                if (dateFrom) url += 'date_from=' + dateFrom + '&';
+                if (dateTo) url += 'date_to=' + dateTo + '&';
+                if (minAmount) url += 'min_amount=' + minAmount + '&';
+                if (maxAmount) url += 'max_amount=' + maxAmount + '&';
+
+                window.location.href = url.slice(0, -1);
+            }
         });
     </script>
 @endsection
