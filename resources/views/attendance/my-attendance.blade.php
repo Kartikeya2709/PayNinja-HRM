@@ -28,9 +28,6 @@
                             <i class="fas fa-file-pdf"></i> Export PDF
                         </a>
                     </form>
-                    <a href="{{ route('attendance.my-attendance') }}?export=true&month={{ $month ?? now()->format('Y-m') }}" class="btn btn-info">
-                        <i class="bi bi-download me-1"></i> Export
-                    </a>
                 </div>
             </div>
             <div class="card-body">

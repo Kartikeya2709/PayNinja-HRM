@@ -123,24 +123,50 @@ class FieldVisitController extends Controller
     /**
      * Display a listing of field visits based on user role.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
 
+        // Build base query based on user role
+        $query = FieldVisit::with(['employee', 'reportingManager']);
+
         if ($user->hasRole(['admin', 'company_admin'])) {
-            $visits = FieldVisit::with(['employee', 'reportingManager'])->get();
+            // Admins see all visits
         } elseif ($user->hasRole(['manager'])) {
-            $visits = FieldVisit::where('reporting_manager_id', $user->employee->id)
-                ->orWhere('employee_id', $user->employee->id)
-                ->with(['employee', 'reportingManager'])
-                ->get();
+            // Managers see visits where they are reporting manager or the employee
+            $query->where(function ($q) use ($user) {
+                $q->where('reporting_manager_id', $user->employee->id)
+                  ->orWhere('employee_id', $user->employee->id);
+            });
         } else {
-            $visits = FieldVisit::where('employee_id', $user->employee->id)
-                ->with(['employee', 'reportingManager'])
-                ->get();
+            // Regular employees see only their own visits
+            $query->where('employee_id', $user->employee->id);
         }
 
-        return view('field_visits.index', ['fieldVisits' => $visits]);
+        // Apply filters
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('approval_status')) {
+            $query->where('approval_status', $request->approval_status);
+        }
+
+        if ($request->filled('date_from')) {
+            $query->where('scheduled_start_datetime', '>=', $request->date_from . ' 00:00:00');
+        }
+
+        if ($request->filled('date_to')) {
+            $query->where('scheduled_start_datetime', '<=', $request->date_to . ' 23:59:59');
+        }
+
+        // Order by scheduled start datetime (newest first)
+        $query->orderBy('scheduled_start_datetime', 'desc');
+
+        // Paginate results
+        $fieldVisits = $query->paginate(15)->withQueryString();
+
+        return view('field_visits.index', compact('fieldVisits'));
     }
 
     /**

@@ -173,6 +173,10 @@
                                     </table>
                                 </div>
 
+                                <!-- Pagination -->
+                                <div class="d-flex justify-content-center mt-4">
+                                    {{ $fieldVisits->links() }}
+                                </div>
 
                             </div>
                         </div>
@@ -276,6 +280,13 @@
     <script>
         $(document).ready(function () {
             let currentVisitId = null;
+
+            // Set current filter values from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            $('#statusFilter').val(urlParams.get('status') || '');
+            $('#approvalFilter').val(urlParams.get('approval_status') || '');
+            $('#dateFrom').val(urlParams.get('date_from') || '');
+            $('#dateTo').val(urlParams.get('date_to') || '');
 
             // Reject button click
             $('.reject-btn').click(function () {

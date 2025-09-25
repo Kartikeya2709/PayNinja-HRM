@@ -373,7 +373,7 @@ class ReimbursementController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'required|string',
-                'amount' => 'required|numeric|min:0',
+                'amount' => 'required',
                 'expense_date' => 'required|date',
                 'receipt' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
             ]);

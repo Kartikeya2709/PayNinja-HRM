@@ -20,8 +20,29 @@ class AttendanceRegularizationController extends Controller
     public function index()
     {
         $employee = Auth::user()->employee;
+        $is_company_admin = Auth::user()->hasRole('company_admin');
 
-        if (is_null($employee->reporting_manager_id)) {
+        // Company admin can see all requests
+        if ($is_company_admin) {
+            $pending_requests = AttendanceRegularization::where('status', '=', 'pending')
+                ->with('employee', 'approver')
+                ->latest()
+                ->paginate(10, ['*'], 'pending_page');
+
+            $approved_requests = AttendanceRegularization::where('status', '=', 'approved')
+                ->with('employee', 'approver')
+                ->latest()
+                ->paginate(10, ['*'], 'approved_page');
+
+            $rejected_requests = AttendanceRegularization::where('status', '=', 'rejected')
+                ->with('employee', 'approver')
+                ->latest()
+                ->paginate(10, ['*'], 'rejected_page');
+
+            return view('employee.regularization.index', compact('pending_requests', 'approved_requests', 'rejected_requests'));
+        }
+        // Manager can see their team's requests
+        elseif (is_null($employee->reporting_manager_id)) {
             $pending_requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
                 ->where('status', '=', 'pending')
                 ->with('employee', 'approver')
@@ -41,7 +62,9 @@ class AttendanceRegularizationController extends Controller
                 ->paginate(10, ['*'], 'rejected_page');
 
             return view('employee.regularization.index', compact('pending_requests', 'approved_requests', 'rejected_requests'));
-        } else {
+        } 
+        // Regular employees can see their own requests
+        else {
             $requests = $employee->attendanceRegularizations()
                 ->with('employee', 'approver')
                 ->latest()
@@ -139,7 +162,13 @@ class AttendanceRegularizationController extends Controller
     public function update(Request $request, $id)
     {
         $regularizationRequest = AttendanceRegularization::findOrFail($id);
-        // Add authorization logic here if needed
+        $employee = Auth::user()->employee;
+        $is_company_admin = Auth::user()->hasRole('company_admin');
+        
+        // Check if user has permission to update this request
+        if (!$is_company_admin && $regularizationRequest->reporting_manager_id !== $employee->id) {
+            return redirect()->back()->with('error', 'You do not have permission to update this request.');
+        }
 
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:approved,rejected',
@@ -161,7 +190,7 @@ class AttendanceRegularizationController extends Controller
 
         $regularizationRequest->update([
             'status' => $validated['status'],
-            'approved_by' => Auth::id(),
+            'approved_by' => Auth::user()->employee->id,
         ]);
 
         if ($validated['status'] == 'approved') {
@@ -190,6 +219,9 @@ class AttendanceRegularizationController extends Controller
 
     public function bulkUpdate(Request $request)
     {
+        $employee = Auth::user()->employee;
+        $is_company_admin = Auth::user()->hasRole('company_admin');
+
         $validator = Validator::make($request->all(), [
             'request_ids' => 'required|array',
             'request_ids.*' => 'exists:attendance_regularizations,id',
@@ -207,12 +239,18 @@ class AttendanceRegularizationController extends Controller
         $validated = $validator->validated();
         $status = ($validated['action'] == 'approve') ? 'approved' : 'rejected';
 
-        $regularizations = AttendanceRegularization::whereIn('id', $validated['request_ids'])
-            ->where('status', 'pending')
-            ->get();
+        $query = AttendanceRegularization::whereIn('id', $validated['request_ids'])
+            ->where('status', 'pending');
+
+        // If not company admin, only allow updating requests where user is reporting manager
+        if (!$is_company_admin) {
+            $query->where('reporting_manager_id', $employee->id);
+        }
+
+        $regularizations = $query->get();
 
         foreach ($regularizations as $regularization) {
-            $regularization->update(['status' => $status, 'approved_by' => Auth::id()]);
+            $regularization->update(['status' => $status, 'approved_by' => Auth::user()->employee->id]);
 
             if ($status == 'approved') {
                 $this->updateAttendanceFromRegularization($regularization, $validated['attendance_status']);
@@ -234,7 +272,7 @@ class AttendanceRegularizationController extends Controller
                 'status' => $attendanceStatus,
                 'check_in' => $regularization->check_in ? $regularization->date . ' ' . $regularization->check_in : null,
                 'check_out' => $regularization->check_out ? $regularization->date . ' ' . $regularization->check_out : null,
-                'updated_by' => Auth::id(),
+                'updated_by' => Auth::user()->employee->id,
             ]
         );
     }

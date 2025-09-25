@@ -135,7 +135,7 @@
                         @if($canApprove)
                             <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#approveModal">
                                 <i class="fas fa-check-circle me-1"></i>
-                                {{ $isAdmin ? 'Approve as Admin' : 'Approve as Reporter' }}
+                                {{ $isAdmin ? 'Approve as Admin' : 'Approve as Reporting Manager' }}
                             </button>
                         @endif
                         
