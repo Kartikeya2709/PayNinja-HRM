@@ -48,9 +48,10 @@
                                     <td>{{ $company->email }}</td>
                                     <td>{{ $company->domain ?? '-' }}</td>
                                     <td>{{ $company->phone ?? '-' }}</td>
-                                    <td>
-                                        <a href="{{ route('superadmin.companies.show', $company->id) }}" class="btn btn-sm btn-primary">View</a>
-                                        <a href="{{ route('superadmin.companies.edit', $company->id) }}" class="btn btn-sm btn-info">Edit</a>
+                                    <td class="w-25">
+                                        <a href="{{ route('superadmin.companies.show', $company->id) }}" class="btn btn-sm btn-success">View</a>
+                                        <a href="{{ route('superadmin.companies.documents.index', $company->id) }}" class="btn btn-sm btn-primary">Documents</a>
+                                        <a href="{{ route('superadmin.companies.edit', $company->id) }}" class="btn btn-sm btn-warning">Edit</a>
                                         <form action="{{ route('superadmin.companies.destroy', $company->id) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')

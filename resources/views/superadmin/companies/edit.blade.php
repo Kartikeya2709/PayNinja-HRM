@@ -31,11 +31,9 @@
                     <div class="form-group row mb-4">
                         <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Company Name <span class="text-danger">*</span></label>
                         <div class="col-sm-12 col-md-9">
-                            <input type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $company->name) }}" required>
+                            <input type="text" placeholder="e.g., My Company" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name', $company->name) }}" minlength="3" maxlength="255">
                             @error('name')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
@@ -43,48 +41,39 @@
                     <div class="form-group row mb-4">
                         <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Company Email <span class="text-danger">*</span></label>
                         <div class="col-sm-12 col-md-9">
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email', $company->email) }}" required>
+                            <input type="email" placeholder="e.g., user@example.com" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email', $company->email) }}">
                             @error('email')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
                     <div class="form-group row mb-4">
-                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Domain</label>
+                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Domain <span class="text-danger">*</span></label>
                         <div class="col-sm-12 col-md-9">
-                            <input type="text" class="form-control @error('domain') is-invalid @enderror" name="domain" value="{{ old('domain', $company->domain) }}">
-                            <small class="form-text text-muted">e.g., example.com</small>
+                            <input type="url" placeholder="e.g., https://example.com" class="form-control @error('domain') is-invalid @enderror" name="domain" value="{{ old('domain', $company->domain) }}">
                             @error('domain')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
                     <div class="form-group row mb-4">
-                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Phone</label>
+                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Phone <span class="text-danger">*</span></label>
                         <div class="col-sm-12 col-md-9">
-                            <input type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" maxlength="10" value="{{ old('phone', $company->phone) }}">
+                            <input type="text" placeholder="e.g., 8888888888"class="form-control @error('phone') is-invalid @enderror" maxlength="10" name="phone" value="{{ old('phone', $company->phone) }}">
                             @error('phone')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>
 
                     <div class="form-group row mb-4">
-                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Address</label>
+                        <label class="col-form-label text-md-right col-12 col-md-3 col-lg-3">Address <span class="text-danger">*</span></label>
                         <div class="col-sm-12 col-md-9">
                             <textarea class="form-control @error('address') is-invalid @enderror" name="address" rows="3">{{ old('address', $company->address) }}</textarea>
                             @error('address')
-                                <div class="invalid-feedback">
-                                    {{ $message }}
-                                </div>
+                                <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>Welcome — PayNinja HRM System</title>
+  <title>Welcome — RocketHR HRM System</title>
 
   <!-- Google Fonts: Poppins & Nunito -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -76,9 +76,9 @@
 
 <!-- HERO SECTION -->
 <section class="hero">
-  <h1 class="animate__animated animate__fadeInDown">Welcome to PayNinja HRM System</h1>
+  <h1 class="animate__animated animate__fadeInDown">Welcome to RokcetHR HRM System</h1>
   <p class="animate__animated animate__fadeInUp">
-    Manage your workforce efficiently and effectively with PayNinja — your complete HRM solution.
+    Manage your workforce efficiently and effectively with RokcetHR — your complete HRM solution.
   </p>
   <a href="{{ route('login') }}" class="btn btn-cta animate__animated animate__zoomIn">Get Started</a>
 </section>
@@ -121,7 +121,7 @@
 
 <!-- FOOTER -->
 <footer class="bg-dark text-white text-center py-3">
-  <p>&copy; {{ date('Y') }} PayNinja HRM System. All rights reserved.</p>
+  <p>&copy; {{ date('Y') }} RokcetHR HRM System. All rights reserved.</p>
 </footer>
 
 </body>

@@ -33,9 +33,9 @@ class SuperAdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:companies',
-            'domain' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
+            'domain' => 'required|url|max:255|unique:companies',
+            'phone' => 'required|numeric|digits:10|unique:companies',
+            'address' => 'required|string',
             // 'admin_id' => 'required|exists:users,id',
         ]);
 
@@ -64,10 +64,10 @@ class SuperAdminController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => "required|email|unique:companies,email,$id",
-            'domain' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
+            'email' => 'required|email|unique:companies,email,' . $company->id,
+            'domain' => 'required|url|max:255|unique:companies,domain,' . $company->id,
+            'phone' => 'required|numeric|digits:10|unique:companies,phone,' . $company->id,
+            'address' => 'required|string',
             // 'admin_id' => 'required|exists:users,id',
         ]);
 

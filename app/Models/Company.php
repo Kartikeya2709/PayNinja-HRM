@@ -42,4 +42,12 @@ class Company extends Model
     {
         return $this->hasMany(BeneficiaryBadge::class);
     }
+
+    /**
+     * Get the documents uploaded for this company
+     */
+    public function documents()
+    {
+        return $this->hasMany(CompanyDocument::class);
+    }
 }

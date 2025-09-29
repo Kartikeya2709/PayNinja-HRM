@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ExampleController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\CompanyDocumentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\DesignationManagementController;
 use App\Http\Controllers\DepartmentManagementController;
@@ -188,6 +189,16 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('assign-company-admin', \App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class)->except(['show']);
         Route::get('assigned-company-admins', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'index'])->name('assigned-company-admins.index');
         Route::get('companies/{companyId}/admins', [EmployeeController::class, 'admins'])->name('admins.index');
+        
+        // Company Documents Management
+        Route::prefix('companies/{company}/documents')->name('companies.documents.')->group(function () {
+            Route::get('/', [CompanyDocumentController::class, 'index'])->name('index');
+            Route::post('/upload', [CompanyDocumentController::class, 'upload'])->name('upload');
+            Route::get('/{document}', [CompanyDocumentController::class, 'show'])->name('show');
+            Route::delete('/{document}', [CompanyDocumentController::class, 'destroy'])->name('destroy');
+            Route::post('/{document}/verify', [CompanyDocumentController::class, 'verify'])->name('verify');
+            Route::post('/{document}/reject', [CompanyDocumentController::class, 'reject'])->name('reject');
+        });
     });
 
     // Shift Management

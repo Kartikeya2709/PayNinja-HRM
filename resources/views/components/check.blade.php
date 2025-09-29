@@ -2,10 +2,10 @@
 <div class="main-sidebar sidebar-style-2">
     <aside id="sidebar-wrapper">
         <div class="sidebar-brand">
-            <a href="">PayNinja</a>
+            <a href="">RokcetHR</a>
         </div>
         <div class="sidebar-brand sidebar-brand-sm">
-            <a href="">PayNinja</a>
+            <a href="">RokcetHR</a>
         </div>
         <ul class="sidebar-menu">
             <li class="menu-header">Dashboard</li>

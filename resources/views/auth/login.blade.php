@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PayNinja - HRM</title>
+    <title>RokcetHR - HRM</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
 		@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -198,7 +198,7 @@
 		<div class="login-card">
 			<div class="login-logo-container"
 				style="height: 70px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-				<img src="{{ asset('/images/rocket-hr-logo.png') }}" alt="PayNinja Logo" class="login-logo"
+				<img src="{{ asset('/images/rocket-hr-logo.png') }}" alt="RokcetHR Logo" class="login-logo"
 					style="object-fit: contain;" />
 			</div>
 			<h2>Login</h2>

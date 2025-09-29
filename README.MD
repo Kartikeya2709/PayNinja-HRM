@@ -1,7 +1,7 @@
-# PayNinja-HRM: Comprehensive Human Resource Management System
+# RocketHR-HRM: Comprehensive Human Resource Management System
 
 ## Overview
-PayNinja-HRM is a full-featured Human Resource Management system built on Laravel 12 and integrated with the Stisla Bootstrap 5 template. It provides a robust platform for managing employee data, attendance, payroll, leave requests, reimbursements, and more, designed to streamline HR operations for companies of all sizes.
+RocketHR is a full-featured Human Resource Management system built on Laravel 12 and integrated with the Stisla Bootstrap 5 template. It provides a robust platform for managing employee data, attendance, payroll, leave requests, reimbursements, and more, designed to streamline HR operations for companies of all sizes.
 
 ## Key Features
 - Built on Laravel 12 with PHP 8.2+
