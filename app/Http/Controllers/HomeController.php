@@ -226,8 +226,8 @@ class HomeController extends Controller
             $absentees = $total_employees->filter(function ($employee) use ($present_employees) {
                 return !in_array($employee->id, $present_employees);
             })->values();
-
             $absentees_count = $absentees->count();
+            $absentees = $absentees->take(5); // Limit to 5 absentees for display
 
             //ClockIn data
 
@@ -253,6 +253,7 @@ class HomeController extends Controller
                 ->get();
 
             $labels = $departments->pluck('name');
+            // dd($labels);
             $data = $departments->pluck('employees_count');
             $colors = ['#ffcd56', '#ff6384', '#4bc0c0', '#36a2eb', '#9966ff', '#ff9f40'];
 
@@ -272,7 +273,8 @@ class HomeController extends Controller
                 ->where('status', '=', 'pending')
                 ->with('employee', 'approver')
                 ->latest()
-                ->paginate(10, ['*'], 'pending_page');
+                ->limit(5)
+                ->get();
 
             // Attendance status counts for today
             $todaysAttendance = Attendance::whereDate('date', Carbon::today())

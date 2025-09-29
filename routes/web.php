@@ -82,7 +82,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/blank-page', [App\Http\Controllers\HomeController::class, 'blank'])->name('blank');
 
     // Hakakses routes
-    Route::middleware(['role'])->group(function () {
+    Route::middleware(['role:superadmin'])->group(function () {
         Route::get('/hakakses', [App\Http\Controllers\HakaksesController::class, 'index'])->name('hakakses.index');
         Route::get('/hakakses/{user}/edit', [App\Http\Controllers\HakaksesController::class, 'edit'])->name('hakakses.edit');
         Route::put('/hakakses/{user}', [App\Http\Controllers\HakaksesController::class, 'update'])->name('hakakses.update');

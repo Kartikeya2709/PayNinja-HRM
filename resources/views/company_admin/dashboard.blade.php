@@ -2,28 +2,6 @@
 @section('title', 'Company Admin Dashboard')
 
 @push('styles')
-    <style>
-        /* Dashboard Switch Styling */
-        .form-check-input:checked {
-            background-color: #6777ef;
-            border-color: #6777ef;
-        }
-
-        .switch-label {
-            font-weight: 500;
-            color: #6777ef;
-            font-size: 0.9rem;
-        }
-
-        .form-check-input {
-            width: 2.5rem;
-            height: 1.25rem;
-        }
-
-        .form-check-label {
-            margin-left: 0.5rem;
-        }
-    </style>
     {{-- <style>
     .card-statistic {
       border-radius: 10px;
@@ -134,42 +112,18 @@
         <section class="section">
             <div class="section-header">
                 <h1>Dashboard Overview</h1>
-                <div class="section-header-breadcrumb">
-                    @if (auth()->user()->role === 'admin')
-                        <div class="breadcrumb-item active">
-                            <a href="http://127.0.0.1:8000/home">Dashboard</a>
-                            <form action="{{ route('dashboard.switch') }}" method="POST" class="d-inline ms-3">
-                                @csrf
-                                <div class="form-check form-switch d-inline-block">
-                                    <input class="form-check-input" type="checkbox" id="dashboardSwitch"
-                                        onchange="this.form.submit()"
-                                        {{ session('dashboard_mode') === 'employee' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="dashboardSwitch">
-                                        <span class="switch-label">
-                                            {{ session('dashboard_mode') === 'employee' ? 'Employee View' : 'Admin View' }}
-                                        </span>
-                                    </label>
-                                </div>
-                                <input type="hidden" name="mode"
-                                    value="{{ session('dashboard_mode') === 'employee' ? 'default' : 'employee' }}">
-                            </form>
-                        </div>
-                    @endif
-                    <div class="breadcrumb-item">Companies Users</div>
-                </div>
-
+                {{-- <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item">Namaskaram, {{ auth()->user()->name }}</div>
+                </div> --}}
             </div>
 
             <div class="row emp-card">
-
-        <!-- Employees Card -->
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1">
-          <div class="card card-statistic-1 card-hover card-str-1">
-
+                <!-- Employees Card -->
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1">
+                    <div class="card card-statistic-1 card-hover card-str-1">
                         <div class="card-wrap">
                             <div class="card-header">
                                 <h4>Total Employees</h4>
-
                                 <div class="card-body">
                                     {{ array_sum($companyRoleData->toArray()) }}
                                 </div>
@@ -177,20 +131,17 @@
 
                             <div class="card-icon">
                                 <i class="fas fa-users"></i>
-
                             </div>
                         </div>
                     </div>
                 </div>
 
-        <!-- Departments Card -->
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1">
-          <div class="card card-statistic-1 card-hover card-str-2">
-
+                <!-- Departments Card -->
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1">
+                    <div class="card card-statistic-1 card-hover card-str-2">
                         <div class="card-wrap">
                             <div class="card-header">
                                 <h4>Departments</h4>
-
                                 <div class="card-body">
                                     {{ $departmentCount }}
                                 </div>
@@ -203,27 +154,24 @@
                 </div>
 
 
-        <!-- Today's Attendance -->
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1 mobile-space">
-          <div class="card card-statistic-1 card-hover card-str-3">
-
+                <!-- Today's Attendance -->
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1 mobile-space">
+                    <div class="card card-statistic-1 card-hover card-str-3">
                         <div class="card-wrap">
                             <div class="card-header">
                                 <h4>Today's Attendance</h4>
-
-                <div id="presentCount" class="card-body">
-                  {{ $presentees_count }}
+                                <div id="presentCount" class="card-body">
+                                    {{ $presentees_count }}
+                                </div>
+                            </div>
+                            <div class="card-icon">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="card-icon">
-                <i class="fas fa-calendar-check"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1 mobile-space">
-          <div class="card card-statistic-1 card-hover card-str-4">
-
+                <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1 mobile-space">
+                    <div class="card card-statistic-1 card-hover card-str-4">
                         <div class="card-wrap">
                             <div class="card-header">
                                 <h4>Today's Absentees</h4>
@@ -241,101 +189,111 @@
             </div>
 
             <!-- Quick Actions Section -->
-
-
-      <div class="row mt-4">
-        <div class="col-lg-6 col-sm-12 px-1">
-          <div class="card emp-department p-4">
-            <h5 class="mb-3 text-center">Employee Distribution by Department</h5>
-            <canvas id="departmentChart"></canvas>
-          </div>
-        </div>
-        <div class="col-lg-6 px-1 mobile-space">
-          <div class="card emp-calender">
-            <div class="card-header">
-              <h5>Calendar</h5>
-            </div>
-            <div class="card-body">
-              <div id="employeeCalendar"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-       <div class="row mt-4">
-            <div class="col-lg-12 px-1 cash-dep">
-                <div class="card">
-                            <h5>Announcement List</h5>
-             <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-striped table-hover align-middle mb-0">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              @forelse ($announcements as $announcement)
-                <tr>
-                  <td>{{ $loop->iteration }}</td>
-                  <td>{{ $announcement->title }}</td>
-                  <td>{{ Str::limit($announcement->description, 50) }}</td>
-                  <td>{{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d') : '-' }}</td>
-                  <td>
-                    @php
-                      $now = \Carbon\Carbon::now();
-                      if ($announcement->publish_date && $now->lt($announcement->publish_date)) {
-                          $status = ['Upcoming', 'info'];
-                      } elseif ($announcement->expires_at && $now->gt($announcement->expires_at)) {
-                          $status = ['Completed', 'success'];
-                      } else {
-                          $status = ['Ongoing', 'warning'];
-                      }
-                    @endphp
-                    <span class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
-                  </td>
-                  <td>
-                    <a href="{{ route('company-admin.announcements.show', $announcement->id) }}" class="btn btn-sm btn-info">Show</a>
-                    <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}" class="btn btn-sm btn-primary ms-1">Edit</a>
-                    <form action="{{ route('company-admin.announcements.destroy', $announcement->id) }}" method="POST" style="display:inline;">
-                      @csrf
-                      @method('DELETE')
-                      <button class="btn btn-sm btn-danger ms-1" onclick="return confirm('Delete this announcement?')">Delete</button>
-                    </form>
-                  </td>
-                </tr>
-              @empty
-                <tr>
-                  <td colspan="6" class="text-center">No announcements found.</td>
-                </tr>
-              @endforelse
-             </tbody>
-          </table>
-        </div>
-      </div>
-
-          </div>
-        </div>
-        </div>
-      <div class="row mt-4">
-        <div class="col-lg-4 px-1">
-          <div class="quick-actions card">
-            <h5 class="pt-3 pb-3 ps-3">Quick Actions</h5>
-            <!-- Attendance Card -->
-            <div class="col-xl-12">
-              <a href="{{ route('attendance.dashboard') }}" class="action-card h-100">
-                <div class="card-body p-3">
-                  <div class="action-icon">
-                    <i class="fas fa-calendar-check"></i>
-                    <h6>Attendance</h6>
-                  </div>
+            <div class="row mt-4">
+                <div class="col-lg-6 col-sm-12 px-1">
+                    <div class="card emp-department p-4">
+                        <h5 class="mb-3 text-center">Employee Distribution by Department</h5>
+                        <canvas id="departmentChart" height="360"></canvas>
+                    </div>
                 </div>
-              </a>
+                <div class="col-lg-6 px-1 mobile-space">
+                    <div class="card emp-calender">
+                        <div class="card-header">
+                            <h5>Calendar</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="employeeCalendar"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="row mt-4">
+                <div class="col-lg-12 px-1 cash-dep">
+                    <div class="card">
+                        <h5>Announcement List</h5>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($announcements as $announcement)
+                                            <tr>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $announcement->title }}</td>
+                                                <td>{{ Str::limit($announcement->description, 50) }}</td>
+                                                <td>{{ $announcement->publish_date ? \Carbon\Carbon::parse($announcement->publish_date)->format('Y-m-d') : '-' }}
+                                                </td>
+                                                <td>
+                                                    @php
+                                                        $now = \Carbon\Carbon::now();
+                                                        if (
+                                                            $announcement->publish_date &&
+                                                            $now->lt($announcement->publish_date)
+                                                        ) {
+                                                            $status = ['Upcoming', 'info'];
+                                                        } elseif (
+                                                            $announcement->expires_at &&
+                                                            $now->gt($announcement->expires_at)
+                                                        ) {
+                                                            $status = ['Completed', 'success'];
+                                                        } else {
+                                                            $status = ['Ongoing', 'warning'];
+                                                        }
+                                                    @endphp
+                                                    <span
+                                                        class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
+                                                        class="btn btn-sm btn-info">Show</a>
+                                                    <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
+                                                        class="btn btn-sm btn-primary ms-1">Edit</a>
+                                                    <form
+                                                        action="{{ route('company-admin.announcements.destroy', $announcement->id) }}"
+                                                        method="POST" style="display:inline;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-sm btn-danger ms-1"
+                                                            onclick="return confirm('Delete this announcement?')">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center">No announcements found.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-lg-4 px-1">
+                    <div class="quick-actions card">
+                        <h5 class="pt-3 pb-3 ps-3">Quick Actions</h5>
+                        <!-- Attendance Card -->
+                        <div class="col-xl-12">
+                            <a href="{{ route('attendance.dashboard') }}" class="action-card h-100">
+                                <div class="card-body p-3">
+                                    <div class="action-icon">
+                                        <i class="fas fa-calendar-check"></i>
+                                        <h6>Attendance</h6>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
 
                         <!-- Departments Card -->
                         <div class="col-xl-12">
@@ -363,45 +321,43 @@
                             </a>
                         </div>
 
-            <!-- Employee Management Card -->
-            <div class="col-xl-12">
-              <a href="{{ route('company-admin.employees.index', ['companyId' => auth()->user()->company_id]) }}"
-                class="action-card h-100">
-                <div class="card-body p-3">
-                  <div class="action-icon">
-                    <i class="fas fa-users"></i>
-
-                    <h6>Employees</h6>
-                  </div>
+                        <!-- Employee Management Card -->
+                        <div class="col-xl-12">
+                            <a href="{{ route('company-admin.employees.index', ['companyId' => auth()->user()->company_id]) }}"
+                                class="action-card h-100">
+                                <div class="card-body p-3">
+                                    <div class="action-icon">
+                                        <i class="fas fa-users"></i>
+                                        <h6>Employees</h6>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
                 </div>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 px-1 mobile-space">
-          <div class="card p-4 attendance-height">
-            <h5 class="mb-3 attendance-card">Attendance Overview</h5>
-            <canvas id="attendanceChart"></canvas>
-          </div>
-        </div>
+                <div class="col-lg-4 col-md-6 px-1 mobile-space">
+                    <div class="card p-4 attendance-height">
+                        <h5 class="mb-3 attendance-card">Attendance Overview</h5>
+                        <canvas id="attendanceChart"></canvas>
+                    </div>
+                </div>
 
-
-        <div class="col-lg-4 col-md-6 px-1 mobile-space">
-          <div class="card card-glass new-old-emp">
-            <h5 class="mb-4">Employee Movement</h5>
-            <!-- New Joinees -->
-            <div class="mb-4 joinee-resign">
-              <div class="icon">
-                <i class="bi bi-person-plus-fill fs-1"></i>
-              </div>
-              <div class="joinee">
-                <h6>New Joinees</h6>
-                <h2>
-                  {{ $newJoineesCount }}
-                </h2>
-                <small class="text-muted">Employees joined</small>
-              </div>
-            </div>
+                <div class="col-lg-4 col-md-6 px-1 mobile-space">
+                    <div class="card card-glass new-old-emp">
+                        <h5 class="mb-4">Employee Movement</h5>
+                        <!-- New Joinees -->
+                        <div class="mb-4 joinee-resign">
+                            <div class="icon">
+                                <i class="bi bi-person-plus-fill fs-1"></i>
+                            </div>
+                            <div class="joinee">
+                                <h6>New Joinees</h6>
+                                <h2>
+                                    {{ $newJoineesCount }}
+                                </h2>
+                                <small class="text-muted">Employees joined</small>
+                            </div>
+                        </div>
 
                         <!-- Resigned Employees -->
                         <div class="joinee-resign">
@@ -421,13 +377,8 @@
                 <div class="col-lg-6 px-1">
                     <div class="card birthday-text">
                         <h5>Upcoming events</h5>
-
-
                         <div class="event-wrapper">
-
                             <div class="background" id="eventBackground"></div>
-
-
                             @if ($upcoming_birthday)
                                 <div class="event-card">
                                     <h6>🎉 {{ ucwords($upcoming_birthday->name) }}’s Birthday Celebration</h6>
@@ -439,285 +390,292 @@
                                     <p>No upcoming birthdays 🎂</p>
                                 </div>
                             @endif
-
-                            </div>
                         </div>
                     </div>
-        <div class="col-lg-6 px-1 mobile-space">
-          <div class="card today-not">
-            <h5 class="text-center">Today's Not Clock In</h5>
-            <div class="table-responsive">
-              <table class="table table-striped table-hover align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Employee Name</th>
-                    <th scope="col">Department</th>
-                    <th scope="col">Expected Shift</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse ($absentees as $index => $employee)
-                    <tr>
-                      <th scope="row">{{ $employee->id }}</th>
-                      <td>{{ $employee->name }}</td>
-                      <td>{{ $employee->department->name ?? 'N/A' }}</td>
-                      <td>10:00 AM - 06:30 PM</td>
-                    </tr>
-
+                </div>
+                <div class="col-lg-6 px-1 mobile-space">
+                    <div class="card today-not">
+                        <h5 class="text-center">Today's Not Clock In</h5>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Employee Name</th>
+                                        <th scope="col">Department</th>
+                                        <th scope="col">Expected Shift</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($absentees as $index => $employee)
+                                        <tr>
+                                            <th scope="row">{{ $employee->id }}</th>
+                                            <td>{{ $employee->name }}</td>
+                                            <td>{{ $employee->department->name ?? 'N/A' }}</td>
+                                            <td>10:00 AM - 06:30 PM</td>
+                                        </tr>
                                     @empty
+										<tr>
+											<td colspan="4" class="text-center">All employees have clocked in today!</td>
+										</tr>
                                     @endforelse
                                 </tbody>
                             </table>
                         </div>
-                        <p class="text-muted small mb-0 text-center">*These employees have not clocked in today</p>
+                        <div class="">
+                            <a href="{{ route('admin.attendance.index') }}" class="float-end">View All</a>
+                            <p class="text-muted small mb-0 float-start">*These employees have not clocked in today</p>
+                        </div>
                     </div>
-
                 </div>
             </div>
 
-
             <div class="row mt-4">
+                <div class="col-lg-7 px-1">
+                    <div class="card today-not">
+                        <h5 class="text-center">Reimbursement Approvals</h5>
+                        <div class="Reimburs-table">
+                            <table class="table table-bordered Reimbursements-table">
+                                <thead>
+                                    <tr>
+                                        <th>S No.</th>
+                                        <th>Date</th>
+                                        <th>Employee</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reimbursementTable">
+                                    @forelse ($reimbursements as $reimbursement)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('d M Y') }}
+                                            </td>
 
-        <div class="col-lg-7 px-1">
-          <div class="card today-not">
-            <h5 class="text-center">Reimbursement Approvals</h5>
-          <div class="Reimburs-table">
-            <table class="table table-bordered Reimbursements-table">
-                <thead>
-                    <tr>
-                        <th>S No.</th>
-                        <th>Date</th>
-                        
-                        <th>Employee</th>
-                        
-                        <th>Amount</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="reimbursementTable">
-                    @foreach($reimbursements as $reimbursement)
-                        <tr>
-                            <td>{{ $loop->iteration }}</td>
-                            <td>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('d M Y') }}</td>
-                            
-                            <td>{{ $reimbursement->employee->user->name }}</td>
-                            
-                            <td>₹{{ number_format($reimbursement->amount, 2) }}</td>
-                            <td>
-                                <span class="badge bg-{{ $reimbursement->status === 'pending' ? 'warning' : ($reimbursement->status === 'reporter_approved' ? 'info' : ($reimbursement->status === 'admin_approved' ? 'success' : 'danger')) }}">
-                                    {{ ucfirst($reimbursement->status) }}
-                                </span>
-                            </td>
-                            <td>
-                                <a href="{{ route('reimbursements.show', $reimbursement->id) }}" class="btn btn-outline-info btn-sm me-1">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-</div>
-</div>
-        </div>
-        <div class="col-lg-5 px-1 mobile-space">
-          <div class="card reg-req">
-            <h5 class="text-center">Regularization Requests</h5>
-            <div class="d-flex justify-content-center">
-              <div class="card-body card p-0">
-                <div class="table-responsive">
-                  <table class="table table-striped table-hover align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      @forelse ($pending_regularization_requests as $request)
-                        <tr>
-                          <td>{{ $request->id }}</td>
-                          <td>{{ $request->employee->name ?? 'N/A' }}</td>
-                          <td>
-                            <button class="btn btn-sm btn-success">View</button>
-                          </td>
-                        </tr>
+                                            <td>{{ $reimbursement->employee->user->name }}</td>
 
+                                            <td>₹{{ number_format($reimbursement->amount, 2) }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge bg-{{ $reimbursement->status === 'pending' ? 'warning' : ($reimbursement->status === 'reporter_approved' ? 'info' : ($reimbursement->status === 'admin_approved' ? 'success' : 'danger')) }}">
+                                                    {{ ucfirst($reimbursement->status) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('reimbursements.show', $reimbursement->id) }}" class="btn btn-outline-info btn-sm me-1">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center">No reimbursements found.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 px-1 mobile-space">
+                    <div class="card reg-req">
+                        <h5 class="text-center">Regularization Requests</h5>
+                        <div class="d-flex justify-content-center">
+                            <div class="card-body card p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover align-middle mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Name</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse ($pending_regularization_requests as $request)
+                                                <tr>
+                                                    <td>{{ $request->id }}</td>
+                                                    <td>{{ $request->employee->name ?? 'N/A' }}</td>
+                                                    <td>
+                                                        <a href="{{ route('regularization.requests.edit', $request->id) }}" class="btn btn-outline-info btn-sm py-0"><i class="fas fa-eye"></i> View</a>
+                                                    </td>
+                                                </tr>
                                             @empty
+												<tr>
+													<td colspan="3" class="text-center">No pending requests.</td>
+												</tr>
                                             @endforelse
                                         </tbody>
                                     </table>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="{{ route('regularization.requests.index') }}" class="float-end">View All</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
 
-      <div class="row mt-4">
-        <div class="col-lg-6 px-1">
-          <div class="card holiday-table">
-            <div class="card-header">
-              <h5 class>Upcoming Holidays</h5>
-            </div>
-            <div class="card-body p-0">
-              <div class="table-responsive">
-              <table class="table table-striped table-hover align-middle mb-0">
-                <thead class="table-light">
-                  <tr>
-                    <th>Date</th>
-                    <th>Day</th>
-                    <th>Holiday</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse ($academic_holidays as $holidays)
-                    <tr>
-                      <td>{{ Carbon\Carbon::parse($holidays->from_date)->format('d M Y') }}</td>
-                      <td>{{ Carbon\Carbon::parse($holidays->from_date)->format('l') }}</td>
-                      <td>{{ $holidays->name }}</td>
-                    </tr>
-                  @empty
-
-                  @endforelse
-
-                                </tbody>
-                            </table>
+            <div class="row mt-4">
+                <div class="col-lg-6 px-1">
+                    <div class="card holiday-table">
+                        <div class="card-header">
+                            <h5 class>Upcoming Holidays</h5>
                         </div>
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-hover align-middle mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Day</th>
+                                            <th>Holiday</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse ($academic_holidays as $holidays)
+                                            <tr>
+                                                <td>{{ Carbon\Carbon::parse($holidays->from_date)->format('d M Y') }}</td>
+                                                <td>{{ Carbon\Carbon::parse($holidays->from_date)->format('l') }}</td>
+                                                <td>{{ $holidays->name }}</td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="3" class="text-center">No upcoming holidays.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-  </div>
-    </div>
-    </div>
-    
-    <div class="col-lg-6 px-1 mobile-space">
-        <div class="card">
-<div class="card-body">
-<h5 class="text-center fw-bold">Field Approvals</h5>
-<div class="card-body p-0">
-             <div class="table-responsive">
-  <table class="table table-hover table-bordered mb-0">
-    <thead class="table-light">
-      <tr>
-        <th>Employee</th>
-        <th>Location</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Ruchi Bisht</td>
-        <td>New Delhi</td>
-        <td>
-          <button class="btn btn-sm btn-primary">View</button>
-          <button class="btn btn-sm btn-warning">Edit</button>
-          <button class="btn btn-sm btn-danger">Delete</button>
-        </td>
-      </tr>
-      <tr>
-        <td>Rahul Sharma</td>
-        <td>Mumbai</td>
-        <td>
-          <button class="btn btn-sm btn-primary">View</button>
-          <button class="btn btn-sm btn-warning">Edit</button>
-          <button class="btn btn-sm btn-danger">Delete</button>
-        </td>
-      </tr>
-      <tr>
-        <td>Anita Verma</td>
-        <td>Bangalore</td>
-        <td>
-          <button class="btn btn-sm btn-primary">View</button>
-          <button class="btn btn-sm btn-warning">Edit</button>
-          <button class="btn btn-sm btn-danger">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+                <div class="col-lg-6 px-1 mobile-space">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="text-center fw-bold">Field Approvals</h5>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-bordered mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>Employee</th>
+                                                <th>Location</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Ruchi Bisht</td>
+                                                <td>New Delhi</td>
+                                                <td>
+                                                    <button class="btn btn-outline-primary btn-sm py-0"><i class="fas fa-eye"></i>View</button>
+                                                    <button class="btn btn-outline-warning btn-sm py-0"><i class="fas fa-edit"></i>Edit</button>
+                                                    <button class="btn btn-outline-danger btn-sm py-0"><i class="fas fa-trash"></i>Delete</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Rahul Sharma</td>
+                                                <td>Mumbai</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary">View</button>
+                                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Anita Verma</td>
+                                                <td>Bangalore</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary">View</button>
+                                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
 
-</div>
-</div>
-</div>
-</div>
-
-
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
 
-  @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script>
-      // const ctx = document.getElementById('payrollChart');
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+        <script>
+            // const ctx = document.getElementById('payrollChart');
 
 
-      // const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
-      // gradient.addColorStop(0, 'rgba(255, 99, 132, 0.4)');
-      // gradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
+            // const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 400);
+            // gradient.addColorStop(0, 'rgba(255, 99, 132, 0.4)');
+            // gradient.addColorStop(1, 'rgba(255, 99, 132, 0)');
 
 
-      // new Chart(ctx, {
-      //   type: 'line',
-      //   data: {
-      //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      //     datasets: [{
-      //       label: 'Payroll Expense (₹ in Lakhs)',
-      //       data: [12, 15, 13, 14, 16, 18, 17, 19, 20, 18, 17, 21],
-      //       fill: true,
-      //       backgroundColor: gradient,
-      //       borderColor: '#ff5c5c',
-      //       borderWidth: 2,
-      //       tension: 0.3,
-      //       pointBackgroundColor: '#fff',
-      //       pointBorderColor: '#ff5c5c',
-      //       pointBorderWidth: 2,
-      //       pointRadius: 5,
-      //       pointHoverRadius: 7,
-      //     }]
-      //   },
-      //   options: {
-      //     responsive: true,
-      //     maintainAspectRatio: false,
-      //     plugins: {
-      //       legend: {
-      //         display: true,
-      //         labels: {
-      //           boxWidth: 20,
-      //           usePointStyle: false,
-      //           font: {
-      //             size: 13,
-      //             weight: 'bold'
-      //           }
-      //         },
-      //         position: 'top',
-      //       },
-      //     },
-      //     scales: {
-      //       y: {
-      //         beginAtZero: true,
-      //         ticks: {
-      //           callback: (val) => `₹${val}L`
-      //         },
-      //         grid: { drawBorder: false }
-      //       },
-      //       x: {
-      //         grid: { display: false }
-      //       }
-      //     }
-      //   }
-      // });
+            // new Chart(ctx, {
+            //   type: 'line',
+            //   data: {
+            //     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            //     datasets: [{
+            //       label: 'Payroll Expense (₹ in Lakhs)',
+            //       data: [12, 15, 13, 14, 16, 18, 17, 19, 20, 18, 17, 21],
+            //       fill: true,
+            //       backgroundColor: gradient,
+            //       borderColor: '#ff5c5c',
+            //       borderWidth: 2,
+            //       tension: 0.3,
+            //       pointBackgroundColor: '#fff',
+            //       pointBorderColor: '#ff5c5c',
+            //       pointBorderWidth: 2,
+            //       pointRadius: 5,
+            //       pointHoverRadius: 7,
+            //     }]
+            //   },
+            //   options: {
+            //     responsive: true,
+            //     maintainAspectRatio: false,
+            //     plugins: {
+            //       legend: {
+            //         display: true,
+            //         labels: {
+            //           boxWidth: 20,
+            //           usePointStyle: false,
+            //           font: {
+            //             size: 13,
+            //             weight: 'bold'
+            //           }
+            //         },
+            //         position: 'top',
+            //       },
+            //     },
+            //     scales: {
+            //       y: {
+            //         beginAtZero: true,
+            //         ticks: {
+            //           callback: (val) => `₹${val}L`
+            //         },
+            //         grid: { drawBorder: false }
+            //       },
+            //       x: {
+            //         grid: { display: false }
+            //       }
+            //     }
+            //   }
+            // });
 
             // Attendance Pie Chart
             const ctxAttend = document.getElementById('attendanceChart').getContext('2d');
             new Chart(ctxAttend, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Present', 'Absent', 'On Leave', 'Half Day', 'Late'],
+                    labels: ['Present', 'Absent', 'On Leave', 'Half Day', 'Late', 'Not Marked'],
                     datasets: [{
                         label: 'Employees',
                         data: [
@@ -725,9 +683,10 @@
                             {{ $attendanceCounts['Absent'] }},
                             {{ $attendanceCounts['On Leave'] }},
                             {{ $attendanceCounts['Half Day'] }},
-                            {{ $attendanceCounts['Late'] }}
+                            {{ $attendanceCounts['Late'] }},
+                            {{ $absentees_count }}
                         ],
-                        backgroundColor: ['#4bc0c0', '#ff6384', '#ffcd56', '#9f2b68', '#9966ff'],
+                        backgroundColor: ['#4bc0c0', '#ff6384', '#ffcd56', '#9f2b68', '#9966ff', '#a3a3a3'],
                     }]
                 },
                 options: {
