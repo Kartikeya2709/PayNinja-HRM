@@ -115,6 +115,8 @@ class EmployeeController extends Controller
             'address' => 'nullable|string|max:500',
         ]);
 
+        // dd();
+
         // Create user
         $user = User::create([
             'name' => $validated['name'],
