@@ -538,7 +538,12 @@ class CompanyAdminController extends Controller
             'ctc' => 'required|numeric|min:0',
             'basic_salary' => 'required|numeric|min:0',
             'bank_name' => 'required|string',
-            'account_number' => 'required|string',
+             'account_number' => [
+                    'required',
+                    'digits_between:9,18',   // Most Indian bank A/C numbers are 9–18 digits
+                    'unique:employee_salaries,account_number',
+                ],
+
             'ifsc_code' => 'required|string',
             'pan_number' => 'required|string',
             // Other Details
@@ -815,7 +820,7 @@ class CompanyAdminController extends Controller
         \Log::info('CompanyAdminController@storeEmployee called');
         $user = Auth::user();
         $company = $user->employee->company;
-
+//  'email' => 'required|email|unique:users,email',
         // Validate the request
         $validated = $request->validate([
             // Basic Information
@@ -824,9 +829,9 @@ class CompanyAdminController extends Controller
             'gender' => 'required|in:male,female,other',
             'dob' => 'required|date',
             'marital_status' => 'required|in:single,married,divorced,widowed',
-            'contact_number' => 'required|string|max:20',
-            'personal_email' => 'required|email',
-            'official_email' => 'nullable|email',
+           'contact_number' => 'required|digits:10|unique:employees,phone',
+           'personal_email' => 'required|email|unique:employees,email',
+            'official_email' => 'nullable|email|',
             'current_address' => 'required|string',
             'permanent_address' => 'required|string',
             // Job Details
@@ -844,7 +849,7 @@ class CompanyAdminController extends Controller
             'bank_name' => 'required|string',
             'account_number' => 'required|string',
             'ifsc_code' => 'required|string',
-            'pan_number' => 'required|string',
+            'pan_number' => ['required','regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/','unique:employees,pan_number'],
             // Other Details
             'emergency_contact' => 'nullable|string|max:20',
             'emergency_contact_relation' => 'nullable|string',

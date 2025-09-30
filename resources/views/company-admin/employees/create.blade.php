@@ -84,14 +84,39 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="contact_number" class="form-label">Contact Number <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="contact_number" maxlength="10" name="contact_number" value="{{ old('contact_number') }}" required>
+                                        <input type="text"
+                                            class="form-control @error('contact_number') is-invalid @enderror"
+                                            id="contact_number"
+                                            name="contact_number"
+                                            maxlength="10"
+                                            value="{{ old('contact_number') }}"
+                                            required>
+                                        @error('contact_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
+
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
+                                    <!-- <div class="col-md-6 mb-3">
                                         <label for="personal_email" class="form-label">Personal Email ID <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control" id="personal_email" name="personal_email" value="{{ old('personal_email') }}" required>
+                                            @error('personal_email')
+                                               <span class="text-danger">{{ $message }}</span>
+                                              @enderror
+                                    </div> -->
+
+
+                                   <div class="col-md-6 mb-3">
+                                        <label for="personal_email" class="form-label">Personal Email ID <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control @error('personal_email') is-invalid @enderror"
+                                            id="personal_email" name="personal_email"
+                                            value="{{ old('personal_email') }}" required>
+                                        @error('personal_email')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
+
                                     <div class="col-md-6 mb-3">
                                         <label for="official_email" class="form-label">Official Email ID</label>
                                         <input type="email" class="form-control" id="official_email" name="official_email" value="{{ old('official_email') }}">
@@ -206,10 +231,22 @@
                                         <label for="bank_name" class="form-label">Bank Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="bank_name" name="bank_name" value="{{ old('bank_name') }}" required>
                                     </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="account_number" class="form-label">Account Number <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="account_number" name="account_number" value="{{ old('account_number') }}" required>
-                                    </div>
+                                   <div class="col-md-6 mb-3">
+                                        <label for="account_number" class="form-label">
+                                            Bank Account Number <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text"
+                                            class="form-control @error('account_number') is-invalid @enderror"
+                                            id="account_number"
+                                            name="account_number"
+                                            value="{{ old('account_number') }}"
+                                            maxlength="18"
+                                            required>
+                                        @error('account_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                       </div>
+
                                 </div>
                                     <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -218,10 +255,27 @@
                                     </div>
                                 
                                 
-                                    <div class="col-md-6 mb-3">
+                                    <!-- <div class="col-md-6 mb-3">
                                         <label for="pan_number" class="form-label">PAN Card Number <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control text-uppercase" id="pan_number" name="pan_number" value="{{ old('pan_number') }}" style="text-transform:uppercase" required>
-                                    </div>
+                                    </div> -->
+                                    <div class="col-md-6 mb-3">
+                                            <label for="pan_number" class="form-label">
+                                                PAN Card Number <span class="text-danger">*</span>
+                                            </label>
+                                            <input type="text"
+                                                class="form-control text-uppercase @error('pan_number') is-invalid @enderror"
+                                                id="pan_number"
+                                                name="pan_number"
+                                                maxlength="10"
+                                                value="{{ old('pan_number') }}"
+                                                style="text-transform:uppercase"
+                                                required>
+                                            @error('pan_number')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                       </div>
+
                                 </div>
                                 <div class="d-flex justify-content-between mt-4">
                                     <a href="{{ route('company-admin.employees.index') }}" class="btn btn-secondary">
