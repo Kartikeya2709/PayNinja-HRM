@@ -46,18 +46,22 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $department->name }}</td>
-                                        <td>{{ $department->description }}</td>
+                                        <td>{{ $department->description ?? 'N/A' }}</td>
                                         <td>
-                                            <a href="{{ route('company.departments.edit', ['companyId' => Auth::user()->company_id, 'department' => $department]) }}" class="btn btn-sm btn-info">
-                                                Edit
-                                            </a>
-                                            <form action="{{ route('company.departments.destroy', ['companyId' => Auth::user()->company_id, 'department' => $department]) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this department?')">
-                                                    Delete
-                                                </button>
-                                            </form>
+                                            <div class="btn-group btn-group-sm" >
+                                                <a href="{{ route('company.departments.edit', ['companyId' => Auth::user()->company_id, 'department' => $department]) }}" class="btn btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Record" aria-label="Edit">
+                                                    <span class="btn-content">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </span>
+                                                </a>
+                                                {{-- <form action="{{ route('company.departments.destroy', ['companyId' => Auth::user()->company_id, 'department' => $department]) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure you want to delete this department?')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form> --}}
+                                            </div>
                                         </td>
                                     </tr>
                                 @empty

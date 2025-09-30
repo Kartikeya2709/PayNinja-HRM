@@ -282,16 +282,16 @@
                             <span>Company Settings</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('company/designations*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('company.designations.index') }}">
-                            <i class="fas fa-id-badge"></i>
-                            <span>Manage Designations</span>
-                        </a>
-                    </li>
                     <li class="{{ Request::is('company/departments*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company.departments.index') }}">
                             <i class="fas fa-building"></i>
                             <span>Manage Departments</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('company/designations*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company.designations.index') }}">
+                            <i class="fas fa-id-badge"></i>
+                            <span>Manage Designations</span>
                         </a>
                     </li>
                     {{-- <li class="{{ Request::is('company/teams*') ? 'active' : '' }}">
@@ -500,16 +500,16 @@
                                 <span>Company Settings</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('company/designations*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('company.designations.index') }}">
-                                <i class="fas fa-id-badge"></i>
-                                <span>Manage Designations</span>
-                            </a>
-                        </li>
                         <li class="{{ Request::is('company/departments*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.departments.index') }}">
                                 <i class="fas fa-building"></i>
                                 <span>Manage Departments</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('company/designations*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('company.designations.index') }}">
+                                <i class="fas fa-id-badge"></i>
+                                <span>Manage Designations</span>
                             </a>
                         </li>
                         {{-- <li class="{{ Request::is('company/teams*') ? 'active' : '' }}">
