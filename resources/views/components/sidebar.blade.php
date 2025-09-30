@@ -169,7 +169,7 @@
                     @endif
 
                     <!-- Payroll Management -->
-                    {{-- @if ($hasModuleAccess('payroll', 'employee'))
+                    @if ($hasModuleAccess('payroll', 'employee'))
                         <li class="menu-header">Payroll Management</li>
                         @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
                             <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
@@ -179,7 +179,7 @@
                                 </a>
                             </li>
                         @endif
-                    @endif --}}
+                    @endif
 
                     <!-- Reimbursements -->
                     @if ($hasModuleAccess('reimbursement', 'employee'))
@@ -270,12 +270,12 @@
 
                     <!-- Team Management -->
                     <li class="menu-header">Team Management</li>
-                    {{-- <li class="{{ Request::is('company-admin/module-access*') ? 'active' : '' }}">
+                    <li class="{{ Request::is('company-admin/module-access*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company-admin.module-access.index') }}">
                             <i class="fas fa-key"></i>
                             <span>Module Access</span>
                         </a>
-                    </li> --}}
+                    </li>
                     <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company-admin.settings.index') }}">
                             <i class="fas fa-cog"></i>
@@ -372,7 +372,7 @@
                     </li> --}}
 
                     <!-- Payroll Management -->
-                    {{-- <li class="menu-header">Payroll Management</li>
+                    <li class="menu-header">Payroll Management</li>
                     <li class="nav-item dropdown {{ Request::is('admin/payroll*') ? 'active' : '' }}">
                         <a href="#" class="nav-link has-dropdown"><i
                                 class="fas fa-file-invoice-dollar"></i><span>Payroll</span></a>
@@ -397,7 +397,7 @@
                                     Configs</a>
                             </li>
                         </ul>
-                    </li> --}}
+                    </li>
 
                      <!-- reimbursement Management -->
                      @if ($hasModuleAccess('reimbursement', 'admin'))
@@ -433,14 +433,14 @@
 
                 {{-- Employee Payslip --}}
                 {{-- @if ($hasModuleAccess('payroll', 'employee'))
-                @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
-                <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
-                        <i class="fas fa-file-pdf"></i>
-                        <span>My Payslips</span>
-                    </a>
-                </li>
-                @endif
+                    @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
+                    <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
+                            <i class="fas fa-file-pdf"></i>
+                            <span>My Payslips</span>
+                        </a>
+                    </li>
+                    @endif
                 @endif --}}
 
                 <!-- Employee Routes -->
@@ -488,12 +488,12 @@
                     <!-- Team Management -->
                     @if ($hasModuleAccess('team', 'admin'))
                         <li class="menu-header">Team Management</li>
-                        {{-- <li class="{{ Request::is('company-admin/module-access*') ? 'active' : '' }}">
+                        <li class="{{ Request::is('company-admin/module-access*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company-admin.module-access.index') }}">
                                 <i class="fas fa-key"></i>
                                 <span>Module Access</span>
                             </a>
-                        </li> --}}
+                        </li>
                         <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company-admin.settings.index') }}">
                                 <i class="fas fa-cog"></i>
@@ -588,7 +588,7 @@
 
 
                     <!-- Payroll Management -->
-                    {{-- @if ($hasModuleAccess('payroll', 'admin'))
+                    @if ($hasModuleAccess('payroll', 'admin'))
                         <li class="menu-header">Payroll Management</li>
                         <li class="nav-item dropdown {{ Request::is('admin/payroll*') ? 'active' : '' }}">
                             <a href="#" class="nav-link has-dropdown"><i
@@ -616,10 +616,10 @@
                             </ul>
                         </li>
                         </li>
-                    @endif --}}
+                    @endif
 
                     <!-- Payslip Management -->
-                    {{-- @if ($hasModuleAccess('payroll', 'employee'))
+                    @if ($hasModuleAccess('payroll', 'employee'))
                         @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
                             <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
                                 <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
@@ -628,7 +628,7 @@
                                 </a>
                             </li>
                         @endif
-                    @endif --}}
+                    @endif
 
                     <!-- reimbursement Management -->
                     @if ($hasModuleAccess('reimbursement', 'admin'))
