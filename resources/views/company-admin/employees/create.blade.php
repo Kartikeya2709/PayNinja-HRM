@@ -46,8 +46,9 @@
                                         @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="parent_name" class="form-label">Father’s / Mother’s Name</label>
+                                        <label for="parent_name" class="form-label">Father’s / Mother’s Name<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="parent_name" name="parent_name" value="{{ old('parent_name') }}">
+                                         @error('parent_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
@@ -154,7 +155,7 @@
                                         <input type="date" class="form-control" id="joining_date" name="joining_date" value="{{ old('joining_date') }}" required>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="department_id" class="form-label">Department <span class="text-danger">*</span></label>
                                         <select class="form-select" id="department_id" name="department_id" required>
@@ -171,6 +172,29 @@
                                             @foreach($designations as $designation)
                                                 <option value="{{ $designation->id }}" {{ old('designation_id') == $designation->id ? 'selected' : '' }}>{{ $designation->title }}</option>
                                             @endforeach
+                                        </select>
+                                    </div>
+                                </div> -->
+
+
+                                <!-- new fresh code wirte here -->
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="department_id" class="form-label">Department <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="department_id" name="department_id" required>
+                                            <option value="">Select Department</option>
+                                            @foreach($departments as $department)
+                                                <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
+                                                    {{ $department->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="designation_id" class="form-label">Designation <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="designation_id" name="designation_id" required>
+                                            <option value="">Select Designation</option>
                                         </select>
                                     </div>
                                 </div>
@@ -432,6 +456,39 @@
 @endpush
 @push('scripts')
 <script>
+// correct designations  loads JS object 
+let allDesignations = @json($designations);
+
+document.addEventListener("DOMContentLoaded", function () {
+    let deptSelect = document.getElementById('department_id');
+    let designationSelect = document.getElementById('designation_id');
+    let oldDesignation = "{{ old('designation_id') }}";
+
+    function filterDesignations(deptId, preselected = null) {
+        designationSelect.innerHTML = '<option value="">Select Designation</option>';
+        let filtered = allDesignations.filter(d => d.department_id == deptId);
+
+        filtered.forEach(function(d) {
+            let option = document.createElement('option');
+            option.value = d.id;
+            option.text = d.title;
+            if (preselected && preselected == d.id) option.selected = true;
+            designationSelect.add(option);
+        });
+    }
+
+    // Department change
+    deptSelect.addEventListener('change', function () {
+        filterDesignations(this.value);
+    });
+
+    // Page load (old value)
+    if (deptSelect.value) {
+        filterDesignations(deptSelect.value, oldDesignation);
+    }
+});
+
+
     // Disable DOB dates less than 18 years from now
     document.addEventListener('DOMContentLoaded', function() {
         var dob = document.getElementById('dob');

@@ -13,7 +13,7 @@
         <div class="col-md-8 offset-md-2">
             <div class="card">
                 <div class="card-header justify-content-center mb-2">
-                    <h3 class="card-title">Create New Designation</h3>
+                    <h3 class="card-title">Create New Designation </h3>
                 </div>
                 <div class="card-body">
                     <form action="{{ route('company.designations.store') }}" method="POST">
@@ -27,13 +27,28 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="level">Level</label>
+                            <label for="level">Level<span class="text-danger">*</span></label>
                             <input type="text" name="level" id="level" class="form-control @error('level') is-invalid @enderror" value="{{ old('level') }}" required>
                             <small class="form-text text-muted">Enter the designation level (e.g., Employee, Team Lead, Manager, etc.)</small>
                             @error('level')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
+                        <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="department_id" class="form-label">Department<span class="text-danger">*</span></label>
+                                    <select class="form-select" id="department_id" name="department_id" required>
+                                        <option value="">Select Department</option>
+                                        @foreach($departments as $department)
+                                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                                        @endforeach
+                                    </select>
+                                     @error('level')
+                                       <span class="invalid-feedback">{{ $message }}</span>
+                                     @enderror
+                                </div>
+                            </div>
+
 
                         <div class="form-group mt-3">
                             <label for="description">Description</label>
