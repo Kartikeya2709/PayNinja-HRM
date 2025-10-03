@@ -577,7 +577,7 @@ class CompanyAdminController extends Controller
 
             'ifsc_code' => 'required|string',
             // 'pan_number' => 'required|string',
-            'pan_number' => 'required',
+             'pan_number' => ['required','regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/','unique:employees,pan_number'],
             // Other Details
             'emergency_contact' => 'nullable|string|max:10',
             'emergency_contact_relation' => 'nullable|string',

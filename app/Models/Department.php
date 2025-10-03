@@ -35,25 +35,4 @@ class Department extends Model
     {
         return $this->department ? $this->department->name : null;
     }
-
-   
-
-    public function designations()
-    {
-        return $this->hasMany(Designation::class, 'department_id');
-    }
-
-
-
-         protected $appends = ['department_name'];
-
-        public function department()
-        {
-            return $this->belongsTo(Department::class, 'department_id');
-        }
-
-        public function getDepartmentNameAttribute()
-        {
-            return $this->department ? $this->department->name : null;
-        }
 }
