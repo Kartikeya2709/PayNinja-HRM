@@ -485,6 +485,26 @@ class CompanyAdminController extends Controller
     /**
      * Show the form for editing an employee.
      */
+    // public function editEmployee($id)
+    // {
+    //     $user = Auth::user();
+    //     $company = $user->employee->company;
+
+    //     $employee = \App\Models\Employee::with(['currentSalary'])
+    //         ->where('company_id', $company->id)
+    //         ->findOrFail($id);
+
+    //     $departments = \App\Models\Department::where('company_id', $company->id)->get();
+    //     $designations = \App\Models\Designation::where('company_id', $company->id)->get();
+    //     $managers = \App\Models\Employee::where('company_id', $company->id)->get();
+    //     // Fetch employee documents
+    //     $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
+
+    //     return view('company-admin.employees.edit', compact('employee', 'departments', 'designations', 'managers', 'company', 'documents'));
+    // }
+
+
+
     public function editEmployee($id)
     {
         $user = Auth::user();
@@ -495,13 +515,26 @@ class CompanyAdminController extends Controller
             ->findOrFail($id);
 
         $departments = \App\Models\Department::where('company_id', $company->id)->get();
-        $designations = \App\Models\Designation::where('company_id', $company->id)->get();
-        $managers = \App\Models\Employee::where('company_id', $company->id)->get();
-        // Fetch employee documents
-        $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
 
-        return view('company-admin.employees.edit', compact('employee', 'departments', 'designations', 'managers', 'company', 'documents'));
+        // Fetch only designations related to employee's department for edit preselect
+        $designations = $employee->department_id
+            ? \App\Models\Designation::where('company_id', $company->id)
+                ->where('department_id', $employee->department_id)
+                ->get()
+            : collect(); // empty collection if department not set
+
+        $managers = \App\Models\Employee::where('company_id', $company->id)->get();
+
+        // Fetch employee documents
+        $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)
+            ->get()
+            ->groupBy('type');
+
+        return view('company-admin.employees.edit', compact(
+            'employee', 'departments', 'designations', 'managers', 'company', 'documents'
+        ));
     }
+
 
     /**
      * Update the specified employee in storage.
@@ -516,12 +549,14 @@ class CompanyAdminController extends Controller
         $validated = $request->validate([
             // Basic Information
             'name' => 'required|string|max:255',
-            'parent_name' => 'nullable|string|max:255',
+            'parent_name' => 'required|string|max:255',
             'gender' => 'required|in:male,female,other',
             'dob' => 'required|date',
             'marital_status' => 'required|in:single,married,divorced,widowed',
-            'contact_number' => 'required|string|max:20',
+            // 'contact_number' => 'required|string|max:20',
             'personal_email' => 'required|email',
+            'contact_number' => 'required|digits:10',
+            'personal_email' => 'required|email|unique:employees,email,' . $employee->id,
             'official_email' => 'nullable|email',
             'current_address' => 'required|string',
             'permanent_address' => 'required|string',
@@ -538,16 +573,13 @@ class CompanyAdminController extends Controller
             'ctc' => 'required|numeric|min:0',
             'basic_salary' => 'required|numeric|min:0',
             'bank_name' => 'required|string',
-             'account_number' => [
-                    'required',
-                    'digits_between:9,18',   // Most Indian bank A/C numbers are 9–18 digits
-                    'unique:employee_salaries,account_number',
-                ],
+            'account_number' => 'required|string',
 
             'ifsc_code' => 'required|string',
-            'pan_number' => 'required|string',
+            // 'pan_number' => 'required|string',
+            'pan_number' => 'required',
             // Other Details
-            'emergency_contact' => 'nullable|string|max:20',
+            'emergency_contact' => 'nullable|string|max:10',
             'emergency_contact_relation' => 'nullable|string',
             'emergency_contact_name' => 'nullable|string',
             'blood_group' => 'nullable|string',
@@ -849,7 +881,7 @@ class CompanyAdminController extends Controller
             'bank_name' => 'required|string',
             'account_number' => 'required|string',
             'ifsc_code' => 'required|string',
-            'pan_number' => ['required','regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/','unique:employees,pan_number'],
+            'pan_number' => 'required','unique:employee_salaries,pan_number',
             // Other Details
             'emergency_contact' => 'nullable|string|max:20',
             'emergency_contact_relation' => 'nullable|string',

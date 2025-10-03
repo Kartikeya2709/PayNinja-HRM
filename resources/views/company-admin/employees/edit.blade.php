@@ -46,8 +46,9 @@
                                         @error('name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="parent_name" class="form-label">Father’s / Mother’s Name</label>
+                                        <label for="parent_name" class="form-label">Father’s / Mother’s Name<span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="parent_name" name="parent_name" value="{{ old('parent_name', $employee->parent_name) }}">
+                                          @error('parent_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
@@ -84,7 +85,10 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="contact_number" class="form-label">Contact Number <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="contact_number" maxlength="10" name="contact_number" value="{{ old('contact_number', $employee->contact_number ?? $employee->phone) }}" required>
+                                        <input type="text" class="form-control @error('contact_number') is-invalid @enderror" id="contact_number" maxlength="10" name="contact_number" value="{{ old('contact_number', $employee->contact_number ?? $employee->phone) }}" required>
+                                        @error('contact_number')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <div class="row">
@@ -139,7 +143,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-6 mb-3">
+                                    <!-- <div class="col-md-6 mb-3">
                                         <label for="designation_id" class="form-label">Designation <span class="text-danger">*</span></label>
                                         <select class="form-select" id="designation_id" name="designation_id" required>
                                             <option value="">Select Designation</option>
@@ -147,8 +151,20 @@
                                                 <option value="{{ $designation->id }}" {{ old('designation_id', $employee->designation_id) == $designation->id ? 'selected' : '' }}>{{ $designation->title }}</option>
                                             @endforeach
                                         </select>
+                                    </div> -->
+                                    <div class="col-md-6 mb-3">
+                                        <label for="designation_id" class="form-label">Designation <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="designation_id" name="designation_id" required>
+                                            <option value="">Select Designation</option>
+                                            @foreach($designations as $designation)
+                                                <option value="{{ $designation->id }}" 
+                                                    {{ old('designation_id', $employee->designation_id) == $designation->id ? 'selected' : '' }}>
+                                                    {{ $designation->title }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                </div>
+                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="location" class="form-label">Location / Branch <span class="text-danger">*</span></label>

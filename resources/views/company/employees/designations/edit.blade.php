@@ -20,7 +20,7 @@
                         @csrf
                         @method('PUT')
                         <div class="form-group">
-                            <label for="title">Title</label>
+                            <label for="title">Title<span class="text-danger">*</span></label>
                             <input type="text" name="title" id="title" class="form-control @error('title') is-invalid @enderror" value="{{ old('title', $designation->title) }}" required>
                             @error('title')
                                 <span class="invalid-feedback">{{ $message }}</span>
@@ -28,10 +28,25 @@
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="level">Level</label>
+                            <label for="level">Level<span class="text-danger">*</span></label>
                             <input type="text" name="level" id="level" class="form-control @error('level') is-invalid @enderror" value="{{ old('level', $designation->level) }}" required>
                             <small class="form-text text-muted">Enter the designation level (e.g., Employee, Team Lead, Manager, etc.)</small>
                             @error('level')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="department_id" class="form-label">Department<span class="text-danger">*</span></label>
+                            <select name="department_id" id="department_id" class="form-select @error('department_id') is-invalid @enderror">
+                                <option value="">Select Department</option>
+                                @foreach($departments as $department)
+                                    <option value="{{ $department->id }}" {{ old('department_id', $designation->department_id ?? '') == $department->id ? 'selected' : '' }}>
+                                        {{ $department->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('department_id')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>

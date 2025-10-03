@@ -6,6 +6,8 @@ use App\Models\Designation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\Department;
+
 class DesignationManagementController extends Controller
 {
     public function __construct()
@@ -18,8 +20,11 @@ class DesignationManagementController extends Controller
      */
     public function index()
     {
-        $designations = Designation::where('company_id', auth()->user()->company_id)->get();
-        return view('company.employees.designations.index', compact('designations'));
+        $designations = Designation::with('department')
+            ->where('company_id', auth()->user()->company_id)
+            ->get();
+
+         return view('company.employees.designations.index', compact('designations'));
     }
 
     /**
@@ -28,7 +33,8 @@ class DesignationManagementController extends Controller
      */
     public function create()
     {
-        return view('company.employees.designations.create');
+        $departments= Department::with("designations")->get();    
+        return view('company.employees.designations.create', compact('departments'));
     }
 
     /**
@@ -39,14 +45,16 @@ class DesignationManagementController extends Controller
         $request->validate([
             'title' => 'required|string|max:255|unique:designations,title,NULL,id,company_id,' . auth()->user()->company_id,
             'description' => 'nullable|string',
-            'level' => 'required|string|max:255'
+            'level' => 'required|string|max:255',
+            'department_id'=> 'required|exists:departments,id',
         ]);
 
         Designation::create([
             'company_id' => auth()->user()->company_id,
             'title' => $request->title,
             'description' => $request->description,
-            'level' => $request->level
+            'level' => $request->level,
+            'department_id'=>$request->department_id,
         ]);
 
         return redirect()->route('company.designations.index', ['companyId' => auth()->user()->company_id])
@@ -61,7 +69,9 @@ class DesignationManagementController extends Controller
         if ($designation->company_id !== auth()->user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        return view('company.employees.designations.edit', compact('designation'));
+         // fetch only departments of the same company
+        $departments = Department::where('company_id', auth()->user()->company_id)->get();
+        return view('company.employees.designations.edit', compact('designation', 'departments'));
     }
 
     /**
@@ -72,14 +82,19 @@ class DesignationManagementController extends Controller
         if ($designation->company_id !== auth()->user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
+
+        // Validate input
         $request->validate([
             'title' => 'required|string|max:255|unique:designations,title,' . $designation->id . ',id,company_id,' . auth()->user()->company_id,
+            'department_id' => 'required|exists:departments,id',
             'description' => 'nullable|string',
-            'level' => 'required|string|max:255'
+            'level' => 'required|string|max:255',
         ]);
 
+        // Update designation
         $designation->update([
             'title' => $request->title,
+            'department_id' => $request->department_id,
             'description' => $request->description,
             'level' => $request->level
         ]);

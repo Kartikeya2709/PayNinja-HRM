@@ -33,6 +33,7 @@
                             <tr>
                                 <th>Title</th>
                                 <th>Level</th>
+                                <th>Department</th>
                                 <th>Description</th>
                                 <th>Actions</th>
                             </tr>
@@ -42,6 +43,7 @@
                                 <tr>
                                     <td>{{ $designation->title }}</td>
                                     <td>{{ $designation->level }}</td>
+                                    <td>{{ $designation->department_name ?? 'N/A' }}</td>
                                     <td>{{ $designation->description ?? 'N/A' }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
