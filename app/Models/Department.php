@@ -17,6 +17,23 @@ class Department extends Model
     public function employees()
     {
         return $this->hasMany(Employee::class);
+    }   
+
+    public function designations()
+    {
+        return $this->hasMany(Designation::class, 'department_id');
+    }
+
+    protected $appends = ['department_name'];
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function getDepartmentNameAttribute()
+    {
+        return $this->department ? $this->department->name : null;
     }
 
    

@@ -556,7 +556,7 @@ class CompanyAdminController extends Controller
             // 'contact_number' => 'required|string|max:20',
             'personal_email' => 'required|email',
             'contact_number' => 'required|digits:10',
-        //    'personal_email' => 'required|email|unique:employees,email',
+            'personal_email' => 'required|email|unique:employees,email,' . $employee->id,
             'official_email' => 'nullable|email',
             'current_address' => 'required|string',
             'permanent_address' => 'required|string',
@@ -573,11 +573,11 @@ class CompanyAdminController extends Controller
             'ctc' => 'required|numeric|min:0',
             'basic_salary' => 'required|numeric|min:0',
             'bank_name' => 'required|string',
-             'account_number' => 'required|string',
+            'account_number' => 'required|string',
 
             'ifsc_code' => 'required|string',
             // 'pan_number' => 'required|string',
-             'pan_number' => 'required','unique:employee_salaries,pan_number',
+            'pan_number' => 'required',
             // Other Details
             'emergency_contact' => 'nullable|string|max:10',
             'emergency_contact_relation' => 'nullable|string',

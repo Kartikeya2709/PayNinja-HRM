@@ -35,8 +35,9 @@
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
-                             <div class="mb-3">
-                                <label for="department_id" class="form-label">Department<span class="text-danger">*</span></label>
+                        
+                        <div class="mb-3">
+                            <label for="department_id" class="form-label">Department<span class="text-danger">*</span></label>
                             <select name="department_id" id="department_id" class="form-select @error('department_id') is-invalid @enderror">
                                 <option value="">Select Department</option>
                                 @foreach($departments as $department)
@@ -45,11 +46,10 @@
                                     </option>
                                 @endforeach
                             </select>
-
-                                @error('department_id')
-                                    <span class="invalid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
+                            @error('department_id')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
 
                         <div class="form-group mt-3">
                             <label for="description">Description</label>

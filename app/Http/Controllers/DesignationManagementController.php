@@ -20,20 +20,9 @@ class DesignationManagementController extends Controller
      */
     public function index()
     {
-        // $designations = Designation::where('company_id', auth()->user()->company_id)->get();
-        // return $designations;
-
-    //     $designations = Designation::with('department')
-    // ->where('company_id', auth()->user()->company_id)
-    // ->get();
-
-    $designations = Designation::with('department')
-    ->where('company_id', auth()->user()->company_id)
-    ->get();
-
-// return $designations;
-
-// return $designations;
+        $designations = Designation::with('department')
+            ->where('company_id', auth()->user()->company_id)
+            ->get();
 
          return view('company.employees.designations.index', compact('designations'));
     }
@@ -44,7 +33,7 @@ class DesignationManagementController extends Controller
      */
     public function create()
     {
-            $departments= Department::with("designations")->get();    
+        $departments= Department::with("designations")->get();    
         return view('company.employees.designations.create', compact('departments'));
     }
 
@@ -57,7 +46,7 @@ class DesignationManagementController extends Controller
             'title' => 'required|string|max:255|unique:designations,title,NULL,id,company_id,' . auth()->user()->company_id,
             'description' => 'nullable|string',
             'level' => 'required|string|max:255',
-            'department_id'=> 'required',
+            'department_id'=> 'required|exists:departments,id',
         ]);
 
         Designation::create([
@@ -90,26 +79,25 @@ class DesignationManagementController extends Controller
      */
     public function update(Request $request, Designation $designation)
     {
-                // Ensure designation belongs to the logged-in user's company
-            if ($designation->company_id !== auth()->user()->company_id) {
-                abort(403, 'Unauthorized action.');
-            }
+        if ($designation->company_id !== auth()->user()->company_id) {
+            abort(403, 'Unauthorized action.');
+        }
 
-            // Validate input
-            $request->validate([
-                'title' => 'required|string|max:255|unique:designations,title,' . $designation->id . ',id,company_id,' . auth()->user()->company_id,
-                'department_id' => 'required|exists:departments,id',
-                'description' => 'nullable|string',
-                'level' => 'required|string|max:255',
-            ]);
+        // Validate input
+        $request->validate([
+            'title' => 'required|string|max:255|unique:designations,title,' . $designation->id . ',id,company_id,' . auth()->user()->company_id,
+            'department_id' => 'required|exists:departments,id',
+            'description' => 'nullable|string',
+            'level' => 'required|string|max:255',
+        ]);
 
-            // Update designation
-            $designation->update([
-                'title' => $request->title,
-                'department_id' => $request->department_id,
-                'description' => $request->description,
-                'level' => $request->level,
-            ]);
+        // Update designation
+        $designation->update([
+            'title' => $request->title,
+            'department_id' => $request->department_id,
+            'description' => $request->description,
+            'level' => $request->level
+        ]);
 
             // Redirect back with success message
             return redirect()->route('company.designations.index', ['companyId' => auth()->user()->company_id])

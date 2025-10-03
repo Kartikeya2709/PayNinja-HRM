@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="marital_status" class="form-label">Marital Status</label>
+                                        <label for="marital_status" class="form-label">Marital Status<span class="text-danger">*</span></label>
                                         <select class="form-select" id="marital_status" name="marital_status" required>
                                             <option value="">Select</option>
                                             <option value="single" {{ old('marital_status') == 'single' ? 'selected' : '' }}>Single</option>
@@ -456,37 +456,37 @@
 @endpush
 @push('scripts')
 <script>
-// correct designations  loads JS object 
-let allDesignations = @json($designations);
+    // correct designations  loads JS object 
+    let allDesignations = @json($designations);
 
-document.addEventListener("DOMContentLoaded", function () {
-    let deptSelect = document.getElementById('department_id');
-    let designationSelect = document.getElementById('designation_id');
-    let oldDesignation = "{{ old('designation_id') }}";
+    document.addEventListener("DOMContentLoaded", function () {
+        let deptSelect = document.getElementById('department_id');
+        let designationSelect = document.getElementById('designation_id');
+        let oldDesignation = "{{ old('designation_id') }}";
 
-    function filterDesignations(deptId, preselected = null) {
-        designationSelect.innerHTML = '<option value="">Select Designation</option>';
-        let filtered = allDesignations.filter(d => d.department_id == deptId);
+        function filterDesignations(deptId, preselected = null) {
+            designationSelect.innerHTML = '<option value="">Select Designation</option>';
+            let filtered = allDesignations.filter(d => d.department_id == deptId);
 
-        filtered.forEach(function(d) {
-            let option = document.createElement('option');
-            option.value = d.id;
-            option.text = d.title;
-            if (preselected && preselected == d.id) option.selected = true;
-            designationSelect.add(option);
+            filtered.forEach(function(d) {
+                let option = document.createElement('option');
+                option.value = d.id;
+                option.text = d.title;
+                if (preselected && preselected == d.id) option.selected = true;
+                designationSelect.add(option);
+            });
+        }
+
+        // Department change
+        deptSelect.addEventListener('change', function () {
+            filterDesignations(this.value);
         });
-    }
 
-    // Department change
-    deptSelect.addEventListener('change', function () {
-        filterDesignations(this.value);
+        // Page load (old value)
+        if (deptSelect.value) {
+            filterDesignations(deptSelect.value, oldDesignation);
+        }
     });
-
-    // Page load (old value)
-    if (deptSelect.value) {
-        filterDesignations(deptSelect.value, oldDesignation);
-    }
-});
 
 
     // Disable DOB dates less than 18 years from now
