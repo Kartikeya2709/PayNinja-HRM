@@ -104,15 +104,28 @@ class FieldVisit extends Model
         ]);
     }
 
+    // public function completeVisit(array $data)
+    // {
+    //     $this->update([
+    //         'status' => 'completed',
+    //         'actual_end_datetime' => now(),
+    //         'visit_notes' => $data['visit_notes'] ?? null,
+    //         'visit_attachments' => $data['visit_attachments'] ?? null,
+    //     ]);
+    // }
+
+
     public function completeVisit(array $data)
-    {
-        $this->update([
-            'status' => 'completed',
-            'actual_end_datetime' => now(),
-            'visit_notes' => $data['visit_notes'] ?? null,
-            'visit_attachments' => $data['visit_attachments'] ?? null,
-        ]);
-    }
+{
+    $this->update([
+        'status' => 'completed',
+        'actual_end_datetime' => now(),
+        'visit_notes' => $data['visit_notes'] ?? null,
+        'visit_attachments' => $data['visit_attachments'] ?? null,
+        'latitude' => $data['latitude'] ?? $this->latitude,
+        'longitude' => $data['longitude'] ?? $this->longitude,
+    ]);
+}
 
     public function approve(Employee $manager)
     {

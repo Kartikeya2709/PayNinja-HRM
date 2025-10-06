@@ -89,7 +89,7 @@
                                
 
                                
-                                    <div class="col-md-6 mb-4">
+                                    <!-- <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="latitude">Latitude</label>
                                             <input type="number" step="any" class="form-control @error('latitude') is-invalid @enderror"
@@ -99,9 +99,9 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
+                                    </div> -->
 
-                                    <div class="col-md-6 mb-4">
+                                    <!-- <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="longitude">Longitude</label>
                                             <input type="number" step="any" class="form-control @error('longitude') is-invalid @enderror"
@@ -111,7 +111,7 @@
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
 
                                 <div class="row">
