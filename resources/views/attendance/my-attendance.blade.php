@@ -30,7 +30,7 @@
                     </form>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body mt-2">
                 <div class="table-responsive">
                     <table class="table table-hover table-striped">
                         <thead>

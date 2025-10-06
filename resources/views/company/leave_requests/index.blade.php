@@ -33,10 +33,10 @@
                                     <select name="department_id" id="department_id" class="form-control select2">
                                         <option value="">All Departments</option>
                                         @foreach($departments as $department)
-                                            <option value="{{ $department->id }}" 
-                                                {{ request('department_id') == $department->id ? 'selected' : '' }}>
-                                                {{ $department->name }}
-                                            </option>
+                                        <option value="{{ $department->id }}"
+                                            {{ request('department_id') == $department->id ? 'selected' : '' }}>
+                                            {{ $department->name }}
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -45,28 +45,33 @@
                                     <label for="status">Status</label>
                                     <select name="status" id="status" class="form-control">
                                         <option value="">All Status</option>
-                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                                        <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
-                                        <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
-                                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>
+                                            Pending</option>
+                                        <option value="approved"
+                                            {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                                        <option value="rejected"
+                                            {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+                                        <option value="cancelled"
+                                            {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group col-md-3">
                                     <label for="date_from">Date From</label>
-                                    <input type="date" name="date_from" id="date_from" 
-                                           class="form-control" value="{{ request('date_from') }}">
+                                    <input type="date" name="date_from" id="date_from" class="form-control"
+                                        value="{{ request('date_from') }}">
                                 </div>
 
                                 <div class="form-group col-md-3">
                                     <label for="date_to">Date To</label>
-                                    <input type="date" name="date_to" id="date_to" 
-                                           class="form-control" value="{{ request('date_to') }}">
+                                    <input type="date" name="date_to" id="date_to" class="form-control"
+                                        value="{{ request('date_to') }}">
                                 </div>
 
                                 <div class="col-12 mt-2 btn-center">
                                     <button type="submit" class="btn btn-primary">Filter</button>
-                                    <a href="{{ route('company.leave-requests.index') }}" class="btn btn-secondary">Reset</a>
+                                    <a href="{{ route('company.leave-requests.index') }}"
+                                        class="btn btn-secondary">Reset</a>
                                 </div>
                             </form>
                         </div>
@@ -76,25 +81,25 @@
                     <div class="card mt-4">
                         <div class="card-body">
                             @if(session('success'))
-                                <div class="alert alert-success alert-dismissible show fade">
-                                    <div class="alert-body">
-                                        <button class="close" data-dismiss="alert">
-                                            <span>&times;</span>
-                                        </button>
-                                        {{ session('success') }}
-                                    </div>
+                            <div class="alert alert-success alert-dismissible show fade">
+                                <div class="alert-body">
+                                    <button class="close" data-dismiss="alert">
+                                        <span>&times;</span>
+                                    </button>
+                                    {{ session('success') }}
                                 </div>
+                            </div>
                             @endif
 
                             @if(session('error'))
-                                <div class="alert alert-danger alert-dismissible show fade">
-                                    <div class="alert-body">
-                                        <button class="close" data-dismiss="alert">
-                                            <span>&times;</span>
-                                        </button>
-                                        {{ session('error') }}
-                                    </div>
+                            <div class="alert alert-danger alert-dismissible show fade">
+                                <div class="alert-body">
+                                    <button class="close" data-dismiss="alert">
+                                        <span>&times;</span>
+                                    </button>
+                                    {{ session('error') }}
                                 </div>
+                            </div>
                             @endif
 
                             <div class="table-responsive">
@@ -114,50 +119,62 @@
                                     </thead>
                                     <tbody>
                                         @forelse($leaveRequests as $request)
-                                            <tr>
-                                                <td>{{ ($leaveRequests->currentPage() - 1) * $leaveRequests->perPage() + $loop->iteration }}</td>
-                                                <td>{{ $request->employee->name }}</td>
-                                                <td>{{ $request->employee->department->name ?? '-' }}</td>
-                                                <td>{{ $request->leaveType->name }}</td>
-                                                <td>{{ $request->start_date->format('Y-m-d') }}</td>
-                                                <td>{{ $request->end_date->format('Y-m-d') }}</td>
-                                                <td>{{ $request->working_days_count }}</td>
-                                                <td>
-                                                    <span class="badge badge-{{ $request->status_color }}">
-                                                        {{ ucfirst($request->status) }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('company.leave-requests.show', $request->id) }}" 
-                                                       class="btn btn-info btn-sm" title="View">
+                                        <tr>
+                                            <td>{{ ($leaveRequests->currentPage() - 1) * $leaveRequests->perPage() + $loop->iteration }}
+                                            </td>
+                                            <td>{{ $request->employee->name }}</td>
+                                            <td>{{ $request->employee->department->name ?? '-' }}</td>
+                                            <td>{{ $request->leaveType->name }}</td>
+                                            <td>{{ $request->start_date->format('Y-m-d') }}</td>
+                                            <td>{{ $request->end_date->format('Y-m-d') }}</td>
+                                            <td>{{ $request->working_days_count }}</td>
+                                            <td>
+                                                <span class="badge badge-{{ $request->status_color }}">
+                                                    {{ ucfirst($request->status) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('company.leave-requests.show', $request->id) }}"
+                                                    class="btn btn-outline-info btn-sm action-btn"
+                                                    data-id="{{ $request->id }}" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="View Leave Request"
+                                                    aria-label="View">
+                                                    <span class="btn-content">
                                                         <i class="fas fa-eye"></i>
-                                                    </a>
-                                                    @if($request->status === 'pending')
-                                                        <form action="{{ route('company.leave-requests.approve', $request->id) }}" 
-                                                              method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-success btn-sm" title="Approve">
-                                                                <i class="fas fa-check"></i>
-                                                            </button>
-                                                        </form>
-                                                        <form action="{{ route('company.leave-requests.reject', $request->id) }}" 
-                                                              method="POST" class="d-inline">
-                                                            @csrf
-                                                            <button type="submit" class="btn btn-danger btn-sm" title="Reject">
-                                                                <i class="fas fa-times"></i>
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                        aria-hidden="true"></span>
+                                                </a>
+
+                                                @if($request->status === 'pending')
+                                                <form
+                                                    action="{{ route('company.leave-requests.approve', $request->id) }}"
+                                                    method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-success btn-sm"
+                                                        title="Approve">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </form>
+                                                <form
+                                                    action="{{ route('company.leave-requests.reject', $request->id) }}"
+                                                    method="POST" class="d-inline">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger btn-sm" title="Reject">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </form>
+                                                @endif
+                                            </td>
+                                        </tr>
                                         @empty
-                                            <tr>
-                                                <td colspan="9" class="text-center">No leave requests found.</td>
-                                            </tr>
+                                        <tr>
+                                            <td colspan="9" class="text-center">No leave requests found.</td>
+                                        </tr>
                                         @endforelse
                                     </tbody>
                                 </table>
-                                
+
                                 <!-- Pagination -->
                                 <div class="d-flex justify-content-center mt-4">
                                     {{ $leaveRequests->withQueryString()->links() }}

@@ -253,18 +253,43 @@
                                                         class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
                                                 </td>
                                                 <td>
+                                                    <div class="btn-group btn-group-sm">
                                                     <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
-                                                        class="btn btn-sm btn-info">Show</a>
+                                                    class="btn btn-outline-info action-btn" data-id="{{ $announcement->id }}"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Show Announcement" aria-label="Show">
+                                                    <span class="btn-content">
+                                                       <i class="fas fa-eye"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </a>
+
                                                     <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
-                                                        class="btn btn-sm btn-primary ms-1">Edit</a>
+                                                    class="btn btn-outline-primary action-btn"
+                                                    data-id="{{ $announcement->id }}"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Announcement" aria-label="Edit">
+                                                    <span class="btn-content">
+                                                       <i class="fas fa-edit"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </a>
+
                                                     <form
                                                         action="{{ route('company-admin.announcements.destroy', $announcement->id) }}"
                                                         method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button class="btn btn-sm btn-danger ms-1"
-                                                            onclick="return confirm('Delete this announcement?')">Delete</button>
+                                                        <button type="submit" class="btn btn-outline-danger action-btn rounded-start-0"
+                                                        data-id="{{ $announcement->id }}"
+                                                        data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Announcement"
+                                                        aria-label="Delete" onclick="return confirm('Delete this announcement?')">
+                                                       <span class="btn-content">
+                                                          <i class="fas fa-trash"></i>
+                                                       </span>
+                                                       <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                       </button>
+
                                                     </form>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty
@@ -463,9 +488,16 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('reimbursements.show', $reimbursement->id) }}" class="btn btn-outline-info btn-sm me-1">
-                                                    <i class="fas fa-eye"></i>
+                                                <a href="{{ route('reimbursements.show', $reimbursement->id) }}"
+                                                class="btn btn-outline-info btn-sm me-1 action-btn"
+                                                data-id="{{ $reimbursement->id }}" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="View Reimbursement" aria-label="View">
+                                                <span class="btn-content">
+                                                   <i class="fas fa-eye"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                 </a>
+
                                             </td>
                                         </tr>
                                     @empty
@@ -498,7 +530,16 @@
                                                     <td>{{ $request->id }}</td>
                                                     <td>{{ $request->employee->name ?? 'N/A' }}</td>
                                                     <td>
-                                                        <a href="{{ route('regularization.requests.edit', $request->id) }}" class="btn btn-outline-info btn-sm py-0"><i class="fas fa-eye"></i> View</a>
+                                                        <a href="{{ route('regularization.requests.edit', $request->id) }}"
+                                                        class="btn btn-outline-info btn-sm action-btn"
+                                                        data-id="{{ $request->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="View Regularization Request"
+                                                        aria-label="View">
+                                                        <span class="btn-content">
+                                                            <i class="fas fa-eye"></i>
+                                                        </span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                        </a>
+
                                                     </td>
                                                 </tr>
                                             @empty
@@ -572,27 +613,102 @@
                                                 <td>Ruchi Bisht</td>
                                                 <td>New Delhi</td>
                                                 <td>
-                                                    <button class="btn btn-outline-primary btn-sm py-0"><i class="fas fa-eye"></i>View</button>
-                                                    <button class="btn btn-outline-warning btn-sm py-0"><i class="fas fa-edit"></i>Edit</button>
-                                                    <button class="btn btn-outline-danger btn-sm py-0"><i class="fas fa-trash"></i>Delete</button>
+                                                    <div class="btn-group btn-group-sm">
+                                                    <button type="button"
+                                                    class="btn btn-outline-primary btn-sm action-btn" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="View Record" aria-label="View">
+                                                    <span class="btn-content">
+                                                       <i class="fas fa-eye"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+
+                                                    <button type="button"
+                                                    class="btn btn-outline-warning btn-sm action-btn" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Edit Record" aria-label="Edit">
+                                                    <span class="btn-content">
+                                                    <i class="fas fa-edit"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+
+                                                    <button type="button" class="btn btn-outline-danger btn-sm action-btn"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Record" aria-label="Delete"
+                                                    onclick="return confirm('Are you sure you want to delete this record?')">
+                                                    <span class="btn-content">
+                                                    <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Rahul Sharma</td>
                                                 <td>Mumbai</td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-primary">View</button>
-                                                    <button class="btn btn-sm btn-warning">Edit</button>
-                                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                                    <div class="btn-group btn-group-sm">
+                                                    <button type="button"
+                                                    class="btn btn-outline-primary btn-sm action-btn" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="View Record" aria-label="View">
+                                                    <span class="btn-content">
+                                                       <i class="fas fa-eye"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+
+                                                    <button type="button"
+                                                    class="btn btn-outline-warning btn-sm action-btn" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Edit Record" aria-label="Edit">
+                                                    <span class="btn-content">
+                                                    <i class="fas fa-edit"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+
+                                                    <button type="button" class="btn btn-outline-danger btn-sm action-btn"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Record" aria-label="Delete"
+                                                    onclick="return confirm('Are you sure you want to delete this record?')">
+                                                    <span class="btn-content">
+                                                    <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>Anita Verma</td>
                                                 <td>Bangalore</td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-primary">View</button>
-                                                    <button class="btn btn-sm btn-warning">Edit</button>
-                                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                                    <div class="btn-group btn-group-sm">
+                                                    <button type="button"
+                                                    class="btn btn-outline-primary btn-sm action-btn" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="View Record" aria-label="View">
+                                                    <span class="btn-content">
+                                                       <i class="fas fa-eye"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+
+                                                    <button type="button"
+                                                    class="btn btn-outline-warning btn-sm action-btn" data-bs-toggle="tooltip"
+                                                    data-bs-placement="top" title="Edit Record" aria-label="Edit">
+                                                    <span class="btn-content">
+                                                    <i class="fas fa-edit"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+
+                                                    <button type="button" class="btn btn-outline-danger btn-sm action-btn"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Record" aria-label="Delete"
+                                                    onclick="return confirm('Are you sure you want to delete this record?')">
+                                                    <span class="btn-content">
+                                                    <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                    </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </tbody>

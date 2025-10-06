@@ -9,24 +9,24 @@ use Carbon\Carbon;
 @section('content')
 <div class="container">
     <section class="section">
-            <div class="section-header">
-                <h1>Request Leave</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="">Request Leave</a></div>
+        <div class="section-header">
+            <h1>Request Leave</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Request Leave</a></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-1">
+                <h5 class="mb-0">My Leave Requests</h5>
+                <div class="section-header-button">
+                    <a href="{{ route('employee.leave-requests.create') }}" class="btn btn-primary">Request Leave</a>
                 </div>
             </div>
-
-    <div class="card">
-        <div class="card-1">
-        <h5 class="mb-0">My Leave Requests</h5>
-        <div class="section-header-button">
-            <a href="{{ route('employee.leave-requests.create') }}" class="btn btn-primary">Request Leave</a>
         </div>
-</div>
-    </div>
 
-    
+
         <div class="mt-4">
             <div class="col-12 px-1">
                 <div class="card">
@@ -46,16 +46,17 @@ use Carbon\Carbon;
                                 </thead>
                                 <tbody>
                                     @foreach($leaveBalances as $balance)
-                                        <tr>
-                                            <td>{{ $balance->leaveType->name }}</td>
-                                            <td>{{ $balance->total_days }}</td>
-                                            <td>{{ $balance->used_days }}</td>
-                                            <td>
-                                                <span class="badge badge-{{ $balance->remaining_days > 0 ? 'success' : 'danger' }}">
-                                                    {{ $balance->remaining_days }}
-                                                </span>
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>{{ $balance->leaveType->name }}</td>
+                                        <td>{{ $balance->total_days }}</td>
+                                        <td>{{ $balance->used_days }}</td>
+                                        <td>
+                                            <span
+                                                class="badge badge-{{ $balance->remaining_days > 0 ? 'success' : 'danger' }}">
+                                                {{ $balance->remaining_days }}
+                                            </span>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -69,25 +70,25 @@ use Carbon\Carbon;
                     </div>
                     <div class="card-body">
                         @if(session('success'))
-                            <div class="alert alert-success alert-dismissible show fade">
-                                <div class="alert-body">
-                                    <button class="close" data-dismiss="alert">
-                                        <span>&times;</span>
-                                    </button>
-                                    {{ session('success') }}
-                                </div>
+                        <div class="alert alert-success alert-dismissible show fade">
+                            <div class="alert-body">
+                                <button class="close" data-dismiss="alert">
+                                    <span>&times;</span>
+                                </button>
+                                {{ session('success') }}
                             </div>
+                        </div>
                         @endif
 
                         @if(session('error'))
-                            <div class="alert alert-danger alert-dismissible show fade">
-                                <div class="alert-body">
-                                    <button class="close" data-dismiss="alert">
-                                        <span>&times;</span>
-                                    </button>
-                                    {{ session('error') }}
-                                </div>
+                        <div class="alert alert-danger alert-dismissible show fade">
+                            <div class="alert-body">
+                                <button class="close" data-dismiss="alert">
+                                    <span>&times;</span>
+                                </button>
+                                {{ session('error') }}
                             </div>
+                        </div>
                         @endif
 
                         <div class="table-responsive">
@@ -105,52 +106,68 @@ use Carbon\Carbon;
                                 </thead>
                                 <tbody>
                                     @foreach($leaveRequests as $request)
-                                        <tr>
-                                            <td>{{ $request->leaveType->name }}</td>
-                                            <td>{{ $request->start_date->format('Y-m-d') }}</td>
-                                            <td>{{ $request->end_date->format('Y-m-d') }}</td>
-                                            <td>{{ $request->working_days_count }}</td>
-                                            <td>
-                                                <div class="text-left">
-                                                    @if(is_array($request->working_days))
-                                                        <span class="badge badge-info">{{ count($request->working_days) }} working days</span>
-                                                        <div class="mt-1 small">
-                                                            @foreach($request->working_days as $date)
-                                                                <span class="badge badge-light text-dark mr-1">{{ \Carbon\Carbon::parse($date)->format('M d') }}</span>
-                                                            @endforeach
-                                                        </div>
-                                                    @else
-                                                        <span class="badge badge-info">0 working days</span>
-                                                    @endif
+                                    <tr>
+                                        <td>{{ $request->leaveType->name }}</td>
+                                        <td>{{ $request->start_date->format('Y-m-d') }}</td>
+                                        <td>{{ $request->end_date->format('Y-m-d') }}</td>
+                                        <td>{{ $request->working_days_count }}</td>
+                                        <td>
+                                            <div class="text-left">
+                                                @if(is_array($request->working_days))
+                                                <span class="badge badge-info">{{ count($request->working_days) }}
+                                                    working days</span>
+                                                <div class="mt-1 small">
+                                                    @foreach($request->working_days as $date)
+                                                    <span
+                                                        class="badge badge-light text-dark mr-1">{{ \Carbon\Carbon::parse($date)->format('M d') }}</span>
+                                                    @endforeach
                                                 </div>
-                                            </td>
-                                            <td>
-                                                <span class="badge badge-{{ $request->status_color }}">
-                                                    {{ ucfirst($request->status) }}
-                                                </span>
-                                            </td>
-                                            <td>
-                                                <a href="{{ route('employee.leave-requests.show', $request->id) }}" 
-                                                   class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                @if($request->status === 'pending')
-                                                    <a href="{{ route('employee.leave-requests.edit', $request->id) }}" 
-                                                       class="btn btn-warning btn-sm">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <form action="{{ route('employee.leave-requests.cancel', $request->id) }}" 
-                                                          method="POST" 
-                                                          class="d-inline"
-                                                          onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
-                                                        @csrf
-                                                        <button type="submit" class="btn btn-danger btn-sm">
-                                                            <i class="fas fa-times"></i>
-                                                        </button>
-                                                    </form>
+                                                @else
+                                                <span class="badge badge-info">0 working days</span>
                                                 @endif
-                                            </td>
-                                        </tr>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-{{ $request->status_color }}">
+                                                {{ ucfirst($request->status) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="{{ route('employee.leave-requests.show', $request->id) }}"
+                                                class="btn btn-outline-info action-btn" data-id="{{ $request->id }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Show Request"
+                                                aria-label="Show">
+                                                <span class="btn-content">
+                                                    <i class="fas fa-eye"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                    aria-hidden="true"></span>
+                                            </a>
+
+                                            @if($request->status === 'pending')
+                                            <a href="{{ route('employee.leave-requests.edit', $request->id) }}"
+                                                class="btn btn-outline-warning edit-leave-request"
+                                                data-id="{{ $request->id }}" data-bs-toggle="tooltip"
+                                                data-bs-placement="top" title="Edit Request" aria-label="Edit">
+                                                <span class="btn-content">
+                                                    <i class="fas fa-edit"></i>
+                                                    <i class="fas fa-triangle-exclamation ms-1"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                    aria-hidden="true"></span>
+                                            </a>
+
+                                            <form action="{{ route('employee.leave-requests.cancel', $request->id) }}"
+                                                method="POST" class="d-inline"
+                                                onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
+                                                @csrf
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </form>
+                                            @endif
+                                        </td>
+                                    </tr>
                                     @endforeach
                                 </tbody>
                             </table>
@@ -159,7 +176,7 @@ use Carbon\Carbon;
                 </div>
             </div>
         </div>
-    </div>
+</div>
 </section>
 @endsection
 
@@ -167,7 +184,9 @@ use Carbon\Carbon;
 <script>
 $(document).ready(function() {
     $('#leaveRequestsTable').DataTable({
-        order: [[1, 'desc']],
+        order: [
+            [1, 'desc']
+        ],
         pageLength: 25
     });
 });

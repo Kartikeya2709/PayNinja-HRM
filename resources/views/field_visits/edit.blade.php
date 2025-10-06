@@ -27,7 +27,7 @@
                                 @method('PUT')
 
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-4">
                                         <div class="form-group">
                                             <label for="reporting_manager">Reporting Manager</label>
                                             <input type="text" class="form-control"
@@ -38,7 +38,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-4">
                                         <div class="form-group">
                                             <label for="visit_title">Visit Title <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('visit_title') is-invalid @enderror"
@@ -52,7 +52,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 mb-4">
                                         <div class="form-group">
                                             <label for="visit_description">Visit Description</label>
                                             <textarea class="form-control @error('visit_description') is-invalid @enderror"
@@ -65,7 +65,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="location_name">Location Name <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('location_name') is-invalid @enderror"
@@ -77,7 +77,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="location_address">Location Address <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('location_address') is-invalid @enderror"
@@ -91,7 +91,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="latitude">Latitude</label>
                                             <input type="number" step="any" class="form-control @error('latitude') is-invalid @enderror"
@@ -104,7 +104,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="longitude">Longitude</label>
                                             <input type="number" step="any" class="form-control @error('longitude') is-invalid @enderror"
@@ -119,7 +119,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="scheduled_start_datetime">Start Date & Time <span class="text-danger">*</span></label>
                                             <input type="datetime-local" class="form-control @error('scheduled_start_datetime') is-invalid @enderror"
@@ -131,7 +131,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="scheduled_end_datetime">End Date & Time <span class="text-danger">*</span></label>
                                             <input type="datetime-local" class="form-control @error('scheduled_end_datetime') is-invalid @enderror"
@@ -158,7 +158,7 @@
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-save"></i> Update Visit
                                         </button>
-                                        <a href="{{ route('field-visits.show', $fieldVisit) }}" class="btn btn-secondary">
+                                        <a href="{{ route('field-visits.show', $fieldVisit) }}" class="btn btn-danger">
                                             <i class="fas fa-times"></i> Cancel
                                         </a>
                                     </div>

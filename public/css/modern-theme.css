@@ -93,9 +93,6 @@ position:fixed;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.progress{
-  margin-top: 20px;
-}
 
 /* Card Styling */
 
@@ -121,7 +118,11 @@ position:fixed;
   font-weight: 500;
   transition: all 0.2s;
 }
-
+.action-btn{
+padding: .25rem .5rem;
+    font-size: .875rem;
+    border-radius: .2rem;
+}
 .btn-primary {
   background: #4361ee;
   border: none;
@@ -293,7 +294,9 @@ position:fixed;
   .navbar-bg {
     height: 65px;
   }
- 
+ .action-btn{
+      padding: .25rem .5rem!important;
+ }
 
   .navbar-brand .brand-text {
     font-size: 1.25rem;

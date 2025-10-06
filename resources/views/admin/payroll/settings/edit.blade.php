@@ -3,9 +3,9 @@
 @section('title', 'Payroll Settings - ' . $company->name)
 
 @section('content')
-<div class="main-content container payroll-setting">
-    <section class="section">
-        <div class="section-header">
+<div class="main-content payroll-setting">
+    <section class="section container">
+        <div class="section-header mb-0">
             <h1>Payroll Settings</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>

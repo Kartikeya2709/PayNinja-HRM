@@ -231,7 +231,6 @@
     /* 🔹 Glass effect for tab content */
     .glass-box {
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(12px);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }

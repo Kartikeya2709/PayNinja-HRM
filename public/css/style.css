@@ -245,9 +245,7 @@
 .card-link:hover::before {
     transform: scaleX(1);
 }
-.check-in-bg{
-background-color: #4361ee36 !important;
-}
+
 .my-attendance .card-header{
   padding-bottom: 10px!important;
 }
@@ -263,6 +261,11 @@ font-weight: 400;
 }
 #app .check-in .text-muted{
   color: #191d21 !important;
+  padding-top: 5px;
+}
+.check-in .card{
+  padding-bottom: 0px!important;
+  padding-top: 0px!important;
 }
 #app .check-in h5{
   color: #191d21 !important;
@@ -316,7 +319,7 @@ padding-left: 0px !important;
   font-size: 30px;
 }
 .emp-dashboard .dash-icon{
-      background: rgb(6, 58, 125);
+    background: rgb(6, 58, 125);
     height: 80px;
     width: 80px;
     align-content: center;
@@ -525,7 +528,7 @@ align-items: center;
 
 .card-body h6{
   margin: 0px;
-  text-align: center;
+  text-align: left;
     }
 .joinee-resign .icon{
       background: rgb(255 148 8 / 11%);
@@ -548,7 +551,16 @@ align-items: center;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
+
 .legend .legend-label{
+  color: #000!important;
+}
+.exit-process .form-group{
+      background: #FAF9F6;
+    padding: 20px;
+    border-radius: 10px;
+}
+.exit-process label{
   color: #000!important;
 }
 .legend-item {
@@ -563,7 +575,9 @@ align-items: center;
   margin-bottom: 0px!important;
   color: #000;
 }
-
+.emp-dashboard strong{
+  color: #000;
+}
 .legend-dot {
   width: 14px;
   height: 14px;
@@ -756,14 +770,6 @@ a {
   -o-transition: all 0.5s;
 }
 
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .ion,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fas,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .far,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fal,
-a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fab {
-  margin-left: 4px;
-}
-
 .bg-primary {
   background-color: #6777ef !important;
 }
@@ -840,10 +846,32 @@ a:not(.btn-social-icon):not(.btn-social):not(.page-link) .fab {
   background: linear-gradient(#3abaf4, rgb(6, 58, 125));
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-weight: 600;
+    font-weight: 400;
+    font-size: 40px!important;
 }
 .check-in-text{
-  padding: 40px!important;
+  padding: 50px!important;
+}
+.check-inn{
+      height: 120px;
+    width: 120px;
+    margin: auto;
+    border-radius: 50%!important;
+}
+.check-outt{
+   height: 120px;
+    width: 120px;
+    margin: auto;
+    border-radius: 50%!important;
+}
+.check-outt i{
+  font-size: 35px;
+}
+.check-inn i{
+  font-size: 35px;
+}
+.check-in i{
+      font-size: 25px;
 }
 .lead {
   line-height: 34px;
@@ -2503,10 +2531,7 @@ h6 .badge {
   display: flex;
     gap: 10px;
 }
-.btn.btn-sm {
-  padding: 5px;
 
-}
 .btn.btn-icon .ion, .btn.btn-icon .fas, .btn.btn-icon .far, .btn.btn-icon .fab, .btn.btn-icon .fal {
   margin-left: 0 !important;
   font-size: 12px;
@@ -2834,7 +2859,35 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
 .breadcrumb .breadcrumb-item i {
   margin-right: 5px;
 }
-
+.Resignations-icon .card-icon{
+height: 50px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+.Resignations-icon .card-icon i{
+  color: #fff;
+}
+.Resignations-icon .card-wrap{
+      display: flex;
+    align-content: center;
+    align-items: center;
+}
+.Resignations-icon .text-wrap{
+      padding-left: 10px;
+}
+.Resignations-icon .card-header{
+      padding-bottom: 0px !important;
+}
+.Resignations-icon h4{
+  font-size: 16px!important;
+}
+.Resignations-icon .card-body{
+      font-weight: 700;
+    font-size: 16px;
+}
 /* 3.15 Accordion */
 .accordion {
   display: inline-block;
@@ -2867,7 +2920,6 @@ nger:active, .btn-danger.disabled:hover, .btn-danger.disabled:focus, .btn-danger
 .accordion .accordion-body {
   line-height: 24px;
 }
-
 /* 3.16 Popover */
 .popover {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.03);
@@ -4954,10 +5006,13 @@ body.layout-3 .main-wrapper {
 .table {
       min-width: 900px;
 }
-.employee-check-in .card-body {
-   
-            display: block !important;
+#companySettingsTabContent{
+  padding: 0px !important;
 }
+.employee-check-in .card-body{
+  display: block;
+}
+
 .mobile-space .card-title{
   text-align: center;
 }
@@ -5081,11 +5136,10 @@ body.layout-3 .main-wrapper {
     text-align: center!important;
   }
   .emp-dashboard .dash-icon i {
-    
-    font-size: 20px;
+     font-size: 20px;
 }
 .employee-check-in h6{
-  margin-left: 0px!important;
+  margin-left: 10px!important;
   margin-top: 10px!important;
 }
 }
@@ -5125,7 +5179,7 @@ padding-top: 20px;;
 }
 
 #employeeCalendar .fc-header-toolbar{
-  padding-top: 20px;
+  padding-top: 15px;
 }
    
     .mobile-space h4{
@@ -5512,10 +5566,9 @@ margin-left: 0px!important;
    }
   .table-responsive{
     padding: 10px;
+    padding-top: 0px!important;
   }
-  .check-in-text .btn{
-margin: 0px!important;
-  }
+
 
   .profile-form{
     padding: 20px;

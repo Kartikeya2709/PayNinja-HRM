@@ -83,7 +83,7 @@
                             </div>
                         @endif
                 <div class="row mt-4">
-                     <div class="col-md-6">
+                     <div class="col-md-4">
                         <div class="form-group">
                             <label class="form-label">Reason for Resignation</label>
                             <p class="form-control-plaintext form-control">{{ $resignation->reason }}</p>
@@ -110,17 +110,17 @@
                         <!-- Approval Information -->
                         @if($resignation->reportingManager)
                            </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         <label class="form-label">Reporting Manager</label>
                                         <p class="form-control-plaintext form-control">{{ $resignation->reportingManager->name }}</p>
                                     </div>
                                 </div>
                                 @if($resignation->hrAdmin)
-                                    <div class="col-md-6">
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label class="form-label">HR Admin</label>
-                                            <p class="form-control-plaintext">{{ $resignation->hrAdmin->name }}</p>
+                                            <p class="form-control-plaintext form-control">{{ $resignation->hrAdmin->name }}</p>
                                         </div>
                                     </div>
                                 @endif
@@ -153,7 +153,7 @@
                         @if($resignation->status === 'approved')
                             <div class="mt-4">
                                 <h5>Exit Process Status</h5>
-                                <div class="row">
+                                <div class="row exit-process">
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label class="form-label">Exit Interview</label>

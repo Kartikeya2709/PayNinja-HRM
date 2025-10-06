@@ -55,7 +55,7 @@
     </div>
 
     <!-- This Week's Summary -->
-    <div class="col-md-8 px-1 mobile-space">
+    <div class="col-md-8 px-1 mobile-space tab-width">
         <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title text-center">This Week's Summary</h5>

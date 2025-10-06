@@ -40,10 +40,10 @@
             <div class="col-12 px-1">
 
                 <!-- Leave Balance Display (Initially Hidden) -->
-                <div class="card" id="leaveBalanceInfo" style="display: none;">
-                    <div class="card-header btn-center justify-content-center">
+                <div class="card" id="leaveBalanceInfo">
+                    <div class="text-center">
                         <h5>Leave Balances</h5>
-                    </div>
+                   
                     <div class="card-body">
                         <div class="row" id="leaveBalancesContainer">
                             <!-- Will be populated by JavaScript -->
@@ -51,9 +51,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header btn-center justify-content-center">
-                        <h5>Leave Balances</h5>
-                    </div>
+                    
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered">
@@ -93,7 +91,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card mt-4">
+                <div class="card">
                     <div class="card-header justify-content-center mb-3 btn-center margin-bottom">
                         <h5>Leave Request Form</h5>
                     </div>

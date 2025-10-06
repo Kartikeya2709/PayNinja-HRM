@@ -115,7 +115,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="scheduled_start_datetime">Start Date & Time <span class="text-danger">*</span></label>
                                             <input type="datetime-local" class="form-control @error('scheduled_start_datetime') is-invalid @enderror"

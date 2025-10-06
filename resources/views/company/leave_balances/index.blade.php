@@ -145,9 +145,16 @@
                                             </td>
                                             <td>{{ $employee->year }}</td>
                                             <td>
-                                                <a href="{{ route('company.leave-balances.edit', $employee->balance_id) }}" class="btn btn-sm btn-info">
+                                                <a href="{{ route('company.leave-balances.edit', $employee->balance_id) }}"
+                                                class="btn btn-outline-info btn-sm action-btn"
+                                                data-id="{{ $employee->balance_id }}"
+                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leave Balance" aria-label="Edit">
+                                                <span class="btn-content">
                                                     <i class="fas fa-edit"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                 </a>
+
                                             </td>
                                         </tr>
                                     @empty

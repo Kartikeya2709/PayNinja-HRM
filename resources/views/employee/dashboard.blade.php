@@ -221,7 +221,16 @@
                                                     </td>
                                                     <td>
                                                         <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
-                                                            class="btn btn-sm btn-info">Show</a>
+                                                         class="btn btn-outline-info action-btn"
+                                                         data-id="{{ $announcement->id }}"
+                                                         data-bs-toggle="tooltip"
+                                                         data-bs-placement="top" title="Show Record" aria-label="Show">
+                                                         <span class="btn-content">
+                                                            <i class="bi bi-eye"></i>
+                                                        </span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                        </a>
+
                                                     </td>
                                                 </tr>
                                             @empty
@@ -468,9 +477,9 @@
                 initialView: 'dayGridMonth',
                 height: 'auto',
                 headerToolbar: {
-                    left: 'prev,next',
+                    left: 'prev',
                     center: 'title',
-                    right: ''
+                    right: 'next'
                 },
 
             });
