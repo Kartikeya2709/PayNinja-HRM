@@ -551,17 +551,15 @@ class CompanyAdminController extends Controller
             'name' => 'required|string|max:255',
             'parent_name' => 'required|string|max:255',
             'gender' => 'required|in:male,female,other',
-            'dob' => 'required|date',
+            'dob' => 'required|date|before:18 years ago',
             'marital_status' => 'required|in:single,married,divorced,widowed',
-            // 'contact_number' => 'required|string|max:20',
-            'personal_email' => 'required|email',
-            'contact_number' => 'required|digits:10',
+            'contact_number' => 'required|digits:10|unique:employees,phone,' . $employee->id,
             'personal_email' => 'required|email|unique:employees,email,' . $employee->id,
-            'official_email' => 'nullable|email',
+            'official_email' => 'nullable|email|unique:employees,official_email,' . $employee->id,
             'current_address' => 'required|string',
             'permanent_address' => 'required|string',
             // Job Details
-            'employee_code' => 'nullable|string', // readonly, generated
+            'employee_code' => 'required|string|unique:employees,employee_code,' . $employee->id, // readonly, generated
             'department_id' => 'required|exists:departments,id',
             'designation_id' => 'required|exists:designations,id',
             'employment_type' => 'required|in:permanent,trainee',
@@ -570,18 +568,16 @@ class CompanyAdminController extends Controller
             'probation_period' => 'nullable|integer',
             'reporting_manager' => 'required|exists:employees,id',
             // Salary Details
-            'ctc' => 'required|numeric|min:0',
-            'basic_salary' => 'required|numeric|min:0',
+            'ctc' => 'required|numeric|min:0|gte:basic_salary',
+            'basic_salary' => 'required|numeric|min:0|lte:ctc',
             'bank_name' => 'required|string',
-            'account_number' => 'required|string',
-
+            'account_number' => 'required|numeric|unique:employee_salaries,account_number,' . ($employee->currentSalary->id ?? 'NULL'),
             'ifsc_code' => 'required|string',
-            // 'pan_number' => 'required|string',
-             'pan_number' => ['required','regex:/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/','unique:employees,pan_number'],
+            'pan_number' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:employee_salaries,pan_number,' . ($employee->currentSalary->id ?? 'NULL'),
             // Other Details
-            'emergency_contact' => 'nullable|string|max:10',
-            'emergency_contact_relation' => 'nullable|string',
-            'emergency_contact_name' => 'nullable|string',
+            'emergency_contact' => 'required|numeric|digits:10',
+            'emergency_contact_relation' => 'required|string',
+            'emergency_contact_name' => 'required|string',
             'blood_group' => 'nullable|string',
             'nominee_details' => 'nullable|string',
             // Documents
@@ -594,7 +590,7 @@ class CompanyAdminController extends Controller
             'relieving_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'offer_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'bank_passbook.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
-            'signed_offer_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
+            'signed_offer_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048'
         ]);
 
         try {
@@ -852,22 +848,21 @@ class CompanyAdminController extends Controller
         \Log::info('CompanyAdminController@storeEmployee called');
         $user = Auth::user();
         $company = $user->employee->company;
-//  'email' => 'required|email|unique:users,email',
         // Validate the request
         $validated = $request->validate([
             // Basic Information
             'name' => 'required|string|max:255',
-            'parent_name' => 'nullable|string|max:255',
+            'parent_name' => 'required|string|max:255',
             'gender' => 'required|in:male,female,other',
-            'dob' => 'required|date',
+            'dob' => 'required|date|before:18 years ago',
             'marital_status' => 'required|in:single,married,divorced,widowed',
-           'contact_number' => 'required|digits:10|unique:employees,phone',
-           'personal_email' => 'required|email|unique:employees,email',
-            'official_email' => 'nullable|email|',
+            'contact_number' => 'required|digits:10|unique:employees,phone',
+            'personal_email' => 'required|email|unique:employees,email',
+            'official_email' => 'nullable|email|unique:employees,official_email',
             'current_address' => 'required|string',
             'permanent_address' => 'required|string',
             // Job Details
-            'employee_code' => 'nullable|string', // readonly, generated
+            'employee_code' => 'required|string|unique:employees,employee_code', // readonly, generated
             'department_id' => 'required|exists:departments,id',
             'designation_id' => 'required|exists:designations,id',
             'employment_type' => 'required|in:permanent,trainee',
@@ -876,16 +871,16 @@ class CompanyAdminController extends Controller
             'probation_period' => 'nullable|integer',
             'reporting_manager' => 'required|exists:employees,id',
             // Salary Details
-            'ctc' => 'required|numeric|min:0',
-            'basic_salary' => 'required|numeric|min:0',
+            'ctc' => 'required|numeric|min:0|gte:basic_salary',
+            'basic_salary' => 'required|numeric|min:0|lte:ctc',
             'bank_name' => 'required|string',
-            'account_number' => 'required|string',
+            'account_number' => 'required|numeric|unique:employee_salaries,account_number',
             'ifsc_code' => 'required|string',
-            'pan_number' => 'required','unique:employee_salaries,pan_number',
+            'pan_number' => 'required|regex:/^[A-Z]{5}[0-9]{4}[A-Z]$/|unique:employee_salaries,pan_number',
             // Other Details
-            'emergency_contact' => 'nullable|string|max:20',
-            'emergency_contact_relation' => 'nullable|string',
-            'emergency_contact_name' => 'nullable|string',
+            'emergency_contact' => 'required|numeric|digits:10',
+            'emergency_contact_relation' => 'required|string',
+            'emergency_contact_name' => 'required|string',
             'blood_group' => 'nullable|string',
             'nominee_details' => 'nullable|string',
             // Documents

@@ -7,7 +7,8 @@
             <h1>New Employee</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="#">New Employee</a></div>
+                <div class="breadcrumb-item"><a href="{{ url('/company-admin/employees') }}">Employees</a></div>
+                <div class="breadcrumb-item">New Employee</div>
             </div>
         </div>
     <div class="row justify-content-center mt-3">
@@ -47,8 +48,8 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="parent_name" class="form-label">Father’s / Mother’s Name<span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="parent_name" name="parent_name" value="{{ old('parent_name') }}">
-                                         @error('parent_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        <input type="text" class="form-control @error('parent_name') is-invalid @enderror" id="parent_name" required name="parent_name" value="{{ old('parent_name') }}">
+                                        @error('parent_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
@@ -66,22 +67,25 @@
                                             <input class="form-check-input" type="radio" name="gender" id="gender_other" value="other" {{ old('gender') == 'other' ? 'checked' : '' }} required>
                                             <label class="form-check-label" for="gender_other">Other</label>
                                         </div>
+                                        @error('gender')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="dob" class="form-label">Date of Birth <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" id="dob" name="dob" value="{{ old('dob') }}" required>
+                                        <input type="date" class="form-control @error('dob') is-invalid @enderror" id="dob" name="dob" value="{{ old('dob') }}" required>
+                                        @error('dob')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="marital_status" class="form-label">Marital Status<span class="text-danger">*</span></label>
-                                        <select class="form-select" id="marital_status" name="marital_status" required>
+                                        <select class="form-select @error('marital_status') is-invalid @enderror" id="marital_status" name="marital_status" required>
                                             <option value="">Select</option>
                                             <option value="single" {{ old('marital_status') == 'single' ? 'selected' : '' }}>Single</option>
                                             <option value="married" {{ old('marital_status') == 'married' ? 'selected' : '' }}>Married</option>
                                             <option value="divorced" {{ old('marital_status') == 'divorced' ? 'selected' : '' }}>Divorced</option>
                                             <option value="widowed" {{ old('marital_status') == 'widowed' ? 'selected' : '' }}>Widowed</option>
                                         </select>
+                                        @error('marital_status')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="contact_number" class="form-label">Contact Number <span class="text-danger">*</span></label>
@@ -126,11 +130,13 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="current_address" class="form-label">Current Address <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="current_address" name="current_address" rows="2" required>{{ old('current_address') }}</textarea>
+                                        <textarea class="form-control @error('current_address') is-invalid @enderror" id="current_address" name="current_address" rows="2" required>{{ old('current_address') }}</textarea>
+                                        @error('current_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="permanent_address" class="form-label">Permanent Address <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="permanent_address" name="permanent_address" rows="2" required>{{ old('permanent_address') }}</textarea>
+                                        <textarea class="form-control @error('permanent_address') is-invalid @enderror" id="permanent_address" name="permanent_address" rows="2" required>{{ old('permanent_address') }}</textarea>
+                                        @error('permanent_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-4">
@@ -147,12 +153,14 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="employee_code" class="form-label">Employee Code <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="employee_code" name="employee_code" value="{{ old('employee_code') }}" readonly required>
+                                        <input type="text" class="form-control @error('employee_code') is-invalid @enderror" id="employee_code" name="employee_code" value="{{ old('employee_code') }}" readonly required>
                                         <div id="employee_code_error" class="text-danger small mt-1"></div>
+                                        @error('employee_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="joining_date" class="form-label">Date of Joining <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" id="joining_date" name="joining_date" value="{{ old('joining_date') }}" required>
+                                        <input type="date" class="form-control @error('joining_date') is-invalid @enderror" id="joining_date" name="joining_date" value="{{ old('joining_date') }}" required>
+                                        @error('joining_date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <!-- <div class="row">
@@ -181,7 +189,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="department_id" class="form-label">Department <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="department_id" name="department_id" required>
+                                        <select class="form-select @error('department_id') is-invalid @enderror" id="department_id" name="department_id" required>
                                             <option value="">Select Department</option>
                                             @foreach($departments as $department)
                                                 <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>
@@ -189,29 +197,33 @@
                                                 </option>
                                             @endforeach
                                         </select>
+                                        @error('department_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="designation_id" class="form-label">Designation <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="designation_id" name="designation_id" required>
+                                        <select class="form-select @error('designation_id') is-invalid @enderror" id="designation_id" name="designation_id" required>
                                             <option value="">Select Designation</option>
                                         </select>
+                                        @error('designation_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="location" class="form-label">Location / Branch <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="location" name="location" value="{{ old('location') }}" required>
+                                        <input type="text" class="form-control @error('location') is-invalid @enderror" id="location" name="location" value="{{ old('location') }}" required>
+                                        @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="employment_type" name="employment_type" required>
+                                        <select class="form-select @error('employment_type') is-invalid @enderror" id="employment_type" name="employment_type" required>
                                             <option value="">Select Type</option>
                                             <option value="permanent" {{ old('employment_type') == 'permanent' ? 'selected' : '' }}>Permanent</option>
                                             {{-- <option value="part_time" {{ old('employment_type') == 'part_time' ? 'selected' : '' }}>Part-time</option>
                                             <option value="contract" {{ old('employment_type') == 'contract' ? 'selected' : '' }}>Contract</option> --}}
                                             <option value="trainee" {{ old('employment_type') == 'trainee' ? 'selected' : '' }}>Trainee</option>
                                         </select>
+                                        @error('employment_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
@@ -221,12 +233,13 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="reporting_manager" class="form-label">Reporting Manager <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="reporting_manager" name="reporting_manager" required>
+                                        <select class="form-select @error('reporting_manager') is-invalid @enderror" id="reporting_manager" name="reporting_manager" required>
                                             <option value="">Select Manager</option>
                                             @foreach($managers as $manager)
                                                 <option value="{{ $manager->id }}" {{ old('reporting_manager') == $manager->id ? 'selected' : '' }}>{{ $manager->name }}</option>
                                             @endforeach
                                         </select>
+                                        @error('reporting_manager')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-between mt-4">
@@ -243,17 +256,20 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="ctc" class="form-label">CTC (Cost to Company) <span class="text-danger">*</span></label>
-                                        <input type="number" step="0.01" class="form-control" id="ctc" name="ctc" value="{{ old('ctc') }}" required>
+                                        <input type="number" step="0.01" class="form-control @error('ctc') is-invalid @enderror" id="ctc" name="ctc" value="{{ old('ctc') }}" required>
+                                        @error('ctc')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="basic_salary" class="form-label">Basic Salary <span class="text-danger">*</span></label>
-                                        <input type="number" step="0.01" class="form-control" id="basic_salary" name="basic_salary" value="{{ old('basic_salary') }}" required>
+                                        <input type="number" step="0.01" class="form-control @error('basic_salary') is-invalid @enderror" id="basic_salary" name="basic_salary" value="{{ old('basic_salary') }}" required>
+                                        @error('basic_salary')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="bank_name" class="form-label">Bank Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" id="bank_name" name="bank_name" value="{{ old('bank_name') }}" required>
+                                        <input type="text" class="form-control @error('bank_name') is-invalid @enderror" id="bank_name" name="bank_name" value="{{ old('bank_name') }}" required>
+                                        @error('bank_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                    <div class="col-md-6 mb-3">
                                         <label for="account_number" class="form-label">
@@ -275,7 +291,8 @@
                                     <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="ifsc_code" class="form-label">IFSC Code <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control text-uppercase" id="ifsc_code" name="ifsc_code" value="{{ old('ifsc_code') }}" style="text-transform:uppercase" required>
+                                        <input type="text" class="form-control text-uppercase @error('ifsc_code') is-invalid @enderror" id="ifsc_code" name="ifsc_code" value="{{ old('ifsc_code') }}" style="text-transform:uppercase" required>
+                                        @error('ifsc_code')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 
                                 
@@ -298,6 +315,7 @@
                                             @error('pan_number')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
+                                            <small class="form-text text-muted">Format: AAAAA9999A (5 letters, 4 digits, 1 letter)</small>
                                        </div>
 
                                 </div>
@@ -353,18 +371,21 @@
                             <div class="tab-pane fade" id="other" role="tabpanel">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="emergency_contact" class="form-label">Emergency Contact</label>
-                                        <input type="text" class="form-control" id="emergency_contact" maxlength="10" name="emergency_contact" value="{{ old('emergency_contact') }}">
+                                        <label for="emergency_contact" class="form-label">Emergency Contact<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('emergency_contact') is-invalid @enderror" id="emergency_contact" required maxlength="10" name="emergency_contact" value="{{ old('emergency_contact') }}">
+                                        @error('emergency_contact')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="emergency_contact_relation" class="form-label">Emergency Contact Relation</label>
-                                        <input type="text" class="form-control" id="emergency_contact_relation" name="emergency_contact_relation" value="{{ old('emergency_contact_relation') }}">
+                                        <label for="emergency_contact_relation" class="form-label">Emergency Contact Relation<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('emergency_contact_relation') is-invalid @enderror" id="emergency_contact_relation" required name="emergency_contact_relation" value="{{ old('emergency_contact_relation') }}">
+                                        @error('emergency_contact_relation')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
-                                    </div>
-                                    <div class="row">
+                                </div>
+                                <div class="row">
                                     <div class="col-md-6 mb-3">
-                                        <label for="emergency_contact_name" class="form-label">Emergency Contact Name</label>
-                                        <input type="text" class="form-control" id="emergency_contact_name" name="emergency_contact_name" value="{{ old('emergency_contact_name') }}">
+                                        <label for="emergency_contact_name" class="form-label">Emergency Contact Name<span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('emergency_contact_name') is-invalid @enderror" id="emergency_contact_name" required name="emergency_contact_name" value="{{ old('emergency_contact_name') }}">
+                                        @error('emergency_contact_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="blood_group" class="form-label">Blood Group</label>
@@ -456,7 +477,32 @@
 @endpush
 @push('scripts')
 <script>
-    // correct designations  loads JS object 
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check for validation errors and open the tab with the first error
+        const invalidFeedbacks = document.querySelectorAll('.invalid-feedback');
+        if (invalidFeedbacks.length > 0) {
+            // Enable all tabs if there are errors
+            document.querySelectorAll('#employeeTab button.nav-link').forEach(btn => {
+                btn.classList.remove('disabled');
+                btn.removeAttribute('aria-disabled');
+                btn.removeAttribute('tabindex');
+            });
+
+            // Find the first error and activate its tab
+            const firstError = invalidFeedbacks[0];
+            const tabPane = firstError.closest('.tab-pane');
+            if (tabPane) {
+                const tabId = tabPane.id;
+                const tabButton = document.querySelector(`[data-bs-target="#${tabId}"]`);
+                if (tabButton) {
+                    const tab = new bootstrap.Tab(tabButton);
+                    tab.show();
+                }
+            }
+        }
+    });
+
+    // correct designations  loads JS object
     let allDesignations = @json($designations);
 
     document.addEventListener("DOMContentLoaded", function () {
