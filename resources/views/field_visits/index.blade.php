@@ -3,12 +3,14 @@
 
 @section('content')
 <section class="section container">
-<section class="section container">
     <div class="section-header">
-        <h1>Field Visits</h1>
-        <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-        <div class="breadcrumb-item active"><a href="">Field Visits</a></div>
+    <h1>Field Visits</h1>
+    <div class="section-header-breadcrumb">
+        <div class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></div>
+        <div class="breadcrumb-item"><a href="{{ route('field-visits.index') }}">Field Visits</a></div>
+        <!-- <div class="breadcrumb-item active"></div> -->
     </div>
+</div>
 
     <div class="section-body">
       @if(session('success'))
@@ -58,7 +60,7 @@
                             </div>
                         </div>
 
-                        <div class="table-responsive">
+                        <div class="table-responsive position-relative">
                             <table class="table table-striped" id="fieldVisitsTable">
                                 <thead>
                                     <tr>
@@ -117,6 +119,14 @@
                                     @endforelse
                                 </tbody>
                             </table>
+                            <!-- Table Loader -->
+                            <div id="tableLoader" style="
+                                position:absolute; top:0; left:0; width:100%; height:100%;
+                                background: rgba(255,255,255,0.7);
+                                display:flex; align-items:center; justify-content:center;
+                                z-index:1000; display:none;">
+                                <span class="spinner-border text-primary"></span>
+                            </div>
                         </div>
                         <div class="d-flex justify-content-center mt-4">{{ $fieldVisits->links() }}</div>
                     </div>
@@ -154,7 +164,7 @@
                         </button>
                     </div>
 
-                    <div id="map" style="height: 300px; display:none;" class="rounded mb-3"></div>
+                    <div id="map" style="height: 300px; display:none;" class="rounded mb-3 position-relative"></div>
 
                     <input type="hidden" name="latitude" id="latitude">
                     <input type="hidden" name="longitude" id="longitude">
@@ -189,6 +199,7 @@ $(function () {
         $('#map').hide();
         $('#latitude').val('');
         $('#longitude').val('');
+        $('#map .map-loader').remove();
         if(userMarker && typeof userMarker.remove === 'function'){ userMarker.remove(); userMarker = null; }
         if(myMap && typeof myMap.resize === 'function') myMap.resize();
     }
@@ -204,93 +215,116 @@ $(function () {
     $('#completionModal').on('hidden.bs.modal', resetLocationButton);
     $('#completionModal').on('shown.bs.modal', function() { if(myMap) myMap.resize(); });
 
+    // === Get Location with Loader ===
     $('#getLocationBtn').click(function() {
         const btn = $(this);
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Getting location...');
 
         if(!navigator.geolocation) {
             alert('Geolocation not supported');
-            btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+            resetLocationButton();
             return;
         }
 
         navigator.geolocation.getCurrentPosition(function(pos) {
-            const lat = pos.coords.latitude;
-            const lng = pos.coords.longitude;
+            const lat = pos.coords.latitude ?? null;
+            const lng = pos.coords.longitude ?? null;
+
+            if(lat == null || lng == null){
+                alert('Unable to get valid coordinates.');
+                resetLocationButton();
+                return;
+            }
+
             $('#latitude').val(lat);
             $('#longitude').val(lng);
             $('#map').show();
 
+            // Map loader overlay
+            $('#map').append('<div class="map-loader" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;"><span class="spinner-border text-primary"></span></div>');
+
             try {
+                const olaMaps = new OlaMaps({ apiKey: OLA_API_KEY });
+
                 if(!myMap){
-                    const olaMaps = new OlaMaps({ apiKey: OLA_API_KEY });
                     myMap = olaMaps.init({
                         container:'map',
                         center:[lng, lat],
                         zoom:15,
                         style:"https://api.olamaps.io/tiles/vector/v1/styles/default-light-standard/style.json"
                     });
+
                     // Office marker
                     olaMaps.addMarker({color:'blue'}).setLngLat(officeCoords).addTo(myMap);
+
                     // Office circle
                     if(typeof olaMaps.addCircle==='function'){
                         olaMaps.addCircle({center:officeCoords,radius:50,fillColor:'#4285F4',fillOpacity:0.1,strokeColor:'#4285F4',strokeOpacity:0.8,strokeWidth:2}).addTo(myMap);
                     }
                 }
+
                 // User marker
-                const olaMaps = new OlaMaps({ apiKey: OLA_API_KEY });
                 if(!userMarker){
                     userMarker = olaMaps.addMarker({color:'red', draggable:false}).setLngLat([lng,lat]).addTo(myMap);
-                }else{
+                } else {
                     userMarker.setLngLat([lng,lat]);
                 }
+
                 if(typeof myMap.setCenter==='function') myMap.setCenter([lng,lat]);
                 if(typeof myMap.resize==='function') myMap.resize();
+
             } catch(e){
                 console.error('Map error:', e);
                 alert('Error initializing map: ' + e.message);
             } finally {
                 btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+                $('#map .map-loader').remove();
             }
         }, function(err){
             alert('Unable to fetch location: ' + err.message);
-            btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+            resetLocationButton();
         }, {enableHighAccuracy:true, timeout:10000});
     });
 
-    // === Table Filter JS ===
+    // === Table Filter Loader ===
     $('#statusFilter, #approvalFilter, #startDateFilter, #endDateFilter').on('change', function() {
         const status = $('#statusFilter').val().toLowerCase();
         const approval = $('#approvalFilter').val().toLowerCase();
         const startDate = $('#startDateFilter').val();
         const endDate = $('#endDateFilter').val();
 
-        $('#fieldVisitsTable tbody tr').each(function() {
-            const row = $(this);
-            const rowStatus = row.find('td:eq(3)').text().toLowerCase();
-            const rowApproval = row.find('td:eq(4)').text().toLowerCase();
-            const rowDateText = row.find('td:eq(2)').text().trim();
-            let show = true;
+        $('#tableLoader').show();
 
-            // Status filter
-            if(status && rowStatus !== status) show = false;
+        setTimeout(() => {
+            $('#fieldVisitsTable tbody tr').each(function() {
+                const row = $(this);
+                const rowStatus = row.find('td:eq(3)').text().toLowerCase();
+                const rowApproval = row.find('td:eq(4)').text().toLowerCase();
+                const rowDateText = row.find('td:eq(2)').text().trim();
+                let show = true;
 
-            // Approval filter
-            if(approval && rowApproval !== approval) show = false;
+                if(status && rowStatus !== status) show = false;
+                if(approval && rowApproval !== approval) show = false;
+                if(startDate){
+                    const rowDateObj = new Date(rowDateText);
+                    if(rowDateObj < new Date(startDate)) show = false;
+                }
+                if(endDate){
+                    const rowDateObj = new Date(rowDateText);
+                    if(rowDateObj > new Date(endDate)) show = false;
+                }
 
-            // Date filter
-            if(startDate){
-                const rowDateObj = new Date(rowDateText);
-                if(rowDateObj < new Date(startDate)) show = false;
-            }
-            if(endDate){
-                const rowDateObj = new Date(rowDateText);
-                if(rowDateObj > new Date(endDate)) show = false;
-            }
+                row.toggle(show);
+            });
 
-            row.toggle(show);
-        });
+            $('#tableLoader').hide();
+        }, 200); // optional delay to show spinner effect
     });
+
+    // Auto dismiss alerts after 3 sec
+    setTimeout(() => {
+        $('#successAlert, #errorAlert, #validationAlert').alert('close');
+    }, 3000);
 });
 </script>
 @endpush
