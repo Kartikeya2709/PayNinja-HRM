@@ -95,29 +95,34 @@ class FieldVisitController extends Controller
         $employee = Auth::user()->employee;
 
         if ($employee->id !== $fieldVisit->employee_id || !$fieldVisit->isInProgress()) {
-            abort(403, 'Unauthorized action.');
+            return response()->json(['error' => 'Unauthorized action.'], 403);
         }
 
         $request->validate([
             'visit_notes' => 'required|string',
             'visit_photos' => 'nullable|array',
             'visit_photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:20048',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
         ]);
 
         $photoPaths = [];
         if ($request->hasFile('visit_photos')) {
             foreach ($request->file('visit_photos') as $photo) {
-                $path = $photo->store('field-visit-photos', 'public');
-                $photoPaths[] = $path;
+                $photoPaths[] = $photo->store('field-visit-photos', 'public');
             }
         }
 
         $fieldVisit->completeVisit([
             'visit_notes' => $request->visit_notes,
             'visit_attachments' => $photoPaths,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
         ]);
+            //    return redirect()->back()->with('success', 'Field visit completed.');
+                // return response()->json(['success' => 'Field visit completed.']);
 
-        return redirect()->back()->with('success', 'Field visit completed.');
+        return redirect()->route('field-visits.index')->with('success', 'Field Visit completed successfully!');
     }
 
     /**

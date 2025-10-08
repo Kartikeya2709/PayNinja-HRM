@@ -242,7 +242,7 @@
                         <span>&times;</span>
                     </button>
                 </div>
-                <form id="approvalForm">
+                <form id="approvalForm" method="post">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
@@ -289,39 +289,51 @@
     </div>
 
     <!-- Completion Modal -->
-    <div class="modal fade" id="completionModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
+    <div class="modal fade" id="completionModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="POST" id="completionForm" enctype="multipart/form-data">
+                @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Complete Field Visit</h5>
-                    <button type="button" class="close" data-dismiss="modal">
-                        <span>&times;</span>
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <form id="completionForm" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="visit_notes">Visit Notes</label>
-                            <textarea class="form-control" id="visit_notes" name="visit_notes" rows="3"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="visit_photos">Visit Photos</label>
-                            <input type="file" class="form-control" id="visit_photos" name="visit_photos[]"
-                                multiple accept="image/*">
-                            <small class="form-text text-muted">You can upload multiple photos (max 20MB each)</small>
-                        </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="visit_notes">Visit Notes</label>
+                        <textarea class="form-control" id="visit_notes" name="visit_notes" rows="3" required></textarea>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Complete Visit</button>
+
+                    <div class="mb-3">
+                        <label for="visit_attachments">Visit Photos</label>
+                        <input type="file" class="form-control" id="visit_attachments" name="visit_attachments[]" multiple accept="image/*">
+                        <small class="form-text text-muted">Multiple photos allowed (max 20MB each)</small>
                     </div>
-                </form>
-            </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="button" class="btn btn-primary" id="getLocationBtn">
+                            <i class="bi bi-geo-alt-fill me-2"></i> Update Location
+                        </button>
+                    </div>
+
+                    <div id="map" style="height: 300px; display:none;" class="rounded mb-3"></div>
+
+                    <input type="hidden" name="latitude" id="latitude">
+                    <input type="hidden" name="longitude" id="longitude">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Complete Visit</button>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 @endsection
-
+@push('styles')
+<link rel="stylesheet" href="https://api.olamaps.io/olamaps/1.0.0/olamaps.css">
+@endpush
+<script src="https://api.olamaps.io/olamaps/1.0.0/olamaps.min.js"></script>
 @push('scripts')
     <script>
         $(document).ready(function () {
@@ -362,7 +374,144 @@
                 var currentVisitId = {{ $fieldVisit->id }};
                 $(this).attr('action', '{{ url("field-visits") }}/' + currentVisitId + '/complete');
             });
+ 
+            //    let currentVisitId = null;
+            let myMap = null;
+            let userMarker = null;
+            const OLA_API_KEY = "{{ config('services.krutrim.maps_api_key') }}";
+            const officeCoords = [77.223786, 28.630901];
 
+            function resetLocationButton() {
+                $('#getLocationBtn').prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+                $('#map').hide();
+                $('#latitude').val('');
+                $('#longitude').val('');
+                $('#map .map-loader').remove();
+                if(userMarker && typeof userMarker.remove === 'function'){ userMarker.remove(); userMarker = null; }
+                if(myMap && typeof myMap.resize === 'function') myMap.resize();
+            }
+
+            $('.complete-visit-btn').click(function() {
+                currentVisitId = $(this).data('id');
+                $('#completionForm').attr('action', '{{ url("field-visits") }}/' + currentVisitId + '/complete');
+                $('#completionForm')[0].reset();
+                resetLocationButton();
+                $('#completionModal').modal('show');
+            });
+
+            $('#completionModal').on('hidden.bs.modal', resetLocationButton);
+            $('#completionModal').on('shown.bs.modal', function() { if(myMap) myMap.resize(); });
+
+            // === Get Location with Loader ===
+            $('#getLocationBtn').click(function() {
+                const btn = $(this);
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Getting location...');
+
+                if(!navigator.geolocation) {
+                    alert('Geolocation not supported');
+                    resetLocationButton();
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    const lat = pos.coords.latitude ?? null;
+                    const lng = pos.coords.longitude ?? null;
+
+                    if(lat == null || lng == null){
+                        alert('Unable to get valid coordinates.');
+                        resetLocationButton();
+                        return;
+                    }
+
+                    $('#latitude').val(lat);
+                    $('#longitude').val(lng);
+                    $('#map').show();
+
+                    // Map loader overlay
+                    $('#map').append('<div class="map-loader" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;"><span class="spinner-border text-primary"></span></div>');
+
+                    try {
+                        const olaMaps = new OlaMaps({ apiKey: OLA_API_KEY });
+
+                        if(!myMap){
+                            myMap = olaMaps.init({
+                                container:'map',
+                                center:[lng, lat],
+                                zoom:15,
+                                style:"https://api.olamaps.io/tiles/vector/v1/styles/default-light-standard/style.json"
+                            });
+
+                            // Office marker
+                            olaMaps.addMarker({color:'blue'}).setLngLat(officeCoords).addTo(myMap);
+
+                            // Office circle
+                            if(typeof olaMaps.addCircle==='function'){
+                                olaMaps.addCircle({center:officeCoords,radius:50,fillColor:'#4285F4',fillOpacity:0.1,strokeColor:'#4285F4',strokeOpacity:0.8,strokeWidth:2}).addTo(myMap);
+                            }
+                        }
+
+                        // User marker
+                        if(!userMarker){
+                            userMarker = olaMaps.addMarker({color:'red', draggable:false}).setLngLat([lng,lat]).addTo(myMap);
+                        } else {
+                            userMarker.setLngLat([lng,lat]);
+                        }
+
+                        if(typeof myMap.setCenter==='function') myMap.setCenter([lng,lat]);
+                        if(typeof myMap.resize==='function') myMap.resize();
+
+                    } catch(e){
+                        console.error('Map error:', e);
+                        alert('Error initializing map: ' + e.message);
+                    } finally {
+                        btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+                        $('#map .map-loader').remove();
+                    }
+                }, function(err){
+                    alert('Unable to fetch location: ' + err.message);
+                    resetLocationButton();
+                }, {enableHighAccuracy:true, timeout:10000});
+            });
+
+            // === Table Filter Loader ===
+            $('#statusFilter, #approvalFilter, #startDateFilter, #endDateFilter').on('change', function() {
+                const status = $('#statusFilter').val().toLowerCase();
+                const approval = $('#approvalFilter').val().toLowerCase();
+                const startDate = $('#startDateFilter').val();
+                const endDate = $('#endDateFilter').val();
+
+                $('#tableLoader').show();
+
+                setTimeout(() => {
+                    $('#fieldVisitsTable tbody tr').each(function() {
+                        const row = $(this);
+                        const rowStatus = row.find('td:eq(3)').text().toLowerCase();
+                        const rowApproval = row.find('td:eq(4)').text().toLowerCase();
+                        const rowDateText = row.find('td:eq(2)').text().trim();
+                        let show = true;
+
+                        if(status && rowStatus !== status) show = false;
+                        if(approval && rowApproval !== approval) show = false;
+                        if(startDate){
+                            const rowDateObj = new Date(rowDateText);
+                            if(rowDateObj < new Date(startDate)) show = false;
+                        }
+                        if(endDate){
+                            const rowDateObj = new Date(rowDateText);
+                            if(rowDateObj > new Date(endDate)) show = false;
+                        }
+
+                        row.toggle(show);
+                    });
+
+                    $('#tableLoader').hide();
+                }, 200); // optional delay to show spinner effect
+            });
+
+            // Auto dismiss alerts after 3 sec
+            setTimeout(() => {
+                $('#successAlert, #errorAlert, #validationAlert').alert('close');
+            }, 3000);
         });
     </script>
 @endpush
