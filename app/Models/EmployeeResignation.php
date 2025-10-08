@@ -147,7 +147,8 @@ class EmployeeResignation extends Model
     public function getRemainingDaysAttribute()
     {
         if ($this->last_working_date) {
-            return Carbon::now()->diffInDays(Carbon::parse($this->last_working_date), false);
+            // dd($this->last_working_date);
+            return ceil(Carbon::now()->diffInDays(Carbon::parse($this->last_working_date), false));
         }
         return null;
     }

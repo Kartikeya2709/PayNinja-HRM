@@ -366,7 +366,7 @@
                             </div>
                             <div class="joinee">
                                 <h6>Resigned This Month</h6>
-                                <h2>3</h2>
+                                <h2>{{ $resignedEmployeesCount }}</h2>
                                 <small class="text-muted">Employees left</small>
                             </div>
                         </div>
