@@ -33,7 +33,7 @@ class DesignationManagementController extends Controller
      */
     public function create()
     {
-        $departments= Department::with("designations")->get();    
+        $departments= Department::with("designations") ->where('company_id', auth()->user()->company_id)->get();    
         return view('company.employees.designations.create', compact('departments'));
     }
 

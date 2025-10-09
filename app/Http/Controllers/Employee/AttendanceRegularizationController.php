@@ -22,19 +22,28 @@ class AttendanceRegularizationController extends Controller
         $employee = Auth::user()->employee;
         $is_company_admin = Auth::user()->hasRole('company_admin');
 
-        // Company admin can see all requests
+        // Company admin can see all requests for their company
         if ($is_company_admin) {
             $pending_requests = AttendanceRegularization::where('status', '=', 'pending')
+                ->whereHas('employee', function($q) use ($employee) {
+                    $q->where('company_id', $employee->company_id);
+                })
                 ->with('employee', 'approver')
                 ->latest()
                 ->paginate(10, ['*'], 'pending_page');
 
             $approved_requests = AttendanceRegularization::where('status', '=', 'approved')
+                ->whereHas('employee', function($q) use ($employee) {
+                    $q->where('company_id', $employee->company_id);
+                })
                 ->with('employee', 'approver')
                 ->latest()
                 ->paginate(10, ['*'], 'approved_page');
 
             $rejected_requests = AttendanceRegularization::where('status', '=', 'rejected')
+                ->whereHas('employee', function($q) use ($employee) {
+                    $q->where('company_id', $employee->company_id);
+                })
                 ->with('employee', 'approver')
                 ->latest()
                 ->paginate(10, ['*'], 'rejected_page');
