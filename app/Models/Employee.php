@@ -209,7 +209,7 @@ class Employee extends Model
 
     public function reimbursements()
     {
-        return $this->hasMany(EmployeeAttendanceAdjustment::class)->where('type', 'reimbursement');
+        return $this->hasMany(Reimbursement::class);
     }
 
     /**
@@ -350,11 +350,27 @@ class Employee extends Model
     public function hasResigned()
     {
         $activeResignation = $this->activeResignation;
-        
+
         if (!$activeResignation || $activeResignation->status !== 'approved') {
             return false;
         }
-        
+
         return now()->gt($activeResignation->last_working_date);
+    }
+
+    /**
+     * Get the employee's documents.
+     */
+    public function documents()
+    {
+        return $this->hasMany(EmployeeDocument::class);
+    }
+
+    /**
+     * Get the employee's field visits.
+     */
+    public function fieldVisits()
+    {
+        return $this->hasMany(FieldVisit::class);
     }
 }

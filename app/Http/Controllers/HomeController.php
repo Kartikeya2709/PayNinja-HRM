@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AcademicHoliday;
 use App\Models\Company; // Added
+use App\Models\EmployeeResignation;
 use App\Models\LeaveBalance;
 use App\Models\LeaveRequest;
 use App\Models\LeaveType;
@@ -313,6 +314,11 @@ class HomeController extends Controller
                     ->first();
             }
 
+            $resignedEmployeesCount = EmployeeResignation::where('company_id', $companyID)
+                ->where('status', 'approved')
+                ->whereNotNull('resignation_date')
+                ->whereMonth('resignation_date', Carbon::now()->month)
+                ->count();
 
             return view('company_admin.dashboard', [
                 'labels' => $labels,
@@ -323,6 +329,7 @@ class HomeController extends Controller
                 'roleData',
                 'announcements',
                 'roleColors',
+                'resignedEmployeesCount',
                 'pending_regularization_requests',
                 'reimbursements',
                 'newJoineesCount',
