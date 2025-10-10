@@ -85,6 +85,8 @@
                             <i class="fas fa-id-card me-2"></i> My Employee Profile
                         </a>
                     </li>
+                    
+                   
                     @endif
                     <li><hr class="dropdown-divider my-1"></li>
                     <li>

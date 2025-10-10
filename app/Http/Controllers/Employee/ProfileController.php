@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Employee;
-
+use App\Models\Designation;
+use App\Models\Department;
+use App\Models\EmployeeSalary;
 class ProfileController extends Controller
 {
     /**
@@ -19,12 +21,26 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
         $employee = $user->employee;
+
+        // dd($employee);
         
+      $designation = $employee->designation;
+      
+      $department = $employee->department;
+        // Employee::with('employeeSalaries')->where('id')
+
+        $employeeSalary = EmployeeSalary::where('employee_id', $employee->id)->first();
+        
+        // Fetch employee documents
+        $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
+
+        // dd($documents);
+
         if (!$employee) {
             return redirect()->route('home')->with('error', 'Employee record not found.');
         }
 
-        return view('employee.profile', compact('employee'));
+        return view('employee.profile', compact('employee', 'designation', 'department', 'employeeSalary', 'documents'));
     }
 
     /**
@@ -111,4 +127,14 @@ class ProfileController extends Controller
             return redirect()->route('employee.profile')->with('error', 'Failed to update profile image. Please try again.');
         }
     }
+
+
+    /**
+     * View the employee profile (read-only).
+     *
+     * @return \Illuminate\Http\Response
+     */
+   
+
+
 } 
