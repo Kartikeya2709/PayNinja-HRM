@@ -31,7 +31,7 @@ class Employee extends Model
         'official_email',
         'current_address',
         'permanent_address',
-        'employment_type',
+        'employment_type_id',
         'joining_date',
         'location',
         'probation_period',
@@ -75,6 +75,11 @@ class Employee extends Model
     public function designation()
     {
         return $this->belongsTo(Designation::class);
+    }
+
+    public function employmentType()
+    {
+        return $this->belongsTo(EmploymentType::class);
     }
 
     public function employeeDetail()

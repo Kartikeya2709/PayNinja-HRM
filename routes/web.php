@@ -317,6 +317,15 @@ Route::middleware(['auth'])->group(function () {
             'destroy' => 'designations.destroy',
         ]);
 
+        // Employment Type Management
+        Route::resource('employment-types', \App\Http\Controllers\EmploymentTypeManagementController::class)->except(['show', 'destroy'])->names([
+            'index' => 'employment-types.index',
+            'create' => 'employment-types.create',
+            'store' => 'employment-types.store',
+            'edit' => 'employment-types.edit',
+            'update' => 'employment-types.update',
+        ]);
+
         // Department Management
         Route::resource('departments', DepartmentManagementController::class)->except(['show'])->names([
             'index' => 'departments.index',
@@ -438,8 +447,6 @@ Route::middleware(['auth'])->group(function () {
 
     // Company Admin Routes (accessible to company_admin and admin roles)
     Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
-        // Dashboard
-        Route::get('/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'dashboard'])->name('dashboard');
 
         // Payslips Management
         Route::get('/payslips', [\App\Http\Controllers\PayslipController::class, 'getAllPayslips'])
@@ -468,7 +475,6 @@ Route::middleware(['auth'])->group(function () {
 
         // Employee ID Prefix Settings Save
         Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
-        Route::get('/settings/get-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'getEmployeeIdPrefix'])->name('settings.get-employee-id-prefix');
 
         // Employee code generation for company-admin (AJAX)
         Route::get('/employees/next-code', [\App\Http\Controllers\EmployeeController::class, 'getNextEmployeeCode'])->name('employees.next-code');

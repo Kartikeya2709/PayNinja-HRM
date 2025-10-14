@@ -183,13 +183,14 @@
                                         @error('location')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                     <div class="col-md-6 mb-3">
-                                        <label for="employment_type" class="form-label">Employment Type <span class="text-danger">*</span></label>
-                                        <select class="form-select @error('employment_type') is-invalid @enderror" id="employment_type" name="employment_type" >
+                                        <label for="employment_type_id" class="form-label">Employment Type <span class="text-danger">*</span></label>
+                                        <select class="form-select @error('employment_type_id') is-invalid @enderror" id="employment_type_id" name="employment_type_id" >
                                             <option value="">Select Type</option>
-                                            <option value="permanent" {{ old('employment_type', $employee->employment_type) == 'permanent' ? 'selected' : '' }}>Permanent</option>
-                                            <option value="trainee" {{ old('employment_type', $employee->employment_type) == 'trainee' ? 'selected' : '' }}>Trainee</option>
+                                            @foreach($employmentTypes ?? [] as $type)
+                                                <option value="{{ $type->id }}" {{ old('employment_type_id', $employee->employment_type_id) == $type->id ? 'selected' : '' }}>{{ $type->name }}</option>
+                                            @endforeach
                                         </select>
-                                        @error('employment_type')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                        @error('employment_type_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
                                 <div class="row">
@@ -592,14 +593,14 @@
     }
     // Fetch employee code on employment type change
     $(document).ready(function() {
-        $('#employment_type').on('change', function() {
-            var employmentType = $(this).val();
+        $('#employment_type_id').on('change', function() {
+            var employmentTypeId = $(this).val();
             var companyId = @json($company->id ?? null);
-            if (employmentType && companyId) {
+            if (employmentTypeId && companyId) {
                 $.ajax({
                     url: '/company-admin/employees/next-code',
                     method: 'GET',
-                    data: { employment_type: employmentType, company_id: companyId },
+                    data: { employment_type_id: employmentTypeId, company_id: companyId },
                     success: function(res) {
                         if (res.code) {
                             $('#employee_code').val(res.code);

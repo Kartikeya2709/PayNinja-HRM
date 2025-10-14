@@ -17,8 +17,8 @@ use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
-    private function generateEmployeeCode($company, $employmentType = null)
-    {        
+    private function generateEmployeeCode($company, $employmentTypeId = null)
+    {
         $prefixSettings = EmployeeIdPrefix::where('company_id', $company->id)->latest()->get();
 
         // If no prefix settings found, use default
@@ -26,29 +26,27 @@ class EmployeeController extends Controller
             return '#' . strtoupper(substr($company->name, 0, 3)) . str_pad('1', 3, '0', STR_PAD_LEFT);
         }
 
-        // Check if we have a common prefix (both types have same settings)
-        if ($prefixSettings->count() == 2) {
-            $permanent = $prefixSettings->where('employment_type', 'permanent')->first();
-            $trainee = $prefixSettings->where('employment_type', 'trainee')->first();
-
-            if ($permanent->prefix === $trainee->prefix && 
-                $permanent->padding === $trainee->padding && 
-                $permanent->start === $trainee->start) {
-                // Use common settings
-                $prefixSetting = $permanent;
-            } else {
-                // Use type-specific settings
-                $prefixSetting = $prefixSettings->where('employment_type', $employmentType)->first();
-            }
+        // Check for common prefix settings
+        $commonPrefix = $prefixSettings->where('is_common', true)->first();
+        if ($commonPrefix) {
+            // Use common settings for all employment types
+            $prefixSetting = $commonPrefix;
         } else {
-            // Only one type exists, check if it matches the employee type
-            $prefixSetting = $prefixSettings->first();
-            if ($prefixSetting->employment_type !== $employmentType && $prefixSettings->count() == 1) {
-                // If settings don't exist for this employment type, use default
-                return '#' . strtoupper(substr($company->name, 0, 3)) . str_pad('1', 3, '0', STR_PAD_LEFT);
+            // Look for type-specific settings
+            if ($employmentTypeId) {
+                $prefixSetting = $prefixSettings->where('employment_type_id', $employmentTypeId)->first();
+            }
+
+            // If no specific setting found, use the first available setting or default
+            if (!isset($prefixSetting) || !$prefixSetting) {
+                $prefixSetting = $prefixSettings->first();
             }
         }
-        // dd( $prefixSetting);
+
+        // If we still don't have a prefix setting, use default
+        if (!isset($prefixSetting) || !$prefixSetting) {
+            return '#' . strtoupper(substr($company->name, 0, 3)) . str_pad('1', 3, '0', STR_PAD_LEFT);
+        }
 
         // Get the last employee number for this prefix
         $lastEmployee = Employee::where('company_id', $company->id)
@@ -65,7 +63,7 @@ class EmployeeController extends Controller
 
         // Format the number according to padding settings
         $formattedNumber = str_pad($nextNumber, $prefixSetting->padding, '0', STR_PAD_LEFT);
-        
+
         return $prefixSetting->prefix . $formattedNumber;
     }
 
@@ -140,7 +138,7 @@ class EmployeeController extends Controller
             'gender' => $validated['gender'],
             'emergency_contact' => $validated['emergency_contact'] ?? '',
             'joining_date' => $validated['joining_date'],
-            'employment_type' => $validated['employment_type'],
+            'employment_type_id' => $validated['employment_type_id'],
             'address' => $validated['address'] ?? '',
             'employee_code' => $this->generateEmployeeCode($company, $employmentType),
             'created_by' => Auth::id()
@@ -153,7 +151,7 @@ class EmployeeController extends Controller
             'gender' => $validated['gender'],
             'emergency_contact' => $validated['emergency_contact'] ?? null,
             'joining_date' => $validated['joining_date'],
-            'employment_type' => $validated['employment_type']
+            'employment_type_id' => $validated['employment_type_id']
         ]);
 
         return redirect()->route('company.employees.index')
@@ -248,7 +246,7 @@ class EmployeeController extends Controller
             'gender' => 'required|in:male,female,other',
             'emergency_contact' => 'nullable|string|max:255',
             'joining_date' => 'required|date',
-            'employment_type' => 'required|in:permanent,trainee',
+            'employment_type_id' => 'required|exists:employment_types,id',
             'address' => 'nullable|string|max:500',
         ]);
         
@@ -283,7 +281,7 @@ class EmployeeController extends Controller
             'gender' => $validated['gender'],
             'emergency_contact' => $validated['emergency_contact'] ?? '',
             'joining_date' => $validated['joining_date'],
-            'employment_type' => $validated['employment_type']
+            'employment_type_id' => $validated['employment_type_id']
         ]);
 
         // Update or create employee details
@@ -294,7 +292,7 @@ class EmployeeController extends Controller
                 'gender' => $validated['gender'] ?? null,
                 'emergency_contact' => $validated['emergency_contact'] ?? null,
                 'joining_date' => $validated['joining_date'],
-                'employment_type' => $validated['employment_type'],
+                'employment_type_id' => $validated['employment_type_id'],
             ]
         );
 
@@ -373,16 +371,16 @@ class EmployeeController extends Controller
     public function getNextEmployeeCode(Request $request)
     {
         $companyId = auth()->user()->company_id;
-        $employmentType = $request->input('employment_type');
-        if (!$employmentType) {
+        $employmentTypeId = $request->input('employment_type_id');
+        if (!$employmentTypeId) {
             return response()->json(['code' => null, 'error' => 'Missing employment type parameter.'], 400);
         }
         $company = Company::find($companyId);
         if (!$company) {
             return response()->json(['code' => null, 'error' => 'Company not found.'], 404);
         }
-        
-        $code = $this->generateEmployeeCode($company, $employmentType);
+
+        $code = $this->generateEmployeeCode($company, $employmentTypeId);
         return response()->json(['code' => $code]);
     }
 }

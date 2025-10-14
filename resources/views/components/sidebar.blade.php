@@ -294,6 +294,12 @@
                             <span>Manage Designations</span>
                         </a>
                     </li>
+                    <li class="{{ Request::is('company/employment-types*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company.employment-types.index') }}">
+                            <i class="fas fa-briefcase"></i>
+                            <span>Employment Types</span>
+                        </a>
+                    </li>
                     {{-- <li class="{{ Request::is('company/teams*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company.teams.index') }}">
                             <i class="fas fa-users-cog"></i>
@@ -510,6 +516,12 @@
                             <a class="nav-link" href="{{ route('company.designations.index') }}">
                                 <i class="fas fa-id-badge"></i>
                                 <span>Manage Designations</span>
+                            </a>
+                        </li>
+                        <li class="{{ Request::is('company/employment-types*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('company.employment-types.index') }}">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Employment Types</span>
                             </a>
                         </li>
                         {{-- <li class="{{ Request::is('company/teams*') ? 'active' : '' }}">
