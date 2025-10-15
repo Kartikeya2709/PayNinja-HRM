@@ -6,13 +6,11 @@ This document provides comprehensive API documentation for the RocketHR mobile a
 
 ### [1. Authentication](#1-authentication)
 - [1.1 Login](#11-login)
-<!-- - [1.2 Logout](#12-logout) -->
 - [1.2 Get Authenticated User](#12-get-authenticated-user)
 
 ### [2. Profile Management](#2-profile-management)
 - [2.1 Get Profile](#21-get-profile)
-- [2.2 Update Profile](#22-update-profile)
-- [2.3 Get Colleagues](#23-get-colleagues)
+- [2.2 Get Colleagues](#22-get-colleagues)
 
 ### [3. Attendance Management](#3-attendance-management)
 - [3.1 Get Attendance History](#31-get-attendance-history)
@@ -40,7 +38,6 @@ This document provides comprehensive API documentation for the RocketHR mobile a
 ### [7. Salary & Payroll](#7-salary--payroll)
 - [7.1 Get Current Salary](#71-get-current-salary)
 - [7.2 Get Payroll Records](#72-get-payroll-records)
-- [7.3 Get Payroll Record Details](#73-get-payroll-record-details)
 - [7.4 Download Payslip](#74-download-payslip)
 
 ### [8. Reimbursements](#8-reimbursements)
@@ -164,19 +161,6 @@ for staging: https://testing.rockethr.org/api/v1
 curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"password123"}'
 ```
 
-<!-- ### 1.2 Logout
-**Endpoint**: `POST /logout`  
-**Description**: Revoke current access token  
-**Authentication**: Required (Bearer token)
-
-**Response Schema**:
-```json
-{
-  "status": true,
-  "message": "Successfully logged out"
-}
-``` -->
-
 ### 1.2 Get Authenticated User
 **Endpoint**: `GET /user`  
 **Description**: Get current authenticated user information  
@@ -242,34 +226,7 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 }
 ```
 
-### 2.2 Update Profile
-**Endpoint**: `POST /profile/update`  
-**Description**: Update employee's basic profile information  
-**Authentication**: Required
-
-**Request Body**:
-```json
-{
-  "phone": "string (optional)",
-  "emergency_contact": "string (optional)",
-  "address": "string (optional)"
-}
-```
-
-**Response Schema**:
-```json
-{
-  "success": true,
-  "data": {
-    "employee": "object - Updated employee data"
-  },
-  "message": "Profile updated successfully"
-}
-```
-
-**Error Codes**: `422`
-
-### 2.3 Get Colleagues
+### 2.2 Get Colleagues
 **Endpoint**: `GET /profile/colleagues`  
 **Description**: Get list of colleagues from same company with filtering and pagination  
 **Authentication**: Required
@@ -746,10 +703,6 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 }
 ```
 
-### 7.3 Get Payroll Record Details
-**Endpoint**: `GET /salary/payroll-records/{id}`  
-**Description**: Get detailed payroll record  
-**Authentication**: Required
 
 **Response Schema**:
 ```json
@@ -777,7 +730,7 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 }
 ```
 
-### 7.4 Download Payslip
+### 7.3 Download Payslip
 **Endpoint**: `GET /salary/payslip/{id}`  
 **Description**: Download payslip PDF  
 **Authentication**: Required

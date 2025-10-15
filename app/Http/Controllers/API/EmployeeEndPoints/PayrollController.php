@@ -111,65 +111,65 @@ class PayrollController extends Controller
     /**
      * Get specific payroll record details
      */
-    public function getPayrollRecord($id)
-    {
-        $user = Auth::user();
-        $employee = $user->employee;
+    // public function getPayrollRecord($id)
+    // {
+    //     $user = Auth::user();
+    //     $employee = $user->employee;
 
-        if (!$employee) {
-            return response()->json(['message' => 'Employee record not found'], 404);
-        }
+    //     if (!$employee) {
+    //         return response()->json(['message' => 'Employee record not found'], 404);
+    //     }
 
-        $payrollRecord = Payroll::where('id', $id)
-            ->where('employee_id', $employee->id)
-            ->first();
+    //     $payrollRecord = Payroll::where('id', $id)
+    //         ->where('employee_id', $employee->id)
+    //         ->first();
 
-        if (!$payrollRecord) {
-            // Detect if the request came from API or web
-            if (request()->expectsJson() || request()->is('api/*')) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid payroll record ID or record not found.'
-                ], 404);
-            }
+    //     if (!$payrollRecord) {
+    //         // Detect if the request came from API or web
+    //         if (request()->expectsJson() || request()->is('api/*')) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => 'Invalid payroll record ID or record not found.'
+    //             ], 404);
+    //         }
 
-            // Redirect back for web routes
-            return redirect()->back()->with('error', 'Invalid payroll record ID or record not found.');
-        }
+    //         // Redirect back for web routes
+    //         return redirect()->back()->with('error', 'Invalid payroll record ID or record not found.');
+    //     }
 
-        return response()->json([
-            'payroll_record' => [
-                'id' => $payrollRecord->id,
-                'pay_period_start' => $payrollRecord->pay_period_start,
-                'pay_period_end' => $payrollRecord->pay_period_end,
-                'payment_date' => $payrollRecord->payment_date,
-                'basic_salary' => $payrollRecord->basic_salary,
-                'hra' => $payrollRecord->hra,
-                'da' => $payrollRecord->da,
-                'other_allowances' => $payrollRecord->other_allowances,
-                'gross_salary' => $payrollRecord->gross_salary,
-                'pf_deduction' => $payrollRecord->pf_deduction,
-                'esi_deduction' => $payrollRecord->esi_deduction,
-                'professional_tax' => $payrollRecord->professional_tax,
-                'tds' => $payrollRecord->tds,
-                'leave_deductions' => $payrollRecord->leave_deductions,
-                'late_attendance_deductions' => $payrollRecord->late_attendance_deductions,
-                'other_deductions' => $payrollRecord->other_deductions,
-                'net_salary' => $payrollRecord->net_salary,
-                'status' => $payrollRecord->status,
-                'present_days' => $payrollRecord->present_days,
-                'leave_days' => $payrollRecord->leave_days,
-                'overtime_hours' => $payrollRecord->overtime_hours,
-                'overtime_amount' => $payrollRecord->overtime_amount,
-                'incentives' => $payrollRecord->incentives,
-                'bonus' => $payrollRecord->bonus,
-                'advance_salary' => $payrollRecord->advance_salary,
-                'notes' => $payrollRecord->notes,
-                'total_deductions' => $payrollRecord->total_deductions,
-                'total_earnings' => $payrollRecord->total_earnings,
-            ]
-        ]);
-    }
+    //     return response()->json([
+    //         'payroll_record' => [
+    //             'id' => $payrollRecord->id,
+    //             'pay_period_start' => $payrollRecord->pay_period_start,
+    //             'pay_period_end' => $payrollRecord->pay_period_end,
+    //             'payment_date' => $payrollRecord->payment_date,
+    //             'basic_salary' => $payrollRecord->basic_salary,
+    //             'hra' => $payrollRecord->hra,
+    //             'da' => $payrollRecord->da,
+    //             'other_allowances' => $payrollRecord->other_allowances,
+    //             'gross_salary' => $payrollRecord->gross_salary,
+    //             'pf_deduction' => $payrollRecord->pf_deduction,
+    //             'esi_deduction' => $payrollRecord->esi_deduction,
+    //             'professional_tax' => $payrollRecord->professional_tax,
+    //             'tds' => $payrollRecord->tds,
+    //             'leave_deductions' => $payrollRecord->leave_deductions,
+    //             'late_attendance_deductions' => $payrollRecord->late_attendance_deductions,
+    //             'other_deductions' => $payrollRecord->other_deductions,
+    //             'net_salary' => $payrollRecord->net_salary,
+    //             'status' => $payrollRecord->status,
+    //             'present_days' => $payrollRecord->present_days,
+    //             'leave_days' => $payrollRecord->leave_days,
+    //             'overtime_hours' => $payrollRecord->overtime_hours,
+    //             'overtime_amount' => $payrollRecord->overtime_amount,
+    //             'incentives' => $payrollRecord->incentives,
+    //             'bonus' => $payrollRecord->bonus,
+    //             'advance_salary' => $payrollRecord->advance_salary,
+    //             'notes' => $payrollRecord->notes,
+    //             'total_deductions' => $payrollRecord->total_deductions,
+    //             'total_earnings' => $payrollRecord->total_earnings,
+    //         ]
+    //     ]);
+    // }
 
     public function downloadPayslip($id)
     {

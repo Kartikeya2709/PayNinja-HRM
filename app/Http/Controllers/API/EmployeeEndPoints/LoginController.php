@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Models\SuperAdmin;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Password;
 
 class LoginController extends Controller
 {
@@ -185,5 +186,30 @@ class LoginController extends Controller
                 'message' => 'An error occurred while fetching user information'
             ], 500);
         }
+    }
+
+  
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.exists' => 'No user found with this email address.',
+        ]);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === Password::RESET_LINK_SENT) {
+            return response()->json([
+                'status' => true,
+                'message' => __($status),
+            ], 200);
+        }
+
+        throw ValidationException::withMessages([
+            'email' => [trans($status)],
+        ]);
     }
 }

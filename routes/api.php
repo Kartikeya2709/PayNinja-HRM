@@ -32,13 +32,14 @@ Route::prefix('v1')->group(function () {
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('logout', [APILoginController::class, 'logout']);
-        Route::get('user', [APILoginController::class, 'user']);
+        // Route::post('logout', [APILoginController::class, 'logout']);
+        // Route::get('user', [APILoginController::class, 'user']);
+        Route::post('forget-password', [APILoginController::class, 'sendResetLinkEmail']);
 
         // Profile Management
         Route::prefix('profile')->group(function () {
             Route::get('/', [ProfileController::class, 'getProfile']);
-            Route::post('/update', [ProfileController::class, 'updateProfile']);
+            // Route::post('/update', [ProfileController::class, 'updateProfile']);
             Route::get('/colleagues', [ProfileController::class, 'getColleagues']);
         });
 
@@ -77,7 +78,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('salary')->group(function () {
             Route::get('/current', [PayrollController::class, 'getCurrentSalary']);
             Route::get('/payroll-records', [PayrollController::class, 'getPayrollRecords']);
-            Route::get('/payroll-records/{id}', [PayrollController::class, 'getPayrollRecord']);
+            // Route::get('/payroll-records/{id}', [PayrollController::class, 'getPayrollRecord']);
             Route::get('/payslip/{id}', [PayrollController::class, 'downloadPayslip']);
         });
 
