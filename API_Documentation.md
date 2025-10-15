@@ -7,6 +7,7 @@ This document provides comprehensive API documentation for the RocketHR mobile a
 ### [1. Authentication](#1-authentication)
 - [1.1 Login](#11-login)
 - [1.2 Get Authenticated User](#12-get-authenticated-user)
+- [1.3 Forget Password](#13-forget-password)
 
 ### [2. Profile Management](#2-profile-management)
 - [2.1 Get Profile](#21-get-profile)
@@ -182,6 +183,25 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
       "designation": "string"
     }
   }
+}
+```
+
+### 1.3 Forget Password (Send Reset Link Mail)
+**Endpoint**: `Post /forget-password`
+**Description**: Send Password Reset Link via mail
+**Authentication**: Required (Bearer token)
+
+**Request Body**:
+```json
+{
+  "email": "string (required) - User email",
+}
+```
+**Response Schema**:
+```json
+{
+    "status": true,
+    "message": "We have emailed your password reset link."
 }
 ```
 
