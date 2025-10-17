@@ -114,3 +114,6 @@ Route::prefix('v1')->group(function () {
 
     });
 });
+
+Route::post('/contact-messages', [App\Http\Controllers\ContactMessageController::class, 'store']);
+Route::post('/demo-requests', [App\Http\Controllers\DemoRequestController::class, 'store']);
