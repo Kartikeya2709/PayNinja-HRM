@@ -674,6 +674,22 @@
 
                 @endif
 
+                <!-- HR Handbooks -->
+                <li class="menu-header">HR Handbooks</li>
+                <li class="{{ Request::is('handbooks') && !Request::is('handbooks/create') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('handbooks.index') }}">
+                        <i class="fas fa-book"></i>
+                        <span>Handbooks</span>
+                    </a>
+                </li>
+                @if(Auth::user()->hasRole(['admin', 'company_admin']))
+                    <li class="{{ Request::is('handbooks/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('handbooks.create') }}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create Handbook</span>
+                        </a>
+                    </li>
+                @endif
                 <li class="menu-header">Profile Management</li>
                 <li class="{{ Request::is('profile/edit') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ url('profile/edit') }}"><i class="far fa-user"></i>

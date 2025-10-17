@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\EmployeePayrollConfigController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\FieldVisitController;
+use App\Http\Controllers\HandbookController;
 // Test logging route - can be removed after testing
 require __DIR__ . '/test-logging.php';
 
@@ -517,6 +518,14 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/field-visits/{fieldVisit}/reject', [FieldVisitController::class, 'reject'])->name('field-visits.reject');
         Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
         Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
+    });
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('handbooks', HandbookController::class);
+        Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
+    });
+    Route::middleware(['auth'])->group(function () {
+        Route::resource('handbooks', HandbookController::class);
+        Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
     });
 
 }); // End of auth middleware group
