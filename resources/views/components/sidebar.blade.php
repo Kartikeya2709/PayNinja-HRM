@@ -101,6 +101,18 @@
                             <span>Assign Company Admin</span>
                         </a>
                     </li>
+                    <li class="{{ Request::is('superadmin/demo-requests') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.demo-requests.index') }}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Demo Requests</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/contact-messages') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.contact-messages.index') }}">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contact Messages</span>
+                        </a>
+                    </li>
                 @endif
 
 

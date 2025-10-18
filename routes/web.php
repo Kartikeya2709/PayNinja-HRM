@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\FieldVisitController;
 use App\Http\Controllers\HandbookController;
+use App\Http\Controllers\SuperAdmin\DemoRequestsController;
+use App\Http\Controllers\SuperAdmin\ContactMessagesController;
 // Test logging route - can be removed after testing
 require __DIR__ . '/test-logging.php';
 
@@ -190,7 +192,11 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('assign-company-admin', \App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class)->except(['show']);
         Route::get('assigned-company-admins', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'index'])->name('assigned-company-admins.index');
         Route::get('companies/{companyId}/admins', [EmployeeController::class, 'admins'])->name('admins.index');
-        
+
+        // Demo Requests and Contact Messages Views
+        Route::get('demo-requests', [DemoRequestsController::class, 'index'])->name('demo-requests.index');
+        Route::get('contact-messages', [ContactMessagesController::class, 'index'])->name('contact-messages.index');
+
         // Company Documents Management
         Route::prefix('companies/{company}/documents')->name('companies.documents.')->group(function () {
             Route::get('/', [CompanyDocumentController::class, 'index'])->name('index');

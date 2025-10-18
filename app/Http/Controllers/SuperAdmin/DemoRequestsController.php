@@ -1,13 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\SuperAdmin;
 
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Models\DemoRequest;
 
-class DemoRequestController extends Controller
-
+class DemoRequestsController extends Controller
 {
+    public function index()
+    {
+        $demoRequests = DemoRequest::orderBy('created_at', 'desc')->get();
+        return view('superadmin.demo_requests', compact('demoRequests'));
+    }
+
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -15,16 +21,13 @@ class DemoRequestController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
-            'company_name' => 'nullable|string|max:255',
+            'company_name' => 'required|string|max:255',
             'company_size' => 'nullable|string|max:100',
-            'additional_info' => 'nullable|string',
+            'additional_info' => 'required|string',
         ]);
 
         $demoRequest = DemoRequest::create($validatedData);
 
-        return response()->json([
-            'message' => 'Demo request submitted successfully.',
-            'data' => $demoRequest,
-        ], 201);
+        return view('SuperAdmin.demo_requests' , compact('demoRequest'));
     }
 }

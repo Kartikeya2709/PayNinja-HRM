@@ -63,7 +63,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/{id}/cancel', [LeaveController::class, 'cancelLeave']);
         }); 
  
-        // Announcements
+        // Announcements 
         Route::prefix('announcements')->group(function () {
             Route::get('/', [AnnouncementController::class, 'getAnnouncements']);
             Route::get('/{id}', [AnnouncementController::class, 'getAnnouncement']);
