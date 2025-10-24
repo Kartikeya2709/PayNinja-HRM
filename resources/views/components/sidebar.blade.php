@@ -79,6 +79,33 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+              
+                 <!-- Asset Management -->
+                     
+                    <li class="menu-header">Asset Management</li>
+                    <li class="{{ Request::is('admin/assets/categories*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.assets.categories.index') }}">
+                            <i class="fas fa-tags"></i>
+                            <span>Asset Categories</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.assets.index') }}">
+                            <i class="fas fa-laptop"></i>
+                            <span>Assets</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('admin/assets/assignments*') ? 'active' : '' }}">
+                       <a class="nav-link" href="{{ route('admin.assets.assignments.index') }}">
+                            <i class="fas fa-hand-holding"></i>
+                            <span>Asset Assignments</span>
+                        </a>
+                       
+                    </li>
+
+                       
+
+                <!-- End Asset Management -->
 
                 <!-- Superadmin Routes -->
                 @if (Auth::user()->hasRole('superadmin'))
@@ -503,6 +530,10 @@
                         </li>
                     @endif
 
+                    
+
+                   
+
                     <!-- Team Management -->
                     @if ($hasModuleAccess('team', 'admin'))
                         <li class="menu-header">Team Management</li>
@@ -510,6 +541,9 @@
                             <a class="nav-link" href="{{ route('company-admin.module-access.index') }}">
                                 <i class="fas fa-key"></i>
                                 <span>Module Access</span>
+                            </a>
+                        </li>
+                  
                             </a>
                         </li>
                         <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
@@ -706,7 +740,6 @@
                 <li class="{{ Request::is('profile/edit') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ url('profile/edit') }}"><i class="far fa-user"></i>
                         <span>Profile</span></a>
-
 
 
                 <li class="{{ Request::is('profile/change-password') ? 'active' : '' }}">

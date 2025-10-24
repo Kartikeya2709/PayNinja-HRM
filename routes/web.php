@@ -7,6 +7,9 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyDocumentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\AssetCategoryController;
+use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\DesignationManagementController;
 use App\Http\Controllers\DepartmentManagementController;
 use App\Http\Controllers\TeamController;
@@ -18,6 +21,7 @@ use App\Http\Controllers\Employee\AttendanceController as EmployeeAttendanceCont
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\AcademicHolidayController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Admin\PayrollController as AdminPayrollController;
 use App\Http\Controllers\Employee\PayrollController as EmployeePayrollController;
 use App\Http\Controllers\Admin\AttendanceAdjustmentController;
@@ -226,6 +230,42 @@ Route::middleware(['auth'])->group(function () {
         Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
         Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
         Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
+
+        // Asset Management Routes
+        Route::prefix('assets')->name('assets.')->group(function () {
+            // Asset Categories
+            Route::resource('categories', AssetCategoryController::class)->names([
+                'index' => 'categories.index',
+                'create' => 'categories.create',
+                'store' => 'categories.store',
+                'show' => 'categories.show',
+                'edit' => 'categories.edit',
+                'update' => 'categories.update',
+                'destroy' => 'categories.destroy'
+            ]);
+
+            // Asset routes with proper group nesting
+            Route::get('/', [AssetController::class, 'index'])->name('index');
+            Route::get('/create', [AssetController::class, 'create'])->name('create');
+            Route::post('/', [AssetController::class, 'store'])->name('store');
+            Route::get('/show/{asset}', [AssetController::class, 'show'])->name('show');
+            Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');
+            Route::put('/{asset}', [AssetController::class, 'update'])->name('update');
+            Route::delete('/{asset}', [AssetController::class, 'destroy'])->name('destroy');
+                // Asset Assignments nested under assets
+        Route::prefix('assignments')->name('assignments.')->group(function () {
+            Route::get('/', [AssetAssignmentController::class, 'index'])->name('index');
+            Route::get('/create', [AssetAssignmentController::class, 'create'])->name('create');
+            Route::post('/', [AssetAssignmentController::class, 'store'])->name('store');
+            Route::get('/{assignment}', [AssetAssignmentController::class, 'show'])->name('show');
+            Route::get('/{assignment}/edit', [AssetAssignmentController::class, 'edit'])->name('edit');
+            Route::put('/{assignment}', [AssetAssignmentController::class, 'update'])->name('update');
+            Route::delete('/{assignment}', [AssetAssignmentController::class, 'destroy'])->name('destroy');
+            Route::post('/{assignment}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
+        });  
+
+        });        
+      
     });
 
     // Admin Payroll Management
