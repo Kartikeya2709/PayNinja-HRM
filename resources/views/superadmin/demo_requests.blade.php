@@ -49,6 +49,16 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    {{-- Pagination --}}
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div>
+                            Showing {{ $demoRequests->firstItem() ?? 0 }} to {{ $demoRequests->lastItem() ?? 0 }} of {{ $demoRequests->total() }} entries
+                        </div>
+                        <div>
+                            {{ $demoRequests->links() }}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,6 +71,37 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* Pagination Styles */
+.pagination {
+    margin: 0;
+}
+
+.page-link {
+    padding: 0.5rem 0.75rem;
+    color: #6c757d;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+.page-link:hover {
+    color: #0056b3;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
 }
 </style>
 @endsection

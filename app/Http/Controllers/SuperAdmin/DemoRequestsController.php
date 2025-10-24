@@ -5,12 +5,15 @@ namespace App\Http\Controllers\SuperAdmin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\DemoRequest;
+use Illuminate\Support\Facades\DB;
 
 class DemoRequestsController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $demoRequests = DemoRequest::orderBy('created_at', 'desc')->get();
+        $perPage = $request->get('per_page', 10); // Default 10 items per page
+        $demoRequests = DemoRequest::orderBy('created_at', 'desc')
+            ->paginate($perPage);
         return view('superadmin.demo_requests', compact('demoRequests'));
     }
 
