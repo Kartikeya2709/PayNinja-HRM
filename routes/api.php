@@ -14,6 +14,8 @@ use App\Http\Controllers\API\EmployeeEndPoints\ReimbursementController;
 use App\Http\Controllers\API\EmployeeEndPoints\TeamController;
 use App\Http\Controllers\API\EmployeeEndPoints\FieldVisitController;
 use App\Http\Controllers\API\EmployeeEndPoints\ResignationController;
+use App\Http\Controllers\API\ContactMessageController;
+use App\Http\Controllers\API\DemoRequestController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -115,5 +117,5 @@ Route::prefix('v1')->group(function () {
     });
 });
 
-Route::post('/contact-messages', [App\Http\Controllers\ContactMessageController::class, 'store']);
-Route::post('/demo-requests', [App\Http\Controllers\DemoRequestController::class, 'store']);
+Route::post('/contact-messages', [ContactMessageController::class, 'store']);
+Route::post('/demo-requests', [DemoRequestController::class, 'store']);
