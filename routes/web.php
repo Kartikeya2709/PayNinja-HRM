@@ -27,6 +27,8 @@ use App\Http\Controllers\Admin\EmployeePayrollConfigController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\FieldVisitController;
+use App\Http\Controllers\SuperAdmin\SlugController;
+use App\Http\Controllers\SuperAdmin\RoleController;
 use App\Http\Controllers\HandbookController;
 use App\Http\Controllers\SuperAdmin\DemoRequestsController;
 use App\Http\Controllers\SuperAdmin\ContactMessagesController;
@@ -196,6 +198,17 @@ Route::middleware(['auth'])->group(function () {
         // Demo Requests and Contact Messages Views
         Route::get('demo-requests', [DemoRequestsController::class, 'index'])->name('demo-requests.index');
         Route::get('contact-messages', [ContactMessagesController::class, 'index'])->name('contact-messages.index');
+
+        // Slug Management
+        Route::get('setting/slugs', [SlugController::class, 'slugs'])->name('setting.slugs');
+        Route::post('setting/slug/add', [SlugController::class, 'add_slug'])->name('setting.slug.add');
+        Route::match(['get', 'post'], 'setting/slug/edit/{id}', [SlugController::class, 'edit_slug'])->name('setting.slug.edit');
+        Route::get('setting/slug/destroy/{id}', [SlugController::class, 'destroy_slug'])->name('setting.slug.destroy');
+
+        // Role Management
+        Route::middleware(['role:superadmin'])->group(function () {
+            Route::resource('roles', RoleController::class);
+        });
 
         // Company Documents Management
         Route::prefix('companies/{company}/documents')->name('companies.documents.')->group(function () {

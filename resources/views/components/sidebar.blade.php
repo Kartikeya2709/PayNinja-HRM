@@ -101,6 +101,18 @@
                             <span>Assign Company Admin</span>
                         </a>
                     </li>
+                    <li class="{{ Request::is('superadmin/setting/slugs*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.setting.slugs') }}">
+                            <i class="fas fa-link"></i>
+                            <span>Manage Slugs</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/roles*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.roles.index') }}">
+                            <i class="fas fa-user-tag"></i>
+                            <span>Manage Roles</span>
+                        </a>
+                    </li>
                     <li class="{{ Request::is('superadmin/demo-requests') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('superadmin.demo-requests.index') }}">
                             <i class="fas fa-clipboard-list"></i>
