@@ -30,6 +30,7 @@ use App\Http\Controllers\FieldVisitController;
 use App\Http\Controllers\HandbookController;
 use App\Http\Controllers\SuperAdmin\DemoRequestsController;
 use App\Http\Controllers\SuperAdmin\ContactMessagesController;
+use App\Http\Controllers\LeadController;
 // Test logging route - can be removed after testing
 require __DIR__ . '/test-logging.php';
 
@@ -454,6 +455,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Company Admin Routes (accessible to company_admin and admin roles)
     Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
+        // Leads Management
+        Route::resource('leads', LeadController::class);
 
         // Payslips Management
         Route::get('/payslips', [\App\Http\Controllers\PayslipController::class, 'getAllPayslips'])
@@ -485,6 +488,8 @@ Route::middleware(['auth'])->group(function () {
 
         // Employee code generation for company-admin (AJAX)
         Route::get('/employees/next-code', [\App\Http\Controllers\EmployeeController::class, 'getNextEmployeeCode'])->name('employees.next-code');
+
+
     });
 
     // Employee Resignation Routes
