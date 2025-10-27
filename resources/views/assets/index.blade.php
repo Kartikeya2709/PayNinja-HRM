@@ -55,8 +55,8 @@
                                         @endif
                                     </td>
                                     <td>
-                                     
-                                        {{ optional($asset->currentAssignment)->condition_on_assignment ?? '-' }}   
+                                     {{ $asset->condition }}
+                                        {{-- {{ optional($asset->currentAssignment)->condition_on_assignment ?? '-' }}    --}}
                                     </td>
                                     </td>
                                     <!-- <td>
@@ -74,9 +74,10 @@
                                     </td> -->
                                     <td>
                                         <!-- View Asset -->
-                                        <a href="{{ route('admin.assets.assignments.show', $asset->id) }}" class="btn btn-info btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
+                                      <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
+    <i class="fas fa-eye"></i>
+</a>
+
 
                                         <!-- Edit Asset -->
                                         <a href="{{ route('admin.assets.assignments.edit', $asset->id) }}" class="btn btn-primary btn-sm">

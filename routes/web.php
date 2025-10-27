@@ -223,49 +223,48 @@ Route::middleware(['auth'])->group(function () {
             ->name('shifts.assign');
 
         // Salary Management
-        Route::get('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'index'])->name('salary.index');
-        Route::get('salary/create', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'create'])->name('salary.create');
-        Route::post('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'store'])->name('salary.store');
-        Route::get('salary/{employee}/edit', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'edit'])->name('salary.edit');
-        Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
-        Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
-        Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
+        // Route::get('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'index'])->name('salary.index');
+        // Route::get('salary/create', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'create'])->name('salary.create');
+        // Route::post('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'store'])->name('salary.store');
+        // Route::get('salary/{employee}/edit', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'edit'])->name('salary.edit');
+        // Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
+        // Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
+        // Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
 
         // Asset Management Routes
-        Route::prefix('assets')->name('assets.')->group(function () {
-            // Asset Categories
-            Route::resource('categories', AssetCategoryController::class)->names([
-                'index' => 'categories.index',
-                'create' => 'categories.create',
-                'store' => 'categories.store',
-                'show' => 'categories.show',
-                'edit' => 'categories.edit',
-                'update' => 'categories.update',
-                'destroy' => 'categories.destroy'
-            ]);
+       Route::prefix('assets')->name('assets.')->group(function () {
+    // Asset Categories
+    Route::resource('categories', AssetCategoryController::class)->names([
+        'index' => 'categories.index',
+        'create' => 'categories.create',
+        'store' => 'categories.store',
+        'show' => 'categories.show',
+        'edit' => 'categories.edit',
+        'update' => 'categories.update',
+        'destroy' => 'categories.destroy',
+    ]);
 
-            // Asset routes with proper group nesting
-            Route::get('/', [AssetController::class, 'index'])->name('index');
-            Route::get('/create', [AssetController::class, 'create'])->name('create');
-            Route::post('/', [AssetController::class, 'store'])->name('store');
-            Route::get('/show/{asset}', [AssetController::class, 'show'])->name('show');
-            Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');
-            Route::put('/{asset}', [AssetController::class, 'update'])->name('update');
-            Route::delete('/{asset}', [AssetController::class, 'destroy'])->name('destroy');
-                // Asset Assignments nested under assets
-        Route::prefix('assignments')->name('assignments.')->group(function () {
-            Route::get('/', [AssetAssignmentController::class, 'index'])->name('index');
-            Route::get('/create', [AssetAssignmentController::class, 'create'])->name('create');
-            Route::post('/', [AssetAssignmentController::class, 'store'])->name('store');
-            Route::get('/{assignment}', [AssetAssignmentController::class, 'show'])->name('show');
-            Route::get('/{assignment}/edit', [AssetAssignmentController::class, 'edit'])->name('edit');
-            Route::put('/{assignment}', [AssetAssignmentController::class, 'update'])->name('update');
-            Route::delete('/{assignment}', [AssetAssignmentController::class, 'destroy'])->name('destroy');
-            Route::post('/{assignment}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
-        });  
+    // Asset routes
+    Route::get('/', [AssetController::class, 'index'])->name('index');
+    Route::get('/create', [AssetController::class, 'create'])->name('create');
+    Route::post('/', [AssetController::class, 'store'])->name('store');
+    Route::get('/show/{asset}', [AssetController::class, 'show'])->name('show');
+    Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');
+    Route::put('/{asset}', [AssetController::class, 'update'])->name('update');
+    Route::delete('/{asset}', [AssetController::class, 'destroy'])->name('destroy');
 
-        });        
-      
+    // Asset Assignments, distinct from assets route by naming convention and URL structure
+    Route::prefix('assignments')->name('assignments.')->group(function () {
+        Route::get('/', [AssetAssignmentController::class, 'index'])->name('index');
+        Route::get('/create', [AssetAssignmentController::class, 'create'])->name('create');
+        Route::post('/', [AssetAssignmentController::class, 'store'])->name('store');
+        Route::get('/show/{assignment}', [AssetAssignmentController::class, 'show'])->name('show');
+        Route::get('/{assignment}/edit', [AssetAssignmentController::class, 'edit'])->name('edit');
+        Route::put('/{assignment}', [AssetAssignmentController::class, 'update'])->name('update');
+        Route::delete('/{assignment}', [AssetAssignmentController::class, 'destroy'])->name('destroy');
+        Route::post('/{assignment}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
+    });
+});
     });
 
     // Admin Payroll Management

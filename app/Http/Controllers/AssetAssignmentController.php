@@ -16,7 +16,14 @@ class AssetAssignmentController extends Controller
      */
     public function index()
     {
-        //
+        $assignments = AssetAssignment::with(['asset', 'employee', 'assignedBy'])
+            ->whereHas('asset', function ($query) {
+                $query->where('company_id', Auth::user()->company_id);
+            })
+            ->orderBy('assigned_date', 'desc')
+            ->paginate(10);
+
+        return view('assets.assignments.index', compact('assignments'));
     }
 
     /**
@@ -44,7 +51,31 @@ class AssetAssignmentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'asset_id' => 'required|exists:assets,id',
+            'employee_id' => 'required|exists:employees,id',
+            'assigned_date' => 'required|date',
+            'expected_return_date' => 'nullable|date|after:assigned_date',
+            'condition_on_assignment' => 'required|in:good,fair,poor,damaged',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $assignment = AssetAssignment::create([
+            'asset_id' => $request->asset_id,
+            'employee_id' => $request->employee_id,
+            'assigned_by' => Auth::id(),
+            'assigned_date' => $request->assigned_date,
+            'expected_return_date' => $request->expected_return_date,
+            'condition_on_assignment' => $request->condition_on_assignment,
+            'notes' => $request->notes,
+            'status' => 'assigned',
+        ]);
+
+        // Update asset status to assigned
+        $assignment->asset->update(['status' => 'assigned']);
+
+        return redirect()->route('admin.assets.assignments.index')
+            ->with('success', 'Asset assigned successfully.');
     }
 
     /**
@@ -55,14 +86,14 @@ class AssetAssignmentController extends Controller
         //  $assignment = AssetAssignment::with(['asset', 'employee', 'assignedBy'])->findOrFail($id);
         // return view('assets.assignments.show', compact('assignment'));
 
-            //     $assignment = AssetAssignment::with([
-            //     'asset.assignments.employee',
-            //     'asset.assignments.assignedBy',
-            //     'employee',
-            //     'assignedBy'
-            // ])->findOrFail($id);
+        //         $assignment = AssetAssignment::with([
+        //         'asset.assignments.employee',
+        //         'asset.assignments.assignedBy',
+        //         'employee',
+        //         'assignedBy'
+        //     ])->findOrFail($id);
 
-            // return view('assets.assignments.show', compact('assignment'));
+        //     return view('assets.assignments.show', compact('assignment'));
 
               // Load assignment with its asset, category, employee, and assignedBy
     $assignment = AssetAssignment::with([
@@ -104,6 +135,43 @@ class AssetAssignmentController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $assignment = AssetAssignment::findOrFail($id);
+
+        // Only allow deletion if assignment is returned
+        if ($assignment->status !== 'returned') {
+            return redirect()->back()->with('error', 'Cannot delete an active assignment. Return the asset first.');
+        }
+
+        $assignment->delete();
+
+        return redirect()->route('admin.assets.assignments.index')
+            ->with('success', 'Asset assignment deleted successfully.');
+    }
+
+    /**
+     * Return an asset assignment.
+     */
+    public function returnAsset(Request $request, string $id)
+    {
+        $request->validate([
+            'return_condition' => 'required|in:good,fair,poor,damaged',
+            'return_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $assignment = AssetAssignment::findOrFail($id);
+
+        $assignment->update([
+            'status' => 'returned',
+            'returned_date' => now(),
+            'condition_on_return' => $request->return_condition,
+            'return_notes' => $request->return_notes,
+        ]);
+
+        // Update asset status back to available
+        $assignment->asset->update(['status' => 'available']);
+         $assignment->asset->update(['condition' => $request->return_condition]);
+
+        return redirect()->route('admin.assets.assignments.show', $assignment->id)
+            ->with('success', 'Asset returned successfully.');
     }
 }

@@ -81,7 +81,7 @@
                 </li>
               
                  <!-- Asset Management -->
-                     
+                       @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
                     <li class="menu-header">Asset Management</li>
                     <li class="{{ Request::is('admin/assets/categories*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin.assets.categories.index') }}">
@@ -102,7 +102,14 @@
                         </a>
                        
                     </li>
+                @endif
 
+                 {{-- <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('assets.index') }}">
+                            <i class="fas fa-laptop"></i>
+                            <span>Assets</span>
+                        </a>
+                    </li> --}}
                        
 
                 <!-- End Asset Management -->

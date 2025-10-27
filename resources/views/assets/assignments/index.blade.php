@@ -77,24 +77,23 @@
                                 <div class="modal-body">
                                 <div class="form-group">
                                     <label for="returned_date_{{ $assignment->id }}">Return Date</label>
-                                    <input type="date" name="returned_date" id="returned_date_{{ $assignment->id }}" class="form-control" value="{{ now()->format('Y-m-d') }}" required>
+                                    <input type="date" name="returned_date" id="returned_date_{{ $assignment->id }}" class="form-control" value="{{ now()->format('Y-m-d') }}">
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="condition_on_return_{{ $assignment->id }}">Condition on Return</label>
-                                    <select name="condition_on_return" id="condition_on_return_{{ $assignment->id }}" class="form-control" required>
+                                    <label for="return_condition_{{ $assignment->id }}">Condition on Return</label>
+                                    <select name="return_condition" id="return_condition_{{ $assignment->id }}" class="form-control" required>
                                         <option value="">-- Select Condition --</option>
-                                        <option value="New">New</option>
-                                        <option value="Good">Good</option>
-                                        <option value="Fair">Fair</option>
-                                        <option value="Poor">Poor</option>
-                                       
+                                        <option value="good">Good</option>
+                                        <option value="fair">Fair</option>
+                                        <option value="poor">Poor</option>
+                                        <option value="damaged">Damaged</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="notes_{{ $assignment->id }}">Notes</label>
-                                    <textarea name="notes" id="notes_{{ $assignment->id }}" class="form-control" placeholder="Optional notes..."></textarea>
+                                    <label for="return_notes_{{ $assignment->id }}">Notes</label>
+                                    <textarea name="return_notes" id="return_notes_{{ $assignment->id }}" class="form-control" placeholder="Optional notes..."></textarea>
                                 </div>
                                 </div>
                                 <div class="modal-footer">

@@ -1,134 +1,172 @@
 @extends('layouts.app')
 
+@section('title', 'Asset Details')
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">Asset Details: {{ $asset->name }}</h3>
-                    <div>
-                       <a href="{{ route('admin.assets.edit', $asset->id) }}" class="btn btn-primary">
-                           <i class="fas fa-edit"></i> Edit Asset
-                       </a>
-                        <a href="{{ route('admin.assets.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-arrow-left"></i> Back to Assets
+                <div class="card-header">
+                    <h3 class="card-title">Asset Details</h3>
+                    <div class="card-tools">
+                        <a href="{{ route('admin.assets.index') }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to List
                         </a>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h5>Basic Information</h5>
-                            <table class="table">
+                            <table class="table table-bordered">
                                 <tr>
-                                    <th>Asset Code:</th>
-                                    <td>{{ $asset->asset_code }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Name:</th>
+                                    <th>Name</th>
                                     <td>{{ $asset->name }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Category:</th>
-                                    <td>{{ $assignment->asset->category->name ?? '-' }}</td>
+                                    <th>Category</th>
+                                    <td>{{ $asset->category->name }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Status:</th>
+                                    <th>Asset Code</th>
+                                    <td>{{ $asset->asset_code }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
                                     <td>
-                                        <span class="badge badge-{{ $asset->status === 'available' ? 'success' : ($asset->status === 'assigned' ? 'primary' : 'warning') }}">
-                                            {{ ucfirst($asset->status) }}
+                                        <span class="badge badge-{{ $asset->status === 'Available' ? 'success' : 'warning' }}">
+                                            {{ $asset->status }}
                                         </span>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Current Condition:</th>
-                                    <td>{{ $asset->condition_on_assignment }}</td>
+                                    <th>Description</th>
+                                    <td>{{ $asset->description ?? '-' }}</td>
                                 </tr>
                                 <tr>
-                                  @if($assignment->returned_date)
-                                        <td>{{ $assignment->condition_on_return }}</td>
-                                    @else
-                                    <td>{{ $assignment->condition_on_assignment }}</td>
-                                    @endif
-                                    <td>{{ $assignment->returned_date ? 'Returned' : 'In Use' }}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <div class="col-md-6">
-                            <h5>Purchase Information</h5>
-                            <table class="table">
-                                <tr>
-                                    <th>Purchase Date:</th>
-                                    <td>{{ $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : 'N/A' }}</td>
+                                    <th>Purchase Date</th>
+                                    <td>{{ $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '-' }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Purchase Cost:</th>
-                                    <td>{{ $asset->purchase_cost ? number_format($asset->purchase_cost, 2) : 'N/A' }}</td>
+                                    <th>Current Assignment</th>
+                                    <td>
+                                        @if($asset->currentAssignment)
+                                            {{ $asset->currentAssignment->employee->name }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <th>Created At:</th>
-                                    <td>{{ $asset->created_at->format('Y-m-d H:i:s') }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Last Updated:</th>
-                                    <td>{{ $asset->updated_at->format('Y-m-d H:i:s') }}</td>
+                                    <th>Condition</th>
+                                    <td>
+                                        @if($asset->currentAssignment)
+                                            {{ $asset->currentAssignment->condition_on_assignment ??$asset->currentAssignment->condition_on_return }}
+                                        @else
+                                            {{ $asset->condition ?? 'N/A' }}
+                                        @endif
+                                    </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
 
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <h5>Description</h5>
-                            <p>{{ $asset->description ?? 'No description available.' }}</p>
-                        </div>
-                    </div>
-
-                    @if($asset->notes)
-                    <div class="row mt-4">
-                        <div class="col-12">
-                            <h5>Notes</h5>
-                            <p>{{ $asset->notes }}</p>
-                        </div>
-                    </div>
-                    @endif
-
-                    <div class="row mt-4">
+                    <!-- Asset Assignment History -->
+                    <div class="row mt-5">
                         <div class="col-12">
                             <h5>Assignment History</h5>
-                            <div class="table-responsive">
-                                <table class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>Employee</th>
-                                            <th>Assigned Date</th>
-                                            <th>Expected Return</th>
-                                            <th>Returned Date</th>
-                                            <th>Assigned By</th>
-                                            <th>Condition</th>
+                            <table class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>S.no</th>
+                                        <th>Employee</th>
+                                        <th>Assigned By</th>
+                                        <th>Assigned Date</th>
+                                        <th>Expected Return</th>
+                                        <th>Returned Date</th>
+                                        <th>Condition on Assignment</th>
+                                        <th>Condition on Return</th>
+                                        <th>Status</th>
+                                        <th>Notes</th>
+                                        {{-- <th>Actions</th> --}}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($asset->assignments as $assignment)
+                                        <tr @if($assignment->status === 'assigned') style="background-color:#eafbe7;" @endif>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $assignment->employee->name ?? '-' }}</td>
+                                            <td>{{ $assignment->assignedBy->name ?? '-' }}</td>
+                                            <td>{{ $assignment->assigned_date ? \Carbon\Carbon::parse($assignment->assigned_date)->format('d M, Y') : 'N/A' }}</td>
+                                            <td>{{ $assignment->expected_return_date ? \Carbon\Carbon::parse($assignment->expected_return_date)->format('d M, Y') : 'N/A' }}</td>
+                                            <td>{{ $assignment->returned_date ? \Carbon\Carbon::parse($assignment->returned_date)->format('d M, Y') : 'Not Returned' }}</td>
+                                            <td>{{ ucfirst($assignment->condition_on_assignment ?? '-') }}</td>
+                                            <td>{{ ucfirst($assignment->condition_on_return ?? '-') }}</td>
+                                            <td>
+                                                @if($assignment->status === 'assigned')
+                                                    <span class="badge badge-success">Assigned</span>
+                                                @elseif($assignment->status === 'returned')
+                                                    <span class="badge badge-secondary">Returned</span>
+                                                @else
+                                                    <span class="badge badge-info">{{ ucfirst($assignment->status ?? 'N/A') }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                @if($assignment->notes)
+                                                      {{ $assignment->notes }}>
+                                                        {{-- <i class="fas fa-info-circle"></i> --}}
+                                          
+                                                @endif
+                                                @if($assignment->return_notes)
+                                                    {{ $assignment->return_notes }}
+                                                @endif
+                                            </td>
+                                            {{-- <td>
+                                                <a href="{{ route('admin.assets.assignments.show', $assignment->id) }}" class="btn btn-sm btn-info">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                @if($assignment->status === 'assigned')
+                                                    <button type="button" class="btn btn-sm btn-warning" 
+                                                            onclick="window.location.href='{{ route('admin.assets.assignments.show', $assignment->id) }}#returnAssetModal'">
+                                                        <i class="fas fa-undo"></i> Return
+                                                    </button>
+                                                @endif
+                                            </td> --}}
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse($asset->assignments as $assignment)
+                                    @empty
                                         <tr>
-                                            <td>{{ $assignment->employee->full_name }}</td>
-                                            <td>{{ $assignment->assigned_date->format('Y-m-d') }}</td>
-                                            <td>{{ $assignment->expected_return_date ? $assignment->expected_return_date->format('Y-m-d') : '-' }}</td>
-                                            <td>{{ $assignment->returned_date ? $assignment->returned_date->format('Y-m-d') : 'Not returned' }}</td>
-                                            <td>{{ $assignment->assignedBy->name }}</td>
-                                            <td>{{ $assignment->condition_on_assignment }}</td>
+                                            <td colspan="11" class="text-center">No assignment history found for this asset.</td>
                                         </tr>
-                                        @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center">No assignment history found.</td>
-                                        </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
+                                    @endforelse
+                                </tbody>
+                            </table>
                         </div>
                     </div>
+                    <!-- End Asset History -->
+
+                    @if($asset->conditions->count() > 0)
+                    <div class="mt-4">
+                        <h4>Condition History</h4>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Condition</th>
+                                    <th>Notes</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($asset->conditions as $condition)
+                                <tr>
+                                    <td>{{ $condition->condition }}</td>
+                                    <td>{{ $condition->notes }}</td>
+                                    <td>{{ $condition->created_at->format('Y-m-d') }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

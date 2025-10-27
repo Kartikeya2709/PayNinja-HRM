@@ -72,7 +72,7 @@ class AssetController extends Controller
             ->findOrFail($id);
            
 
-        return view('admin.assets.show', compact('asset'));
+        return view('assets.show', compact('asset'));
     }
 
     /**
