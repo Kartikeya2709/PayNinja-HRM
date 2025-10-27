@@ -81,15 +81,15 @@
                 </li>
               
                  <!-- Asset Management -->
-                       @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
+                @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
                     <li class="menu-header">Asset Management</li>
-                    <li class="{{ Request::is('admin/assets/categories*') ? 'active' : '' }}">
+                    <li class="{{ Request::is('admin/assets-categories*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin.assets.categories.index') }}">
                             <i class="fas fa-tags"></i>
                             <span>Asset Categories</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
+                    <li class="{{ (Request::is('admin/assets/*') || Request::is('admin/assets')) && !Request::is('admin/assets/assignments*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin.assets.index') }}">
                             <i class="fas fa-laptop"></i>
                             <span>Assets</span>
@@ -256,6 +256,15 @@
                         <a class="nav-link" href="{{ route('field-visits.create') }}">
                             <i class="fas fa-plus-circle"></i>
                             <span>Schedule Visit</span>
+                        </a>
+                    </li>
+
+                    <!-- Assets -->
+                    <li class="menu-header">Assets</li>
+                    <li class="{{ Request::is('employee/assets') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('employee.assets.index') }}">
+                            <i class="fas fa-laptop"></i>
+                            <span>My Assets</span>
                         </a>
                     </li>
 

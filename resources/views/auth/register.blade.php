@@ -168,7 +168,7 @@
         <div class="register-card">
             <div class="register-logo-container"
                 style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                <img src="{{ asset('/images/rocket-hr-logo.png') }}" alt="RokcetHR Logo" class="register-logo"
+                <img src="{{ asset('/images/rocket-hr-logo.png') }}" alt="RocketHR Logo" class="register-logo"
                     style="object-fit: contain;" />
             </div>
             <h2>Register</h2>

@@ -41,7 +41,7 @@
                                 </tr>
                                 <tr>
                                     <th>Current Condition</th>
-                                    <td>{{ optional($assignment->asset->currentAssignment)->condition_on_assignment ?? '-' }}</td>
+                                    <td>{{ optional($assignment->asset)->condition ?? '-' }}</td>
                                 </tr>
                             </table>
                         </div>
@@ -69,8 +69,8 @@
                                 <tr>
                                     <th>Status</th>
                                     <td>
-                                        <span class="badge badge-{{ $assignment->status === 'assigned' ? 'success' : 'secondary' }}">
-                                            {{ ucfirst($assignment->status) }}
+                                        <span class="badge badge-{{ $assignment->asset->status === 'assigned' ? 'warning' : 'primary' }}">
+                                            {{ ucfirst($assignment->asset->status) }}
                                         </span>
                                     </td>
                                 </tr>
@@ -141,13 +141,9 @@
                                             <td>{{ ucfirst($history->condition_on_assignment ?? '-') }}</td>
                                             <td>{{ ucfirst($history->condition_on_return ?? '-') }}</td>
                                             <td>
-                                                @if($history->status === 'assigned')
-                                                    <span class="badge badge-success">Assigned</span>
-                                                @elseif($history->status === 'returned')
-                                                    <span class="badge badge-secondary">Returned</span>
-                                                @else
-                                                    <span class="badge badge-info">{{ ucfirst($history->status ?? 'N/A') }}</span>
-                                                @endif
+                                                <span class="badge badge-{{ $history->returned_date ? 'success' : 'primary' }}">
+                                                    {{ $history->returned_date ? 'Returned' : 'Active' }}
+                                                </span>
                                             </td>
                                             <td>{{ $history->notes ?? '-' }}</td>
                                         </tr>

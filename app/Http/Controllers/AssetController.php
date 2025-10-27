@@ -132,4 +132,19 @@ class AssetController extends Controller
         return redirect()->route('admin.assets.index')
             ->with('success', 'Asset deleted successfully.');
     }
+
+    /**
+     * Display the employee's assigned assets.
+     */
+    public function employeeAssets()
+    {
+        $employee = Auth::user()->employee;
+
+        $assignments = \App\Models\AssetAssignment::where('employee_id', $employee->id)
+            ->with(['asset.category'])
+            ->orderBy('assigned_date', 'desc')
+            ->get();
+
+        return view('employee.assets.index', compact('assignments'));
+    }
 }

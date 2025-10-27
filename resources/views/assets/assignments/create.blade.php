@@ -66,10 +66,10 @@
     <!-- Department -->
     <div class="col-md-4">
         <label for="department_id" class="form-label">Department <span class="text-danger">*</span></label>
-                <select id="department_id" name="department_id" class="form-control" required>
+                <select id="department_id" name="department_id" class="form-control @error('department_id') is-invalid @enderror" required>
                         <option value="">Select Department</option>
                         @foreach($departments as $department)
-                            <option value="{{ $department->id }}">{{ $department->name }}</option>
+                            <option value="{{ $department->id }}" {{ old('department_id') == $department->id ? 'selected' : '' }}>{{ $department->name }}</option>
                         @endforeach
                     </select>
         @error('department_id') <span class="invalid-feedback">{{ $message }}</span> @enderror
@@ -78,7 +78,7 @@
     <!-- Designation -->
     <div class="col-md-4">
         <label for="designation_id" class="form-label">Designation <span class="text-danger">*</span></label>
-        <select id="designation_id" name="designation_id" class="form-control" required>
+        <select id="designation_id" name="designation_id" class="form-control @error('designation_id') is-invalid @enderror" required>
             <option value="">Select Designation</option>
         </select>
         @error('designation_id') <span class="invalid-feedback">{{ $message }}</span> @enderror
@@ -87,7 +87,7 @@
     <!-- Employee -->
     <div class="col-md-4">
         <label for="employee_id" class="form-label">Employee <span class="text-danger">*</span></label>
-       <select id="employee_id" name="employee_id" class="form-control" required>
+       <select id="employee_id" name="employee_id" class="form-control @error('employee_id') is-invalid @enderror" required>
             <option value="">Select Employee</option>
         </select>
         @error('employee_id') <span class="invalid-feedback">{{ $message }}</span> @enderror
@@ -117,13 +117,13 @@
 
                         <div class="form-group mt-3">
                             <label for="condition_on_assignment">Condition on Assignment <span class="text-danger">*</span></label>
-                            <select class="form-control @error('condition_on_assignment') is-invalid @enderror" 
+                            <select class="form-control @error('condition_on_assignment') is-invalid @enderror"
                                     id="condition_on_assignment" name="condition_on_assignment" required>
                                 <option value="">Select Condition</option>
-                                <option value="excellent">Excellent</option>
-                                <option value="good">Good</option>
-                                <option value="fair">Fair</option>
-                                <option value="poor">Poor</option>
+                                <option value="good" {{ old('condition_on_assignment') == 'good' ? 'selected' : '' }}>Good</option>
+                                <option value="fair" {{ old('condition_on_assignment') == 'fair' ? 'selected' : '' }}>Fair</option>
+                                <option value="poor" {{ old('condition_on_assignment') == 'poor' ? 'selected' : '' }}>Poor</option>
+                                <option value="damaged" {{ old('condition_on_assignment') == 'damaged' ? 'selected' : '' }}>Damaged</option>
                             </select>
                         </div>
 
@@ -147,19 +147,17 @@
 
 @push('scripts')
 <script>
-
-   
     const departments = @json($departments);
+    const oldDepartmentId = '{{ old('department_id') }}';
+    const oldDesignationId = '{{ old('designation_id') }}';
+    const oldEmployeeId = '{{ old('employee_id') }}';
 
     const deptSelect = document.getElementById('department_id');
     const designationSelect = document.getElementById('designation_id');
     const employeeSelect = document.getElementById('employee_id');
 
-    deptSelect.addEventListener('change', function() {
-        const deptId = this.value;
+    function populateDesignations(deptId, selectedDesId = null) {
         designationSelect.innerHTML = '<option value="">Select Designation</option>';
-        employeeSelect.innerHTML = '<option value="">Select Employee</option>';
-
         if(!deptId) return;
 
         const department = departments.find(d => d.id == deptId);
@@ -168,16 +166,16 @@
                 const option = document.createElement('option');
                 option.value = des.id;
                 option.text = des.title;
+                if (selectedDesId && des.id == selectedDesId) {
+                    option.selected = true;
+                }
                 designationSelect.appendChild(option);
             });
         }
-    });
+    }
 
-    designationSelect.addEventListener('change', function() {
-        const desId = this.value;
+    function populateEmployees(deptId, desId, selectedEmpId = null) {
         employeeSelect.innerHTML = '<option value="">Select Employee</option>';
-
-        const deptId = deptSelect.value;
         if(!deptId || !desId) return;
 
         const department = departments.find(d => d.id == deptId);
@@ -187,10 +185,34 @@
                 const option = document.createElement('option');
                 option.value = emp.id;
                 option.text = emp.name;
+                if (selectedEmpId && emp.id == selectedEmpId) {
+                    option.selected = true;
+                }
                 employeeSelect.appendChild(option);
             });
         }
+    }
+
+    deptSelect.addEventListener('change', function() {
+        const deptId = this.value;
+        populateDesignations(deptId);
+        employeeSelect.innerHTML = '<option value="">Select Employee</option>';
     });
+
+    designationSelect.addEventListener('change', function() {
+        const desId = this.value;
+        const deptId = deptSelect.value;
+        populateEmployees(deptId, desId);
+    });
+
+    // Handle old values on page load
+    if (oldDepartmentId) {
+        deptSelect.value = oldDepartmentId;
+        populateDesignations(oldDepartmentId, oldDesignationId);
+        if (oldDesignationId) {
+            populateEmployees(oldDepartmentId, oldDesignationId, oldEmployeeId);
+        }
+    }
 </script>
 @endpush
 

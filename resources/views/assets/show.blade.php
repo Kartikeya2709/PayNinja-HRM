@@ -34,8 +34,8 @@
                                 <tr>
                                     <th>Status</th>
                                     <td>
-                                        <span class="badge badge-{{ $asset->status === 'Available' ? 'success' : 'warning' }}">
-                                            {{ $asset->status }}
+                                        <span class="badge badge-{{ $asset->status === 'available' ? 'success' : 'warning' }}">
+                                            {{ ucfirst($asset->status) }}
                                         </span>
                                     </td>
                                 </tr>
@@ -50,10 +50,10 @@
                                 <tr>
                                     <th>Current Assignment</th>
                                     <td>
-                                        @if($asset->currentAssignment)
-                                            {{ $asset->currentAssignment->employee->name }}
+                                        @if($asset->assignments && $asset->assignments->last()->returned_date === null)
+                                            {{ $asset->assignments->last()->employee->name }}
                                         @else
-                                            -
+                                            N/A
                                         @endif
                                     </td>
                                 </tr>
@@ -103,17 +103,13 @@
                                             <td>{{ ucfirst($assignment->condition_on_assignment ?? '-') }}</td>
                                             <td>{{ ucfirst($assignment->condition_on_return ?? '-') }}</td>
                                             <td>
-                                                @if($assignment->status === 'assigned')
-                                                    <span class="badge badge-success">Assigned</span>
-                                                @elseif($assignment->status === 'returned')
-                                                    <span class="badge badge-secondary">Returned</span>
-                                                @else
-                                                    <span class="badge badge-info">{{ ucfirst($assignment->status ?? 'N/A') }}</span>
-                                                @endif
+                                                <span class="badge badge-{{ $assignment->returned_date ? 'success' : 'primary' }}">
+                                                    {{ $assignment->returned_date ? 'Returned' : 'Active' }}
+                                                </span>
                                             </td>
                                             <td>
                                                 @if($assignment->notes)
-                                                      {{ $assignment->notes }}>
+                                                      {{ $assignment->notes }}
                                                         {{-- <i class="fas fa-info-circle"></i> --}}
                                           
                                                 @endif

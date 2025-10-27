@@ -95,23 +95,23 @@ class AssetAssignmentController extends Controller
 
         //     return view('assets.assignments.show', compact('assignment'));
 
-              // Load assignment with its asset, category, employee, and assignedBy
-    $assignment = AssetAssignment::with([
-        'asset.category',        // eager load category
-        'employee',              // eager load employee
-        'assignedBy'             // eager load who assigned it
-    ])->findOrFail($id);
+        // Load assignment with its asset, category, employee, and assignedBy
+        $assignment = AssetAssignment::with([
+            'asset',                 // eager load asset
+            'asset.category',        // eager load category
+            'employee',              // eager load employee
+            'assignedBy'             // eager load who assigned it
+        ])->findOrFail($id);
 
-    // Get all assignments for this asset (across employees)
-    $assetassignmenthistory = AssetAssignment::with(['assignedBy', 'employee'])
-                        ->where('asset_id', $assignment->asset_id)
-                        ->orderBy('assigned_date', 'desc')
-                        ->get();
-                        
+        // Get all assignments for this asset (across employees)
+        $assetassignmenthistory = AssetAssignment::with(['assignedBy', 'employee', 'asset', 'asset.category'])
+                            ->where('asset_id', $assignment->asset_id)
+                            ->orderBy('assigned_date', 'desc')
+                            ->get();                            
 
-    // $assethisthis = Asset::with('lastAssignment')->find($assignment->asset_id);
+        // $assethisthis = Asset::with('lastAssignment')->find($assignment->asset_id);
 
-    return view('assets.assignments.show', compact('assignment', 'assetassignmenthistory'));
+        return view('assets.assignments.show', compact('assignment', 'assetassignmenthistory'));
     }
 
     /**

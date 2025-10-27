@@ -44,9 +44,6 @@
                                     
                                     <td>{{ $asset->currentAssignment?->assigned_date?->format('Y-m-d') ?? '-' }}</td>
 
-
-
-
                                     <td>
                                         @if($asset->currentAssignment)
                                             {{ $asset->currentAssignment->employee->name }}
@@ -59,7 +56,7 @@
                                         {{-- {{ optional($asset->currentAssignment)->condition_on_assignment ?? '-' }}    --}}
                                     </td>
                                     </td>
-                                    <!-- <td>
+                                    <td>
                                         <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -71,26 +68,23 @@
                                                 <i class="fas fa-user-plus"></i>
                                             </a>
                                         @endif
-                                    </td> -->
-                                    <td>
+                                    </td>
+                                    {{-- <td>
                                         <!-- View Asset -->
-                                      <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
-    <i class="fas fa-eye"></i>
-</a>
-
-
+                                        <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
                                         <!-- Edit Asset -->
                                         <a href="{{ route('admin.assets.assignments.edit', $asset->id) }}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
-
                                         <!-- Assign Asset (only if available) -->
                                         @if($asset->status === 'available')
                                             <a href="{{ route('admin.assets.assignments.create', ['asset' => $asset->id]) }}" class="btn btn-success btn-sm">
                                                 <i class="fas fa-user-plus"></i>
                                             </a>
                                         @endif
-                                    </td>
+                                    </td> --}}
 
                                 </tr>
                                 @empty
