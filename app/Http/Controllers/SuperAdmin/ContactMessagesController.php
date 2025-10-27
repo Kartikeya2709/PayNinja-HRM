@@ -8,9 +8,11 @@ use App\Models\ContactMessage;
 
 class ContactMessagesController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $contactMessages = ContactMessage::orderBy('created_at', 'desc')->get();
+        $perPage = $request->get('per_page', 10); // Default 10 items per page
+        $contactMessages = ContactMessage::orderBy('created_at', 'desc')
+            ->paginate($perPage);
         return view('superadmin.contact_messages', compact('contactMessages'));
     }
 
