@@ -269,6 +269,16 @@
                         </a>
                     </li>
 
+                     @if (Auth::user()->hasRole('employee'))
+                 <li class="menu-header">Holiday Management</li>
+                    <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
+                            <i class="fas fa-calendar"></i>
+                            <span>Academic Holidays</span>
+                        </a>
+                    </li>
+                    @endif
+
                     <!-- Resignations -->
                     <li class="menu-header">Resignations</li>
                     <li
@@ -285,6 +295,9 @@
                         </a>
                     </li>
                 @endif
+
+                <!-- Company employee management -->
+                    
 
                 {{-- Company Admin Routes --}}
                 @if (Auth::user()->hasRole('company_admin'))
@@ -525,11 +538,11 @@
                 @if (Auth::user()->hasRole('admin'))
                     @if ($hasModuleAccess('team', 'admin'))
                         <!-- Holiday Management -->
-                        <li class="menu-header">Holiday Management</li>
+                        <li class="menu-header">Holiday Management  </li>
                         <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
                                 <i class="fas fa-calendar"></i>
-                                <span>Academic Holidays</span>
+                                <span>Academic Holidays </span>
                             </a>
                         </li>
 
@@ -562,10 +575,18 @@
                         </li>
                     @endif
 
-                    
-
-                   
-
+                    <!-- Team Holiday Management -->
+                      @if (Auth::user()->hasRole('user'))
+                        @if ($hasModuleAccess('team'))
+                            <li class="menu-header">Team Holiday Management</li>
+                            <li class="{{ Request::is('company-admin/team-holidays*') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('company-admin.team-holidays.index') }}">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Team Holidays</span>
+                                </a>
+                            </li>
+                        @endif
+                          @endif
                     <!-- Team Management -->
                     @if ($hasModuleAccess('team', 'admin'))
                         <li class="menu-header">Team Management</li>

@@ -331,7 +331,9 @@ Route::middleware(['auth'])->group(function () {
         // Add other resource routes (create, store, show, destroy) here later if needed
     });
 
-    Route::middleware(['auth', 'role:admin,company_admin', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
+    // Route::get('company/academic-holidays', [AcademicHolidayController::class, 'index'])->name('company.academic-holidays.index');
+
+    Route::middleware(['auth', 'role:admin,company_admin,employee', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
         // Academic Holidays Management
         Route::get('academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
         Route::get('academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
@@ -408,6 +410,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
 
     });
+
+             
 
     // Debug route for attendance data
     Route::get('/debug/attendance', function () {
