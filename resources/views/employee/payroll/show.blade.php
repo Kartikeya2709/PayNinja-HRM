@@ -105,11 +105,34 @@
 </style>
 
 <div class="payslip-container">
-    <div class="payslip-header">
+     @php
+            // Use passed $company when available, otherwise fetch the first company record from DB.
+            $company = $company ?? optional(auth()->user())->company ?? 'rocketHR';
+
+            $companyName = $company->name ?? 'RocketHR.';
+            $companyAddress = $company->address ?? 'Flat No. 1003, 10th Floor, Nirmal Tower 26, Barakhamba Road, New Delhi – 110001';
+
+            // Build phone string from available fields. Company model exposes `phone` per app/Models/Company.php
+            $phones = [];
+            if (!empty($company->phone)) {
+                $phones[] = $company->phone;
+            }
+            // fallback to the original two numbers if none provided
+            $phoneText = count($phones) ? implode(' | ', $phones) : '+91 9999092616 | +91 9654540842';
+
+            $emailText = $company->email ?? 'info@payninjahr.com';
+        @endphp
+
+        <div class="payslip-header">
+            <h2>{{ $companyName }}</h2>
+            <p>{{ $companyAddress }}</p>
+            <p>Phone: {{ $phoneText }} | Email: {{ $emailText }}</p>
+        </div>
+    {{-- <div class="payslip-header">
         <h2>PayNinja Payment Technology Ltd.</h2>
         <p>Flat No. 1003, 10th Floor, Nirmal Tower 26, Barakhamba Road, New Delhi – 110001</p>
         <p>Phone: +91 9999092616 | +91 9654540842 | Email: info@payninjahr.com</p>
-    </div>
+    </div> --}}
 
     <div class="payslip-title">Salary Slip for {{ $payroll->pay_period_start->format('F Y') }}</div>
 
@@ -118,11 +141,11 @@
             <th>Employee Name</th>
             <td>{{ Auth::user()->name }}</td>
             <th>Employee ID</th>
-            <td>{{ Auth::user()->employee->employee_id ?? 'N/A' }}</td>
+            <td>{{ Auth::user()->employee->employee_code ?? 'N/A' }}</td>
         </tr>
         <tr>
             <th>Pay Period</th>
-            <td>{{ $payroll->pay_period_start->format('M d, Y') }} - {{ $payroll->pay_period_end->format('M d, Y') }}</td>
+          <td>{{ $payroll->pay_period_start->format('M d, Y') }} - {{ $payroll->pay_period_end->format('M d, Y') }}</td>
             <th>Payment Date</th>
             <td>{{ $payroll->payment_date ? $payroll->payment_date->format('M d, Y') : 'N/A' }}</td>
         </tr>
