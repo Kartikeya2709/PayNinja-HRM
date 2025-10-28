@@ -7,7 +7,7 @@
     
     <section class="section">
             <div class="section-header">
-                <h1>My Attendance</h1>
+                <h1>My Attendance </h1>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
                     <div class="breadcrumb-item"><a href="">My Attendance</a></div>
@@ -51,7 +51,8 @@
                                     <td>{{ \Carbon\Carbon::parse($attendance->date)->format('l') }}</td>
                                     <td>
                                         @if($attendance->check_in)
-                                            {{ \Carbon\Carbon::parse($attendance->check_in)->format('h:i A') }}
+                                            {{ \Carbon\Carbon::parse($attendance->check_in)->format('h:i:s A') }}
+                                         
                                             @if($attendance->check_in_location)
                                                 <i class="bi bi-geo-alt-fill text-primary ms-1" 
                                                    data-bs-toggle="tooltip" 
@@ -63,7 +64,7 @@
                                     </td>
                                     <td>
                                         @if($attendance->check_out)
-                                            {{ \Carbon\Carbon::parse($attendance->check_out)->format('h:i A') }}
+                                            {{ \Carbon\Carbon::parse($attendance->check_out)->format('h:i:s A') }}
                                             @if($attendance->check_out_location)
                                                 <i class="bi bi-geo-alt-fill text-primary ms-1" 
                                                    data-bs-toggle="tooltip" 
@@ -83,7 +84,7 @@
                                             {{ $attendance->status }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <!-- <td>
                                         @if($attendance->check_in && $attendance->check_out)
                                             @php
                                                 $checkIn = \Carbon\Carbon::parse($attendance->check_in);
@@ -95,7 +96,25 @@
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
+                                    </td> -->
+                                    <td>
+                                        @if($attendance->check_in && $attendance->check_out)
+                                            @php
+                                                $checkIn = \Carbon\Carbon::parse($attendance->check_in);
+                                                $checkOut = \Carbon\Carbon::parse($attendance->check_out);
+
+                                                // Use diff() with absolute = true to avoid negative results
+                                                $diff = $checkIn->diff($checkOut, true);
+
+                                                $hours = $diff->h;
+                                                $minutes = $diff->i;
+                                            @endphp
+                                            {{ sprintf('%d:%02d', $hours, $minutes) }} hrs
+                                        @else
+                                            <span class="text-muted">-</span>
+                                        @endif
                                     </td>
+
                                     <td>
                                         @if($attendance->remarks)
                                             <span data-bs-toggle="tooltip" title="{{ $attendance->remarks }}">

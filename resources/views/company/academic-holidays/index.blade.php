@@ -18,10 +18,12 @@
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3 class="card-title">Academic Holidays</h3>
                         <div class="academic d-flex align-items-center gap-2">
+                            @if(!$isReadOnly)
                             <a href="{{ route('company.academic-holidays.create') }}"
                                 class="btn btn-primary d-flex align-items-center gap-1">
                                 <i class="fas fa-plus"></i> Add Holiday
-                            </a> <button type="button" class="btn btn-success d-flex align-items-center gap-1"
+                            </a>
+                            <button type="button" class="btn btn-success d-flex align-items-center gap-1"
                                 data-bs-toggle="modal" data-bs-target="#importModal">
                                 <i class="fas fa-file-import"></i> Import Holidays
                             </button>
@@ -29,6 +31,7 @@
                                 class="btn btn-info d-flex align-items-center gap-1">
                                 <i class="fas fa-download"></i> Download Template
                             </a>
+                            @endif
                         </div>
                     </div>
                     <div class="card-body">
@@ -46,7 +49,10 @@
                                         <th>From Date</th>
                                         <th>To Date</th>
                                         <th>Description</th>
+                                        @if(!$isReadOnly)
+                                     
                                         <th>Actions</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -58,6 +64,7 @@
                                         <td>{{ $holiday->to_date ? \Carbon\Carbon::parse($holiday->to_date)->format('Y-m-d') : '-' }}
                                         </td>
                                         <td>{{ $holiday->description ?? '-' }}</td>
+                                          @if(!$isReadOnly)
                                         <td>
                                             <div class="btn-group btn-group-sm">
                                             <a href="{{ route('company.academic-holidays.edit', $holiday->id) }}"
@@ -70,7 +77,7 @@
                                                 <span class="spinner-border spinner-border-sm d-none" role="status"
                                                     aria-hidden="true"></span>
                                             </a>
-
+                                          
                                             <form
                                                 action="{{ route('company.academic-holidays.destroy', $holiday->id) }}"
                                                 method="POST" class="d-inline-block">
@@ -89,8 +96,10 @@
                                                 </button>
 
                                             </form>
+                                          
                                             </div>
                                         </td>
+                                          @endif
                                     </tr>
                                     @empty
                                     <tr>

@@ -7,6 +7,9 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CompanyDocumentController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\AssetCategoryController;
+use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\DesignationManagementController;
 use App\Http\Controllers\DepartmentManagementController;
 use App\Http\Controllers\TeamController;
@@ -18,6 +21,7 @@ use App\Http\Controllers\Employee\AttendanceController as EmployeeAttendanceCont
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\AcademicHolidayController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Admin\PayrollController as AdminPayrollController;
 use App\Http\Controllers\Employee\PayrollController as EmployeePayrollController;
 use App\Http\Controllers\Admin\AttendanceAdjustmentController;
@@ -77,7 +81,7 @@ Route::get('/', function () {
     // return view('welcome');
 });
 
-Auth::routes();
+Auth::routes(['register' => false]);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -233,13 +237,47 @@ Route::middleware(['auth'])->group(function () {
             ->name('shifts.assign');
 
         // Salary Management
-        Route::get('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'index'])->name('salary.index');
-        Route::get('salary/create', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'create'])->name('salary.create');
-        Route::post('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'store'])->name('salary.store');
-        Route::get('salary/{employee}/edit', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'edit'])->name('salary.edit');
-        Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
-        Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
-        Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
+        // Route::get('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'index'])->name('salary.index');
+        // Route::get('salary/create', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'create'])->name('salary.create');
+        // Route::post('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'store'])->name('salary.store');
+        // Route::get('salary/{employee}/edit', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'edit'])->name('salary.edit');
+        // Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
+        // Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
+        // Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
+
+        // Asset Management Routes        
+        // Asset Categories
+        Route::resource('assets-categories', AssetCategoryController::class)->names([
+            'index' => 'assets.categories.index',
+            'create' => 'assets.categories.create',
+            'store' => 'assets.categories.store',
+            'show' => 'assets.categories.show',
+            'edit' => 'assets.categories.edit',
+            'update' => 'assets.categories.update',
+            'destroy' => 'assets.categories.destroy',
+        ]);
+        Route::prefix('assets')->name('assets.')->group(function () {
+            // Asset routes
+            Route::get('/', [AssetController::class, 'index'])->name('index');
+            Route::get('/create', [AssetController::class, 'create'])->name('create');
+            Route::post('/', [AssetController::class, 'store'])->name('store');
+            Route::get('/show/{asset}', [AssetController::class, 'show'])->name('show');
+            Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');
+            Route::put('/{asset}', [AssetController::class, 'update'])->name('update');
+            Route::delete('/{asset}', [AssetController::class, 'destroy'])->name('destroy');
+
+            // Asset Assignments, distinct from assets route by naming convention and URL structure
+            Route::prefix('assignments')->name('assignments.')->group(function () {
+                Route::get('/', [AssetAssignmentController::class, 'index'])->name('index');
+                Route::get('/create', [AssetAssignmentController::class, 'create'])->name('create');
+                Route::post('/', [AssetAssignmentController::class, 'store'])->name('store');
+                Route::get('/show/{assignment}', [AssetAssignmentController::class, 'show'])->name('show');
+                Route::get('/{assignment}/edit', [AssetAssignmentController::class, 'edit'])->name('edit');
+                Route::put('/{assignment}', [AssetAssignmentController::class, 'update'])->name('update');
+                Route::delete('/{assignment}', [AssetAssignmentController::class, 'destroy'])->name('destroy');
+                Route::post('/{assignment}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
+            });
+        });
     });
 
     // Admin Payroll Management
@@ -306,7 +344,9 @@ Route::middleware(['auth'])->group(function () {
         // Add other resource routes (create, store, show, destroy) here later if needed
     });
 
-    Route::middleware(['auth', 'role:admin,company_admin', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
+    // Route::get('company/academic-holidays', [AcademicHolidayController::class, 'index'])->name('company.academic-holidays.index');
+
+    Route::middleware(['auth', 'role:admin,company_admin,employee', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
         // Academic Holidays Management
         Route::get('academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
         Route::get('academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
@@ -384,6 +424,8 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+             
+
     // Debug route for attendance data
     Route::get('/debug/attendance', function () {
         $user = \App\Models\User::first();
@@ -418,6 +460,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('profile/update', [\App\Http\Controllers\Employee\ProfileController::class, 'update'])->name('profile.update');
         Route::post('profile/update-image', [\App\Http\Controllers\Employee\ProfileController::class, 'updateImage'])->name('profile.update-image');
         Route::get('colleagues', [EmployeeController::class, 'listColleagues'])->name('colleagues');
+
+        // Assets
+        Route::get('assets', [AssetController::class, 'employeeAssets'])->name('assets.index');
         // Salary Routes
         Route::prefix('salary')->name('salary.')->group(function () {
             Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');

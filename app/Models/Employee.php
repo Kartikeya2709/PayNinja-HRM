@@ -10,6 +10,7 @@ use App\Models\LeaveRequest;
 use App\Models\EmployeeSalary;
 use App\Models\PayrollRecord;
 use App\Models\EmployeeAttendanceAdjustment;
+use App\Models\AssetAssignment;
 
 class Employee extends Model
 {
@@ -378,4 +379,9 @@ class Employee extends Model
     {
         return $this->hasMany(FieldVisit::class);
     }
+
+    public function assignments()
+{
+    return $this->hasMany(AssetAssignment::class);
+}
 }

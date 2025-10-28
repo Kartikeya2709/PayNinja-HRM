@@ -76,9 +76,9 @@
 
 <!-- HERO SECTION -->
 <section class="hero">
-  <h1 class="animate__animated animate__fadeInDown">Welcome to RokcetHR HRM System</h1>
+  <h1 class="animate__animated animate__fadeInDown">Welcome to RocketHR HRM System</h1>
   <p class="animate__animated animate__fadeInUp">
-    Manage your workforce efficiently and effectively with RokcetHR — your complete HRM solution.
+    Manage your workforce efficiently and effectively with RocketHR — your complete HRM solution.
   </p>
   <a href="{{ route('login') }}" class="btn btn-cta animate__animated animate__zoomIn">Get Started</a>
 </section>
@@ -121,7 +121,7 @@
 
 <!-- FOOTER -->
 <footer class="bg-dark text-white text-center py-3">
-  <p>&copy; {{ date('Y') }} RokcetHR HRM System. All rights reserved.</p>
+  <p>&copy; {{ date('Y') }} RocketHR HRM System. All rights reserved.</p>
 </footer>
 
 </body>
