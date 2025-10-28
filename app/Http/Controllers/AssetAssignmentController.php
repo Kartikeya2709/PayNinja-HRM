@@ -33,17 +33,17 @@ class AssetAssignmentController extends Controller
     {
          $assets = Asset::where('company_id', Auth::user()->company_id)
         ->where('status', 'available')
-        ->pluck('name', 'id');
-
-    $departments = Department::where('company_id', Auth::user()->company_id)
-        ->with(['designations.employees'])
+        ->select('id', 'name', 'asset_code')
         ->get();
-          // Add employees variable
-    $employees = Employee::where('company_id', Auth::user()->company_id)->get();
-    // dd($employees);
 
-    return view('assets.assignments.create', compact('assets', 'departments', 'employees'));
-        //
+        $departments = Department::where('company_id', Auth::user()->company_id)
+            ->with(['designations.employees'])
+            ->get();
+            // Add employees variable
+        $employees = Employee::where('company_id', Auth::user()->company_id)->get();
+        // dd($employees);
+
+        return view('assets.assignments.create', compact('assets', 'departments', 'employees'));
     }
 
     /**
@@ -72,7 +72,7 @@ class AssetAssignmentController extends Controller
         ]);
 
         // Update asset status to assigned
-        $assignment->asset->update(['status' => 'assigned']);
+        $assignment->asset->update(['status' => 'assigned', 'condition' => $request->condition_on_assignment]);
 
         return redirect()->route('admin.assets.assignments.index')
             ->with('success', 'Asset assigned successfully.');

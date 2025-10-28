@@ -27,9 +27,9 @@
                             <select class="form-control @error('asset_id') is-invalid @enderror" 
                                     id="asset_id" name="asset_id" required>
                                 <option value="">Select Asset</option>
-                                @foreach($assets as $id => $name)
-                                    <option value="{{ $id }}" {{ old('asset_id') == $id ? 'selected' : '' }}>
-                                        {{ $name }}
+                                @foreach($assets as $asset)
+                                    <option value="{{ $asset->id }}" {{ old('asset_id') == $asset->id || request('asset') == $asset->id ? 'selected' : '' }}>
+                                        {{ $asset->name }} ({{ $asset->asset_code }})
                                     </option>
                                 @endforeach
                             </select>

@@ -74,11 +74,15 @@
                             <select class="form-control @error('condition') is-invalid @enderror" 
                                     id="condition" name="condition" required>
                                 <option value="">Select Condition</option>
-                                <option value="new" {{ old('condition', $asset->condition ?? '') == 'new' ? 'selected' : '' }}>New</option>
-                                <option value="excellent" {{ old('condition', $asset->condition ?? '') == 'excellent' ? 'selected' : '' }}>Excellent</option>
-                                <option value="good" {{ old('condition', $asset->condition ?? '') == 'good' ? 'selected' : '' }}>Good</option>
-                                <option value="fair" {{ old('condition', $asset->condition ?? '') == 'fair' ? 'selected' : '' }}>Fair</option>
-                                <option value="poor" {{ old('condition', $asset->condition ?? '') == 'poor' ? 'selected' : '' }}>Poor</option>
+                                @php
+                                    $conditions = ['good' => 'Good', 'fair' => 'Fair', 'poor' => 'Poor', 'damaged' => 'Damaged'];
+                                @endphp
+                                @foreach($conditions as $value => $label)
+                                    <option value="{{ $value }}" 
+                                        {{ old('condition', $asset->condition ?? '') == $value ? 'selected' : '' }}>
+                                        {{ $label }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
 

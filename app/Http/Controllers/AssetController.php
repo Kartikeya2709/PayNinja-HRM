@@ -47,7 +47,7 @@ class AssetController extends Controller
             'category_id' => 'required|exists:asset_categories,id',
             'purchase_cost' => 'nullable|numeric|min:0',
             'purchase_date' => 'nullable|date',
-            'condition' => 'required|string|max:255',
+            'condition' => 'required|in:good,fair,poor,damaged',
             'notes' => 'nullable|string'
         ]);
 
@@ -103,7 +103,7 @@ class AssetController extends Controller
             'category_id' => 'required|exists:asset_categories,id',
             'purchase_cost' => 'nullable|numeric|min:0',
             'purchase_date' => 'nullable|date',
-            'condition' => 'required|string|max:255',
+            'condition' => 'required|in:good,fair,poor,damaged',
             'notes' => 'nullable|string'
         ]);
 
