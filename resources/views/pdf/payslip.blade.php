@@ -104,10 +104,29 @@
 </head>
 <body>
     <div class="payslip-container">
+        @php
+            // Use passed $company when available, otherwise use the authenticated user's company,
+            // otherwise fall back to the first company record from DB.
+            $company = $company ?? optional(auth()->user())->company ?? 'rocketHR';
+
+            $companyName = $company->name ?? 'RocketHR.';
+            $companyAddress = $company->address ?? 'Flat No. 1003, 10th Floor, Nirmal Tower 26, Barakhamba Road, New Delhi – 110001';
+
+            // Build phone string from available fields. Company model exposes `phone` per app/Models/Company.php
+            $phones = [];
+            if (!empty($company->phone)) {
+                $phones[] = $company->phone;
+            }
+            // fallback to the original two numbers if none provided
+            $phoneText = count($phones) ? implode(' | ', $phones) : '+91 9999092616 | +91 9654540842';
+
+            $emailText = $company->email ?? 'info@payninjahr.com';
+        @endphp
+
         <div class="payslip-header">
-            <h2>PayNinja Payment Technology Ltd.</h2>
-            <p>Flat No. 1003, 10th Floor, Nirmal Tower 26, Barakhamba Road, New Delhi – 110001</p>
-            <p>Phone: +91 9999092616 | +91 9654540842 | Email: info@payninjahr.com</p>
+            <h2>{{ $companyName }}</h2>
+            <p>{{ $companyAddress }}</p>
+            <p>Phone: {{ $phoneText }} | Email: {{ $emailText }}</p>
         </div>
 
         <div class="payslip-title">Salary Slip for {{ date('F Y', strtotime($monthYear)) }}</div>
@@ -117,7 +136,7 @@
                 <th>Employee Name</th>
                 <td>{{ $employee->name }}</td>
                 <th>Employee ID</th>
-                <td>{{ $employee->employee_id ?? 'N/A' }}</td>
+                <td>{{ $employee->employee_code ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <th>Pay Period</th>

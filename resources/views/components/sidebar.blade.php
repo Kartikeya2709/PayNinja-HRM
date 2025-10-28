@@ -59,7 +59,7 @@
 
     <div class="main-sidebar sidebar-style-2">
         <aside id="sidebar-wrapper">
-                <!-- Add search input -->
+            <!-- Add search input -->
             <div class="sidebar-search px-4 pt-5">
                 <div class="input-group">
                     <input type="text" class="form-control" id="sidebar-menu-search" placeholder="Search menu...">
@@ -246,7 +246,8 @@
 
                     <!-- Field Visits -->
                     <li class="menu-header">Field Visits</li>
-                    <li class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
+                    <li
+                        class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('field-visits.index') }}">
                             <i class="fas fa-map-marked-alt"></i>
                             <span>My Field Visits</span>
@@ -413,8 +414,8 @@
                     </li>
                     <li class="{{ Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company.leave-requests.create') }}">
-                                <i class="fas fa-calendar-plus"></i>
-                                <span>Apply for Leave</span>
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Apply for Leave</span>
                             </i>
                         </a>
                     </li>
@@ -423,6 +424,20 @@
                         <a class="nav-link" href="{{ route('company.leave-requests.index') }}">
                             <i class="fas fa-clipboard-list"></i>
                             <span>Leave Requests</span>
+                        </a>
+                    </li>
+
+                    <li class="menu-header">Leads Management</li>
+                    <li class="{{ Request::is('company-admin/leads') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company-admin.leads.index') }}">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Leads</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('company-admin/leads/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company-admin.leads.create') }}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Lead</span>
                         </a>
                     </li>
                     {{-- <li class="{{ Request::is('company/leave-requests/calendar') ? 'active' : '' }}">
@@ -460,24 +475,25 @@
                         </ul>
                     </li>
 
-                     <!-- reimbursement Management -->
-                     @if ($hasModuleAccess('reimbursement', 'admin'))
-                     <li class="menu-header">Reimbursements</li>
+                    <!-- reimbursement Management -->
+                    @if ($hasModuleAccess('reimbursement', 'admin'))
+                        <li class="menu-header">Reimbursements</li>
 
-                     <li class="{{ Request::is('reimbursements/create') ? 'active' : '' }}">
-                         <a class="nav-link" href="{{ route('reimbursements.create') }}"><i class="fas fa-plus-circle"></i>
-                             <span>Request Reimbursement</span></a>
-                     </li>
-                     <li class="{{ Request::is('reimbursements') && !Request::is('reimbursements/create') ? 'active' : '' }}">
-                         <a class="nav-link" href="{{ route('reimbursements.index') }}"><i class="fas fa-tasks"></i>
-                             <span>Pending Approvals</span></a>
-                     </li>
-                     </li>
-                 @endif
+                        <li class="{{ Request::is('reimbursements/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('reimbursements.create') }}"><i class="fas fa-plus-circle"></i>
+                                <span>Request Reimbursement</span></a>
+                        </li>
+                        <li class="{{ Request::is('reimbursements') && !Request::is('reimbursements/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('reimbursements.index') }}"><i class="fas fa-tasks"></i>
+                                <span>Pending Approvals</span></a>
+                        </li>
+                        </li>
+                    @endif
 
                     <!-- Field Visits -->
                     <li class="menu-header">Field Visits</li>
-                    <li class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
+                    <li
+                        class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('field-visits.index') }}">
                             <i class="fas fa-map-marked-alt"></i>
                             <span>Field Visits</span>
@@ -494,14 +510,14 @@
 
                 {{-- Employee Payslip --}}
                 {{-- @if ($hasModuleAccess('payroll', 'employee'))
-                    @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
-                    <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
-                            <i class="fas fa-file-pdf"></i>
-                            <span>My Payslips</span>
-                        </a>
-                    </li>
-                    @endif
+                @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
+                <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>My Payslips</span>
+                    </a>
+                </li>
+                @endif
                 @endif --}}
 
                 <!-- Employee Routes -->
@@ -630,7 +646,7 @@
                         <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('admin.shifts.index') }}"><i class="fas fa-clock"></i>
                                 <span>Manage Shifts</span></a>
-                        </li> 
+                        </li>
                     @endif
 
                     <!-- Leave Management -->
@@ -658,6 +674,20 @@
                                     class="fas fa-calendar-alt"></i> <span>Leave Calendar</span></a>
                         </li> --}}
                     @endif
+
+                    <li class="menu-header">Leads Management</li>
+                    <li class="{{ Request::is('company-admin/leads') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company-admin.leads.index') }}">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Leads</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('company-admin/leads/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company-admin.leads.create') }}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Add Lead</span>
+                        </a>
+                    </li>
 
 
 
@@ -721,7 +751,8 @@
 
                     <!-- Field Visits -->
                     <li class="menu-header">Field Visits</li>
-                    <li class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
+                    <li
+                        class="{{ Request::is('field-visits') && !Request::is('field-visits/create') && !Request::is('field-visits/pending') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('field-visits.index') }}">
                             <i class="fas fa-map-marked-alt"></i>
                             <span>Field Visits</span>
