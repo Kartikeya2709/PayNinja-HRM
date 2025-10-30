@@ -54,6 +54,9 @@
                     <div class="card-header justify-content-center mb-3 btn-center margin-bottom">
                         <h5>Leave Request Form</h5>
                     </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> You can now enhance your leave request message automatically! After entering your reason, click the "Enhance" button to generate a professional and well-structured leave application.
+                    </div>
                     <div class="card-body">
                         <form action="{{ route('employee.leave-requests.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -112,18 +115,28 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group mb-4">
+                            <div class="form-group">
                                 <label for="reason">Reason <span class="text-danger">*</span></label>
-                                <textarea name="reason" 
-                                          id="reason" 
-                                          class="form-control @error('reason') is-invalid @enderror" 
-                                          rows="3" 
-                                          required>{{ old('reason') }}</textarea>
+                                <div class="input-group">
+                                    <textarea name="reason" 
+                                            id="reason" 
+                                            class="form-control @error('reason') is-invalid @enderror" 
+                                            rows="3" 
+                                            required>{{ old('reason') }}</textarea>
+                                    <div class="input-group-append">
+                                        <button type="button" id="enhance-btn" class="btn btn-info" onclick="enhanceLeaveRequest()">
+                                            <i class="fas fa-magic"></i> Enhance
+                                        </button>
+                                    </div>
+                                </div>
                                 @error('reason')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
                                 @enderror
+                                <small class="form-text text-muted">
+                                    Click "Enhance" to professionally improve your leave request message.
+                                </small>
                             </div>
 
                             <div class="form-group mb-4" id="attachmentGroup" style="display: none;">
@@ -158,6 +171,46 @@
 
 @push('scripts')
 <script>
+function enhanceLeaveRequest() {
+    const leaveType = $('#leave_type_id option:selected').text();
+    const startDate = $('#start_date').val();
+    const endDate = $('#end_date').val();
+    const reason = $('#reason').val();
+
+    if (!leaveType || !startDate || !endDate || !reason) {
+        alert('Please fill in all fields before enhancing.');
+        return;
+    }
+
+    const enhanceBtn = $('#enhance-btn');
+    enhanceBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Enhancing...');
+
+    $.ajax({
+        url: "{{ route('employee.leave-requests.enhance') }}",
+        method: 'POST',
+        data: {
+            leave_type: leaveType,
+            start_date: startDate,
+            end_date: endDate,
+            reason: reason,
+            _token: '{{ csrf_token() }}'
+        },
+        success: function(response) {
+            if (response.success && response.enhanced_message) {
+                $('#reason').val(response.enhanced_message);
+            } else {
+                alert('Failed to enhance the message. Please try again.');
+            }
+        },
+        error: function(xhr) {
+            alert('Error: ' + (xhr.responseJSON?.message || 'Failed to enhance the message. Please try again.'));
+        },
+        complete: function() {
+            enhanceBtn.prop('disabled', false).html('<i class="fas fa-magic"></i> Enhance');
+        }
+    });
+}
+
 $(document).ready(function() {
     $('.select2').select2();
 

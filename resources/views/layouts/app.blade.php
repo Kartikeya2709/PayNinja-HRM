@@ -113,6 +113,12 @@
         });
     </script>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Leave Enhancement -->
+    <script src="{{ asset('js/leave-enhancement.js') }}"></script>
+
     <!-- Additional JS (if any) -->
     @stack('scripts')
     

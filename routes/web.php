@@ -31,6 +31,8 @@ use App\Http\Controllers\HandbookController;
 use App\Http\Controllers\SuperAdmin\DemoRequestsController;
 use App\Http\Controllers\SuperAdmin\ContactMessagesController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\AIControllers\LeaveAIController;
+use App\Http\Controllers\AIControllers\LeadAIController;
 // Test logging route - can be removed after testing
 require __DIR__ . '/test-logging.php';
 
@@ -400,6 +402,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Employee Routes
     Route::middleware(['role:user,employee'])->prefix('employee')->name('employee.')->group(function () {
+        // Leave AI Enhancement
+        Route::post('leave-requests/enhance', [LeaveAIController::class, 'enhanceLeaveApplication'])->name('leave-requests.enhance');
+        
         // Profile
         Route::get('profile', [\App\Http\Controllers\Employee\ProfileController::class, 'show'])->name('profile');
         Route::post('profile/update', [\App\Http\Controllers\Employee\ProfileController::class, 'update'])->name('profile.update');
@@ -457,6 +462,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
         // Leads Management
         Route::resource('leads', LeadController::class);
+        Route::post('leads/enhance-message', [LeadAIController::class, 'enhanceMessage'])->name('leads.enhance-message');
 
         // Payslips Management
         Route::get('/payslips', [\App\Http\Controllers\PayslipController::class, 'getAllPayslips'])

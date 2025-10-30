@@ -26,6 +26,10 @@ return [
         'maps_api_key' => env('KRUTRIM_MAPS_API_KEY'),
     ],
 
+    'huggingface' => [
+        'token' => env('HF_TOKEN'),
+    ],
+
     'ses' => [
         'key' => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
