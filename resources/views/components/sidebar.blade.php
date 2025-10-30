@@ -79,6 +79,40 @@
                         <span>Dashboard</span>
                     </a>
                 </li>
+              
+                 <!-- Asset Management -->
+                @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
+                    <li class="menu-header">Asset Management</li>
+                    <li class="{{ Request::is('admin/assets-categories*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.assets.categories.index') }}">
+                            <i class="fas fa-tags"></i>
+                            <span>Asset Categories</span>
+                        </a>
+                    </li>
+                    <li class="{{ (Request::is('admin/assets/*') || Request::is('admin/assets')) && !Request::is('admin/assets/assignments*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('admin.assets.index') }}">
+                            <i class="fas fa-laptop"></i>
+                            <span>Assets</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('admin/assets/assignments*') ? 'active' : '' }}">
+                       <a class="nav-link" href="{{ route('admin.assets.assignments.index') }}">
+                            <i class="fas fa-hand-holding"></i>
+                            <span>Asset Assignments</span>
+                        </a>
+                       
+                    </li>
+                @endif
+
+                 {{-- <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('assets.index') }}">
+                            <i class="fas fa-laptop"></i>
+                            <span>Assets</span>
+                        </a>
+                    </li> --}}
+                       
+
+                <!-- End Asset Management -->
 
                 <!-- Superadmin Routes -->
                 @if (Auth::user()->hasRole('superadmin'))
@@ -226,6 +260,25 @@
                         </a>
                     </li>
 
+                    <!-- Assets -->
+                    <li class="menu-header">Assets</li>
+                    <li class="{{ Request::is('employee/assets') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('employee.assets.index') }}">
+                            <i class="fas fa-laptop"></i>
+                            <span>My Assets</span>
+                        </a>
+                    </li>
+
+                     @if (Auth::user()->hasRole('employee'))
+                 <li class="menu-header">Holiday Management</li>
+                    <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
+                            <i class="fas fa-calendar"></i>
+                            <span>Academic Holidays</span>
+                        </a>
+                    </li>
+                    @endif
+
                     <!-- Resignations -->
                     <li class="menu-header">Resignations</li>
                     <li
@@ -242,6 +295,9 @@
                         </a>
                     </li>
                 @endif
+
+                <!-- Company employee management -->
+                    
 
                 {{-- Company Admin Routes --}}
                 @if (Auth::user()->hasRole('company_admin'))
@@ -482,11 +538,11 @@
                 @if (Auth::user()->hasRole('admin'))
                     @if ($hasModuleAccess('team', 'admin'))
                         <!-- Holiday Management -->
-                        <li class="menu-header">Holiday Management</li>
+                        <li class="menu-header">Holiday Management  </li>
                         <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
                                 <i class="fas fa-calendar"></i>
-                                <span>Academic Holidays</span>
+                                <span>Academic Holidays </span>
                             </a>
                         </li>
 
@@ -519,6 +575,18 @@
                         </li>
                     @endif
 
+                    <!-- Team Holiday Management -->
+                      @if (Auth::user()->hasRole('user'))
+                        @if ($hasModuleAccess('team'))
+                            <li class="menu-header">Team Holiday Management</li>
+                            <li class="{{ Request::is('company-admin/team-holidays*') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('company-admin.team-holidays.index') }}">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Team Holidays</span>
+                                </a>
+                            </li>
+                        @endif
+                          @endif
                     <!-- Team Management -->
                     @if ($hasModuleAccess('team', 'admin'))
                         <li class="menu-header">Team Management</li>
@@ -526,6 +594,9 @@
                             <a class="nav-link" href="{{ route('company-admin.module-access.index') }}">
                                 <i class="fas fa-key"></i>
                                 <span>Module Access</span>
+                            </a>
+                        </li>
+                  
                             </a>
                         </li>
                         <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
@@ -737,7 +808,6 @@
                 <li class="{{ Request::is('profile/edit') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ url('profile/edit') }}"><i class="far fa-user"></i>
                         <span>Profile</span></a>
-
 
 
                 <li class="{{ Request::is('profile/change-password') ? 'active' : '' }}">
