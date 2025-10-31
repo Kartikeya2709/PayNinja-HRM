@@ -159,6 +159,39 @@
                             <span>Contact Messages</span>
                         </a>
                     </li>
+
+                    <!-- Package Management -->
+                    <li class="menu-header">Package Management</li>
+                    <li class="{{ Request::is('superadmin/packages*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.packages.index') }}">
+                            <i class="fas fa-box"></i>
+                            <span>Packages</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/company-packages*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.company-packages.index') }}">
+                            <i class="fas fa-handshake"></i>
+                            <span>Company Packages</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/discounts*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.discounts.index') }}">
+                            <i class="fas fa-percent"></i>
+                            <span>Discounts</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/taxes*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.taxes.index') }}">
+                            <i class="fas fa-calculator"></i>
+                            <span>Taxes</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/invoices*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.invoices.index') }}">
+                            <i class="fas fa-file-invoice"></i>
+                            <span>Invoices</span>
+                        </a>
+                    </li>
                 @endif
 
 

@@ -38,6 +38,13 @@ use App\Http\Controllers\SuperAdmin\DemoRequestsController;
 use App\Http\Controllers\SuperAdmin\ContactMessagesController;
 use App\Http\Controllers\LeadController;
 // Test logging route - can be removed after testing
+use App\Http\Controllers\PackageController;
+use App\Http\Controllers\CompanyPackageController;
+use App\Http\Controllers\PackageModuleController;
+use App\Http\Controllers\PackagePricingController;
+use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\TaxController;
+use App\Http\Controllers\InvoiceController;
 require __DIR__ . '/test-logging.php';
 
 
@@ -194,7 +201,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/about-example', [App\Http\Controllers\ExampleController::class, 'about'])->name('about.example');
 
     // SuperAdmin Routes (Can manage Companies)
-    Route::middleware(['role:superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
+    Route::middleware(['superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
         Route::resource('companies', SuperAdminController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy', 'show']);
         Route::resource('assign-company-admin', \App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class)->except(['show']);
         Route::get('assigned-company-admins', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'index'])->name('assigned-company-admins.index');
@@ -214,6 +221,76 @@ Route::middleware(['auth'])->group(function () {
         Route::middleware(['role:superadmin'])->group(function () {
             Route::resource('roles', RoleController::class);
         });
+
+        // Package Management Routes
+        Route::resource('packages', PackageController::class)->names([
+            'index' => 'packages.index',
+            'create' => 'packages.create',
+            'store' => 'packages.store',
+            'show' => 'packages.show',
+            'edit' => 'packages.edit',
+            'update' => 'packages.update',
+            'destroy' => 'packages.destroy',
+        ]);
+        Route::post('packages/{package}/toggle-active', [PackageController::class, 'toggleActive'])->name('packages.toggle-active');
+        Route::get('packages/{package}/modules', [PackageController::class, 'getModules'])->name('packages.modules');
+
+        // Company Package Assignment Routes
+        Route::prefix('company-packages')->name('company-packages.')->group(function () {
+            Route::get('/', [CompanyPackageController::class, 'index'])->name('index');
+            Route::post('/assign', [CompanyPackageController::class, 'assign'])->name('assign');
+            Route::post('/reassign', [CompanyPackageController::class, 'reassign'])->name('reassign');
+            Route::post('/unassign', [CompanyPackageController::class, 'unassign'])->name('unassign');
+            Route::get('/get-company-packages', [CompanyPackageController::class, 'getCompanyPackages'])->name('get-company-packages');
+            Route::post('/bulk-assign', [CompanyPackageController::class, 'bulkAssign'])->name('bulk-assign');
+        });
+
+        // Package Module Management Routes
+        Route::put('packages/{package}/modules', [PackageModuleController::class, 'updateModules'])->name('packages.modules.update');
+        Route::get('packages/{package}/modules', [PackageModuleController::class, 'getPackageModules'])->name('packages.modules.get');
+
+        // Pricing Management Routes
+        Route::post('packages/{package}/pricing-tiers', [PackagePricingController::class, 'storeTier'])->name('packages.pricing-tiers.store');
+        Route::put('pricing-tiers/{tier}', [PackagePricingController::class, 'updateTier'])->name('pricing-tiers.update');
+        Route::delete('pricing-tiers/{tier}', [PackagePricingController::class, 'deleteTier'])->name('pricing-tiers.destroy');
+        Route::post('packages/{package}/calculate-price', [PackagePricingController::class, 'calculatePrice'])->name('packages.calculate-price');
+
+        // Discount Management Routes
+        Route::resource('discounts', DiscountController::class)->names([
+            'index' => 'discounts.index',
+            'create' => 'discounts.create',
+            'store' => 'discounts.store',
+            'show' => 'discounts.show',
+            'edit' => 'discounts.edit',
+            'update' => 'discounts.update',
+            'destroy' => 'discounts.destroy',
+        ]);
+        Route::post('discounts/{discount}/validate-code', [DiscountController::class, 'validateCode'])->name('discounts.validate-code');
+
+        // Tax Management Routes
+        Route::resource('taxes', TaxController::class)->names([
+            'index' => 'taxes.index',
+            'create' => 'taxes.create',
+            'store' => 'taxes.store',
+            'show' => 'taxes.show',
+            'edit' => 'taxes.edit',
+            'update' => 'taxes.update',
+            'destroy' => 'taxes.destroy',
+        ]);
+
+        // Invoice Management Routes
+        Route::resource('invoices', InvoiceController::class)->names([
+            'index' => 'invoices.index',
+            'create' => 'invoices.create',
+            'store' => 'invoices.store',
+            'show' => 'invoices.show',
+            'edit' => 'invoices.edit',
+            'update' => 'invoices.update',
+            'destroy' => 'invoices.destroy',
+        ]);
+        Route::post('invoices/{invoice}/generate', [InvoiceController::class, 'generate'])->name('invoices.generate');
+        Route::post('invoices/{invoice}/mark-paid', [InvoiceController::class, 'markPaid'])->name('invoices.mark-paid');
+        Route::post('invoices/{invoice}/send-invoice', [InvoiceController::class, 'sendInvoice'])->name('invoices.send-invoice');
 
         // Company Documents Management
         Route::prefix('companies/{company}/documents')->name('companies.documents.')->group(function () {

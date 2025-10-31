@@ -129,7 +129,7 @@ class HomeController extends Controller
                 ->pluck('total', 'role');
             $companiesWithAdmins = Company::with('admin')->get();
 
-            return view('superadmin.dashboard', compact(
+            return view('home', compact(
                 'totalCompanies',
                 'totalUsers',
                 'totalDepartments',
