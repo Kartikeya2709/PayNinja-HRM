@@ -609,108 +609,61 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @forelse ($pending_field_visits as $visit)
                                             <tr>
-                                                <td>Ruchi Bisht</td>
-                                                <td>New Delhi</td>
+                                                <td>{{ $visit->employee->name }}</td>
+                                                <td>{{ $visit->location_name }}</td>
                                                 <td>
                                                     <div class="btn-group btn-group-sm">
-                                                    <button type="button"
-                                                    class="btn btn-outline-primary btn-sm action-btn" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="View Record" aria-label="View">
-                                                    <span class="btn-content">
-                                                       <i class="fas fa-eye"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
+                                                        <a href="{{ route('field-visits.show', $visit->id) }}"
+                                                           class="btn btn-outline-info btn-sm action-btn"
+                                                           data-bs-toggle="tooltip"
+                                                           data-bs-placement="top"
+                                                           title="View Details">
+                                                            <span class="btn-content">
+                                                                <i class="fas fa-eye"></i>
+                                                            </span>
+                                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                        </a>
 
-                                                    <button type="button"
-                                                    class="btn btn-outline-warning btn-sm action-btn" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="Edit Record" aria-label="Edit">
-                                                    <span class="btn-content">
-                                                    <i class="fas fa-edit"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
+                                                        {{-- <form action="{{ route('field-visits.approve', $visit->id) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit"
+                                                                    class="btn btn-outline-success btn-sm action-btn"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-placement="top"
+                                                                    title="Approve Visit">
+                                                                <span class="btn-content">
+                                                                    <i class="fas fa-check"></i>
+                                                                </span>
+                                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                            </button>
+                                                        </form> --}}
 
-                                                    <button type="button" class="btn btn-outline-danger btn-sm action-btn"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Record" aria-label="Delete"
-                                                    onclick="return confirm('Are you sure you want to delete this record?')">
-                                                    <span class="btn-content">
-                                                    <i class="fas fa-trash"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
+                                                        {{-- <form action="{{ route('field-visits.reject', $visit->id) }}" method="POST" class="d-inline">
+                                                            @csrf
+                                                            @method('PATCH')
+                                                            <button type="submit"
+                                                                    class="btn btn-outline-danger btn-sm action-btn"
+                                                                    data-bs-toggle="tooltip"
+                                                                    data-bs-placement="top"
+                                                                    title="Reject Visit"
+                                                                    onclick="return confirm('Are you sure you want to reject this field visit?')">
+                                                                <span class="btn-content">
+                                                                    <i class="fas fa-times"></i>
+                                                                </span>
+                                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                            </button>
+                                                        </form> --}}
                                                     </div>
                                                 </td>
                                             </tr>
+                                            @empty
                                             <tr>
-                                                <td>Rahul Sharma</td>
-                                                <td>Mumbai</td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm">
-                                                    <button type="button"
-                                                    class="btn btn-outline-primary btn-sm action-btn" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="View Record" aria-label="View">
-                                                    <span class="btn-content">
-                                                       <i class="fas fa-eye"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-
-                                                    <button type="button"
-                                                    class="btn btn-outline-warning btn-sm action-btn" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="Edit Record" aria-label="Edit">
-                                                    <span class="btn-content">
-                                                    <i class="fas fa-edit"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-
-                                                    <button type="button" class="btn btn-outline-danger btn-sm action-btn"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Record" aria-label="Delete"
-                                                    onclick="return confirm('Are you sure you want to delete this record?')">
-                                                    <span class="btn-content">
-                                                    <i class="fas fa-trash"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-                                                    </div>
-                                                </td>
+                                                <td colspan="3" class="text-center">No pending field visits</td>
                                             </tr>
-                                            <tr>
-                                                <td>Anita Verma</td>
-                                                <td>Bangalore</td>
-                                                <td>
-                                                    <div class="btn-group btn-group-sm">
-                                                    <button type="button"
-                                                    class="btn btn-outline-primary btn-sm action-btn" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="View Record" aria-label="View">
-                                                    <span class="btn-content">
-                                                       <i class="fas fa-eye"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-
-                                                    <button type="button"
-                                                    class="btn btn-outline-warning btn-sm action-btn" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="Edit Record" aria-label="Edit">
-                                                    <span class="btn-content">
-                                                    <i class="fas fa-edit"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-
-                                                    <button type="button" class="btn btn-outline-danger btn-sm action-btn"
-                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Record" aria-label="Delete"
-                                                    onclick="return confirm('Are you sure you want to delete this record?')">
-                                                    <span class="btn-content">
-                                                    <i class="fas fa-trash"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                    </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
+                                            @endforelse
                                         </tbody>
                                     </table>
                                 </div>
