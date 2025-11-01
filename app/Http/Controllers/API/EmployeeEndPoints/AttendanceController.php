@@ -136,6 +136,87 @@ class AttendanceController extends BaseApiController
     }
 
     /**
+     * Get attendance settings and today's attendance for mobile
+     */
+    public function getAttendanceSettingsAndToday(Request $request)
+    {
+        try {
+            $employee = Auth::user()->employee;
+            $today = Carbon::today();
+
+            // Get attendance settings
+            $settings = $this->attendanceService->getAttendanceSettings();
+
+            if (!$settings) {
+                return $this->sendError('Attendance settings not configured', [], 404);
+            }
+
+            // Get today's attendance
+            $todayAttendance = $employee->attendances()
+                ->whereDate('date', $today)
+                ->first();
+
+            // Check if today is weekend
+            $isWeekend = $this->attendanceService->isWeekend($today);
+
+            // Check if employee is exempt from geolocation
+            $isExemptFromGeolocation = false;
+            try {
+                $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
+                    ->latest('updated_at')
+                    ->withoutGlobalScopes()
+                    ->first();
+                $isExemptFromGeolocation = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id) : false;
+            } catch (\Throwable $t) {
+                \Log::warning('Failed checking geolocation exemption: ' . $t->getMessage());
+            }
+
+            $response = [
+                'todayAttendance' => $todayAttendance ? [
+                    'id' => $todayAttendance->id,
+                    'date' => $todayAttendance->date,
+                    'check_in' => $todayAttendance->check_in,
+                    'check_out' => $todayAttendance->check_out,
+                    'status' => $todayAttendance->status,
+                    'check_in_status' => $todayAttendance->check_in_status,
+                    'check_in_location' => $todayAttendance->check_in_location,
+                    'check_out_location' => $todayAttendance->check_out_location,
+                    'check_in_latitude' => $todayAttendance->check_in_latitude,
+                    'check_in_longitude' => $todayAttendance->check_in_longitude,
+                    'check_out_latitude' => $todayAttendance->check_out_latitude,
+                    'check_out_longitude' => $todayAttendance->check_out_longitude,
+                    'remarks' => $todayAttendance->remarks,
+                    'check_in_remarks' => $todayAttendance->check_in_remarks
+                ] : null,
+                'settings' => [
+                    'class' => get_class($settings),
+                    'properties' => [
+                        'office_start_time' => $settings->office_start_time,
+                        'office_end_time' => $settings->office_end_time,
+                        'grace_period' => $settings->grace_period,
+                        'auto_absent_time' => $settings->auto_absent_time,
+                        'work_hours' => $settings->work_hours,
+                        'enable_geolocation' => $settings->enable_geolocation,
+                        'office_latitude' => $settings->office_latitude,
+                        'office_longitude' => $settings->office_longitude,
+                        'geofence_radius' => $settings->geofence_radius,
+                        'weekend_days' => $settings->weekend_days,
+                        'allow_multiple_check_in' => $settings->allow_multiple_check_in,
+                        'track_location' => $settings->track_location
+                    ]
+                ],
+                'isWeekend' => $isWeekend,
+                'today' => $today->toDateString(),
+                'isExemptFromGeolocation' => $isExemptFromGeolocation
+            ];
+
+            return $this->sendResponse($response, 'Attendance settings and today\'s attendance retrieved successfully');
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving attendance data', [$e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Check out
      */
     public function checkOut(Request $request)

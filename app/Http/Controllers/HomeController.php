@@ -204,6 +204,9 @@ class HomeController extends Controller
 
             //Presentee_count
             $presentees_count = Attendance::whereDate('date', Carbon::today())
+                ->whereHas('employee', function ($q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+                })
                 ->count();
 
             $companyRoleLabels = $companyEmployees->pluck('role');
@@ -219,7 +222,7 @@ class HomeController extends Controller
             //Absentees data
 
             $today = Carbon::today();
-            $total_employees = Employee::select('id', 'name', 'department_id')->with('department')->get();
+            $total_employees = Employee::select('id', 'name', 'department_id')->where('company_id', $companyId)->with('department')->get();
             $present_employees = Attendance::whereDate('date', $today)
                 ->pluck('employee_id')
                 ->toArray();
@@ -267,6 +270,16 @@ class HomeController extends Controller
             $reimbursements = Reimbursement::where('company_id', $companyID)
                 ->where('status', 'pending')
                 ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get();
+
+            // Get pending field visits for the current company
+            $pending_field_visits = \App\Models\FieldVisit::where('approval_status', 'pending')
+                ->whereHas('employee', function($query) use ($companyID) {
+                    $query->where('company_id', $companyID);
+                })
+                ->with(['employee'])
+                ->latest()
                 ->take(5)
                 ->get();
 
@@ -347,7 +360,8 @@ class HomeController extends Controller
                 'totalEmployees',
                 'recentActivities',
                 'pendingLeaves',
-                'upcomingHolidays'
+                'upcomingHolidays',
+                'pending_field_visits'
             ));
         } elseif ($user->role === 'admin' && !$employeeView) {
             // Get total employees in the company
@@ -417,11 +431,13 @@ class HomeController extends Controller
             //Absentees data
 
             $today = Carbon::today();
-            $total_employees = Employee::select('id', 'name', 'department_id')->with('department')->get();
+            $total_employees = Employee::select('id', 'name', 'department_id')->where('company_id',$companyId)->with('department')->get();
             $present_employees = Attendance::whereDate('date', $today)
+            ->whereHas('employee', function ($q) use ($companyId) { 
+                    $q->where('company_id', $companyId);
+                })
                 ->pluck('employee_id')
                 ->toArray();
-
             $absentees = $total_employees->filter(function ($employee) use ($present_employees) {
                 return !in_array($employee->id, $present_employees);
             })->values();

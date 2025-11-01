@@ -90,9 +90,10 @@ class AttendanceController extends Controller
                 ->whereColumn('employees.id', 'attendances.employee_id')
         )->paginate(31)->withQueryString();
 
-        $departments = Department::orderBy('name')->get();
-        $designations = Designation::orderBy('title')->get();
+        $departments = Department::orderBy('name')->where('company_id',$companyId)->get();
+        $designations = Designation::orderBy('title')->where('company_id',$companyId)->get();
         $employees = Employee::with('user')
+        ->where('company_id', $companyId)
             ->orderBy('created_at', 'desc')
             ->get();
 
