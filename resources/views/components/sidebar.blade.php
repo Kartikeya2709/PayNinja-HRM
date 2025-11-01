@@ -123,13 +123,13 @@
                             <span>All Users</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('superadmin/companies') ? 'active' : '' }}">
+                    <li class="{{ Request::is('superadmin/companies*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('superadmin.companies.index') }}">
                             <i class="fas fa-building"></i>
                             <span>Manage Companies</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('superadmin/assigned-company-admins') ? 'active' : '' }}">
+                    <li class="{{ Request::is('superadmin/assigned-company-admins*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('superadmin.assigned-company-admins.index') }}">
                             <i class="fas fa-users-cog"></i>
                             <span>Assign Company Admin</span>
