@@ -48,6 +48,7 @@ Route::prefix('v1')->group(function () {
         // Attendance Management
         Route::prefix('attendance')->group(function () {
             Route::get('/history', [AttendanceController::class, 'getAttendanceHistory']);
+            Route::get('/settings-today', [AttendanceController::class, 'getAttendanceSettingsAndToday']);
             Route::post('/check-in', [AttendanceController::class, 'checkIn']);
             Route::post('/check-out', [AttendanceController::class, 'checkOut']);
 
