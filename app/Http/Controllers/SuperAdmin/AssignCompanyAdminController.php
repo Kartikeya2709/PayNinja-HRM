@@ -49,7 +49,11 @@ class AssignCompanyAdminController extends Controller
         }
 
         // Generate a secure random password
-        $password = \Illuminate\Support\Str::random(12);
+        if(config('app.env') === 'local'){
+            $password = '12345678';
+        }   else {
+            $password = \Illuminate\Support\Str::random(12);
+        }
 
         DB::beginTransaction();
         try {
@@ -104,8 +108,12 @@ class AssignCompanyAdminController extends Controller
             ]);
             Log::info('AssignCompanyAdminController@store: Employee created', ['employee_id' => $employee->id]);
 
-            // Send welcome email with credentials
-            $user->notify(new \App\Notifications\CompanyAdminWelcomeNotification($password));
+            if(config('app.env') === 'local'){
+                Log::info("Company Admin created with email: " . $user->email . " and password: " . $password);
+            } else {
+                // Send welcome email with credentials
+                $user->notify(new \App\Notifications\CompanyAdminWelcomeNotification($password));
+            }
 
             DB::commit();
             return redirect()->route('superadmin.assigned-company-admins.index')->with('success', 'Company admin created successfully. Login credentials have been sent to the email address.');
