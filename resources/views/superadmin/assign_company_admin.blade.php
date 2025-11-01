@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
-@section('title', isset($admin) ? 'Edit Company Admin' : 'Assign Company Admin')
+@section('title', isset($admin) ? 'Edit Company Admin' : 'Create Company Admin')
 
 @section('content')
 <div class="main-content-01">
     <section class="section">
         <div class="section-header">
-            <h1>{{ isset($admin) ? 'Edit Company Admin' : 'Assign Company Admin' }}</h1>
+            <h1>{{ isset($admin) ? 'Edit Company Admin' : 'Create Company Admin' }}</h1>
         </div>
         <div class="section-body">
             <form action="{{ isset($admin) ? route('superadmin.assign-company-admin.update', $admin->id) : route('superadmin.assign-company-admin.store') }}" method="POST" id="assignCompanyAdminForm">
@@ -14,18 +14,6 @@
                 @if(isset($admin))
                     @method('PUT')
                 @endif
-                <div class="form-group">
-                    <label for="user_id">Select User</label>
-                    <select name="user_id" id="user_id" class="form-control" required>
-                        <option value="">-- Select User --</option>
-                        @foreach($users as $user)
-                            <option value="{{ $user->id }}" {{ old('user_id', isset($admin) ? $admin->user_id : null) == $user->id ? 'selected' : '' }}>{{ $user->name }} ({{ $user->email }})</option>
-                        @endforeach
-                    </select>
-                    @error('user_id')
-                        <span class="text-danger small">{{ $message }}</span>
-                    @enderror
-                </div>
                 <div class="form-group">
                     <label for="company_id">Select Company</label>
                     <select name="company_id" id="company_id" class="form-control" required @if(isset($admin)) readonly disabled @endif>
@@ -46,6 +34,20 @@
                         <input type="hidden" name="company_id" value="{{ $admin->company_id }}">
                     @endif
                     @error('company_id')
+                        <span class="text-danger small">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" class="form-control" required value="{{ old('name', isset($admin) ? $admin->user->name : '') }}">
+                    @error('name')
+                        <span class="text-danger small">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" class="form-control" required value="{{ old('email', isset($admin) ? $admin->user->email : '') }}">
+                    @error('email')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror
                 </div>
@@ -92,35 +94,9 @@
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-primary">{{ isset($admin) ? 'Update' : 'Assign' }}</button>
+                <button type="submit" class="btn btn-primary">{{ isset($admin) ? 'Update' : 'Create' }}</button>
             </form>
         </div>
     </section>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var userSelect = document.getElementById('user_id');
-        var companySelect = document.getElementById('company_id');
-        var form = document.getElementById('assignCompanyAdminForm');
-        var oldValues = {};
-        if (userSelect && form) {
-            userSelect.addEventListener('focus', function() {
-                Array.from(form.elements).forEach(function(el) {
-                    if (el.name && el.name !== 'company_id' && el.name !== 'user_id' && el.type !== 'hidden' && el.type !== 'submit') {
-                        oldValues[el.name] = el.value;
-                    }
-                });
-            });
-            userSelect.addEventListener('change', function() {
-                var companyValue = companySelect ? companySelect.value : '';
-                Array.from(form.elements).forEach(function(el) {
-                    if (el.name && el.name !== 'company_id' && el.name !== 'user_id' && el.type !== 'hidden' && el.type !== 'submit') {
-                        el.value = '';
-                    }
-                });
-                if (companySelect) companySelect.value = companyValue;
-            });
-        }
-    });
-</script>
 @endsection
