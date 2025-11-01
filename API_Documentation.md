@@ -14,11 +14,12 @@ This document provides comprehensive API documentation for the RocketHR mobile a
 - [2.2 Get Colleagues](#22-get-colleagues)
 
 ### [3. Attendance Management](#3-attendance-management)
-- [3.1 Get Attendance History](#31-get-attendance-history)
-- [3.2 Check In](#32-check-in)
-- [3.3 Check Out](#33-check-out)
-- [3.4 Get Regularization Requests](#34-get-regularization-requests)
-- [3.5 Create Regularization Request](#35-create-regularization-request)
+- [3.1 Get Attendance Settings and Today Attendance](#31-get-attendance-settings-and-today-attendance)
+- [3.2 Get Attendance History](#32-get-attendance-history)
+- [3.3 Check In](#33-check-in)
+- [3.4 Check Out](#34-check-out)
+- [3.5 Get Regularization Requests](#35-get-regularization-requests)
+- [3.6 Create Regularization Request](#36-create-regularization-request)
 
 ### [4. Leave Management](#4-leave-management)
 - [4.1 Get Leave Types](#41-get-leave-types)
@@ -285,9 +286,66 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 
 ## 3. Attendance Management
 
-### 3.1 Get Attendance History
-**Endpoint**: `GET /attendance/history`  
-**Description**: Get employee's attendance history with optional date filtering  
+### 3.1 Get Attendance Settings and Today Attendance
+**Endpoint**: `GET /attendance/check-in-out`
+**Description**: Get attendance settings and today's attendance data for mobile app
+**Authentication**: Required
+
+**Response Schema**:
+```json
+{
+  "success": true,
+  "data": {
+    "todayAttendance": {
+      "id": "integer",
+      "date": "string",
+      "check_in": "string (HH:mm:ss)",
+      "check_out": "string (HH:mm:ss)",
+      "status": "string",
+      "check_in_status": "string",
+      "check_in_location": "string",
+      "check_out_location": "string",
+      "check_in_latitude": "number",
+      "check_in_longitude": "number",
+      "check_out_latitude": "number",
+      "check_out_longitude": "number",
+      "remarks": "string",
+      "check_in_remarks": "string"
+    },
+    "settings": {
+      "class": "string",
+      "properties": {
+        "office_start_time": "string (HH:mm:ss)",
+        "office_end_time": "string (HH:mm:ss)",
+        "grace_period": "string (HH:mm:ss)",
+        "auto_absent_time": "string (HH:mm:ss)",
+        "work_hours": "integer",
+        "enable_geolocation": "boolean",
+        "office_latitude": "number",
+        "office_longitude": "number",
+        "geofence_radius": "integer",
+        "weekend_days": "array",
+        "allow_multiple_check_in": "boolean",
+        "track_location": "boolean"
+      }
+    },
+    "isWeekend": "boolean",
+    "today": "string (Y-m-d)",
+    "isExemptFromGeolocation": "boolean"
+  },
+  "message": "Attendance settings and today's attendance retrieved successfully"
+}
+```
+
+**Notes**:
+- `todayAttendance` will be `null` if employee hasn't checked in today
+- `isWeekend` indicates if current date is a weekend according to company settings
+- `isExemptFromGeolocation` indicates if employee is exempted from geolocation requirements
+- `enable_geolocation` setting determines if geolocation tracking is active for check-in/out
+
+### 3.2 Get Attendance History
+**Endpoint**: `GET /attendance/history`
+**Description**: Get employee's attendance history with optional date filtering
 **Authentication**: Required
 
 **Query Parameters**:
@@ -314,9 +372,9 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 }
 ```
 
-### 3.2 Check In
-**Endpoint**: `POST /attendance/check-in`  
-**Description**: Record employee check-in with location  
+### 3.3 Check In
+**Endpoint**: `POST /attendance/check-in`
+**Description**: Record employee check-in with location
 **Authentication**: Required
 
 **Request Body**:
@@ -340,9 +398,9 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 
 **Error Codes**: `400`, `422`
 
-### 3.3 Check Out
-**Endpoint**: `POST /attendance/check-out`  
-**Description**: Record employee check-out with location  
+### 3.4 Check Out
+**Endpoint**: `POST /attendance/check-out`
+**Description**: Record employee check-out with location
 **Authentication**: Required
 
 **Request Body**:
@@ -366,9 +424,9 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 
 **Error Codes**: `400`
 
-### 3.4 Get Regularization Requests
-**Endpoint**: `GET /attendance/regularization`  
-**Description**: Get employee's attendance regularization requests  
+### 3.5 Get Regularization Requests
+**Endpoint**: `GET /attendance/regularization`
+**Description**: Get employee's attendance regularization requests
 **Authentication**: Required
 
 **Query Parameters**:
@@ -399,9 +457,9 @@ curl -X POST /api/v1/login -H "Content-Type: application/json" -d '{"email":"use
 }
 ```
 
-### 3.5 Create Regularization Request
-**Endpoint**: `POST /attendance/regularization`  
-**Description**: Submit attendance regularization request  
+### 3.6 Create Regularization Request
+**Endpoint**: `POST /attendance/regularization`
+**Description**: Submit attendance regularization request
 **Authentication**: Required
 
 **Request Body**:

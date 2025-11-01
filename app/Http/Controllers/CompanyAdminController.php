@@ -662,11 +662,14 @@ class CompanyAdminController extends Controller
         try {
             DB::beginTransaction();
             \Log::info('Employee created successfully');
+            // Generate a secure random password
+            $password = \Illuminate\Support\Str::random(12);
+
             // Create user account
             $user = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['personal_email'], // Use personal email for login
-                'password' => Hash::make(12345678), // Random password, user will need to reset
+                'password' => Hash::make($password),
                 'company_id' => $company->id,
                 'status' => 'active',
                 'role' => 'employee'
@@ -780,11 +783,11 @@ class CompanyAdminController extends Controller
 
             DB::commit();
 
-            // Send welcome email with password reset link
-            // TODO: Implement welcome email
+            // Send welcome email with credentials
+            $user->notify(new \App\Notifications\EmployeeWelcomeNotification($password));
 
             return redirect()->route('company-admin.employees.index')
-                ->with('success', 'Employee created successfully.');
+                ->with('success', 'Employee created successfully. Login credentials have been sent to the email address.');
 
         } catch (\Exception $e) {
             \Log::error('Error in CompanyAdminController@storeEmployee: ' . $e->getMessage());

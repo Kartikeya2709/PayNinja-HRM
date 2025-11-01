@@ -30,8 +30,9 @@ class AssignCompanyAdminController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'company_id' => 'required|exists:companies,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
             'phone' => 'nullable|string|max:10',
             'dob' => 'nullable|date',
             'gender' => 'nullable|in:male,female,other',
@@ -47,14 +48,19 @@ class AssignCompanyAdminController extends Controller
             return back()->withErrors(['company_id' => 'This company already has a company admin assigned.'])->withInput();
         }
 
+        // Generate a secure random password
+        $password = \Illuminate\Support\Str::random(12);
+
         DB::beginTransaction();
         try {
-            $user = User::findOrFail($validated['user_id']);
-            Log::info('AssignCompanyAdminController@store: User found', ['user_id' => $user->id, 'role' => $user->role]);
-            $user->role = 'company_admin';
-            $user->company_id = $validated['company_id']; // Store company_id in user
-            $user->save();
-            Log::info('AssignCompanyAdminController@store: User updated', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
+            $user = User::create([
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'password' => bcrypt($password),
+                'role' => 'company_admin',
+                'company_id' => $validated['company_id'],
+            ]);
+            Log::info('AssignCompanyAdminController@store: User created', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
 
             // Ensure department exists
             $department = \App\Models\Department::firstOrCreate(
@@ -80,29 +86,29 @@ class AssignCompanyAdminController extends Controller
             );
             Log::info('AssignCompanyAdminController@store: Designation ensured', ['designation_id' => $designation->id]);
 
-            $employee = Employee::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'company_id' => $validated['company_id'],
-                ],
-                [
-                    'department_id' => $department->id,
-                    'designation_id' => $designation->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'phone' => $validated['phone'] ?? null,
-                    'dob' => $validated['dob'] ?? null,
-                    'gender' => $validated['gender'] ?? null,
-                    'emergency_contact' => $validated['emergency_contact'] ?? null,
-                    'current_address' => $validated['address'] ?? null,
-                    'joining_date' => now(),
-                    'employee_type' => 'Permanent',
-                    'created_by' => auth()->user()->id,
-                ]
-            );
-            Log::info('AssignCompanyAdminController@store: Employee updated/created', ['employee_id' => $employee->id]);
+            $employee = Employee::create([
+                'user_id' => $user->id,
+                'company_id' => $validated['company_id'],
+                'department_id' => $department->id,
+                'designation_id' => $designation->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'phone' => $validated['phone'] ?? null,
+                'dob' => $validated['dob'] ?? null,
+                'gender' => $validated['gender'] ?? null,
+                'emergency_contact' => $validated['emergency_contact'] ?? null,
+                'current_address' => $validated['address'] ?? null,
+                'joining_date' => now(),
+                'employee_type' => 'Permanent',
+                'created_by' => auth()->user()->id,
+            ]);
+            Log::info('AssignCompanyAdminController@store: Employee created', ['employee_id' => $employee->id]);
+
+            // Send welcome email with credentials
+            $user->notify(new \App\Notifications\CompanyAdminWelcomeNotification($password));
+
             DB::commit();
-            return redirect()->route('superadmin.assigned-company-admins.index')->with('success', 'Company admin assigned successfully.');
+            return redirect()->route('superadmin.assigned-company-admins.index')->with('success', 'Company admin created successfully. Login credentials have been sent to the email address.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to assign company admin: ' . $e->getMessage()])->withInput();
