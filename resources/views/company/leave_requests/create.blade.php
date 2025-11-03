@@ -91,7 +91,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card">
+                <div class="card pt-0">
                     <div class="card-header justify-content-center mb-3 btn-center margin-bottom">
                         <h5>Leave Request Form</h5>
                     </div>

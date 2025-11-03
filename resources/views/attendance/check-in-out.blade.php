@@ -15,7 +15,7 @@
 <div class="row justify-content-center">
     <div class="col-md-6 check-in-col">
         <div class="card check-in-text">
-            <div class="card-body text-center">
+            <div class="card-body text-center mobile-center">
                 <h5 class="mb-4">
                     @if(!$todayAttendance || !$todayAttendance->check_in)
                         Check In
@@ -40,7 +40,9 @@
                                 <div class="card-body p-3">
                                     <div class="row text-center">
                                         <div class="col-4">
-                                        <i class="bi bi-clock-history"></i>
+                                           
+                                        <i class="bi bi-box-arrow-in-right"></i>
+                                        
                                             <div class="text-muted small">Check In</div>
                                             <div class="h5 mb-0">
                                                 @if(isset($todayAttendance) && $todayAttendance && $todayAttendance->check_in)
@@ -50,7 +52,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-4 check-out-mar">
                                             <i class="bi bi-box-arrow-left me-2"></i>
                                             <div class="text-muted small">Check Out </div>
                                             <div class="h5 mb-0">
@@ -101,11 +103,11 @@
                 <div class="d-grid gap-3 col-md-12 mx-auto">
                     @if(!$todayAttendance || !$todayAttendance->check_in)
                         <button id="checkInBtn" class="btn btn-success check-inn btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
-                            <i class="bi bi-box-arrow-in-right me-2"></i> Check In
+                           <div class="icon"> <i class="bi bi-box-arrow-in-right me-2"></i></div> Check In
                         </button>
                     @elseif(!$todayAttendance->check_out)
                         <button id="checkOutBtn" class="btn btn-danger check-outt btn-lg" {{ $settings->enable_geolocation ? 'disabled' : '' }}>
-                            <i class="bi bi-box-arrow-right"></i> Check Out
+                             <div class="icon"> <i class="bi bi-box-arrow-right"></i></div> Check Out
                         </button>
                     @else
                         <div class="alert alert-success">
