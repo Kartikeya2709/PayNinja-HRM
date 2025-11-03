@@ -1,0 +1,211 @@
+/* Modern Tour Styles */
+:root {
+    --primary-color: #6777ef;
+    --primary-glow: rgba(103, 119, 239, 0.5);
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --overlay-bg: rgba(0, 0, 0, 0.6);
+}
+
+/* Tour Container */
+.modern-tour-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9990;
+    pointer-events: none;
+}
+
+/* Blur Overlay */
+.modern-tour-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--overlay-bg);
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+    z-index: 9991;
+}
+
+.modern-tour-container.active .modern-tour-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Tour Modal */
+.modern-tour-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 9999;
+    width: 90%;
+    max-width: 450px;
+}
+
+.modern-tour-container.active .modern-tour-modal {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    pointer-events: auto;
+}
+
+/* Tour Content */
+.modern-tour-content {
+    text-align: center;
+}
+
+.modern-tour-content h3 {
+    margin: 0 0 16px;
+    color: #2D3748;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.modern-tour-content p {
+    margin: 0 0 24px;
+    color: #4A5568;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* Glass Buttons */
+.modern-tour-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.modern-tour-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modern-tour-button-primary {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+.modern-tour-button-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px var(--primary-glow);
+}
+
+.modern-tour-button-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: #4A5568;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modern-tour-button-secondary:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Progress Dots */
+.modern-tour-progress {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.modern-tour-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #E2E8F0;
+    transition: all 0.3s ease;
+}
+
+.modern-tour-dot.active {
+    background: var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Highlight Effect */
+.tour-highlight {
+    position: relative;
+    z-index: 9992;
+    animation: glowPulse 2s infinite;
+    pointer-events: auto !important;
+}
+
+.menu-item .nav-link.tour-highlight {
+    background: var(--primary-color) !important;
+    color: white !important;
+    box-shadow: 0 0 20px var(--primary-glow);
+    border-radius: 8px;
+}
+
+@keyframes glowPulse {
+    0% {
+        box-shadow: 0 0 10px var(--primary-glow);
+    }
+    50% {
+        box-shadow: 0 0 20px var(--primary-glow),
+                    0 0 30px var(--primary-glow);
+    }
+    100% {
+        box-shadow: 0 0 10px var(--primary-glow);
+    }
+}
+
+/* Tour Target Arrow */
+.tour-arrow {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: var(--primary-color);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+    .modern-tour-modal {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .modern-tour-buttons {
+        flex-direction: column;
+    }
+    
+    .modern-tour-button {
+        width: 100%;
+    }
+}

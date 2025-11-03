@@ -1,0 +1,41 @@
+/* Tour Styles */
+.tour-blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    backdrop-filter: blur(3px);
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1040;
+    transition: all 0.3s ease;
+}
+
+.tour-highlight {
+    position: relative;
+    z-index: 1050 !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 4px #6777ef !important;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+#onboardingModal {
+    z-index: 1060;
+}
+
+#onboardingModal .modal-content {
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    border-radius: 8px;
+}
+
+.dimmed {
+    opacity: 0.4;
+    transition: opacity 0.3s ease;
+}
+
+.menu-item.active .tour-highlight {
+    background: #6777ef !important;
+    color: white !important;
+}

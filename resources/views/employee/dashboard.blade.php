@@ -2,6 +2,8 @@
 @section('title', 'Employee Dashboard')
 
 @push('styles')
+    <link rel="stylesheet" href="{{ asset('css/guided-tour.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         /* Dashboard Switch Styling */
         .form-check-input:checked {
@@ -69,9 +71,9 @@
 
                             <div class="col-lg-12">
                                 <a href="{{ route('attendance.check-in') }}" class="card card-link">
-                                    <div class="card-body text-center d-flex align-items-center">
+                                    <div class="card-body d-flex align-items-center">
 
-                                        <i class="fas fa-clock fa-3x"></i>
+                                        <i class="fas fa-clock fa-3x text-center"></i>
 
                                         <h6 class="card-title mb-0 ms-2">Check In/Out</h6>
                                     </div>
@@ -80,9 +82,9 @@
 
                             <div class="col-lg-12">
                                 <a href="{{ route('attendance.my-attendance') }}" class="card card-link">
-                                    <div class="card-body text-center d-flex align-items-center">
+                                    <div class="card-body d-flex align-items-center">
 
-                                        <i class="fas fa-calendar-check fa-3x"></i>
+                                        <i class="fas fa-calendar-check fa-3x text-center"></i>
 
                                         <h6 class="card-title mb-0 ms-2">My Attendance</h6>
                                     </div>
@@ -91,9 +93,9 @@
 
                             <div class="col-lg-12">
                                 <a href="{{ route('employee.leave-requests.create') }}" class="card card-link">
-                                    <div class="card-body text-center d-flex align-items-center">
+                                    <div class="card-body d-flex align-items-center">
 
-                                        <i class="fas fa-calendar-plus fa-3x"></i>
+                                         <i class="fas fa-calendar-plus fa-3x text-center"></i>
 
                                         <h6 class="card-title mb-0 ms-2">Apply Leave</h6>
                                     </div>
@@ -102,9 +104,9 @@
 
                             <div class="col-lg-12">
                                 <a href="{{ route('regularization.requests.index') }}" class="card card-link">
-                                    <div class="card-body text-center d-flex align-items-center">
+                                    <div class="card-body d-flex align-items-center">
 
-                                        <i class="fas fa-calendar-plus fa-3x"></i>
+                                        <i class="fas fa-user-edit fa-3x text-center"></i>
 
                                         <h6 class="card-title mb-0 ms-2">Regularization Requests</h6>
                                     </div>
@@ -112,9 +114,9 @@
                             </div>
                             <div class="col-lg-12">
                                 <a href="{{ route('employee.resignations.index') }}" class="card card-link">
-                                    <div class="card-body text-center d-flex align-items-center">
+                                    <div class="card-body d-flex align-items-center">
 
-                                        <i class="fas fa-calendar-plus fa-3x"></i>
+                                        <i class="fas fa-sign-out-alt fa-3x text-center"></i>
 
                                         <h6 class="card-title mb-0 ms-2">My Resignations</h6>
                                     </div>
@@ -234,7 +236,7 @@
                                                     </td>
                                                 </tr>
                                             @empty
-                                                <tr>
+                                                <tr> 
                                                     <td colspan="6" class="text-center">No announcements found.</td>
                                                 </tr>
                                             @endforelse
@@ -394,7 +396,7 @@
 
             <div class="row mt-4">
 
-                <div class="col-lg-12 px-1 mobile-space">
+                <div class="col-lg-12 px-1">
                     <div class="card holiday-table">
 
                         <h5 class="text-center">Upcoming Holidays</h5>
@@ -429,13 +431,26 @@
                 </div>
             </div>
 
+
         </section>
+        <!-- Tour Container --> 
+        <div class="tour-container">
+            <div class="tour-overlay"></div>
+            <div class="tour-modal">
+                <div class="tour-content">
+                    <!-- Tour content will be injected here -->
+                </div>
+            </div>
+        </div>
     </div>
 @endsection
 
 @push('scripts')
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ asset('js/guided-tour.js') }}"></script>
+
     <script>
         const leaveBalanceCtx = document.getElementById('leaveBalanceChart').getContext('2d');
         const totalLeaves = {{ $total_leaves ?? 0 }};
@@ -683,4 +698,223 @@
             }
         });
     </script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  if (sessionStorage.getItem("rockethr_sidebar_tour_shown")) return;
+
+  const steps = [
+    {
+      image: "{{ asset('images/616991.png') }}",
+      title: "Welcome to RocketHR 🚀",
+      description: "Let's explore your sidebar navigation.",
+      selector: null
+    },
+    {
+      image: "{{ asset('images/sidebar-dashboard.png') }}",
+      title: "Dashboard",
+      description: "Here you can see key HR statistics.",
+      selector: ".menu-item a[href*='home']"
+    },
+    {
+      image: "{{ asset('images/sidebar-attendance.png') }}",
+      title: "Attendance",
+      description: "View and manage your attendance records here.",
+      selector: ".menu-item a[href*='attendance']"
+    },
+    {
+      image: "{{ asset('images/sidebar-leave.png') }}",
+      title: "Leave",
+      description: "Apply and manage your leaves here.",
+      selector: ".menu-item a[href*='leave']"
+    },
+    {
+      image: "{{ asset('images/sidebar-payroll.png') }}",
+      title: "Payroll",
+      description: "Check your payslips and salary info here.",
+      selector: ".menu-item a[href*='payroll']"
+    },
+    {
+      image: "{{ asset('images/welcome.png') }}",
+      title: "You're All Set 🎉",
+      description: "You now know how to use your sidebar!",
+      selector: null
+    }
+  ];
+
+  let currentStep = 0;
+  const modalEl = document.getElementById("onboardingModal");
+  const modalBody = document.getElementById("tour-content");
+  const tourModal = new bootstrap.Modal(modalEl);
+
+  // 🌫️ Create blur overlay
+  const createBlurOverlay = () => {
+    if (!document.querySelector(".tour-blur-overlay")) {
+      const overlay = document.createElement("div");
+      overlay.className = "tour-blur-overlay";
+      document.body.appendChild(overlay);
+    }
+  };
+
+  const removeBlurOverlay = () => {
+    const overlay = document.querySelector(".tour-blur-overlay");
+    if (overlay) overlay.remove();
+  };  // 🔦 Highlight sidebar item
+  const highlightElement = (selector) => {
+    // Remove previous highlights
+    document.querySelectorAll(".tour-highlight").forEach(el => el.classList.remove("tour-highlight"));
+    document.querySelectorAll(".menu-item").forEach(el => el.classList.remove("dimmed"));
+
+    if (!selector) return;
+    const el = document.querySelector(selector);
+    if (el) {
+      const item = el.closest(".menu-item");
+      if (item) {
+        item.classList.add("tour-highlight");
+        document.querySelectorAll(".menu-item").forEach(menu => {
+          if (menu !== item) menu.classList.add("dimmed");
+        });
+        item.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  };
+
+  // 🔁 Render current step
+  const renderStep = () => {
+    const step = steps[currentStep];
+    highlightElement(step.selector);
+
+    const dotsHTML = steps
+      .map(
+        (_, i) => `<div class="dot ${i === currentStep ? "active" : i < currentStep ? "checked" : ""}"></div>`
+      )
+      .join("");
+
+    modalBody.innerHTML = `
+      <img src="${step.image}" class="onboarding-img mb-3" alt="Step image">
+      <h5 class="fw-bold text-center">${step.title}</h5>
+      <p class="text-secondary text-center mb-4">${step.description}</p>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <button class="btn btn-link text-secondary text-decoration-none" id="skipBtn">Skip</button>
+        <div>
+          <button class="btn btn-outline-secondary me-2" id="prevBtn" ${currentStep === 0 ? "disabled" : ""}>Prev</button>
+          <button class="btn btn-primary px-4" id="nextBtn">${currentStep === steps.length - 1 ? "Finish" : "Next"}</button>
+        </div>
+      </div>
+
+      <div class="progress-container">${dotsHTML}</div>
+    `;
+
+    document.getElementById("nextBtn").addEventListener("click", nextStep);
+    document.getElementById("skipBtn").addEventListener("click", closeTour);
+    const prevBtn = document.getElementById("prevBtn");
+    if (prevBtn) prevBtn.addEventListener("click", prevStep);
+  };
+
+  // ➡️ Next Step
+  const nextStep = () => {
+    if (currentStep < steps.length - 1) {
+      currentStep++;
+      renderStep();
+    } else {
+      closeTour();
+    }
+  };
+
+  // ⬅️ Previous Step
+  const prevStep = () => {
+    if (currentStep > 0) {
+      currentStep--;
+      renderStep();
+    }
+  };
+
+  // ❌ Close tour
+  const closeTour = () => {
+    sessionStorage.setItem("rockethr_sidebar_tour_shown", "true");
+    document.querySelectorAll(".tour-highlight").forEach(el => el.classList.remove("tour-highlight"));
+    document.querySelectorAll(".dimmed").forEach(el => el.classList.remove("dimmed"));
+    removeBlurOverlay();
+    tourModal.hide();
+  };
+
+  modalEl.addEventListener("hidden.bs.modal", closeTour);
+
+  // 🕐 Start the tour
+  setTimeout(() => {
+    createBlurOverlay();
+    currentStep = 0;
+    renderStep();
+    tourModal.show();
+  }, 800);
+});
+</script>
+
+<!-- Custom tour backdrop + modal (add near end of body so it sits after DOM) -->
+<div id="tour-backdrop" class="tour-backdrop" aria-hidden="true"></div>
+
+<div id="tour-modal" class="tour-modal" role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-desc">
+	<div class="tour-modal-inner">
+		<h4 id="tour-title">Attendance</h4>
+		<p id="tour-desc">View and manage your attendance records here.</p>
+
+		<div class="tour-controls">
+			<button id="tour-skip" type="button" class="btn btn-link">Skip</button>
+			<button id="tour-prev" type="button" class="btn btn-outline-secondary">Prev</button>
+			<button id="tour-next" type="button" class="btn btn-primary">Next</button>
+		</div>
+	</div>
+</div>
+
+<script>
+// filepath: inline in dashboard (keep minimal)
+(function(){
+	const backdrop = document.getElementById('tour-backdrop');
+	const modal = document.getElementById('tour-modal');
+	const target = document.getElementById('tour-attendance');
+
+	function openTour(){
+		// show backdrop + modal
+		backdrop.classList.add('visible');
+		modal.classList.add('visible');
+
+		// highlight target and keep it above backdrop/modal
+		if(target){
+			target.classList.add('tour-highlight');
+			// ensure positioned for z-index to apply
+			target.style.position = target.style.position || 'relative';
+		}
+		// prevent page scroll while tour open
+		document.documentElement.classList.add('tour-open');
+	}
+
+	function closeTour(){
+		backdrop.classList.remove('visible');
+		modal.classList.remove('visible');
+		if(target) target.classList.remove('tour-highlight');
+		document.documentElement.classList.remove('tour-open');
+	}
+
+	// Wire controls
+	document.getElementById('tour-skip').addEventListener('click', closeTour);
+	document.getElementById('tour-backdrop').addEventListener('click', closeTour);
+	document.getElementById('tour-next').addEventListener('click', function(){ /* minimal: close or advance */ closeTour(); });
+	document.getElementById('tour-prev').addEventListener('click', function(){ /* minimal */ closeTour(); });
+
+	// If you want to auto-open on first visit, uncomment:
+	// openTour();
+
+	// Expose small API for other scripts:
+	window.RocketHRTour = { open: openTour, close: closeTour };
+})();
+</script>
+
+
+
+
+
+
+
+
+
 @endpush

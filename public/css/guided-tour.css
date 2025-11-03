@@ -1,0 +1,212 @@
+/* Guided Tour Highlight Styles */
+.guided-tour-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9990;
+}
+
+/* Dimming Overlay */
+.guided-tour-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 9991;
+}
+
+.guided-tour-active .guided-tour-overlay {
+    opacity: 1;
+}
+
+/* Sidebar Items Dimming */
+.guided-tour-active .main-sidebar .menu-item {
+    transition: all 0.3s ease;
+    opacity: 0.3;
+    filter: blur(1px);
+}
+
+/* Active Item Exception */
+.guided-tour-active .main-sidebar .menu-item.sidebar-highlight,
+.guided-tour-active .main-sidebar .menu-item .sidebar-highlight {
+    opacity: 1 !important;
+    filter: blur(0) !important;
+    transform: scale(1.05);
+    background: white !important;
+}
+
+/* Highlight Effect */
+.sidebar-highlight {
+    position: relative;
+    z-index: 9995 !important; /* Increased z-index to appear above overlay */
+    transition: all 0.3s ease;
+    pointer-events: auto !important;
+    isolation: isolate; /* Create stacking context */
+    background: white !important; /* Ensure background is solid */
+    transform: translateZ(0); /* Force GPU acceleration */
+}
+
+/* Create cutout effect */
+.sidebar-highlight::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 
+        0 0 0 3px rgba(103, 119, 239, 1),
+        0 0 20px rgba(103, 119, 239, 0.6),
+        0 0 40px rgba(103, 119, 239, 0.4);
+    animation: pulseGlow 2s infinite;
+    z-index: -1;
+}
+
+/* Ensure the highlighted item stays clear */
+.sidebar-highlight::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    backdrop-filter: blur(0);
+    background: white;
+    border-radius: 6px;
+    z-index: -1;
+}
+
+.menu-item .nav-link.sidebar-highlight {
+    background: #6777ef !important;
+    color: white !important;
+    transform: scale(1.05);
+    border-radius: 6px;
+    position: relative;
+    box-shadow: 
+        0 0 0 2px white,
+        0 0 0 4px rgba(103, 119, 239, 0.5),
+        0 0 25px rgba(103, 119, 239, 0.4);
+    isolation: isolate;
+}
+
+/* Glow Animation */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 
+            0 0 0 2px rgba(103, 119, 239, 1),
+            0 0 15px rgba(103, 119, 239, 0.5);
+    }
+    50% {
+        box-shadow: 
+            0 0 0 2px rgba(103, 119, 239, 1),
+            0 0 25px rgba(103, 119, 239, 0.8),
+            0 0 40px rgba(103, 119, 239, 0.4);
+    }
+    100% {
+        box-shadow: 
+            0 0 0 2px rgba(103, 119, 239, 1),
+            0 0 15px rgba(103, 119, 239, 0.5);
+    }
+}
+
+/* Tour Modal */
+.guided-tour-modal {
+    position: fixed;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    z-index: 9993;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+}
+
+.guided-tour-modal.active {
+    opacity: 1;
+}
+
+/* Tour Content */
+.guided-tour-content {
+    text-align: center;
+    max-width: 300px;
+}
+
+.guided-tour-content h3 {
+    margin: 0 0 12px;
+    color: #2D3748;
+    font-size: 1.25rem;
+}
+
+.guided-tour-content p {
+    margin: 0 0 20px;
+    color: #4A5568;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Tour Navigation */
+.guided-tour-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.guided-tour-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.guided-tour-button-primary {
+    background: #6777ef;
+    color: white;
+}
+
+.guided-tour-button-primary:hover {
+    background: #556ee6;
+    transform: translateY(-1px);
+}
+
+.guided-tour-button-secondary {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.guided-tour-button-secondary:hover {
+    background: #dee2e6;
+}
+
+/* Progress Indicator */
+.guided-tour-progress {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.guided-tour-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.guided-tour-dot.active {
+    background: #6777ef;
+    transform: scale(1.2);
+}
