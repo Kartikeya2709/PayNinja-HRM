@@ -73,12 +73,12 @@
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="menu-header pt-0">Dashboard</li>
-                <li class="{{ Request::is('home') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('home') }}">
-                        <i class="fas fa-fire"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
+                <li class="menu-item {{ Request::is('home') ? 'active' : '' }}">
+  <a class="nav-link" href="{{ url('home') }}">
+    <i class="fas fa-fire"></i>
+    <span>Dashboard</span>
+  </a>
+</li>
               
                  <!-- Asset Management -->
                 @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
@@ -164,12 +164,13 @@
                     <!-- Attendance Management -->
                     @if ($hasModuleAccess('attendance', 'employee'))
                         <li class="menu-header">Attendance Management</li>
-                        <li class="{{ Request::is('attendance') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('attendance.dashboard') }}">
-                                <i class="fas fa-clock"></i>
-                                <span>Attendance Dashboard</span>
-                            </a>
-                        </li>
+                        <li class="menu-item {{ Request::is('attendance') ? 'active' : '' }}">
+  <a class="nav-link" href="{{ url('attendance') }}">
+    <i class="fas fa-calendar-check"></i>
+    <span>Attendance</span>
+  </a>
+</li>
+
                         <li class="{{ Request::is('attendance/check-in-out') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('attendance.check-in') }}">
                                 <i class="fas fa-sign-in-alt"></i>
@@ -193,13 +194,12 @@
                     <!-- Leave Management -->
                     @if ($hasModuleAccess('leave', 'employee'))
                         <li class="menu-header">Leave Management</li>
-                        <li
-                            class="{{ Request::is('leave-management/leave-requests') && !Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-management.leave-requests.index') }}">
-                                <i class="fas fa-clipboard-list"></i>
-                                <span>My Leave Requests</span>
-                            </a>
-                        </li>
+                        <li class="menu-item {{ Request::is('leave') ? 'active' : '' }}">
+  <a class="nav-link" href="{{ url('leave') }}">
+    <i class="fas fa-plane-departure"></i>
+    <span>Leave</span>
+  </a>
+</li>
                         <li class="{{ Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('leave-management.leave-requests.create') }}">
                                 <i class="fas fa-calendar-plus"></i>

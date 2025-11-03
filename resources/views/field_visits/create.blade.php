@@ -16,7 +16,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header justify-content-center">
                             <h5>Visit Details</h5>
                         </div>
 
@@ -150,11 +150,11 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-12 text-center">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-paper-plane"></i> Submit for Approval
                                         </button>
-                                        <a href="{{ route('field-visits.index') }}" class="btn btn-secondary">
+                                        <a href="{{ route('field-visits.index') }}" class="btn btn-danger">
                                             <i class="fas fa-times"></i> Cancel
                                         </a>
                                     </div>

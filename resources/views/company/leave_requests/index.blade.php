@@ -28,7 +28,7 @@
                         </div>
                         <div class="card-body">
                             <form action="{{ route('company.leave-requests.index') }}" method="GET" class="row">
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-3 mb-4">
                                     <label for="department_id">Department</label>
                                     <select name="department_id" id="department_id" class="form-control select2">
                                         <option value="">All Departments</option>
@@ -41,7 +41,7 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-3 mb-4">
                                     <label for="status">Status</label>
                                     <select name="status" id="status" class="form-control">
                                         <option value="">All Status</option>
@@ -56,19 +56,19 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-3 mb-4">
                                     <label for="date_from">Date From</label>
                                     <input type="date" name="date_from" id="date_from" class="form-control"
                                         value="{{ request('date_from') }}">
                                 </div>
 
-                                <div class="form-group col-md-3">
+                                <div class="form-group col-md-3 mb-4">
                                     <label for="date_to">Date To</label>
                                     <input type="date" name="date_to" id="date_to" class="form-control"
                                         value="{{ request('date_to') }}">
                                 </div>
 
-                                <div class="col-12 mt-2 btn-center">
+                                <div class="col-12 btn-center">
                                     <button type="submit" class="btn btn-primary">Filter</button>
                                     <a href="{{ route('company.leave-requests.index') }}"
                                         class="btn btn-secondary">Reset</a>

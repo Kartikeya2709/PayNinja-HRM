@@ -17,7 +17,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header justify-content-center">
                             <h4>Visit Details</h4>
                         </div>
 
@@ -38,7 +38,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-12 mb-4">
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="visit_title">Visit Title <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control @error('visit_title') is-invalid @enderror"
@@ -49,10 +49,10 @@
                                             @enderror
                                         </div>
                                     </div>
-                                </div>
+                                
 
-                                <div class="row">
-                                    <div class="col-md-12 mb-4">
+                          
+                                    <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="visit_description">Visit Description</label>
                                             <textarea class="form-control @error('visit_description') is-invalid @enderror"
@@ -154,7 +154,7 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-12 text-center">
                                         <button type="submit" class="btn btn-primary">
                                             <i class="fas fa-save"></i> Update Visit
                                         </button>

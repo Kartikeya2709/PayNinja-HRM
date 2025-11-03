@@ -14,7 +14,7 @@
 
 <div class="section-body">
     <div class="row">
-        <div class="col-8 mx-auto">
+        <div class="col-6 mx-auto">
             <div class="card">
                 <div class="card-header justify-content-center">
                     <h3 class="card-title">Edit Department</h3>
@@ -62,4 +62,6 @@
         </div>
     </div>
 </div>
+</div>
+
 @endsection

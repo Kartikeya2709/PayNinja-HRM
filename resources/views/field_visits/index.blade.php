@@ -56,7 +56,7 @@
 
                         <!-- Filters -->
                         <div class="row mt-2">
-                            <div class="col-md-3 mb-4">
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
                                 <select class="form-control" id="statusFilter">
                                     <option value="">All Status</option>
                                     <option value="scheduled">Scheduled</option>
@@ -65,7 +65,7 @@
                                     <option value="cancelled">Cancelled</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mb-4">
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
                                 <select class="form-control" id="approvalFilter">
                                     <option value="">All Approvals</option>
                                     <option value="pending">Pending</option>
@@ -73,10 +73,10 @@
                                     <option value="rejected">Rejected</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 mb-4">
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
                                 <input type="date" class="form-control" id="startDateFilter" placeholder="Start Date">
                             </div>
-                            <div class="col-md-3 mb-4">
+                            <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
                                 <input type="date" class="form-control" id="endDateFilter" placeholder="End Date">
                             </div>
                         </div>

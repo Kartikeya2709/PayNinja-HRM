@@ -17,7 +17,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header mb-3 justify-content-center">
-                        <h4>Individual Allocation</h4>
+                        <h4 class="text-center">Individual Allocation</h4>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('company.leave-balances.store') }}" method="POST">
@@ -107,7 +107,7 @@
 
                 <div class="card mt-4">
                     <div class="card-header justify-content-center mb-3">
-                        <h4>Bulk Allocation</h4>
+                        <h4 class="text-center">Bulk Allocation</h4>
                     </div>
                     <div class="card-body">
                         <form action="{{ route('company.leave-balances.bulk-allocate') }}" method="POST">
