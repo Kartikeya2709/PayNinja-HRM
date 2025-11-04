@@ -57,7 +57,7 @@ position:fixed;
 .main-sidebar {
   background: var(--sidebar-bg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  top:70px;
+  top:60px;
 }
 
 .sidebar-brand a {
@@ -122,6 +122,7 @@ position:fixed;
 padding: .25rem .5rem;
     font-size: .875rem;
     border-radius: .2rem;
+    align-content: center;
 }
 .btn-primary {
   background: #4361ee;
@@ -134,6 +135,7 @@ padding: .25rem .5rem;
   border-radius: 6px;
   border: 1px solid #e2e8f0;
   padding: 10px 16px;
+
 }
 .table thead{
       background: #f0f2f8;
@@ -283,7 +285,8 @@ padding: .25rem .5rem;
     .left-side{
       left:20px;
     }
-  
+  .btn {
+  padding: 8px!important;}
 
 .main-sidebar {
         top: 60px;

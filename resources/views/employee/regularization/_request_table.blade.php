@@ -3,6 +3,9 @@
         <table class="table table-bordered table-hover mt-4">
             <thead>
                 <tr>
+                    @if ($show_actions)
+                        <th><input type="checkbox" id="select-all"></th>
+                    @endif
                     <th>S.No.</th>
                     <th>Employee</th>
                     <th>Date</th>
@@ -18,8 +21,11 @@
             </thead>
             <tbody>
                 @foreach ($requests as $key => $request)
-                   
+
                     <tr>
+                        @if ($show_actions)
+                            <td><input type="checkbox" name="request_ids[]" value="{{ $request->id }}"></td>
+                        @endif
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $request->employee->name }}</td>
                         <td>{{ $request->date }}</td>

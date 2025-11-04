@@ -36,7 +36,7 @@
                             @enderror
                         </div>
                         
-                        <div class="mb-3">
+                        <div class="mb-3 mt-3">
                             <label for="department_id" class="form-label">Department<span class="text-danger">*</span></label>
                             <select name="department_id" id="department_id" class="form-select @error('department_id') is-invalid @enderror">
                                 <option value="">Select Department</option>

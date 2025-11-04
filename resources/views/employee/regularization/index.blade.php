@@ -105,6 +105,12 @@
                 {{-- @if (isset($requests) && $requests instanceof \Illuminate\Pagination\LengthAwarePaginator)
                         {{ $requests->links() }}
                     @endif --}}
+            </div>
+        </section>
+    </div>
+    </div>
+    </div>
+    </div>
 
                 <!-- Approval Modal -->
                 <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel"
@@ -136,12 +142,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
-    </div>
-    </div>
-    </div>
-    </div>
 @endsection
 
 @push('scripts')

@@ -50,7 +50,7 @@
                                 <tr>
                                     <th>Current Assignment</th>
                                     <td>
-                                        @if($asset->assignments && $asset->assignments->last()->returned_date === null)
+                                        @if($asset->assignments && $asset->assignments->last() && $asset->assignments->last()->returned_date === null)
                                             {{ $asset->assignments->last()->employee->name }}
                                         @else
                                             N/A

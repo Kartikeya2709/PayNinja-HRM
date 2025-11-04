@@ -663,7 +663,11 @@ class CompanyAdminController extends Controller
             DB::beginTransaction();
             \Log::info('Employee created successfully');
             // Generate a secure random password
-            $password = \Illuminate\Support\Str::random(12);
+            if(config('app.env') === 'local'){
+                $password = '12345678'; // Fixed password for local environment
+            } else {
+                $password = \Illuminate\Support\Str::random(12);
+            }
 
             // Create user account
             $user = User::create([
@@ -784,7 +788,11 @@ class CompanyAdminController extends Controller
             DB::commit();
 
             // Send welcome email with credentials
-            $user->notify(new \App\Notifications\EmployeeWelcomeNotification($password));
+            if(config('app.env') === 'local'){
+                \Log::info("Employee created with email: " . $user->email . " and password: " . $password);
+            } else {
+                $user->notify(new \App\Notifications\EmployeeWelcomeNotification($password));
+            }            
 
             return redirect()->route('company-admin.employees.index')
                 ->with('success', 'Employee created successfully. Login credentials have been sent to the email address.');

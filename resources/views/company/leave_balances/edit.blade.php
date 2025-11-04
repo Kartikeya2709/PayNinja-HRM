@@ -3,7 +3,7 @@
 @section('title', 'Edit Leave Balance')
 
 @section('content')
-<section class="section">
+<section class="section container">
     <div class="section-header">
         <h1>Edit Leave Balance</h1>
         <div class="section-header-breadcrumb">
@@ -47,7 +47,7 @@
                                 @enderror
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group mt-4">
                                 <label>Used Days</label>
                                 <p class="form-control-static">{{ $leaveBalance->used_days }}</p>
                             </div>

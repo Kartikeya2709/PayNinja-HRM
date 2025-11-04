@@ -131,14 +131,18 @@ public function complete(Request $request, FieldVisit $fieldVisit)
     public function index(Request $request)
     {
         $user = Auth::user();
+        $companyId = $user->company_id;
 
-        // Build base query based on user role
-        $query = FieldVisit::with(['employee', 'reportingManager']);
+        // Build base query based on user role with company filtering
+        $query = FieldVisit::with(['employee', 'reportingManager'])
+            ->whereHas('employee', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
 
         if ($user->hasRole(['admin', 'company_admin'])) {
-            // Admins see all visits
+            // Admins see all visits within their company
         } elseif ($user->hasRole(['manager'])) {
-            // Managers see visits where they are reporting manager or the employee
+            // Managers see visits within their company where they are reporting manager or the employee
             $query->where(function ($q) use ($user) {
                 $q->where('reporting_manager_id', $user->employee->id)
                   ->orWhere('employee_id', $user->employee->id);
