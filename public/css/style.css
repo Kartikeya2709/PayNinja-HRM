@@ -100,8 +100,6 @@
 }
 .employee-check-in i::before{
   font-size: 20px;
-  top: -8px;
-    position: relative;
 }
 .department-header td{
   border:1px solid #dee2e6;
@@ -1832,11 +1830,11 @@ color: #fff;
   border-right: 0px;
   border-top: 0px;
   border-bottom: 1px solid #f5f5f5!important;
-     border-radius: 0px !important;
-    padding: 0px 20px;
-    margin-bottom: 15px;
+  border-radius: 0px !important;
+  padding: 0px 20px;
+  margin-bottom: 15px;
   
-}
+  }
 .fc .fc-button-primary:not(:disabled).fc-button-active:focus, .fc .fc-button-primary:not(:disabled):active:focus{
   box-shadow: none!important;
 }
@@ -1890,8 +1888,8 @@ color: #fff;
   width: 100%;
   display: flex;
   align-items: center;
-      justify-content: space-between;
-      padding-bottom: 10px!important;
+  justify-content: space-between;
+  padding-bottom: 10px!important;
 }
 .search-btn{
   border-radius: 0px 30px 30px 0px!important;
@@ -5284,7 +5282,7 @@ body.layout-3 .main-wrapper {
 }
 .employee-check-in h6{
   margin-left: 10px!important;
-  margin-top: 10px!important;
+  margin-top: 0px!important;
 }
 }
 @media (max-width: 575.98px) {
@@ -5339,7 +5337,8 @@ body.layout-3 .main-wrapper {
 padding-top: 20px;;
   }
  .employee-check-in .card-body {
-    padding-bottom: 10px !important;}
+    padding-bottom: 10px !important;
+    justify-content: left;}
 .Resignation-Information{
   padding-top: 25px;
 }

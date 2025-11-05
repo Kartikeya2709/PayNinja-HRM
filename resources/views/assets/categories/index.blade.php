@@ -33,19 +33,43 @@
                                     <td>{{ $category->description }}</td>
                                     <td>{{ $category->assets_count }}</td>
                                     <td>
-                                        <a href="{{ route('admin.assets.categories.show', $category->id) }}" class="btn btn-info btn-sm">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.assets.categories.edit', $category->id) }}" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
-                                        <form action="{{ route('admin.assets.categories.destroy', $category->id) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this category?')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
+                                        <div class="btn-group btn-group-sm">
+                                          <a href="{{ route('admin.assets.categories.show', $category->id) }}"
+                                          class="btn btn-outline-info btn-sm action-btn"
+                                          data-id="{{ $category->id }}" data-bs-toggle="tooltip"
+                                          data-bs-placement="top" title="View Category" aria-label="View">
+                                          <span class="btn-content">
+                                              <i class="fas fa-eye"></i>
+                                          </span>
+                                          <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                          </a>
+
+                                          <a href="{{ route('admin.assets.categories.edit', $category->id) }}"
+                                          class="btn btn-outline-primary btn-sm action-btn"
+                                          data-id="{{ $category->id }}" data-bs-toggle="tooltip"
+                                          data-bs-placement="top" title="Edit Category" aria-label="Edit">
+                                          <span class="btn-content">
+                                              <i class="fas fa-edit"></i>
+                                          </span>
+                                          <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                          </a>
+
+                                          <form action="{{ route('admin.assets.categories.destroy', $category->id) }}" method="POST" class="d-inline-block">
+                                          @csrf
+                                          @method('DELETE')
+                                          <button type="submit"
+                                          class="btn btn-outline-danger btn-sm action-btn rounded-start-0"
+                                          data-id="{{ $category->id }}" data-bs-toggle="tooltip"
+                                          data-bs-placement="top" title="Delete Category" aria-label="Delete"
+                                          onclick="return confirm('Are you sure you want to delete this category?')">
+                                          <span class="btn-content">
+                                             <i class="fas fa-trash"></i>
+                                          </span>
+                                          <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                          </button>
+                                          </form>
+                                        </div>
+
                                     </td>
                                 </tr>
                                 @empty
