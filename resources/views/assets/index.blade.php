@@ -57,17 +57,42 @@
                                     </td>
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
+                                        <div class="btn-group btn-group-sm">
+                                        <!-- View Asset -->
+                                        <a href="{{ route('admin.assets.show', $asset->id) }}"
+                                        class="btn btn-outline-info btn-sm action-btn"
+                                        data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="View Asset" aria-label="View">
+                                        <span class="btn-content">
                                             <i class="fas fa-eye"></i>
+                                        </span>
+                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                         </a>
-                                        <a href="{{ route('admin.assets.edit', $asset->id) }}" class="btn btn-primary btn-sm">
+
+                                        <!-- Edit Asset -->
+                                        <a href="{{ route('admin.assets.edit', $asset->id) }}"
+                                        class="btn btn-outline-primary btn-sm action-btn"
+                                        data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="Edit Asset" aria-label="Edit">
+                                        <span class="btn-content">
                                             <i class="fas fa-edit"></i>
+                                        </span>
+                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                         </a>
+
+                                        <!-- Assign Asset -->
                                         @if($asset->status === 'available')
-                                            <a href="{{ route('admin.assets.assignments.create', ['asset' => $asset->id]) }}" class="btn btn-success btn-sm">
-                                                <i class="fas fa-user-plus"></i>
-                                            </a>
+                                        <a href="{{ route('admin.assets.assignments.create', ['asset' => $asset->id]) }}"
+                                        class="btn btn-outline-success btn-sm action-btn"
+                                        data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
+                                        data-bs-placement="top" title="Assign Asset" aria-label="Assign">
+                                        <span class="btn-content">
+                                        <i class="fas fa-user-plus"></i>
+                                        </span>
+                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                        </a>
                                         @endif
+                                        </div>
                                     </td>
                                     {{-- <td>
                                         <!-- View Asset -->

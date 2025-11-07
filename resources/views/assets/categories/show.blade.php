@@ -12,37 +12,41 @@
                     </a>
                 </div>
                 <div class="card-body">
-                    <div class="row mb-4">
-                        <div class="col-md-6">
-                            <h5>Category Details</h5>
-                            <table class="table">
-                                <tr>
-                                    <th>Name:</th>
-                                    <td>{{ $category->name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Description:</th>
-                                    <td>{{ $category->description ?? 'N/A' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Total Assets:</th>
-                                    <td>{{ $category->assets->count() }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Created At:</th>
-                                    <td>{{ $category->created_at->format('Y-m-d H:i:s') }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Last Updated:</th>
-                                    <td>{{ $category->updated_at->format('Y-m-d H:i:s') }}</td>
-                                </tr>
-                            </table>
+                    <div class="row mb-5">
+                        <div class="col-md-12">
+                            <div class="card shadow border-0 rounded-4 overflow-hidden">
+                            <div class="detail-page bg-primary text-white fw-semibold py-3 px-2 rounded-2 mb-4">
+                            Category Details
+                            </div>
+                                <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-semibold text-muted">Name:</div>
+                                    <div class="col-md-8">{{ $category->name }}</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-semibold text-muted">Description:</div>
+                                    <div class="col-md-8">{{ $category->description ?? 'N/A' }}</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-semibold text-muted">Total Assets:</div>
+                                    <div class="col-md-8">{{ $category->assets->count() }}</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-4 fw-semibold text-muted">Created At:</div>
+                                    <div class="col-md-8">{{ $category->created_at->format('Y-m-d H:i:s') }}</div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 fw-semibold text-muted">Last Updated:</div>
+                                    <div class="col-md-8">{{ $category->updated_at->format('Y-m-d H:i:s') }}</div>
+                                </div>
+                            </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12">
-                            <h5>Assets in this Category</h5>
+                            <h5 class="text-center">Assets in this Category</h5>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped">
                                     <thead>

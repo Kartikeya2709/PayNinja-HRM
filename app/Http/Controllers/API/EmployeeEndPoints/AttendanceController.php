@@ -58,6 +58,9 @@ class AttendanceController extends BaseApiController
             return $this->sendResponse([
                 'attendances' => $attendances,
                 'summary' => [
+                    'total' => $attendances->count(),
+                    'week-off' => $attendances->where('status', 'Week-Off')->count(),
+                    'Holidays' => $attendances->where('status', 'Holiday')->count(),
                     'present' => $attendances->where('status', 'Present')->count(),
                     'absent' => $attendances->where('status', 'Absent')->count(),
                     'late' => $attendances->where('status', 'Late')->count(),

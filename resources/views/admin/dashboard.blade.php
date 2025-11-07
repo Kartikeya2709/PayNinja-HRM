@@ -649,6 +649,8 @@
               label: 'Number of Employees',
               data: @json($data),
               backgroundColor: @json($colors),
+              barPercentage: 0.4,
+              categoryPercentage: 0.8,
             }]
           },
           options: {
