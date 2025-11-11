@@ -127,7 +127,7 @@ class AcademicHolidayController extends BaseApiController
                             'name' => $holiday->name,
                             'description' => $holiday->description
                         ];
-                    })
+                    })->values()->toArray()
                 ]);
 
                 $currentDate->addDay();
