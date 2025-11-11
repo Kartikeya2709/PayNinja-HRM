@@ -31,12 +31,12 @@ use App\Http\Controllers\API\DemoRequestController;
 Route::prefix('v1')->group(function () {
     // Authentication
     Route::post('login', [APILoginController::class, 'login']);
+    Route::post('forget-password', [APILoginController::class, 'sendResetLinkEmail'])->middleware('throttle:2,1');
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function () {
         // Route::post('logout', [APILoginController::class, 'logout']);
         // Route::get('user', [APILoginController::class, 'user']);
-        Route::post('forget-password', [APILoginController::class, 'sendResetLinkEmail']);
 
         // Profile Management
         Route::prefix('profile')->group(function () {

@@ -104,7 +104,7 @@
                                 <a href="{{ route('regularization.requests.index') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
-                                        <i class="fas fa-calendar-plus fa-3x"></i>
+                                        <i class="fas fa-user-clock"></i>
 
                                         <h6 class="card-title mb-0 ms-2">Regularization Requests</h6>
                                     </div>
@@ -114,7 +114,7 @@
                                 <a href="{{ route('employee.resignations.index') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
-                                        <i class="fas fa-calendar-plus fa-3x"></i>
+                                        <i class="fas fa-file-signature"></i>
 
                                         <h6 class="card-title mb-0 ms-2">My Resignations</h6>
                                     </div>

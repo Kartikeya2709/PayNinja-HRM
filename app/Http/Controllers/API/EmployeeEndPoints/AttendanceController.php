@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\AttendanceRegularization;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 use App\Services\AttendanceService;
 
@@ -52,11 +53,14 @@ class AttendanceController extends BaseApiController
                     ->whereMonth('date', now()->month);
             }
 
-            $attendances = $query->latest()->get();
+            $attendances = $query->orderBy('date', 'asc')->get();
 
             return $this->sendResponse([
                 'attendances' => $attendances,
                 'summary' => [
+                    'total' => $attendances->count(),
+                    'week-off' => $attendances->where('status', 'Week-Off')->count(),
+                    'Holidays' => $attendances->where('status', 'Holiday')->count(),
                     'present' => $attendances->where('status', 'Present')->count(),
                     'absent' => $attendances->where('status', 'Absent')->count(),
                     'late' => $attendances->where('status', 'Late')->count(),

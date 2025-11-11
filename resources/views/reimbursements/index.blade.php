@@ -39,7 +39,7 @@
                 <div class="col-lg-3 col-md-4 mb-3">
                     <input type="number" class="form-control" id="maxAmountFilter" placeholder="Max Amount" step="0.01">
                 </div>
-                <div class="col-lg-3 col-md-4 mb-3">
+                <div class="col-lg-3 col-md-4">
                     <button type="button" class="btn btn-secondary w-100" id="clearFilters">Clear Filters</button>
                 </div>
             </div>

@@ -33,7 +33,9 @@
                                     <tr>
                                           <td>{{ $loop->iteration }}</td>
                                         <td>
-                                            <a href="{{ route('handbooks.show', $handbook) }}">{{ $handbook->title }}</a>
+                                            {{-- <a href="{{ route('handbooks.show', $handbook) }}"> --}}
+                                                {{ $handbook->title }}
+                                            {{-- </a> --}}
                                         </td>
                                         <td>{{ $handbook->version }}</td>
                                         <td>{{ $handbook->department->name ?? 'All Departments' }}</td>
@@ -46,16 +48,47 @@
                                         <td>{{ $handbook->created_at->format('M d, Y') }}</td>
                                         @if(Auth::user()->hasRole(['admin', 'company_admin']))
                                             <td>
-                                                   
-                                                    {{-- <a href="{{ route('handbooks.show', $handbook) }}" class="btn btn-sm btn-dark">View</a> --}}
-                                            {{-- <a href="{{ route('handbooks.show', $handbook) }}">{{ $handbook->title }}</a> --}}
-                                        
-                                                <a href="{{ route('handbooks.edit', $handbook) }}" class="btn btn-sm btn-warning">Edit</a>
-                                                <form action="{{ route('handbooks.destroy', $handbook) }}" method="POST" style="display: inline;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                                <div class="btn-group btn-group-sm">
+
+                                                <!-- View Button -->
+                                                <a href="{{ route('handbooks.show', $handbook) }}"
+                                                   class="btn btn-outline-info btn-sm action-btn"
+                                                   data-id="{{ $handbook->id }}" data-bs-toggle="tooltip"
+                                                   data-bs-placement="top" title="View Handbook" aria-label="View">
+                                                   <span class="btn-content">
+                                                   <i class="fas fa-eye"></i>
+                                                   </span>
+                                                   <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                </a>
+
+                                                <!-- Edit Button -->
+                                                <a href="{{ route('handbooks.edit', $handbook) }}"
+                                                   class="btn btn-outline-primary btn-sm action-btn"
+                                                   data-id="{{ $handbook->id }}" data-bs-toggle="tooltip"
+                                                   data-bs-placement="top" title="Edit Handbook" aria-label="Edit">
+                                                   <span class="btn-content">
+                                                   <i class="fas fa-edit"></i>
+                                                   </span>
+                                                   <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                </a>
+
+                                                <!-- Delete Button -->
+                                                <form action="{{ route('handbooks.destroy', $handbook) }}" method="POST" class="d-inline-block">
+                                                   @csrf
+                                                   @method('DELETE')
+                                                   <button type="submit"
+                                                   class="btn btn-outline-danger btn-sm action-btn rounded-start-0"
+                                                   data-id="{{ $handbook->id }}" data-bs-toggle="tooltip"
+                                                   data-bs-placement="top" title="Delete Handbook" aria-label="Delete"
+                                                   onclick="return confirm('Are you sure you want to delete this handbook?')">
+                                                   <span class="btn-content">
+                                                   <i class="fas fa-trash"></i>
+                                                   </span>
+                                                   <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                   </button>
                                                 </form>
+                                                </div>
+
                                             </td>
                                           
                                         @endif

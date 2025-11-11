@@ -7,10 +7,12 @@
             <div class="card">
                 <div class="card-header">
                     <h4>{{ $handbook->title }}</h4>
+                    <div class="">
                     <a href="{{ route('handbooks.index') }}" class="btn btn-secondary">Back to List</a>
                     @if(Auth::user()->hasRole(['admin', 'company_admin']))
                         <a href="{{ route('handbooks.edit', $handbook) }}" class="btn btn-warning">Edit</a>
                     @endif
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -73,7 +75,7 @@
 
                     @if(Auth::user()->hasRole(['admin', 'company_admin']))
                         <hr>
-                        <h5>Acknowledgments</h5>
+                        <h5 class="mt-4">Acknowledgments</h5>
                         <div class="table-responsive">
                             <table class="table table-striped">
                                 <thead>

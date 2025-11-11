@@ -49,7 +49,11 @@ class AssignCompanyAdminController extends Controller
         }
 
         // Generate a secure random password
-        $password = \Illuminate\Support\Str::random(12);
+        if(config('app.env') === 'local'){
+            $password = '12345678';
+        }   else {
+            $password = \Illuminate\Support\Str::random(12);
+        }
 
         DB::beginTransaction();
         try {
@@ -60,7 +64,11 @@ class AssignCompanyAdminController extends Controller
                 'role' => 'company_admin',
                 'company_id' => $validated['company_id'],
             ]);
-            Log::info('AssignCompanyAdminController@store: User created', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
+            
+            // Create and assign Company Admin role with null permissions
+            $user->assignRole('Company Admin');
+            
+            Log::info('AssignCompanyAdminController@store: User created', ['user_id' => $user->id, 'role' => $user->role, 'role_id' => $user->role_id, 'company_id' => $user->company_id]);
 
             // Ensure department exists
             $department = \App\Models\Department::firstOrCreate(
@@ -104,8 +112,12 @@ class AssignCompanyAdminController extends Controller
             ]);
             Log::info('AssignCompanyAdminController@store: Employee created', ['employee_id' => $employee->id]);
 
-            // Send welcome email with credentials
-            $user->notify(new \App\Notifications\CompanyAdminWelcomeNotification($password));
+            if(config('app.env') === 'local'){
+                Log::info("Company Admin created with email: " . $user->email . " and password: " . $password);
+            } else {
+                // Send welcome email with credentials
+                $user->notify(new \App\Notifications\CompanyAdminWelcomeNotification($password));
+            }
 
             DB::commit();
             return redirect()->route('superadmin.assigned-company-admins.index')->with('success', 'Company admin created successfully. Login credentials have been sent to the email address.');
@@ -152,7 +164,11 @@ class AssignCompanyAdminController extends Controller
             $user->role = 'company_admin';
             $user->company_id = $validated['company_id']; // Store company_id in user
             $user->save();
-            Log::info('AssignCompanyAdminController@update: User updated', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
+            
+            // Assign Company Admin role with null permissions
+            $user->assignRole('Company Admin');
+            
+            Log::info('AssignCompanyAdminController@update: User updated', ['user_id' => $user->id, 'role' => $user->role, 'role_id' => $user->role_id, 'company_id' => $user->company_id]);
 
             // Ensure department exists
             $department = \App\Models\Department::firstOrCreate(
@@ -207,6 +223,7 @@ class AssignCompanyAdminController extends Controller
         try {
             $user = $admin->user;
             $user->role = 'employee'; // Or previous role
+            $user->removeRole(); // Remove the role assignment
             $user->save();
             $admin->delete();
             DB::commit();

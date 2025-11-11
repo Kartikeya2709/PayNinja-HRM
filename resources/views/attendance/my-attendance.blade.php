@@ -169,24 +169,12 @@
                         <div class="card action-icon month-sum text-white">
                            <div class="card-body d-flex align-items-center">
                                 <div class="icon">
-                               <i class="bi bi-calendar-x"></i>
-</div>
-<div class="text">
+                                  <i class="bi bi-calendar-x"></i>
+                               </div>
+                            <div class="text">
                                 <h6 class="card-title">Week-Off</h6>
-                                <h2>{{ $monthlySummary['week_off'] ?? 0 }}</h2></div>
+                                <h2>{{ $monthlySummary['week_off'] ?? 0 }}</h2>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4 px-1">
-                        <div class="card action-icon month-sum text-white">
-                            <div class="card-body d-flex align-items-center">
-                                 <div class="icon">
-                                <i class="bi bi-check-circle-fill"></i>
-</div>
-                                <div class="text">
-                                <h6 class="card-title">Present</h6>
-                                <h2>{{ $monthlySummary['present'] ?? 0 }}</h2>
-</div>
                             </div>
                         </div>
                     </div>
@@ -194,16 +182,29 @@
                         <div class="card action-icon month-sum text-white">
                             <div class="card-body d-flex align-items-center">
                                 <div class="icon">
-                                <i class="bi bi-x-circle-fill"></i>
-</div>
-                                <div class="text">
-                                <h6 class="card-title">Absent</h6>
-                                <h2>{{ $monthlySummary['absent'] ?? 0 }}</h2>
-</div>
+                                  <i class="bi bi-check-circle-fill"></i>
+                                </div>
+                                   <div class="text">
+                                     <h6 class="card-title">Present</h6>
+                                     <h2>{{ $monthlySummary['present'] ?? 0 }}</h2>
+                                   </div>
                             </div>
                         </div>
                     </div>
-</div>
+                    <div class="col-md-4 px-1">
+                        <div class="card action-icon month-sum text-white">
+                            <div class="card-body d-flex align-items-center">
+                                <div class="icon">
+                                  <i class="bi bi-x-circle-fill"></i>
+                                </div>
+                                <div class="text">
+                                  <h6 class="card-title">Absent</h6>
+                                <h2>{{ $monthlySummary['absent'] ?? 0 }}</h2>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
 <div class="row text-center mt-2 monthly-summary">
                     <div class="col-md-4 px-1">

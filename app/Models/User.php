@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-// Role management
 
 class User extends Authenticatable
 {
@@ -23,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'role_id',
         'company_id',
     ];
     
@@ -31,6 +31,11 @@ class User extends Authenticatable
      */
     public function getRoleNameAttribute()
     {
+        // First check if we have a role_id relationship
+        if ($this->roleModel()) {
+            return $this->roleModel()->first()->name;
+        }
+        // Fallback to the old role string
         return $this->role ?? 'No Role';
     }
 
@@ -39,10 +44,52 @@ class User extends Authenticatable
      */
     public function hasRole($role)
     {
+        // If we have a roleModel, check against it first
+        if ($this->role_id && $this->roleModel()) {
+            $roleModel = $this->roleModel()->first();
+            if ($roleModel) {
+                if (is_array($role)) {
+                    return in_array($roleModel->name, $role);
+                }
+                return $roleModel->name === $role;
+            }
+        }
+        
+        // Fallback to the old role string
         if (is_array($role)) {
             return in_array($this->role, $role);
         }
         return $this->role === $role;
+    }
+
+    /**
+     * Assign a role to the user.
+     */
+    public function assignRole($role)
+    {
+        if (is_string($role)) {
+            // Find or create the role
+            $roleModel = Role::firstOrCreate(
+                ['name' => $role, 'company_id' => $this->company_id],
+                ['permissions' => null] // null permissions as requested
+            );
+            $this->role_id = $roleModel->id;
+            $this->save();
+        } elseif ($role instanceof Role) {
+            $this->role_id = $role->id;
+            $this->save();
+        }
+        return $this;
+    }
+
+    /**
+     * Remove role from the user.
+     */
+    public function removeRole()
+    {
+        $this->role_id = null;
+        $this->save();
+        return $this;
     }
 
     /**
@@ -104,9 +151,24 @@ class User extends Authenticatable
         );
     }
     public function department()
-{
-    return $this->belongsTo(Department::class, 'company_id', 'company_id');
-}
+    {
+        return $this->belongsTo(Department::class, 'company_id', 'company_id');
+    }
 
+    /**
+     * Get the role associated with the user.
+     */
+    public function roleModel()
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * Get the role associated with the user (alias for roleModel).
+     */
+    public function getRoleModelAttribute()
+    {
+        return $this->roleModel;
+    }
 
 }

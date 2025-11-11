@@ -20,7 +20,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <div class="d-flex justify-content-between align-items-center px-2 py-2">
+                    <div class="d-flex justify-content-between align-items-center pb-3">
                         <h5 class="card-title mb-0">
                             <i class="fas fa-clock me-2"></i>Attendance Settings
                         </h5>
@@ -50,8 +50,8 @@
                         </div>
 
                         <!-- Office Hours Section -->
-                        <div class="card mb-4 px-0 py-0">
-                            <div class="card-header bg-light">
+                        <div class="card px-0 py-0">
+                            <div class="card-header bg-light atdnc-stng">
                                 <h6 class="mb-0"><i class="fas fa-clock me-2"></i>Office Hours</h6>
                             </div>
 
@@ -82,7 +82,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="office_end_time" class="form-label">Office End Time</label>
+                                            <label for="office_end_time" class="form-label mobile-space-01">Office End Time</label>
                                             @php
     $officeEnd = old('office_end_time', $settings->office_end_time ?? '18:00:00');
     try {
@@ -118,7 +118,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="grace_period" class="form-label fw-medium">Grace Period</label>
+                                            <label for="grace_period" class="form-label fw-medium mobile-space-01">Grace Period</label>
                                             @php
                                                 $gracePeriod = old('grace_period', $settings->grace_period ?? '00:15');
                                                 try {
@@ -209,7 +209,7 @@
 
                         <!-- Geolocation Settings Section -->
                         <div class="card mb-4 px-0 py-0">
-                            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                            <div class="card-header bg-light d-flex justify-content-between align-items-center  atdnc-stng">
                                 <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Geolocation Settings</h6>
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="checkbox" id="enable_geolocation" 
@@ -320,7 +320,7 @@
 
                         <!-- Weekend Settings Section -->
                         <div class="card mb-4 px-0 py-0">
-                            <div class="card-header bg-light">
+                            <div class="card-header bg-light  atdnc-stng">
                                 <h6 class="mb-0"><i class="fas fa-calendar-week me-2"></i>Weekend Configuration</h6>
                             </div>
                             <div class="card-body">

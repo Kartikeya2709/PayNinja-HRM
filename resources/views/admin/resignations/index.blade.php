@@ -17,60 +17,72 @@
         <div class="row">
             <div class="col-lg-3 col-md-6 col-sm-6 col-12 px-1">
                 <div class="card Resignations-icon">
-                    <div class="card-wrap">
-                    <div class="card-icon bg-primary">
-                        <i class="fas fa-file-signature"></i>
-                    </div>
-                    <div class="text-wrap">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-wrap">
                         <div class="card-header">
                             <h4>Total Requests</h4>
                         </div>
                         <div class="card-body">{{ $stats['total'] }}</div>
+                    </div>
+                    <div class="card-wrap">
+                    <div class="card-icon bg-primary">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    
                     </div>
                     </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space-01 px-1">
                 <div class="card Resignations-icon">
-                    <div class="card-wrap">
-                    <div class="card-icon bg-warning">
-                        <i class="fas fa-clock"></i>
-                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
                      <div class="text-wrap">
+                        
                         <div class="card-header">
                             <h4>Pending</h4>
                         </div>
                         <div class="card-body">{{ $stats['pending'] }}</div>
                     </div>
+                    <div class="card-wrap">
+                    <div class="card-icon bg-warning">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    </div>
                 </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space px-1">
                 <div class="card Resignations-icon">
-                    <div class="card-wrap">
-                    <div class="card-icon bg-success">
-                        <i class="fas fa-check"></i>
-                    </div>
-                    <div class="text-wrap">
+                    <div class="d-flex justify-content-between align-items-center">
+                         <div class="text-wrap">
                         <div class="card-header">
                             <h4>Approved</h4>
                         </div>
                         <div class="card-body">{{ $stats['approved'] }}</div>
                     </div>
+                    <div class="card-wrap">
+                    <div class="card-icon bg-success">
+                        <i class="fas fa-check"></i>
+                    </div>
+                   
+                </div>
                 </div>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 col-12 mobile-space px-1">
                 <div class="card Resignations-icon">
-                    <div class="card-wrap">
-                    <div class="card-icon bg-info">
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                    <div class="text-wrap">
+                    <div class="d-flex justify-content-between align-items-center">
+                         <div class="text-wrap">
                         <div class="card-header">
                             <h4>This Month</h4>
                         </div>
                         <div class="card-body">{{ $stats['this_month'] }}</div>
+                    </div>
+                    <div class="card-wrap">
+                    <div class="card-icon bg-info">
+                        <i class="fas fa-calendar"></i>
+                    </div>
+                   
                     </div>
                 </div>
             </div>
@@ -84,7 +96,7 @@
             </div>
             <div class="card-body">
                 <form method="GET" action="{{ route('admin.resignations.index') }}" class="row g-3">
-                    <div class="col-lg-3 col-md-4 col-sm-12">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
                         <label for="department_id" class="form-label">Department</label>
                         <select name="department_id" id="department_id" class="form-control">
                             <option value="">All Departments</option>
@@ -96,7 +108,7 @@
                             @endforeach
                         </select>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-12">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
                         <label for="status" class="form-label">Status</label>
                         <select name="status" id="status" class="form-control">
                             <option value="">All Status</option>
@@ -115,7 +127,7 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-12">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
                         <label for="resignation_type" class="form-label">Type</label>
                         <select name="resignation_type" id="resignation_type" class="form-control">
                             <option value="">All Types</option>
@@ -129,7 +141,7 @@
                             </option>
                         </select>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-sm-12">
+                    <div class="col-lg-3 col-md-6 col-sm-12">
                         <label class="form-label">Date Range</label>
                         <div class="input-group">
                             <input type="date" name="date_from" class="form-control" value="{{ request('date_from') }}">

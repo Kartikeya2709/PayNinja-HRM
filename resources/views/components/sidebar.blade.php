@@ -73,12 +73,12 @@
             <ul class="sidebar-menu">
                 <!-- Dashboard -->
                 <li class="menu-header pt-0">Dashboard</li>
-                <li class="{{ Request::is('home') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ url('home') }}">
-                        <i class="fas fa-fire"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
+                <li class="menu-item {{ Request::is('home') ? 'active' : '' }}">
+  <a class="nav-link" href="{{ url('home') }}">
+    <i class="fas fa-fire"></i>
+    <span>Dashboard</span>
+  </a>
+</li>
               
                  <!-- Asset Management -->
                 @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
@@ -159,6 +159,39 @@
                             <span>Contact Messages</span>
                         </a>
                     </li>
+
+                    <!-- Package Management -->
+                    <li class="menu-header">Package Management</li>
+                    <li class="{{ Request::is('superadmin/packages*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.packages.index') }}">
+                            <i class="fas fa-box"></i>
+                            <span>Packages</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/company-packages*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.company-packages.index') }}">
+                            <i class="fas fa-handshake"></i>
+                            <span>Company Packages</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/discounts*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.discounts.index') }}">
+                            <i class="fas fa-percent"></i>
+                            <span>Discounts</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/taxes*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.taxes.index') }}">
+                            <i class="fas fa-calculator"></i>
+                            <span>Taxes</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/invoices*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.invoices.index') }}">
+                            <i class="fas fa-file-invoice"></i>
+                            <span>Invoices</span>
+                        </a>
+                    </li>
                 @endif
 
 
@@ -176,12 +209,12 @@
                     <!-- Attendance Management -->
                     @if ($hasModuleAccess('attendance', 'employee'))
                         <li class="menu-header">Attendance Management</li>
-                        <li class="{{ Request::is('attendance') ? 'active' : '' }}">
+                        <li class="menu-item {{ Request::is('attendance') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('attendance.dashboard') }}">
-                                <i class="fas fa-clock"></i>
+                                <i class="fas fa-calendar-check"></i>
                                 <span>Attendance Dashboard</span>
-                            </a>
-                        </li>
+  </a>
+</li>
                         <li class="{{ Request::is('attendance/check-in-out') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('attendance.check-in') }}">
                                 <i class="fas fa-sign-in-alt"></i>
@@ -206,12 +239,12 @@
                     @if ($hasModuleAccess('leave', 'employee'))
                         <li class="menu-header">Leave Management</li>
                         <li
-                            class="{{ Request::is('leave-management/leave-requests') && !Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
+                            class="menu-item {{ Request::is('leave-management/leave-requests') && !Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('leave-management.leave-requests.index') }}">
-                                <i class="fas fa-clipboard-list"></i>
+    <i class="fas fa-plane-departure"></i>
                                 <span>My Leave Requests</span>
-                            </a>
-                        </li>
+  </a>
+</li>
                         <li class="{{ Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('leave-management.leave-requests.create') }}">
                                 <i class="fas fa-calendar-plus"></i>

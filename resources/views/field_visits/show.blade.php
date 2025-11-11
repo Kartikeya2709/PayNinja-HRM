@@ -84,7 +84,7 @@
                             <div class="row">
                                 <!-- Basic Information -->
                                 <div class="col-md-6">
-                                    <div class="card">
+                                    <div class="card visit-info">
                                         <div class="card-header">
                                             <h5>Visit Information</h5>
                                         </div>
@@ -109,7 +109,7 @@
 
                                 <!-- Location Information -->
                                 <div class="col-md-6">
-                                    <div class="card">
+                                    <div class="card visit-info">
                                         <div class="card-header">
                                             <h5>Location Details</h5>
                                         </div>
@@ -143,7 +143,7 @@
                             <div class="row mt-3">
                                 <!-- Schedule Information -->
                                 <div class="col-md-6">
-                                    <div class="card">
+                                    <div class="card visit-info">
                                         <div class="card-header">
                                             <h5>Schedule</h5>
                                         </div>
@@ -176,7 +176,7 @@
 
                                 <!-- Visit Notes & attachments -->
                                 <div class="col-md-6">
-                                    <div class="card">
+                                    <div class="card visit-info">
                                         <div class="card-header">
                                             <h5>Visit Details</h5>
                                         </div>
@@ -226,8 +226,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
     </div>
 
     <!-- Approval Modal -->
