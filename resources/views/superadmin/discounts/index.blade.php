@@ -96,7 +96,7 @@
                                                         @if($discount->type == 'percentage')
                                                             {{ $discount->value }}%
                                                         @else
-                                                            {{ $discount->currency ?? 'USD' }} {{ number_format($discount->value, 2) }}
+                                                            ₹ {{ number_format($discount->value, 2) }}
                                                         @endif
                                                     </td>
                                                     <td>{{ $discount->usage_limit ?: 'Unlimited' }}</td>
@@ -252,30 +252,32 @@
 
 @push('scripts')
     <script>
-        function viewDiscount(id) {
-            // Implement view functionality
-            window.location.href = '{{ route("superadmin.discounts.show", ":id") }}'.replace(':id', id);
-        }
+        $(document).ready(function() {
+            // View discount function
+            window.viewDiscount = function(id) {
+                // Implement view functionality
+                window.location.href = '{{ route("superadmin.discounts.show", ":id") }}'.replace(':id', id);
+            };
 
-        function editDiscount(id) {
-            // Implement edit functionality
-            window.location.href = '{{ route("superadmin.discounts.edit", ":id") }}'.replace(':id', id);
-        }
+            // Edit discount function
+            window.editDiscount = function(id) {
+                // Implement edit functionality
+                window.location.href = '{{ route("superadmin.discounts.edit", ":id") }}'.replace(':id', id);
+            };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const typeSelect = document.getElementById('type');
-            const currencyGroup = document.getElementById('currency-group');
+            const $typeSelect = $('#type');
+            const $currencyGroup = $('#currency-group');
 
-            typeSelect.addEventListener('change', function() {
-                if (this.value === 'fixed') {
-                    currencyGroup.style.display = 'block';
+            $typeSelect.on('change', function() {
+                if ($(this).val() === 'fixed') {
+                    $currencyGroup.show();
                 } else {
-                    currencyGroup.style.display = 'none';
+                    $currencyGroup.hide();
                 }
             });
 
             // Trigger change event on page load if editing
-            typeSelect.dispatchEvent(new Event('change'));
+            $typeSelect.trigger('change');
         });
     </script>
 @endpush

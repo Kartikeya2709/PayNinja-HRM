@@ -44,13 +44,23 @@ class TaxController extends Controller
         return view('superadmin.taxes.index', compact('taxes'));
     }
 
-    public function store(StoreTaxRequest $request)
+    public function store(Request $request)
     {
         $this->authorize('create', Tax::class);
 
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'rate' => 'required|numeric|min:0|max:100',
+            'country' => 'nullable|string|size:2',
+            'state' => 'nullable|string|max:50',
+            'is_active' => 'boolean',
+        ]);
+
         DB::beginTransaction();
         try {
-            $tax = Tax::create($request->validated());
+            $tax = Tax::create($request->only([
+                'name', 'rate', 'country', 'state', 'is_active'
+            ]));
 
             // Log audit
             AuditLogService::logCreated($tax, 'Tax created successfully');
@@ -68,16 +78,26 @@ class TaxController extends Controller
         }
     }
 
-    public function update(UpdateTaxRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $tax = Tax::findOrFail($id);
         $this->authorize('update', $tax);
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'rate' => 'required|numeric|min:0|max:100',
+            'country' => 'nullable|string|size:2',
+            'state' => 'nullable|string|max:50',
+            'is_active' => 'boolean',
+        ]);
 
         $oldValues = $tax->toArray();
 
         DB::beginTransaction();
         try {
-            $tax->update($request->validated());
+            $tax->update($request->only([
+                'name', 'rate', 'country', 'state', 'is_active'
+            ]));
 
             // Log audit
             AuditLogService::logUpdated($tax, $oldValues, $tax->toArray(), 'Tax updated successfully');

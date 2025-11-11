@@ -69,8 +69,8 @@
                                                 <label for="pricing_type">Pricing Type</label>
                                                 <select name="pricing_type" id="pricing_type" class="form-control @error('pricing_type') is-invalid @enderror" required>
                                                     <option value="">Select Pricing Type</option>
-                                                    <option value="one-time" {{ old('pricing_type') == 'one-time' ? 'selected' : '' }}>One-time</option>
-                                                    <option value="recurring" {{ old('pricing_type') == 'recurring' ? 'selected' : '' }}>Recurring</option>
+                                                    <option value="one_time" {{ old('pricing_type') == 'one_time' ? 'selected' : '' }}>One-time</option>
+                                                    <option value="subscription" {{ old('pricing_type') == 'subscription' ? 'selected' : '' }}>Subscription</option>
                                                 </select>
                                                 @error('pricing_type')
                                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -92,15 +92,8 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="currency">Currency</label>
-                                                <select name="currency" id="currency" class="form-control @error('currency') is-invalid @enderror" required>
-                                                    <option value="USD" {{ old('currency', 'USD') == 'USD' ? 'selected' : '' }}>USD</option>
-                                                    <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>EUR</option>
-                                                    <option value="GBP" {{ old('currency') == 'GBP' ? 'selected' : '' }}>GBP</option>
-                                                    <option value="INR" {{ old('currency') == 'INR' ? 'selected' : '' }}>INR</option>
-                                                </select>
-                                                @error('currency')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
+                                                <input type="text" id="currency" name="currency" class="form-control" value="INR" readonly>
+                                                <small class="form-text text-muted">All prices are in Indian Rupees (INR)</small>
                                             </div>
                                         </div>
                                     </div>
@@ -131,7 +124,7 @@
                                             @if($slugs->count() > 0)
                                                 @include('superadmin.packages.partials.slug-tree', [
                                                     'slugs' => $slugs,
-                                                    'selectedSlugs' => old('modules', []),
+                                                    'selectedModules' => old('modules', []),
                                                     'level' => 0
                                                 ])
                                             @else
@@ -186,31 +179,29 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const pricingTypeSelect = document.getElementById('pricing_type');
-            const billingCycleGroup = document.getElementById('billing_cycle_group');
+        $(document).ready(function() {
+            const $pricingTypeSelect = $('#pricing_type');
+            const $billingCycleGroup = $('#billing_cycle_group');
 
-            pricingTypeSelect.addEventListener('change', function() {
-                if (this.value === 'recurring') {
-                    billingCycleGroup.style.display = 'block';
+            $pricingTypeSelect.on('change', function() {
+                if ($(this).val() === 'subscription') {
+                    $billingCycleGroup.show();
                 } else {
-                    billingCycleGroup.style.display = 'none';
+                    $billingCycleGroup.hide();
                 }
             });
 
             // Module selection
-            document.querySelectorAll('.module-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const checkbox = this.querySelector('input[type="checkbox"]');
-                    checkbox.checked = !checkbox.checked;
-                    this.classList.toggle('selected', checkbox.checked);
-                });
+            $('.module-item').on('click', function() {
+                const $checkbox = $(this).find('input[type="checkbox"]');
+                $checkbox.prop('checked', !$checkbox.prop('checked'));
+                $(this).toggleClass('selected', $checkbox.prop('checked'));
             });
 
             // Pricing tiers
             let tierIndex = {{ count(old('pricing_tiers', [])) }};
-            document.getElementById('add-tier').addEventListener('click', function() {
-                const tiersContainer = document.getElementById('pricing-tiers');
+            $('#add-tier').on('click', function() {
+                const $tiersContainer = $('#pricing-tiers');
                 const tierHtml = `
                     <div class="pricing-tier">
                         <div class="row">
@@ -229,14 +220,12 @@
                         </div>
                     </div>
                 `;
-                tiersContainer.insertAdjacentHTML('beforeend', tierHtml);
+                $tiersContainer.append(tierHtml);
                 tierIndex++;
             });
 
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-tier')) {
-                    e.target.closest('.pricing-tier').remove();
-                }
+            $(document).on('click', '.remove-tier', function() {
+                $(this).closest('.pricing-tier').remove();
             });
         });
     </script>

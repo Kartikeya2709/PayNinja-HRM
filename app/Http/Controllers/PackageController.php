@@ -69,13 +69,57 @@ class PackageController extends Controller
         return view('superadmin.packages.create', compact('slugs'));
     }
 
-    public function store(StorePackageRequest $request)
+    public function store(Request $request)
     {
         $this->authorize('create', Package::class);
 
+        $request->validate([
+            'name' => 'required|string|max:255|unique:packages',
+            'description' => 'nullable|string',
+            'pricing_type' => 'required|in:one_time,subscription',
+            'base_price' => 'required|numeric|min:0',
+            'currency' => 'required|string|size:3',
+            'billing_cycle' => 'nullable|required_if:pricing_type,subscription|in:monthly,yearly,quarterly',
+            'modules' => 'nullable|array',
+            'modules.*' => 'boolean',
+            'pricing_tiers' => 'nullable|array',
+            'pricing_tiers.*.name' => 'required_with:pricing_tiers|string|max:255',
+            'pricing_tiers.*.min_users' => 'required_with:pricing_tiers|integer|min:1',
+            'pricing_tiers.*.price' => 'required_with:pricing_tiers|numeric|min:0',
+        ]);
+
         DB::beginTransaction();
         try {
-            $package = Package::create($request->validated());
+            // Convert checkbox values (1/0) to boolean (true/false)
+            $modules = $request->modules ?? [];
+            $convertedModules = [];
+            foreach ($modules as $moduleSlug => $value) {
+                $convertedModules[$moduleSlug] = $value == '1' ? true : false;
+            }
+
+            $package = Package::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'pricing_type' => $request->pricing_type,
+                'base_price' => $request->base_price,
+                'currency' => $request->currency,
+                'billing_cycle' => $request->pricing_type === 'one_time' ? null : $request->billing_cycle,
+                'modules' => $convertedModules
+            ]);
+
+            // Handle pricing tiers
+            if ($request->has('pricing_tiers') && is_array($request->pricing_tiers)) {
+                foreach ($request->pricing_tiers as $tierData) {
+                    PackagePricingTier::create([
+                        'package_id' => $package->id,
+                        'tier_name' => $tierData['name'],
+                        'min_users' => $tierData['min_users'],
+                        'max_users' => $tierData['max_users'] ?? null,
+                        'price' => $tierData['price'],
+                        'currency' => $request->currency,
+                    ]);
+                }
+            }
 
             // Log audit
             AuditLogService::logCreated($package, 'Package created successfully');
@@ -114,16 +158,61 @@ class PackageController extends Controller
         return view('superadmin.packages.edit', compact('package', 'slugs'));
     }
 
-    public function update(UpdatePackageRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $package = Package::findOrFail($id);
         $this->authorize('update', $package);
+
+        $request->validate([
+            'name' => 'required|string|max:255|unique:packages,name,' . $id,
+            'description' => 'nullable|string',
+            'pricing_type' => 'required|in:one_time,subscription',
+            'base_price' => 'required|numeric|min:0',
+            'currency' => 'required|string|size:3',
+            'billing_cycle' => 'nullable|required_if:pricing_type,subscription|in:monthly,yearly,quarterly',
+            'modules' => 'nullable|array',
+            'modules.*' => 'boolean',
+            'pricing_tiers' => 'nullable|array',
+            'pricing_tiers.*.name' => 'required_with:pricing_tiers|string|max:255',
+            'pricing_tiers.*.min_users' => 'required_with:pricing_tiers|integer|min:1',
+            'pricing_tiers.*.price' => 'required_with:pricing_tiers|numeric|min:0',
+        ]);
 
         $oldValues = $package->toArray();
 
         DB::beginTransaction();
         try {
-            $package->update($request->validated());
+            // Convert checkbox values (1/0) to boolean (true/false)
+            $modules = $request->modules ?? [];
+            $convertedModules = [];
+            foreach ($modules as $moduleSlug => $value) {
+                $convertedModules[$moduleSlug] = $value == '1' ? true : false;
+            }
+
+            $package->update([
+                'name' => $request->name,
+                'description' => $request->description,
+                'pricing_type' => $request->pricing_type,
+                'base_price' => $request->base_price,
+                'currency' => $request->currency,
+                'billing_cycle' => $request->pricing_type === 'one_time' ? null : $request->billing_cycle,
+                'modules' => $convertedModules
+            ]);
+
+            // Handle pricing tiers - remove existing and add new ones
+            $package->pricingTiers()->delete();
+            if ($request->has('pricing_tiers') && is_array($request->pricing_tiers)) {
+                foreach ($request->pricing_tiers as $tierData) {
+                    PackagePricingTier::create([
+                        'package_id' => $package->id,
+                        'tier_name' => $tierData['name'],
+                        'min_users' => $tierData['min_users'],
+                        'max_users' => $tierData['max_users'] ?? null,
+                        'price' => $tierData['price'],
+                        'currency' => $request->currency,
+                    ]);
+                }
+            }
 
             // Log audit
             AuditLogService::logUpdated($package, $oldValues, $package->toArray(), 'Package updated successfully');
@@ -153,54 +242,81 @@ class PackageController extends Controller
 
         DB::beginTransaction();
         try {
-            $package->update(['is_active' => false]);
+            $package->delete();
 
             // Log audit
-            AuditLogService::logDeleted($package, 'Package deactivated successfully');
+            AuditLogService::logDeleted($package, 'Package deleted successfully');
 
             DB::commit();
             return redirect()->route('superadmin.packages.index')
-                ->with('success', 'Package deactivated successfully');
+                ->with('success', 'Package deleted successfully');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Failed to deactivate package', [
+            Log::error('Failed to delete package', [
                 'error' => $e->getMessage(),
                 'user_id' => auth()->id()
             ]);
-            return back()->with('error', 'Failed to deactivate package');
+            return back()->with('error', 'Failed to delete package');
         }
     }
 
     public function toggleActive($id)
     {
-        $package = Package::findOrFail($id);
-        $this->authorize('toggleActive', $package);
-
-        $oldValues = ['is_active' => $package->is_active];
-
-        DB::beginTransaction();
         try {
-            $package->update(['is_active' => !$package->is_active]);
+            $package = Package::findOrFail($id);
+            $this->authorize('toggleActive', $package);
 
-            // Log audit
-            AuditLogService::logUpdated($package, $oldValues, ['is_active' => $package->is_active], 'Package status toggled successfully');
+            // Check if package is assigned to any companies (prevent deactivation of assigned packages)
+            if ($package->is_active && $package->companyPackages()->exists()) {
+                return response()->json([
+                    'success' => false,
+                    'is_active' => $package->is_active,
+                    'message' => 'Cannot deactivate package that is assigned to companies'
+                ]);
+            }
 
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'is_active' => $package->is_active,
-                'message' => 'Package status updated successfully'
-            ]);
+            $oldValues = ['is_active' => $package->is_active];
+            $newStatus = !$package->is_active;
+            $statusText = $newStatus ? 'activated' : 'deactivated';
+
+            DB::beginTransaction();
+            try {
+                $package->update(['is_active' => $newStatus]);
+
+                // Log audit
+                AuditLogService::logUpdated($package, $oldValues, ['is_active' => $newStatus], "Package {$statusText} successfully");
+
+                DB::commit();
+                
+                return response()->json([
+                    'success' => true,
+                    'is_active' => $newStatus,
+                    'message' => "Package has been {$statusText} successfully"
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Failed to toggle package status', [
+                    'error' => $e->getMessage(),
+                    'package_id' => $id,
+                    'user_id' => auth()->id()
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'is_active' => $package->is_active,
+                    'message' => 'Failed to update package status: ' . $e->getMessage()
+                ], 500);
+            }
         } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Failed to toggle package status', [
+            Log::error('Package toggle error', [
                 'error' => $e->getMessage(),
+                'package_id' => $id,
                 'user_id' => auth()->id()
             ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update package status'
-            ], 500);
+                'is_active' => false,
+                'message' => 'Package not found or access denied'
+            ], 404);
         }
     }
 

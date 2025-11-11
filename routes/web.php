@@ -238,9 +238,13 @@ Route::middleware(['auth'])->group(function () {
         // Company Package Assignment Routes
         Route::prefix('company-packages')->name('company-packages.')->group(function () {
             Route::get('/', [CompanyPackageController::class, 'index'])->name('index');
+            Route::get('/view/{companyPackage}', [CompanyPackageController::class, 'show'])->name('show');
+            Route::get('/assign', [CompanyPackageController::class, 'create'])->name('assign.form');
             Route::post('/assign', [CompanyPackageController::class, 'assign'])->name('assign');
-            Route::post('/reassign', [CompanyPackageController::class, 'reassign'])->name('reassign');
-            Route::post('/unassign', [CompanyPackageController::class, 'unassign'])->name('unassign');
+            Route::get('/edit/{id}', [CompanyPackageController::class, 'edit'])->name('edit');
+            Route::put('/edit/{id}', [CompanyPackageController::class, 'update'])->name('update');
+            Route::delete('/unassign/{id}', [CompanyPackageController::class, 'unassign'])->name('unassign');
+            Route::post('/{id}/toggle-active', [CompanyPackageController::class, 'toggleActive'])->name('toggle-active');
             Route::get('/get-company-packages', [CompanyPackageController::class, 'getCompanyPackages'])->name('get-company-packages');
             Route::post('/bulk-assign', [CompanyPackageController::class, 'bulkAssign'])->name('bulk-assign');
         });
@@ -542,10 +546,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('assets', [AssetController::class, 'employeeAssets'])->name('assets.index');
         // Salary Routes
         Route::prefix('salary')->name('salary.')->group(function () {
-            Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');
-            Route::get('monthly/{year}/{month}', [\App\Http\Controllers\Employee\SalaryController::class, 'monthlyDetails'])
-                ->where(['year' => '[0-9]{4}', 'month' => '0[1-9]|1[0-2]'])
-                ->name('monthly.details');
+            // Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');
+            // Route::get('monthly/{year}/{month}', [\App\Http\Controllers\Employee\SalaryController::class, 'monthlyDetails'])
+            //     ->where(['year' => '[0-9]{4}', 'month' => '0[1-9]|1[0-2]'])
+            //     ->name('monthly.details');
 
             // PDF Payslip Routes
             Route::get('payslips', [\App\Http\Controllers\PayslipController::class, 'listPayslips'])->name('payslips');

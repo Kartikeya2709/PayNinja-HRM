@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             SuperAdminUserSeeder::class,
+            SlugSeeder::class,
             PackageSeeder::class,
             PackageModuleSeeder::class,
             DiscountSeeder::class,

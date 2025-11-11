@@ -110,7 +110,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ $invoice->package->name }}</td>
-                                                    <td><span class="invoice-amount">{{ $invoice->currency }} {{ number_format($invoice->total_amount, 2) }}</span></td>
+                                                    <td><span class="invoice-amount">₹ {{ number_format($invoice->total_amount, 2) }}</span></td>
                                                     <td>{{ $invoice->issue_date->format('M d, Y') }}</td>
                                                     <td>{{ $invoice->due_date->format('M d, Y') }}</td>
                                                     <td>
@@ -208,7 +208,7 @@
                                     <i class="fas fa-dollar-sign fa-2x text-info"></i>
                                 </div>
                                 <h6>Total Revenue</h6>
-                                <h4>{{ $invoiceStats['currency'] ?? 'USD' }} {{ number_format($invoiceStats['total_revenue'] ?? 0, 2) }}</h4>
+                                <h4>₹ {{ number_format($invoiceStats['total_revenue'] ?? 0, 2) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -220,6 +220,8 @@
 
 @push('scripts')
     <script>
-        // Any additional JS for filtering or bulk actions
+        $(document).ready(function() {
+            // Any additional JS for filtering or bulk actions can be added here
+        });
     </script>
 @endpush

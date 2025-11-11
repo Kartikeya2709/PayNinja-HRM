@@ -55,9 +55,18 @@ class InvoiceController extends Controller
         return view('superadmin.invoices.index', compact('invoices'));
     }
 
-    public function generate(GenerateInvoiceRequest $request)
+    public function generate(Request $request)
     {
         $this->authorize('create', CompanyPackageInvoice::class);
+
+        $request->validate([
+            'company_package_id' => 'required|exists:company_packages,id',
+            'billing_period_start' => 'nullable|date',
+            'billing_period_end' => 'nullable|date|after:billing_period_start',
+            'discount_id' => 'nullable|exists:discounts,id',
+            'tax_id' => 'nullable|exists:taxes,id',
+            'notes' => 'nullable|string',
+        ]);
 
         DB::beginTransaction();
         try {
@@ -70,6 +79,22 @@ class InvoiceController extends Controller
 
             // Use BillingService to generate invoice
             $invoice = $this->billingService->generateInvoice($companyPackage, $billingPeriodStart, $billingPeriodEnd);
+
+            // Apply optional discount and tax if provided
+            if ($request->discount_id) {
+                $invoice->update(['discount_id' => $request->discount_id]);
+            }
+            if ($request->tax_id) {
+                $invoice->update(['tax_id' => $request->tax_id]);
+            }
+            if ($request->notes) {
+                $invoice->update(['notes' => $request->notes]);
+            }
+
+            // Recalculate totals if discount/tax were applied
+            if ($request->discount_id || $request->tax_id) {
+                $invoice->calculateTotal();
+            }
 
             // Log audit
             AuditLogService::logCreated($invoice, 'Invoice generated successfully');

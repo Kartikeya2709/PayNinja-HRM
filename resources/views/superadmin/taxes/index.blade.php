@@ -239,14 +239,18 @@
 
 @push('scripts')
     <script>
-        function viewTax(id) {
-            // Implement view functionality
-            window.location.href = '{{ route("superadmin.taxes.show", ":id") }}'.replace(':id', id);
-        }
+        $(document).ready(function() {
+            // View tax function
+            window.viewTax = function(id) {
+                // Implement view functionality
+                window.location.href = '{{ route("superadmin.taxes.show", ":id") }}'.replace(':id', id);
+            };
 
-        function editTax(id) {
-            // Implement edit functionality
-            window.location.href = '{{ route("superadmin.taxes.edit", ":id") }}'.replace(':id', id);
-        }
+            // Edit tax function
+            window.editTax = function(id) {
+                // Implement edit functionality
+                window.location.href = '{{ route("superadmin.taxes.edit", ":id") }}'.replace(':id', id);
+            };
+        });
     </script>
 @endpush

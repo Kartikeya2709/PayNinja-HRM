@@ -46,9 +46,156 @@ class CompanyPackageController extends Controller
         return view('superadmin.company-packages.index', compact('companyPackages', 'companies', 'packages'));
     }
 
-    public function assign(AssignPackageRequest $request)
+    public function create()
     {
         $this->authorize('assign', CompanyPackage::class);
+
+        $companies = Company::all();
+        $packages = Package::active()->get();
+
+        return view('superadmin.company-packages.assign', compact('companies', 'packages'));
+    }
+
+    public function edit($id)
+    {
+        try {
+            $companyPackage = CompanyPackage::with(['company', 'package', 'assignedBy', 'invoices'])
+                ->findOrFail($id);
+
+            $this->authorize('update', $companyPackage);
+
+            $packages = Package::active()->get();
+
+            return view('superadmin.company-packages.edit', compact('companyPackage', 'packages'));
+        } catch (\Exception $e) {
+            Log::error('Failed to edit company package', [
+                'error' => $e->getMessage(),
+                'company_package_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+            return redirect()->route('superadmin.company-packages.index')
+                ->with('error', 'Company package not found');
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        $companyPackage = CompanyPackage::findOrFail($id);
+        $this->authorize('update', $companyPackage);
+
+        $request->validate([
+            'assigned_at' => 'nullable|date',
+            'expires_at' => 'nullable|date|after:assigned_at',
+            'notes' => 'nullable|string|max:1000',
+            'is_active' => 'boolean',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $oldValues = $companyPackage->toArray();
+
+            $updateData = [
+                'assigned_at' => $request->assigned_at ? new \DateTime($request->assigned_at) : $companyPackage->assigned_at,
+                'expires_at' => $request->expires_at ? new \DateTime($request->expires_at) : null,
+                'notes' => $request->notes,
+            ];
+
+            // Handle status change
+            if ($request->has('is_active') && $request->is_active !== $companyPackage->is_active) {
+                $updateData['is_active'] = $request->boolean('is_active');
+                if ($updateData['is_active']) {
+                    $updateData['activated_at'] = now();
+                    $updateData['deactivated_at'] = null;
+                } else {
+                    $updateData['deactivated_at'] = now();
+                }
+            }
+
+            $companyPackage->update($updateData);
+
+            // Handle status change and update role permissions accordingly
+            if (isset($updateData['is_active']) && $updateData['is_active'] !== $oldValues['is_active']) {
+                if ($updateData['is_active']) {
+                    // Package is being activated, update permissions with current package
+                    $this->updateCompanyRolePermissions($companyPackage->company_id, $companyPackage->package_id);
+                } else {
+                    // Package is being deactivated, clear permissions
+                    $this->clearCompanyRolePermissions($companyPackage->company_id);
+                }
+            }
+
+            // Log audit
+            AuditLogService::log('updated', $companyPackage, $oldValues, $companyPackage->fresh()->toArray(), 'Company package updated successfully');
+
+            DB::commit();
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Company package updated successfully',
+                    'company_package' => $companyPackage->fresh()->load(['company', 'package', 'assignedBy'])
+                ]);
+            }
+
+            return redirect()->route('superadmin.company-packages.index')
+                ->with('success', 'Company package updated successfully');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update company package', [
+                'error' => $e->getMessage(),
+                'company_package_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+            
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to update company package: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return redirect()->route('superadmin.company-packages.edit', $id)
+                ->with('error', 'Failed to update company package: ' . $e->getMessage());
+        }
+    }
+
+    public function show($id)
+    {
+        try {
+            $companyPackage = CompanyPackage::with(['company', 'package', 'assignedBy', 'invoices'])
+                ->findOrFail($id);
+
+            $this->authorize('view', $companyPackage);
+
+            return view('superadmin.company-packages.show', compact('companyPackage'));
+        } catch (\Exception $e) {
+            Log::error('Failed to show company package', [
+                'error' => $e->getMessage(),
+                'company_package_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+            return redirect()->route('superadmin.company-packages.index')
+                ->with('error', 'Company package not found');
+        }
+    }
+
+    public function destroy($id)
+    {
+        return $this->unassign($id);
+    }
+
+    public function assign(Request $request)
+    {
+        $this->authorize('assign', CompanyPackage::class);
+
+        $request->validate([
+            'company_id' => 'required|exists:companies,id',
+            'package_id' => 'required|exists:packages,id',
+            'assigned_at' => 'nullable|date',
+            'expires_at' => 'nullable|date|after:assigned_at',
+            'send_notification' => 'boolean',
+            'generate_invoice' => 'boolean',
+        ]);
 
         DB::beginTransaction();
         try {
@@ -68,20 +215,26 @@ class CompanyPackageController extends Controller
                 'company_id' => $request->company_id,
                 'package_id' => $request->package_id,
                 'assigned_by' => auth()->id(),
-                'assigned_at' => now(),
+                'assigned_at' => $request->assigned_at ?? now(),
+                'expires_at' => $request->expires_at,
                 'is_active' => true,
                 'activated_at' => now(),
             ]);
+
+            // Update role permissions based on package modules
+            $this->updateCompanyRolePermissions($request->company_id, $request->package_id);
+
+            // Generate invoice if requested
+            if ($request->boolean('generate_invoice')) {
+                $billingService = app(\App\Services\BillingService::class);
+                $billingService->generateInvoice($companyPackage, now(), now()->addMonth());
+            }
 
             // Log audit
             AuditLogService::logAssigned($companyPackage, 'Package assigned to company successfully');
 
             DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => 'Package assigned successfully',
-                'company_package' => $companyPackage->load(['company', 'package'])
-            ]);
+            return redirect()->route('superadmin.company-packages.index')->with('success', 'Package assigned to company successfully');
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Failed to assign package', [
@@ -90,10 +243,70 @@ class CompanyPackageController extends Controller
                 'package_id' => $request->package_id,
                 'user_id' => auth()->id()
             ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to assign package'
-            ], 500);
+            return redirect()->route('superadmin.company-packages.index')->with('error', 'Failed to assign package: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update company role permissions based on package modules
+     */
+    private function updateCompanyRolePermissions($companyId, $packageId)
+    {
+        try {
+            // Get the package with its modules
+            $package = Package::findOrFail($packageId);
+            
+            // Update all roles for this company
+            $roles = \App\Models\Role::where('company_id', $companyId)->get();
+            
+            foreach ($roles as $role) {
+                $role->update([
+                    'permissions' => $package->modules
+                ]);
+            }
+            
+            Log::info('Updated role permissions for company', [
+                'company_id' => $companyId,
+                'package_id' => $packageId,
+                'roles_updated' => $roles->count()
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to update role permissions', [
+                'error' => $e->getMessage(),
+                'company_id' => $companyId,
+                'package_id' => $packageId
+            ]);
+            throw $e; // Re-throw to trigger rollback
+        }
+    }
+
+    /**
+     * Clear company role permissions
+     */
+    private function clearCompanyRolePermissions($companyId)
+    {
+        try {
+            // Update all roles for this company to clear permissions
+            $roles = \App\Models\Role::where('company_id', $companyId)->get();
+            
+            foreach ($roles as $role) {
+                $role->update([
+                    'permissions' => null
+                ]);
+            }
+            
+            Log::info('Cleared role permissions for company', [
+                'company_id' => $companyId,
+                'roles_updated' => $roles->count()
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to clear role permissions', [
+                'error' => $e->getMessage(),
+                'company_id' => $companyId
+            ]);
+            throw $e; // Re-throw to trigger rollback
         }
     }
 
@@ -103,13 +316,35 @@ class CompanyPackageController extends Controller
         $this->authorize('reassign', $companyPackage);
 
         $request->validate([
-            'package_id' => 'required|exists:packages,id|different:package_id',
+            'package_id' => 'required|exists:packages,id',
         ]);
+
+        // Check if new package is active
+        $newPackage = Package::find($request->package_id);
+        if (!$newPackage->is_active) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cannot assign to an inactive package'
+            ], 422);
+        }
+
+        // If current assignment is active, validate that a different package is selected
+        if ($companyPackage->is_active && $request->package_id == $companyPackage->package_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please select a different package for reassignment'
+            ], 422);
+        }
 
         DB::beginTransaction();
         try {
+            $oldValues = $companyPackage->toArray();
+
             // Deactivate current package
-            $companyPackage->deactivate();
+            $companyPackage->update([
+                'is_active' => false,
+                'deactivated_at' => now()
+            ]);
 
             // Create new assignment
             $newAssignment = CompanyPackage::create([
@@ -121,8 +356,11 @@ class CompanyPackageController extends Controller
                 'activated_at' => now(),
             ]);
 
+            // Update role permissions based on new package modules
+            $this->updateCompanyRolePermissions($companyPackage->company_id, $request->package_id);
+
             // Log audit
-            AuditLogService::logReassigned($newAssignment, 'Package reassigned for company successfully');
+            AuditLogService::log('reassigned', $companyPackage, $oldValues, $newAssignment->toArray(), 'Package reassigned for company successfully');
 
             DB::commit();
             return response()->json([
@@ -139,7 +377,7 @@ class CompanyPackageController extends Controller
             ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to reassign package'
+                'message' => 'Failed to reassign package: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -152,6 +390,9 @@ class CompanyPackageController extends Controller
         DB::beginTransaction();
         try {
             $companyPackage->deactivate();
+
+            // Clear role permissions when package is unassigned
+            $this->clearCompanyRolePermissions($companyPackage->company_id);
 
             // Log audit
             AuditLogService::logDeleted($companyPackage, 'Package unassigned from company successfully');
@@ -246,9 +487,15 @@ class CompanyPackageController extends Controller
         }
     }
 
-    public function bulkAssign(BulkAssignPackageRequest $request)
+    public function bulkAssign(Request $request)
     {
         $this->authorize('assign', CompanyPackage::class);
+
+        $request->validate([
+            'company_ids' => 'required|array|min:1',
+            'company_ids.*' => 'exists:companies,id',
+            'package_id' => 'required|exists:packages,id',
+        ]);
 
         DB::beginTransaction();
         try {
@@ -277,6 +524,9 @@ class CompanyPackageController extends Controller
                     ]);
 
                     $assigned[] = $companyPackage;
+                    
+                    // Update role permissions for each assigned company
+                    $this->updateCompanyRolePermissions($companyId, $request->package_id);
                 } catch (\Exception $e) {
                     $errors[] = "Failed to assign package to company ID {$companyId}: " . $e->getMessage();
                 }
@@ -305,4 +555,70 @@ class CompanyPackageController extends Controller
             ], 500);
         }
     }
+
+    public function toggleActive($id)
+    {
+        try {
+            $companyPackage = CompanyPackage::findOrFail($id);
+            $this->authorize('update', $companyPackage);
+
+            $oldValues = ['is_active' => $companyPackage->is_active];
+            $newStatus = !$companyPackage->is_active;
+            $statusText = $newStatus ? 'activated' : 'deactivated';
+
+            DB::beginTransaction();
+            try {
+                $companyPackage->update([
+                    'is_active' => $newStatus,
+                    'deactivated_at' => $newStatus ? null : now(),
+                    'activated_at' => $newStatus ? now() : null
+                ]);
+
+                // Update role permissions based on package status
+                if ($newStatus) {
+                    // Package is being activated, update permissions with current package
+                    $this->updateCompanyRolePermissions($companyPackage->company_id, $companyPackage->package_id);
+                } else {
+                    // Package is being deactivated, clear permissions
+                    $this->clearCompanyRolePermissions($companyPackage->company_id);
+                }
+
+                // Log audit
+                AuditLogService::log('status_toggled', $companyPackage, $oldValues, ['is_active' => $newStatus], "Assignment {$statusText} successfully");
+
+                DB::commit();
+                
+                return response()->json([
+                    'success' => true,
+                    'is_active' => $newStatus,
+                    'message' => "Assignment has been {$statusText} successfully"
+                ]);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Failed to toggle assignment status', [
+                    'error' => $e->getMessage(),
+                    'company_package_id' => $id,
+                    'user_id' => auth()->id()
+                ]);
+                return response()->json([
+                    'success' => false,
+                    'is_active' => $companyPackage->is_active,
+                    'message' => 'Failed to update assignment status: ' . $e->getMessage()
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            Log::error('Assignment toggle error', [
+                'error' => $e->getMessage(),
+                'company_package_id' => $id,
+                'user_id' => auth()->id()
+            ]);
+            return response()->json([
+                'success' => false,
+                'is_active' => false,
+                'message' => 'Assignment not found or access denied'
+            ], 404);
+        }
+    }
+
+    
 }

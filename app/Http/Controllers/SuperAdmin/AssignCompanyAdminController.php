@@ -64,7 +64,11 @@ class AssignCompanyAdminController extends Controller
                 'role' => 'company_admin',
                 'company_id' => $validated['company_id'],
             ]);
-            Log::info('AssignCompanyAdminController@store: User created', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
+            
+            // Create and assign Company Admin role with null permissions
+            $user->assignRole('Company Admin');
+            
+            Log::info('AssignCompanyAdminController@store: User created', ['user_id' => $user->id, 'role' => $user->role, 'role_id' => $user->role_id, 'company_id' => $user->company_id]);
 
             // Ensure department exists
             $department = \App\Models\Department::firstOrCreate(
@@ -160,7 +164,11 @@ class AssignCompanyAdminController extends Controller
             $user->role = 'company_admin';
             $user->company_id = $validated['company_id']; // Store company_id in user
             $user->save();
-            Log::info('AssignCompanyAdminController@update: User updated', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
+            
+            // Assign Company Admin role with null permissions
+            $user->assignRole('Company Admin');
+            
+            Log::info('AssignCompanyAdminController@update: User updated', ['user_id' => $user->id, 'role' => $user->role, 'role_id' => $user->role_id, 'company_id' => $user->company_id]);
 
             // Ensure department exists
             $department = \App\Models\Department::firstOrCreate(
@@ -215,6 +223,7 @@ class AssignCompanyAdminController extends Controller
         try {
             $user = $admin->user;
             $user->role = 'employee'; // Or previous role
+            $user->removeRole(); // Remove the role assignment
             $user->save();
             $admin->delete();
             DB::commit();

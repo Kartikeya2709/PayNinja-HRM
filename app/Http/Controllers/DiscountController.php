@@ -43,13 +43,31 @@ class DiscountController extends Controller
         return view('superadmin.discounts.index', compact('discounts'));
     }
 
-    public function store(StoreDiscountRequest $request)
+    public function store(Request $request)
     {
         $this->authorize('create', Discount::class);
 
+        $request->validate([
+            'code' => 'required|string|max:50|unique:discounts',
+            'description' => 'nullable|string',
+            'discount_type' => 'required|in:percentage,fixed_amount',
+            'discount_value' => 'required|numeric|min:0',
+            'max_discount_amount' => 'nullable|numeric|min:0',
+            'valid_from' => 'nullable|date',
+            'valid_until' => 'nullable|date|after:valid_from',
+            'usage_limit' => 'nullable|integer|min:1',
+            'applicable_packages' => 'nullable|array',
+            'applicable_packages.*' => 'exists:packages,id',
+            'is_active' => 'boolean',
+        ]);
+
         DB::beginTransaction();
         try {
-            $discount = Discount::create($request->validated());
+            $discount = Discount::create($request->only([
+                'code', 'description', 'discount_type', 'discount_value',
+                'max_discount_amount', 'valid_from', 'valid_until',
+                'usage_limit', 'applicable_packages', 'is_active'
+            ]));
 
             // Log audit
             AuditLogService::logCreated($discount, 'Discount created successfully');
@@ -67,16 +85,34 @@ class DiscountController extends Controller
         }
     }
 
-    public function update(UpdateDiscountRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $discount = Discount::findOrFail($id);
         $this->authorize('update', $discount);
+
+        $request->validate([
+            'code' => 'required|string|max:50|unique:discounts,code,' . $id,
+            'description' => 'nullable|string',
+            'discount_type' => 'required|in:percentage,fixed_amount',
+            'discount_value' => 'required|numeric|min:0',
+            'max_discount_amount' => 'nullable|numeric|min:0',
+            'valid_from' => 'nullable|date',
+            'valid_until' => 'nullable|date|after:valid_from',
+            'usage_limit' => 'nullable|integer|min:1',
+            'applicable_packages' => 'nullable|array',
+            'applicable_packages.*' => 'exists:packages,id',
+            'is_active' => 'boolean',
+        ]);
 
         $oldValues = $discount->toArray();
 
         DB::beginTransaction();
         try {
-            $discount->update($request->validated());
+            $discount->update($request->only([
+                'code', 'description', 'discount_type', 'discount_value',
+                'max_discount_amount', 'valid_from', 'valid_until',
+                'usage_limit', 'applicable_packages', 'is_active'
+            ]));
 
             // Log audit
             AuditLogService::logUpdated($discount, $oldValues, $discount->toArray(), 'Discount updated successfully');

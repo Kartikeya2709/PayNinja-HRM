@@ -106,7 +106,7 @@
                                             @if($invoice->package->pricing_type == 'recurring')
                                                 <p><strong>Billing Cycle:</strong> {{ ucfirst($invoice->package->billing_cycle) }}</p>
                                             @endif
-                                            <p><strong>Currency:</strong> {{ $invoice->currency }}</p>
+                                            <p><strong>Currency:</strong> INR</p>
                                         </div>
                                     </div>
                                 </div>
@@ -143,41 +143,41 @@
                                                         <tr class="line-item">
                                                             <td>{{ $item->description }}</td>
                                                             <td class="text-right">{{ $item->quantity }}</td>
-                                                            <td class="text-right">{{ $invoice->currency }} {{ number_format($item->unit_price, 2) }}</td>
-                                                            <td class="text-right">{{ $invoice->currency }} {{ number_format($item->amount, 2) }}</td>
+                                                            <td class="text-right">₹ {{ number_format($item->unit_price, 2) }}</td>
+                                                            <td class="text-right">₹ {{ number_format($item->amount, 2) }}</td>
                                                         </tr>
                                                     @endforeach
                                                 @else
                                                     <tr class="line-item">
                                                         <td>{{ $invoice->package->name }} Package</td>
                                                         <td class="text-right">1</td>
-                                                        <td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->subtotal, 2) }}</td>
-                                                        <td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->subtotal, 2) }}</td>
+                                                        <td class="text-right">₹ {{ number_format($invoice->subtotal, 2) }}</td>
+                                                        <td class="text-right">₹ {{ number_format($invoice->subtotal, 2) }}</td>
                                                     </tr>
                                                 @endif
 
                                                 <tr class="total-row">
                                                     <td colspan="3" class="text-right"><strong>Subtotal:</strong></td>
-                                                    <td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->subtotal, 2) }}</td>
+                                                    <td class="text-right">₹ {{ number_format($invoice->subtotal, 2) }}</td>
                                                 </tr>
 
                                                 @if($invoice->discount_amount > 0)
                                                     <tr>
                                                         <td colspan="3" class="text-right">Discount:</td>
-                                                        <td class="text-right">-{{ $invoice->currency }} {{ number_format($invoice->discount_amount, 2) }}</td>
+                                                        <td class="text-right">-₹ {{ number_format($invoice->discount_amount, 2) }}</td>
                                                     </tr>
                                                 @endif
 
                                                 @if($invoice->tax_amount > 0)
                                                     <tr>
                                                         <td colspan="3" class="text-right">Tax:</td>
-                                                        <td class="text-right">{{ $invoice->currency }} {{ number_format($invoice->tax_amount, 2) }}</td>
+                                                        <td class="text-right">₹ {{ number_format($invoice->tax_amount, 2) }}</td>
                                                     </tr>
                                                 @endif
 
                                                 <tr class="total-row">
                                                     <td colspan="3" class="text-right"><strong>Total Amount:</strong></td>
-                                                    <td class="text-right"><strong>{{ $invoice->currency }} {{ number_format($invoice->total_amount, 2) }}</strong></td>
+                                                    <td class="text-right"><strong>₹ {{ number_format($invoice->total_amount, 2) }}</strong></td>
                                                 </tr>
                                             </tbody>
                                         </table>

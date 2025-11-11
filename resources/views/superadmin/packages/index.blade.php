@@ -90,7 +90,7 @@
                                                 <tr data-package-id="{{ $package->id }}">
                                                     <td>{{ $package->name }}</td>
                                                     <td>{{ ucfirst(str_replace('_', '-', $package->pricing_type)) }}</td>
-                                                    <td>{{ $package->currency }} {{ number_format($package->base_price, 2) }}</td>
+                                                    <td>₹ {{ number_format($package->base_price, 2) }}</td>
                                                     <td>{{ $package->billing_cycle ? ucfirst($package->billing_cycle) : '-' }}</td>
                                                     <td>
                                                         <span class="badge badge-{{ $package->is_active ? 'success' : 'danger' }}">
@@ -106,7 +106,6 @@
                                                         </a>
                                                         <form action="{{ route('superadmin.packages.toggle-active', $package) }}" method="POST" class="d-inline">
                                                             @csrf
-                                                            @method('PATCH')
                                                             <button type="submit" class="btn btn-sm btn-{{ $package->is_active ? 'danger' : 'success' }}">
                                                                 <i class="fas fa-{{ $package->is_active ? 'times' : 'check' }}"></i>
                                                                 {{ $package->is_active ? 'Deactivate' : 'Activate' }}
@@ -139,22 +138,21 @@
 
 @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search');
-            const pricingTypeSelect = document.getElementById('pricing_type');
-            const isActiveSelect = document.getElementById('is_active');
-            const perPageSelect = document.getElementById('per_page');
-            const packagesTable = document.getElementById('packages-tbody');
-            const noPackagesRow = document.getElementById('no-packages-row');
+        $(document).ready(function() {
+            const $searchInput = $('#search');
+            const $pricingTypeSelect = $('#pricing_type');
+            const $isActiveSelect = $('#is_active');
+            const $perPageSelect = $('#per_page');
+            const $packagesTable = $('#packages-tbody');
 
             let searchTimeout;
 
             // Function to fetch and update packages
             function fetchPackages() {
-                const search = searchInput.value.trim();
-                const pricingType = pricingTypeSelect.value;
-                const isActive = isActiveSelect.value;
-                const perPage = perPageSelect.value;
+                const search = $searchInput.val().trim();
+                const pricingType = $pricingTypeSelect.val();
+                const isActive = $isActiveSelect.val();
+                const perPage = $perPageSelect.val();
 
                 // Build query string
                 const params = new URLSearchParams();
@@ -164,126 +162,173 @@
                 if (perPage) params.append('per_page', perPage);
 
                 // Show loading state
-                packagesTable.innerHTML = '<tr><td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+                $packagesTable.html('<tr><td colspan="6" class="text-center"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>');
 
-                fetch(`{{ route('superadmin.packages.index') }}?${params.toString()}`, {
+                $.ajax({
+                    url: '{{ route('superadmin.packages.index') }}',
                     method: 'GET',
+                    data: params.toString(),
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'Accept': 'application/json'
+                    },
+                    success: function(data) {
+                        if (data.html) {
+                            $packagesTable.html(data.html);
+                        } else {
+                            $packagesTable.html('<tr><td colspan="6" class="text-center">Error loading packages</td></tr>');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error fetching packages:', error);
+                        $packagesTable.html('<tr><td colspan="6" class="text-center">Error loading packages</td></tr>');
                     }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.html) {
-                        packagesTable.innerHTML = data.html;
-                    } else {
-                        packagesTable.innerHTML = '<tr><td colspan="6" class="text-center">Error loading packages</td></tr>';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching packages:', error);
-                    packagesTable.innerHTML = '<tr><td colspan="6" class="text-center">Error loading packages</td></tr>';
                 });
             }
 
             // Debounced search
-            searchInput.addEventListener('input', function() {
+            $searchInput.on('input', function() {
                 clearTimeout(searchTimeout);
                 searchTimeout = setTimeout(fetchPackages, 500);
             });
 
             // Instant filter for selects
-            pricingTypeSelect.addEventListener('change', fetchPackages);
-            isActiveSelect.addEventListener('change', fetchPackages);
-            perPageSelect.addEventListener('change', fetchPackages);
+            $pricingTypeSelect.on('change', fetchPackages);
+            $isActiveSelect.on('change', fetchPackages);
+            $perPageSelect.on('change', fetchPackages);
 
             // Handle toggle active buttons with AJAX
-            document.addEventListener('click', function(e) {
-                if (e.target.matches('button[type="submit"]') &&
-                    e.target.closest('form[action*="toggle-active"]')) {
+            $(document).on('click', 'button[type="submit"]', function(e) {
+                const $form = $(this).closest('form');
+                if ($form.attr('action') && $form.attr('action').indexOf('toggle-active') !== -1) {
                     e.preventDefault();
 
-                    const form = e.target.closest('form');
-                    const formData = new FormData(form);
-                    const packageRow = e.target.closest('tr');
+                    const $button = $(this);
+                    const $packageRow = $button.closest('tr');
+                    const formData = new FormData($form[0]);
+                    
+                    // Store original button state for restoration on error
+                    const originalHtml = $button.html();
+                    const originalDisabled = $button.prop('disabled');
 
-                    // Show loading state
-                    e.target.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-                    e.target.disabled = true;
-
-                    fetch(form.action, {
+                    $.ajax({
+                        url: $form.attr('action'),
                         method: 'POST',
-                        body: formData,
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function(xhr) {
+                            // Show loading state
+                            $button.html('<i class="fas fa-spinner fa-spin"></i>').prop('disabled', true);
+                        },
                         headers: {
                             'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            // Update the status badge
-                            const statusCell = packageRow.querySelector('td:nth-child(5)');
-                            const buttonCell = packageRow.querySelector('td:nth-child(6)');
+                        },
+                        success: function(data) {
+                            console.log('Toggle success response:', data);
+                            
+                            // Always show a message
+                            const message = data.message || (data.success ? 'Package status updated successfully' : 'Error updating package status');
+                            const type = data.success ? 'success' : 'error';
+                            showToast(message, type);
+                            
+                            // Update UI only if successful
+                            if (data.success && data.is_active !== undefined) {
+                                const isActive = data.is_active;
+                                const $statusCell = $packageRow.find('td:nth-child(5)');
+                                const $buttonCell = $packageRow.find('td:nth-child(6)');
 
-                            if (data.is_active) {
-                                statusCell.innerHTML = '<span class="badge badge-success">Active</span>';
-                                buttonCell.querySelector('button').className = 'btn btn-sm btn-danger';
-                                buttonCell.querySelector('button').innerHTML = '<i class="fas fa-times"></i> Deactivate';
-                            } else {
-                                statusCell.innerHTML = '<span class="badge badge-danger">Inactive</span>';
-                                buttonCell.querySelector('button').className = 'btn btn-sm btn-success';
-                                buttonCell.querySelector('button').innerHTML = '<i class="fas fa-check"></i> Activate';
+                                // Update the status badge
+                                if (isActive) {
+                                    $statusCell.html('<span class="badge badge-success">Active</span>');
+                                    $buttonCell.find('button').removeClass('btn-success').addClass('btn-danger');
+                                    $buttonCell.find('button').html('<i class="fas fa-times"></i> Deactivate');
+                                } else {
+                                    $statusCell.html('<span class="badge badge-danger">Inactive</span>');
+                                    $buttonCell.find('button').removeClass('btn-danger').addClass('btn-success');
+                                    $buttonCell.find('button').html('<i class="fas fa-check"></i> Activate');
+                                }
                             }
-
-                            // Show success message
-                            showToast(data.message, 'success');
-                        } else {
-                            showToast(data.message || 'Error updating package status', 'error');
+                        },
+                        complete: function() {
+                            // Restore button to original state
+                            $button.html(originalHtml).prop('disabled', originalDisabled);
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('AJAX Error:', error, xhr);
+                            
+                            let errorMessage = 'Error updating package status';
+                            if (xhr.responseJSON && xhr.responseJSON.message) {
+                                errorMessage = xhr.responseJSON.message;
+                            } else if (xhr.status === 419) {
+                                errorMessage = 'CSRF token mismatch. Please refresh the page.';
+                            } else if (xhr.status === 403) {
+                                errorMessage = 'You do not have permission to perform this action.';
+                            } else if (xhr.status === 404) {
+                                errorMessage = 'Package not found.';
+                            }
+                            showToast(errorMessage, 'error');
                         }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        showToast('Error updating package status', 'error');
-                    })
-                    .finally(() => {
-                        e.target.disabled = false;
                     });
                 }
             });
 
             // Toast notification function
             function showToast(message, type = 'info') {
-                // Create toast container if it doesn't exist
-                let toastContainer = document.querySelector('.toast-container');
-                if (!toastContainer) {
-                    toastContainer = document.createElement('div');
-                    toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
-                    toastContainer.style.zIndex = '9999';
-                    document.body.appendChild(toastContainer);
+                console.log('showToast called with:', message, type);
+                
+                // Try Bootstrap toast first
+                if (typeof bootstrap !== 'undefined' && bootstrap.Toast) {
+                    try {
+                        // Create toast container if it doesn't exist
+                        let $toastContainer = $('.toast-container');
+                        if ($toastContainer.length === 0) {
+                            $toastContainer = $('<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>');
+                            $('body').append($toastContainer);
+                        }
+
+                        // Create toast element
+                        const $toast = $(`
+                            <div class="toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert">
+                                <div class="d-flex">
+                                    <div class="toast-body">${message}</div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                                </div>
+                            </div>
+                        `);
+
+                        $toastContainer.append($toast);
+
+                        // Initialize and show toast
+                        const toast = new bootstrap.Toast($toast[0]);
+                        toast.show();
+
+                        // Remove toast after it's hidden
+                        $toast.on('hidden.bs.toast', function() {
+                            $(this).remove();
+                        });
+                        
+                        return; // Success with Bootstrap toast
+                    } catch (e) {
+                        console.log('Bootstrap toast failed, falling back to alert:', e);
+                    }
                 }
-
-                // Create toast element
-                const toast = document.createElement('div');
-                toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
-                toast.setAttribute('role', 'alert');
-                toast.innerHTML = `
-                    <div class="d-flex">
-                        <div class="toast-body">${message}</div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                
+                // Fallback: use simple alert with styling
+                const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+                const $alert = $(`
+                    <div class="alert ${alertClass} alert-dismissible fade show position-fixed" style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                `;
-
-                toastContainer.appendChild(toast);
-
-                // Initialize and show toast
-                const bsToast = new bootstrap.Toast(toast);
-                bsToast.show();
-
-                // Remove toast after it's hidden
-                toast.addEventListener('hidden.bs.toast', () => {
-                    toast.remove();
-                });
+                `);
+                
+                $('body').append($alert);
+                
+                // Auto-hide after 5 seconds
+                setTimeout(() => {
+                    $alert.alert('close');
+                }, 5000);
             }
         });
     </script>

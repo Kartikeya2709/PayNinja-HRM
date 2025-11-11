@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('base_price', 10, 2);
             $table->string('currency', 3);
             $table->enum('billing_cycle', ['monthly', 'yearly', 'quarterly'])->nullable();
+            $table->json('modules')->nullable(); // Store modules as JSON object with true/false values
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
