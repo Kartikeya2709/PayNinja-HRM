@@ -256,7 +256,7 @@ class ResignationController extends Controller
             'reason' => 'required|string|max:1000',
             'resignation_date' => 'required|date|after:today',
             'last_working_date' => 'required|date|after:resignation_date',
-            'notice_period_days' => 'nullable|integer|min:0',
+            'notice_period_days' => 'required|integer|min:0',
             'employee_remarks' => 'nullable|string|max:1000',
             'attachment' => 'nullable|file|mimes:jpeg,jpg,png,pdf,doc,docx|max:5120', // 5MB max
         ]);
