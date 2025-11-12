@@ -30,8 +30,8 @@ use Carbon\Carbon;
         <div class="mt-4">
             <div class="col-12 px-1">
                 <div class="card">
-                    <div class="card-header btn-center">
-                        <h5>Leave Balances</h5>
+                    <div class="card-header btn-center justify-content-center">
+                        <h5 class="mb-3">Leave Balances</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -65,8 +65,8 @@ use Carbon\Carbon;
                 </div>
 
                 <div class="card mt-4">
-                    <div class="card-header btn-center">
-                        <h5>Leave Requests</h5>
+                    <div class="card-header btn-center justify-content-center">
+                        <h5 class="mb-3">Leave Requests</h5>
                     </div>
                     <div class="card-body">
                         @if(session('success'))
@@ -133,6 +133,7 @@ use Carbon\Carbon;
                                             </span>
                                         </td>
                                         <td>
+                                            <div class="btn-group btn-group-sm">
                                             <a href="{{ route('employee.leave-requests.show', $request->id) }}"
                                                 class="btn btn-outline-info action-btn" data-id="{{ $request->id }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Show Request"
@@ -151,7 +152,6 @@ use Carbon\Carbon;
                                                 data-bs-placement="top" title="Edit Request" aria-label="Edit">
                                                 <span class="btn-content">
                                                     <i class="fas fa-edit"></i>
-                                                    <i class="fas fa-triangle-exclamation ms-1"></i>
                                                 </span>
                                                 <span class="spinner-border spinner-border-sm d-none" role="status"
                                                     aria-hidden="true"></span>
@@ -161,10 +161,21 @@ use Carbon\Carbon;
                                                 method="POST" class="d-inline"
                                                 onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
                                                 @csrf
-                                                <button type="submit" class="btn btn-danger btn-sm">
-                                                    <i class="fas fa-times"></i>
-                                                </button>
+                                                <button type="submit" 
+                                                class="btn btn-outline-danger btn-sm action-btn rounded-start-0" 
+                                                data-id="1" 
+                                                data-bs-toggle="tooltip" 
+                                                data-bs-placement="top" 
+                                                title="Delete Category" 
+                                                aria-label="Delete" 
+                                                onclick="return confirm('Are you sure you want to delete this category?')">
+                                                <span class="btn-content">
+                                                <i class="fas fa-trash"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                 </button>
                                             </form>
+                                            </div>
                                             @endif
                                         </td>
                                     </tr>

@@ -10,7 +10,8 @@
             </div>
         </div>
     <div class="row">
-        <div class="col-md-8 offset-md-2">
+        <div class="col-md-8
+            offset-md-2">
             <div class="card">
                 <div class="card-header justify-content-center mb-2">
                     <h3 class="card-title">Create New Designation </h3>
@@ -46,6 +47,7 @@
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
+                        
                         
                         <div class="form-group mt-3">
                             <label for="description">Description</label>

@@ -171,14 +171,15 @@
                                 </div>
                             @endif
 
-                            <div class="form-group text-center">
-                                <a href="{{ route('company.leave-requests.index') }}" class="btn btn-link btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Back
-                                </a>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-paper-plane"></i> Submit Request
-                                </button>
+                            <div class="d-flex gap-3 justify-content-center mt-4">
+                               <a href="{{ route('company.leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
+                               <i class="fas fa-arrow-left me-2"></i>Back
+                               </a>
+                               <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                               <i class="fas fa-paper-plane me-2"></i>Submit Request
+                               </button>
                             </div>
+
                         </form>
                     </div>
                 </div>

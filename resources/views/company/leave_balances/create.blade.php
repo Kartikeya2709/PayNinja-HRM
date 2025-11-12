@@ -22,10 +22,11 @@
                     <div class="card-body">
                         <form action="{{ route('company.leave-balances.store') }}" method="POST">
                             @csrf
-
-                            <div class="form-group mb-4">
-                                <label for="employee_id">Employee <span class="text-danger">*</span></label>
-                                <select name="employee_id" 
+                        <div class="row">
+                            
+                               <div class="form-group mb-4">
+                                   <label for="employee_id">Employee <span class="text-danger">*</span></label>
+                                   <select name="employee_id" 
                                         id="employee_id" 
                                         class="form-control select2 @error('employee_id') is-invalid @enderror" 
                                         required>
@@ -42,8 +43,10 @@
                                     </div>
                                 @enderror
                             </div>
-
-                            <div class="form-group mb-4">
+                        </div>
+                        <div class="row">
+                           <div class="col-md-4 col-sm-12">
+                              <div class="form-group mb-4">
                                 <label for="leave_type_id">Leave Type <span class="text-danger">*</span></label>
                                 <select name="leave_type_id" 
                                         id="leave_type_id" 
@@ -64,7 +67,9 @@
                                     </div>
                                 @enderror
                             </div>
-
+                        </div>
+                        
+                            <div class="col-md-4 col-sm-12">
                             <div class="form-group mb-4">
                                 <label for="total_days">Total Days <span class="text-danger">*</span></label>
                                 <input type="number" 
@@ -80,7 +85,9 @@
                                     </div>
                                 @enderror
                             </div>
+                        </div>
 
+                            <div class="col-md-4 col-sm-12">
                             <div class="form-group mb-4">
                                 <label for="year">Year <span class="text-danger">*</span></label>
                                 <input type="number" 
@@ -96,11 +103,17 @@
                                     </div>
                                 @enderror
                             </div>
-
-                            <div class="form-group text-center">
-                                <button type="submit" class="btn btn-primary">Allocate Leave Balance</button>
-                                <a href="{{ route('company.leave-balances.index') }}" class="btn btn-danger">Cancel</a>
+                        </div>
+                       </div>
+                            <div class="d-flex gap-3 justify-content-center">
+                               <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                               <i class="bi bi-check-circle me-2"></i>Allocate Leave Balance
+                               </button>
+                               <a href="{{ route('company.leave-balances.index') }}" class="btn btn-danger px-4 rounded-pill">
+                               <i class="bi bi-x-circle me-2"></i>Cancel
+                               </a>
                             </div>
+
                         </form>
                     </div>
                 </div>
@@ -131,8 +144,9 @@
                                     </div>
                                 @enderror
                             </div>
-
-                            <div class="form-group mb-4">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                               <div class="form-group mb-4">
                                 <label for="bulk_leave_type_id">Leave Type <span class="text-danger">*</span></label>
                                 <select name="leave_type_id" 
                                         id="bulk_leave_type_id" 
@@ -152,7 +166,8 @@
                                     </div>
                                 @enderror
                             </div>
-
+                        </div>
+                            <div class="col-md-4 col-sm-12">
                             <div class="form-group mb-4">
                                 <label for="bulk_total_days">Total Days <span class="text-danger">*</span></label>
                                 <input type="number" 
@@ -168,7 +183,8 @@
                                     </div>
                                 @enderror
                             </div>
-
+                            </div>
+                        <div class="col-md-4 col-sm-12">
                             <div class="form-group mb-4">
                                 <label for="bulk_year">Year <span class="text-danger">*</span></label>
                                 <input type="number" 
@@ -184,10 +200,14 @@
                                     </div>
                                 @enderror
                             </div>
-
-                            <div class="form-group text-center">
-                                <button type="submit" class="btn btn-primary">Bulk Allocate Leave Balance</button>
+                        </div>
+                        </div>
+                            <div class="d-flex justify-content-center mt-4">
+                               <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                               <i class="bi bi-people-fill me-2"></i>Bulk Allocate Leave Balance
+                               </button>
                             </div>
+
                         </form>
                     </div>
                 </div>

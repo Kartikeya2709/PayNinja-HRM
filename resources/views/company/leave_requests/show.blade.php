@@ -3,7 +3,7 @@
 @section('title', 'View Leave Request')
 
 @section('content')
-<section class="section">
+<section class="section container">
     <div class="section-header">
         <h1>View Leave Request</h1>
         <div class="section-header-breadcrumb">
@@ -15,162 +15,115 @@
     <div class="section-body">
         <div class="row">
             <div class="col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Employee Name</label>
-                                    <p class="form-control-static">{{ $leaveRequest->employee->name }}</p>
-                                </div>
+                <div class="card glass-card">
+    <div class="card-header">
+        <h4 class="mb-0"><i class="fas fa-calendar-check me-2"></i>Leave Request Details</h4>
+    </div>
 
-                                <div class="form-group">
-                                    <label>Department</label>
-                                    <p class="form-control-static">{{ $leaveRequest->employee->department->name ?? '-' }}</p>
-                                </div>
+    <div class="card-body">
+        <div class="row g-4">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <h6 class="glass-section-title"><i class="fas fa-user-circle me-2"></i>Employee Info</h6>
 
-                                <div class="form-group">
-                                    <label>Leave Type</label>
-                                    <p class="form-control-static">{{ $leaveRequest->leaveType->name }}</p>
-                                </div>
+                <p><span class="label">Employee Name:</span> <span class="value">{{ $leaveRequest->employee->name }}</span></p>
+                <p><span class="label">Department:</span> <span class="value">{{ $leaveRequest->employee->department->name ?? '-' }}</span></p>
+                <p><span class="label">Leave Type:</span> <span class="value">{{ $leaveRequest->leaveType->name }}</span></p>
+                <p><span class="label">Start Date:</span> <span class="value">{{ $leaveRequest->start_date->format('Y-m-d') }}</span></p>
+                <p><span class="label">End Date:</span> <span class="value">{{ $leaveRequest->end_date->format('Y-m-d') }}</span></p>
+            </div>
 
-                                <div class="form-group">
-                                    <label>Start Date</label>
-                                    <p class="form-control-static">{{ $leaveRequest->start_date->format('Y-m-d') }}</p>
-                                </div>
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <h6 class="glass-section-title"><i class="fas fa-clock me-2"></i>Leave Duration</h6>
 
-                                <div class="form-group">
-                                    <label>End Date</label>
-                                    <p class="form-control-static">{{ $leaveRequest->end_date->format('Y-m-d') }}</p>
-                                </div>
-                            </div>
+                <p><span class="label">Total Days:</span> 
+                    <span class="value">{{ $leaveRequest->total_days }} 
+                    <span class="text-muted">({{ count($approvedWorkingDays) }} working days)</span></span>
+                </p>
 
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Total Days</label>
-                                    <p class="form-control-static">
-                                        {{ $leaveRequest->total_days }} 
-                                        <span class="text-muted">({{ count($approvedWorkingDays) }} working days)</span>
-                                    </p>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Working Days ({{ count($approvedWorkingDays) }})</label>
-                                    <p class="form-control-static">
-                                        @if(count($approvedWorkingDays) > 0)
-                                            @foreach($approvedWorkingDays as $date)
-                                                <span class="badge badge-primary mr-1 mb-1">
-                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
-                                                </span>
-                                            @endforeach
-                                        @else
-                                            <span class="text-muted">No working days specified</span>
-                                        @endif
-                                    </p>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Weekend Days ({{ count($weekendDays) }})</label>
-                                    <p class="form-control-static">
-                                        @if(count($weekendDays) > 0)
-                                            @foreach($weekendDays as $date)
-                                                <span class="badge badge-secondary mr-1 mb-1">
-                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
-                                                </span>
-                                            @endforeach
-                                        @else
-                                            <span class="text-muted">No weekend days in this period</span>
-                                        @endif
-                                    </p>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label>Holiday Days ({{ count($holidayDates) }})</label>
-                                    <p class="form-control-static">
-                                        @if(count($holidayDates) > 0)
-                                            @foreach($holidayDates as $date)
-                                                <span class="badge badge-success mr-1 mb-1">
-                                                    {{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}
-                                                </span>
-                                            @endforeach
-                                        @else
-                                            <span class="text-muted">No holidays in this period</span>
-                                        @endif
-                                    </p>
-                                </div>
+                <p class="label">Working Days ({{ count($approvedWorkingDays) }})</p>
+                <p>
+                    @forelse($approvedWorkingDays as $date)
+                        <span class="badge badge-primary mb-1">{{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}</span>
+                    @empty
+                        <span class="text-muted">No working days</span>
+                    @endforelse
+                </p>
 
-                                <div class="form-group">
-                                    <label>Status</label>
-                                    <p class="form-control-static">
-                                        <span class="badge badge-{{ $leaveRequest->status_color }}">
-                                            {{ ucfirst($leaveRequest->status) }}
-                                        </span>
-                                    </p>
-                                </div>
+                <p class="label">Weekend Days ({{ count($weekendDays) }})</p>
+                <p>
+                    @forelse($weekendDays as $date)
+                        <span class="badge badge-secondary mb-1">{{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}</span>
+                    @empty
+                        <span class="text-muted">No weekend days</span>
+                    @endforelse
+                </p>
 
-                                <div class="form-group">
-                                    <label>Reason</label>
-                                    <p class="form-control-static">{{ $leaveRequest->reason }}</p>
-                                </div>
+                <p class="label">Holiday Days ({{ count($holidayDates) }})</p>
+                <p>
+                    @forelse($holidayDates as $date)
+                        <span class="badge badge-success mb-1">{{ \Carbon\Carbon::parse($date)->format('M d, Y (D)') }}</span>
+                    @empty
+                        <span class="text-muted">No holidays</span>
+                    @endforelse
+                </p>
 
-                                @if($leaveRequest->attachment)
-                                    <div class="form-group">
-                                        <label>Attachment</label>
-                                        <p class="form-control-static">
-                                            <a href="{{ Storage::url($leaveRequest->attachment) }}" 
-                                               target="_blank" 
-                                               class="btn btn-sm btn-info">
-                                                <i class="fas fa-download"></i> Download Attachment
-                                            </a>
-                                        </p>
-                                    </div>
-                                @endif
+                <p><span class="label">Status:</span> 
+                    <span class="badge badge-{{ $leaveRequest->status_color }}">{{ ucfirst($leaveRequest->status) }}</span>
+                </p>
 
-                                @if($leaveRequest->status === 'rejected' && $leaveRequest->admin_remarks)
-                                    <div class="form-group">
-                                        <label>Rejection Reason</label>
-                                        <p class="form-control-static">{{ $leaveRequest->admin_remarks }}</p>
-                                    </div>
-                                @endif
-                            </div>
-                        </div>
+                <p><span class="label">Reason:</span> <span class="value">{{ $leaveRequest->reason }}</span></p>
 
-                        @if($leaveRequest->status === 'pending')
-                            <div class="row mt-4">
-                                <div class="col-md-6">
-                                    <form action="{{ route('company.leave-requests.approve', $leaveRequest->id) }}" 
-                                          method="POST" 
-                                          class="d-inline">
-                                        @csrf
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="fas fa-check"></i> Approve Leave Request
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="col-md-6">
-                                    <button type="button" 
-                                            class="btn btn-danger" 
-                                            data-bs-toggle="modal" 
-                                            data-bs-target="#rejectModal">
-                                        <i class="fas fa-times"></i> Reject Leave Request
-                                    </button>
-                                </div>
-                            </div>
-                        @endif
-
-                        <div class="row mt-4">
-                            <div class="col-12">
-                                <a href="{{ route('company.leave-requests.index') }}" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Back to Leave Requests
-                                </a>
-                            </div>
-                        </div>
+                @if($leaveRequest->attachment)
+                    <div class="mt-3">
+                        <a href="{{ Storage::url($leaveRequest->attachment) }}" 
+                           target="_blank" class="btn btn-sm btn-glass">
+                            <i class="fas fa-download"></i> Download Attachment
+                        </a>
                     </div>
+                @endif
+
+                @if($leaveRequest->status === 'rejected' && $leaveRequest->admin_remarks)
+                    <div class="mt-3">
+                        <p><span class="label">Rejection Reason:</span></p>
+                        <p class="text-warning">{{ $leaveRequest->admin_remarks }}</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- Buttons -->
+        @if($leaveRequest->status === 'pending')
+            <div class="row mt-4 text-center">
+                <div class="col-md-6 mb-2">
+                    <form action="{{ route('company.leave-requests.approve', $leaveRequest->id) }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit" class="btn btn-glass text-success">
+                            <i class="fas fa-check"></i> Approve
+                        </button>
+                    </form>
                 </div>
+                <div class="col-md-6 mb-2">
+                    <button type="button" class="btn btn-glass text-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                </div>
+            </div>
+        @endif
+
+        <div class="d-flex gap-3 justify-content-center mt-4">
+             <a href="{{ route('company.leave-requests.index') }}" 
+              class="btn btn-secondary px-4 rounded-pill shadow-sm">
+              <i class="bi bi-arrow-left me-2"></i>Back to Leave Requests
+              </a>
+        </div>
+    </div>
+</div>
             </div>
         </div>
     </div>
-</section>
+
 
 @if($leaveRequest->status === 'pending')
     <!-- Reject Modal -->
@@ -200,5 +153,6 @@
             </div>
         </div>
     </div>
+    </section>
 @endif
 @endsection

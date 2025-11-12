@@ -17,17 +17,17 @@
                 <form method="POST" action="{{ route('company-admin.announcements.store') }}">
                     @csrf
                     <div class="row">
-                         <div class="col-lg-12 mb-3">
+                         <div class="col-lg-12 mb-3 form-group">
                         <label for="title" class="form-label">Title</label>
                         <input type="text" name="title" id="title" class="form-control" required>
                     </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6 col-sm-12 mb-3">
+                        <div class="col-lg-6 col-sm-12 mb-3 form-group">
                         <label for="description" class="form-label">Description</label>
                         <textarea name="description" id="description" class="form-control" required></textarea>
                     </div>
-                    <div class="col-lg-6 col-sm-12 mb-3">
+                    <div class="col-lg-6 col-sm-12 mb-3 form-group">
                         <label for="audience" class="form-label">Audience</label>
                         <select name="audience" id="audience" class="form-control" required>
                             <option value="employees">Employees</option>
@@ -37,17 +37,20 @@
                     </div>
                     </div>
                     <div class="row">
-                        <div class="col-lg-6 col-sm-12 mb-3">
+                        <div class="col-lg-6 col-sm-12 mb-3 form-group">
                         <label for="publish_date" class="form-label">Publish Date</label>
                         <input type="date" name="publish_date" id="publish_date" class="form-control">
                     </div>
-                    <div class="col-lg-6 col-sm-12 mb-3">
+                    <div class="col-lg-6 col-sm-12 mb-3 form-group">
                         <label for="expires_at" class="form-label">Expires At</label>
                         <input type="date" name="expires_at" id="expires_at" class="form-control">
                     </div>
-                    <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Create Announcement</button>
+                    <div class="d-flex justify-content-center mt-4">
+                         <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                         <i class="bi bi-save me-2"></i>Create Announcement
+                         </button>
                     </div>
+
                 </form>
             </div>
         </div>

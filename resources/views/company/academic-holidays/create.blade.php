@@ -108,13 +108,15 @@
 
                             <div class="form-group row">
                                
-                                <div class="col-12 text-center">
-                                    <button type="submit"
-                                        class="btn btn-primary">{{ isset($holiday) ? 'Update' : 'Create' }}
-                                        Holiday</button>
-                                    <a href="{{ route('company.academic-holidays.index') }}"
-                                        class="btn btn-danger ml-2">Cancel</a>
+                                <div class="col-12 d-flex gap-3 justify-content-center mt-4">
+                                   <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                                   <i class="bi bi-calendar-event me-2"></i>{{ isset($holiday) ? 'Update' : 'Create' }} Holiday
+                                   </button>
+                                   <a href="{{ route('company.academic-holidays.index') }}" class="btn btn-danger px-4 rounded-pill">
+                                   <i class="bi bi-x-circle me-2"></i>Cancel
+                                   </a>
                                 </div>
+
                             </div>
                         </form>
                     </div>

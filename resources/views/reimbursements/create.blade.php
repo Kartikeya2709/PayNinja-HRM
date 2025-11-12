@@ -60,10 +60,15 @@
                             @enderror
                         </div>
 
-                        <div class="d-flex justify-content-center">
-                            <a href="{{ route('reimbursements.index') }}" class="btn btn-danger me-2">Cancel</a>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                        <div class="d-flex gap-3 justify-content-center mt-4">
+                           <a href="{{ route('reimbursements.index') }}" class="btn btn-danger px-4 rounded-pill shadow-sm">
+                           <i class="bi bi-x-circle me-2"></i>Cancel
+                           </a>
+                           <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                           <i class="bi bi-send me-2"></i>Submit
+                           </button>
                         </div>
+
                     </form>
                 </div>
             </div>

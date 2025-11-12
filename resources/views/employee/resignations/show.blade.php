@@ -25,234 +25,138 @@
                             </a>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row Resignation-Information">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Resignation Type</label>
-                                    <p class="form-control-plaintext">
-                                        <span class="badge badge-info">{{ $resignation->resignation_type_label }}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="form-label">Status</label>
-                                    <p class="form-control-plaintext">
-                                        <span class="badge badge-{{ $resignation->status_color }}">
-                                            {{ $resignation->status_label }}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+  
+    <div class="resignation-summary">
 
-                        <div class="row mt-4 Resignation-Date">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Resignation Date</label>
-                                    <p class="form-control-plaintext form-control">{{ $resignation->resignation_date->format('M d, Y') }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Last Working Date</label>
-                                    <p class="form-control-plaintext form-control">{{ $resignation->last_working_date->format('M d, Y') }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Notice Period</label>
-                                    <p class="form-control-plaintext form-control">{{ $resignation->notice_period_days }} days</p>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Header -->
+    <div class="resignation-header">
+        <h2><i class="fas fa-user-slash me-2 text-primary"></i> Resignation Summary</h2>
+        <p>Your resignation request overview and exit process details</p>
+        <div class="mt-2">
+            <span class="status-badge status-{{ $resignation->status }}">
+                {{ ucfirst($resignation->status_label) }}
+            </span>
+        </div>
+    </div>
 
-                        @if($resignation->remaining_days !== null)
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="alert alert-{{ $resignation->remaining_days > 0 ? 'info' : 'warning' }}">
-                                        <i class="fas fa-clock"></i>
-                                        @if($resignation->remaining_days > 0)
-                                            <strong>{{ ceil($resignation->remaining_days) }} days remaining</strong> until your last working date.
-                                        @else
-                                            Your last working date has passed. Your employment has ended.
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-                <div class="row mt-4">
-                     <div class="col-md-4">
-                        <div class="form-group">
-                            <label class="form-label">Reason for Resignation</label>
-                            <p class="form-control-plaintext form-control">{{ $resignation->reason }}</p>
-                        </div>
+    <!-- Info -->
+    <div class="info-grid">
+        <div class="info-block">
+            <label><i class="fas fa-file-alt"></i> Resignation Type</label>
+            <span>{{ $resignation->resignation_type_label }}</span>
+        </div>
+        <div class="info-block">
+            <label><i class="fas fa-calendar"></i> Resignation Date</label>
+            <span>{{ $resignation->resignation_date->format('M d, Y') }}</span>
+        </div>
+        <div class="info-block">
+            <label><i class="fas fa-calendar-check"></i> Last Working Date</label>
+            <span>{{ $resignation->last_working_date->format('M d, Y') }}</span>
+        </div>
+        <div class="info-block">
+            <label><i class="fas fa-hourglass-half"></i> Notice Period</label>
+            <span>{{ $resignation->notice_period_days }} days</span>
+        </div>
+    </div>
 
-                        @if($resignation->employee_remarks)
-                            <div class="form-group">
-                                <label class="form-label">Your Remarks</label>
-                                <p class="form-control-plaintext form-control">{{ $resignation->employee_remarks }}</p>
-                            </div>
-                        @endif
+    <!-- Timeline -->
+    <div class="timeline">
+        <div class="timeline-line"></div>
+        <div class="timeline-steps">
 
-                        @if($resignation->attachment_path)
-                            <div class="form-group">
-                                <label class="form-label">Supporting Document</label>
-                                <p class="form-control-plaintext form-control">
-                                    <a href="{{ Storage::url($resignation->attachment_path) }}" target="_blank" class="btn btn-sm btn-info">
-                                        <i class="fas fa-download"></i> Download Document
-                                    </a>
-                                </p>
-                            </div>
-                        @endif
+            <!-- Exit Interview -->
+            <div class="timeline-step">
+                @php $status = $resignation->exit_interview_status ?? 'pending'; @endphp
+                <div class="circle {{ $status }}">
+                    <i class="fas fa-comments"></i>
+                </div>
+                <div class="label">Exit Interview</div>
+                <div class="step-status {{ $status }}">
+                    {{ ucfirst(str_replace('_', ' ', $status)) }}
+                </div>
+            </div>
 
-                        <!-- Approval Information -->
-                        @if($resignation->reportingManager)
-                           </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="form-label">Reporting Manager</label>
-                                        <p class="form-control-plaintext form-control">{{ $resignation->reportingManager->name }}</p>
-                                    </div>
-                                </div>
-                                @if($resignation->hrAdmin)
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label class="form-label">HR Admin</label>
-                                            <p class="form-control-plaintext form-control">{{ $resignation->hrAdmin->name }}</p>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                        @endif
+            <!-- Handover -->
+            <div class="timeline-step">
+                @php $status = $resignation->handover_status ?? 'pending'; @endphp
+                <div class="circle {{ $status }}">
+                    <i class="fas fa-people-arrows"></i>
+                </div>
+                <div class="label">Handover</div>
+                <div class="step-status {{ $status }}">
+                    {{ ucfirst(str_replace('_', ' ', $status)) }}
+                </div>
+            </div>
 
-                        <!-- Approval Remarks -->
-                        @if($resignation->manager_remarks)
-                            <div class="form-group">
-                                <label class="form-label">Manager Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->manager_remarks }}</p>
-                            </div>
-                        @endif
+            <!-- Assets Returned -->
+            <div class="timeline-step">
+                @php $status = $resignation->assets_status ?? 'pending'; @endphp
+                <div class="circle {{ $status }}">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <div class="label">Assets Returned</div>
+                <div class="step-status {{ $status }}">
+                    {{ ucfirst(str_replace('_', ' ', $status)) }}
+                </div>
+            </div>
 
-                        @if($resignation->hr_remarks)
-                            <div class="form-group">
-                                <label class="form-label">HR Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->hr_remarks }}</p>
-                            </div>
-                        @endif
-
-                        @if($resignation->admin_remarks)
-                            <div class="form-group">
-                                <label class="form-label">Admin Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->admin_remarks }}</p>
-                            </div>
-                        @endif
-
-                        <!-- Exit Process Status -->
-                        @if($resignation->status === 'approved')
-                            <div class="mt-4">
-                                <h5>Exit Process Status</h5>
-                                <div class="row exit-process">
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label">Exit Interview</label>
-                                            <p class="form-control-plaintext">
-                                                @if($resignation->exit_interview_completed)
-                                                    <span class="badge badge-success">
-                                                        <i class="fas fa-check"></i> Completed
-                                                    </span>
-                                                    @if($resignation->exit_interview_date)
-                                                        <br><small>On {{ $resignation->exit_interview_date->format('M d, Y') }}</small>
-                                                    @endif
-                                                @else
-                                                    <span class="badge badge-warning">
-                                                        <i class="fas fa-clock"></i> Pending
-                                                    </span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label">Handover</label>
-                                            <p class="form-control-plaintext">
-                                                @if($resignation->handover_completed)
-                                                    <span class="badge badge-success">
-                                                        <i class="fas fa-check"></i> Completed
-                                                    </span>
-                                                @else
-                                                    <span class="badge badge-warning">
-                                                        <i class="fas fa-clock"></i> Pending
-                                                    </span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label">Assets Returned</label>
-                                            <p class="form-control-plaintext">
-                                                @if($resignation->assets_returned)
-                                                    <span class="badge badge-success">
-                                                        <i class="fas fa-check"></i> Completed
-                                                    </span>
-                                                @else
-                                                    <span class="badge badge-warning">
-                                                        <i class="fas fa-clock"></i> Pending
-                                                    </span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="form-group">
-                                            <label class="form-label">Final Settlement</label>
-                                            <p class="form-control-plaintext">
-                                                @if($resignation->final_settlement_completed)
-                                                    <span class="badge badge-success">
-                                                        <i class="fas fa-check"></i> Completed
-                                                    </span>
-                                                @else
-                                                    <span class="badge badge-warning">
-                                                        <i class="fas fa-clock"></i> Pending
-                                                    </span>
-                                                @endif
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                @if($resignation->isExitProcessComplete())
-                                    <div class="alert alert-success">
-                                        <i class="fas fa-check-circle"></i>
-                                        <strong>All exit processes have been completed!</strong>
-                                        Your resignation process is now complete.
-                                    </div>
-                                @endif
-                            </div>
-                        @endif
-
-                        <!-- Action Buttons -->
-                        <div class="form-group mt-4 text-center Resignation-Date">
-                            @if($resignation->canBeWithdrawn())
-                                <button type="button" class="btn btn-danger"
-                                        onclick="withdrawResignation({{ $resignation->id }})">
-                                    <i class="fas fa-times"></i> Withdraw Resignation
-                                </button>
-                            @endif
-
-                            @if($resignation->status === 'pending')
-                                <a href="{{ route('employee.resignations.edit', $resignation) }}" class="btn btn-warning">
-                                    <i class="fas fa-edit"></i> Edit Request
-                                </a>
-                            @endif
-                        </div>
-                    </div>
+            <!-- Final Settlement -->
+            <div class="timeline-step">
+                @php $status = $resignation->settlement_status ?? 'pending'; @endphp
+                <div class="circle {{ $status }}">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <div class="label">Final Settlement</div>
+                <div class="step-status {{ $status }}">
+                    {{ ucfirst(str_replace('_', ' ', $status)) }}
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Remarks -->
+    <div class="remarks">
+        @if($resignation->reason)
+            <h5><i class="fas fa-comment-dots text-primary"></i> Reason for Resignation</h5>
+            <p>{{ $resignation->reason }}</p>
+        @endif
+        @if($resignation->employee_remarks)
+            <h5><i class="fas fa-user-pen text-primary"></i> Your Remarks</h5>
+            <p>{{ $resignation->employee_remarks }}</p>
+        @endif
+        @if($resignation->manager_remarks)
+            <h5><i class="fas fa-user-tie text-success"></i> Manager Remarks</h5>
+            <p>{{ $resignation->manager_remarks }}</p>
+        @endif
+        @if($resignation->hr_remarks)
+            <h5><i class="fas fa-user-cog text-info"></i> HR Remarks</h5>
+            <p>{{ $resignation->hr_remarks }}</p>
+        @endif
+        @if($resignation->admin_remarks)
+            <h5><i class="fas fa-user-shield text-danger"></i> Admin Remarks</h5>
+            <p>{{ $resignation->admin_remarks }}</p>
+        @endif
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        @if($resignation->canBeWithdrawn())
+            <button type="button" class="btn btn-danger" onclick="withdrawResignation({{ $resignation->id }})">
+                <i class="fas fa-times"></i> Withdraw Resignation
+            </button>
+        @endif
+
+        @if($resignation->status === 'pending')
+            <a href="{{ route('employee.resignations.edit', $resignation) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit Request
+            </a>
+        @endif
+    </div>
+</div>
+</div>
+        </div>
+    </div>
+</div>
 </section>
 @endsection
 

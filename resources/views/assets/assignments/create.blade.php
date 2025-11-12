@@ -5,7 +5,7 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header justify-content-center">
                     <h3 class="card-title">Assign Asset</h3>
                 </div>
                 <div class="card-body">
@@ -64,7 +64,7 @@
   
 
     <!-- Department -->
-    <div class="col-md-4">
+    <div class="col-md-4 form-group">
         <label for="department_id" class="form-label">Department <span class="text-danger">*</span></label>
                 <select id="department_id" name="department_id" class="form-control @error('department_id') is-invalid @enderror" required>
                         <option value="">Select Department</option>
@@ -76,7 +76,7 @@
     </div>
 
     <!-- Designation -->
-    <div class="col-md-4">
+    <div class="col-md-4 form-group">
         <label for="designation_id" class="form-label">Designation <span class="text-danger">*</span></label>
         <select id="designation_id" name="designation_id" class="form-control @error('designation_id') is-invalid @enderror" required>
             <option value="">Select Designation</option>
@@ -85,7 +85,7 @@
     </div>
 
     <!-- Employee -->
-    <div class="col-md-4">
+    <div class="col-md-4 form-group">
         <label for="employee_id" class="form-label">Employee <span class="text-danger">*</span></label>
        <select id="employee_id" name="employee_id" class="form-control @error('employee_id') is-invalid @enderror" required>
             <option value="">Select Employee</option>
@@ -133,10 +133,15 @@
                                       id="notes" name="notes" rows="3">{{ old('notes') }}</textarea>
                         </div>
 
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary">Assign Asset</button>
-                            <a href="{{ route('admin.assets.index') }}" class="btn btn-secondary">Cancel</a>
-                        </div>
+                        <div class="d-flex gap-3 justify-content-center mt-4">
+                        <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                           <i class="bi bi-link-45deg me-2"></i>Assign Asset
+                        </button>
+                        <a href="{{ route('admin.assets.index') }}" class="btn btn-danger px-4 rounded-pill">
+                        <i class="bi bi-x-circle me-2"></i>Cancel
+                       </a>
+                       </div>
+
                     </form>
                 </div>
             </div>

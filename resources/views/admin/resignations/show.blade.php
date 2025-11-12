@@ -17,227 +17,204 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header">
-                        <h5>Employee Information</h5>
+                    <div class="card-1">
+                        <h5 class="mb-0">Employee Information</h5>
                         <div class="card-header-action">
                             <a href="{{ route('admin.resignations.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to List
                             </a>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-3">
-                                @if($resignation->employee->profile_image)
-                                    <img src="{{ asset('storage/' . $resignation->employee->profile_image) }}"
-                                         class="img-fluid rounded" alt="Profile Image">
-                                @else
-                                    <div class="text-left">
-                                        <div class="avatar avatar-xl mb-3 align-content-center text-center">
-                                            <span class="avatar-title rounded-circle bg-primary" style="width: 80px; height: 80px; font-size: 32px;">
-                                                {{ substr($resignation->employee->name, 0, 1) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                @endif
-                            </div>
-                            <div class="col-md-9">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Employee Name</label>
-                                            <p class="form-control-plaintext font-weight-bold">{{ $resignation->employee->name }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Employee Code</label>
-                                            <p class="form-control-plaintext">{{ $resignation->employee->employee_code }}</p>
-                                        </div>
-                                    </div>
+                </div>
+                    <div class="card glass-card mt-4">
+                       <div class="row align-items-center">
+                          <div class="col-md-3 text-center mb-3 mb-md-0">
+                          @if($resignation->employee->profile_image)
+                          <div class="profile-avatar mx-auto">
+                             <img src="{{ asset('storage/' . $resignation->employee->profile_image) }}" alt="Profile Image">
+                          </div>
+                          @else
+                          <div class="profile-avatar mx-auto">
+                             <span class="avatar-title">
+                             {{ substr($resignation->employee->name, 0, 1) }}
+                             </span>
+                          </div>
+                          @endif
+                          </div>
+
+                        <div class="col-md-9 emp-info-text">
+                           <h4 class="mb-1">{{ $resignation->employee->name }}</h4>
+                           <p class="mb-3">{{ $resignation->employee->designation->title ?? 'N/A' }} | {{ $resignation->employee->department->name ?? 'N/A' }}</p>
+                           <div class="divider"></div>
+            
+                             <div class="row mt-3">
+                                <div class="col-md-6 mb-2">
+                                   <p class="info-label mb-1"><i class="fas fa-id-badge me-2"></i>Employee Code</p>
+                                   <p class="info-value">{{ $resignation->employee->employee_code }}</p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Department</label>
-                                            <p class="form-control-plaintext">{{ $resignation->employee->department->name ?? 'N/A' }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Designation</label>
-                                            <p class="form-control-plaintext">{{ $resignation->employee->designation->title ?? 'N/A' }}</p>
-                                        </div>
-                                    </div>
+                                <div class="col-md-6 mb-2">
+                                   <p class="info-label mb-1"><i class="fas fa-envelope me-2"></i>Email</p>
+                                   <p class="info-value">{{ $resignation->employee->email }}</p>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Email</label>
-                                            <p class="form-control-plaintext">{{ $resignation->employee->email }}</p>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="form-label">Phone</label>
-                                            <p class="form-control-plaintext">{{ $resignation->employee->phone ?? 'N/A' }}</p>
-                                        </div>
-                                    </div>
+                                <div class="col-md-6 mb-2">
+                                   <p class="info-label mb-1"><i class="fas fa-phone me-2"></i>Phone</p>
+                                   <p class="info-value">{{ $resignation->employee->phone ?? 'N/A' }}</p>
                                 </div>
-                            </div>
+                                <div class="col-md-6 mb-2">
+                                   <p class="info-label mb-1"><i class="fas fa-briefcase me-2"></i>Department</p>
+                                   <p class="info-value">{{ $resignation->employee->department->name ?? 'N/A' }}</p>
+                                </div>
+                             </div>
+                        </div>
                         </div>
                     </div>
-                </div>
 
                 <!-- Resignation Details -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5>Resignation Details</h5>
-                    </div>
+               
+                    <div class="card glass-card mt-4">
+                       <div class="d-flex align-items-center bg-primary py-2 px-2 text-white rounded-3 mb-4">
+                         <h5 class="mb-0"><i class="fas fa-user-times me-2"></i>Resignation Details</h5>
+                       </div>
+
                     <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Resignation Type</label>
-                                    <p class="form-control-plaintext">
-                                        <span class="badge badge-info">{{ $resignation->resignation_type_label }}</span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Status</label>
-                                    <p class="form-control-plaintext">
-                                        <span class="badge badge-{{ $resignation->status_color }}">
-                                            {{ $resignation->status_label }}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Submitted Date</label>
-                                    <p class="form-control-plaintext">{{ $resignation->created_at->format('M d, Y H:i') }}</p>
-                                </div>
-                            </div>
-                        </div>
+                       <!-- Top Info Row -->
+                       <div class="row mb-4">
+                          <div class="col-md-4 mb-3 mb-md-0">
+                             <div class="info-box">
+                                <label class="form-label info-label text-muted"><i class="fas fa-clipboard-list me-2"></i>Type</label>
+                                <p><span class="badge bg-info text-white px-3 py-2">{{ $resignation->resignation_type_label }}</span></p>
+                             </div>
+                          </div>
+                          <div class="col-md-4 mb-3 mb-md-0">
+                             <div class="info-box">
+                                <label class="form-label info-label text-muted"><i class="fas fa-flag me-2"></i>Status</label>
+                                <p><span class="badge bg-{{ $resignation->status_color }} text-white px-3 py-2">{{ $resignation->status_label }}</span></p>
+                             </div>
+                          </div>
+                          <div class="col-md-4">
+                             <div class="info-box">
+                                <label class="form-label info-label text-muted"><i class="fas fa-calendar-alt me-2"></i>Submitted</label>
+                                <p class="fw-semibold">{{ $resignation->created_at->format('M d, Y H:i') }}</p>
+                             </div>
+                         </div>
+                       </div>
 
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Resignation Date</label>
-                                    <p class="form-control-plaintext">{{ $resignation->resignation_date->format('M d, Y') }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Last Working Date</label>
-                                    <p class="form-control-plaintext">{{ $resignation->last_working_date->format('M d, Y') }}</p>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label class="form-label">Notice Period</label>
-                                    <p class="form-control-plaintext">{{ $resignation->notice_period_days }} days</p>
-                                </div>
-                            </div>
-                        </div>
+                       <div class="row mb-4">
+                          <div class="col-md-4 mb-3 mb-md-0">
+                             <label class="form-label info-label text-muted"><i class="fas fa-calendar-day me-2"></i>Resignation Date</label>
+                             <p class="fw-semibold">{{ $resignation->resignation_date->format('M d, Y') }}</p>
+                          </div>
+                          <div class="col-md-4 mb-3 mb-md-0">
+                             <label class="form-label info-label text-muted"><i class="fas fa-hourglass-end me-2"></i>Last Working Date</label>
+                             <p class="fw-semibold">{{ $resignation->last_working_date->format('M d, Y') }}</p>
+                          </div>
+                          <div class="col-md-4">
+                             <label class="form-label info-label text-muted"><i class="fas fa-clock me-2"></i>Notice Period</label>
+                             <p class="fw-semibold">{{ $resignation->notice_period_days }} days</p>
+                          </div>
+                       </div>
 
-                        @if($resignation->remaining_days !== null)
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="alert alert-{{ ceil($resignation->remaining_days) > 0 ? 'info' : 'warning' }}">
-                                        <i class="fas fa-clock"></i>
-                                        @if($resignation->remaining_days > 0)
-                                            <strong>{{ ceil($resignation->remaining_days) }} days remaining</strong> until last working date.
-                                        @else
-                                            Last working date has passed. Employment has ended.
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
+                       @if($resignation->remaining_days !== null)
+                         <div class="alert {{ ceil($resignation->remaining_days) > 0 ? 'alert-info' : 'alert-warning' }} text-center rounded-3 shadow-sm">
+                            <i class="fas fa-stopwatch me-2"></i>
+                            @if($resignation->remaining_days > 0)
+                            <strong>{{ ceil($resignation->remaining_days) }} days remaining</strong> until last working date.
+                            @else
+                            Last working date has passed. Employment has ended.
+                            @endif
+                         </div>
+                       @endif
 
-                        <div class="form-group">
-                            <label class="form-label">Reason for Resignation</label>
-                            <p class="form-control-plaintext">{{ $resignation->reason }}</p>
-                        </div>
+                       <div class="mt-4">
+                          <label class="form-label text-muted"><i class="fas fa-comment-dots me-2"></i>Reason for Resignation</label>
+                          <p class="fw-semibold text-dark">{{ $resignation->reason }}</p>
+                       </div>
 
-                        @if($resignation->employee_remarks)
-                            <div class="form-group">
-                                <label class="form-label">Employee Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->employee_remarks }}</p>
-                            </div>
-                        @endif
+                       @if($resignation->employee_remarks)
+                       <div class="mt-3">
+                          <label class="form-label text-muted"><i class="fas fa-user-edit me-2"></i>Employee Remarks</label>
+                          <p class="fw-semibold text-dark">{{ $resignation->employee_remarks }}</p>
+                       </div>
+                       @endif
 
-                        @if($resignation->attachment_path)
-                            <div class="form-group">
-                                <label class="form-label">Supporting Document</label>
-                                <p class="form-control-plaintext">
-                                    <a href="{{ Storage::url($resignation->attachment_path) }}" target="_blank" class="btn btn-sm btn-info">
-                                        <i class="fas fa-download"></i> Download Document
-                                    </a>
-                                </p>
-                            </div>
-                        @endif
+                       @if($resignation->attachment_path)
+                       <div class="mt-3 text-center">
+                          <a href="{{ Storage::url($resignation->attachment_path) }}" target="_blank" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+                          <i class="fas fa-download me-2"></i>Download Supporting Document
+                          </a>
+                      </div>
+                      @endif
                     </div>
                 </div>
 
                 <!-- Approval Information -->
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5>Approval Information</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            @if($resignation->reportingManager)
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="form-label">Reporting Manager</label>
-                                        <p class="form-control-plaintext">{{ $resignation->reportingManager->name }}</p>
-                                    </div>
-                                </div>
-                            @endif
-                            @if($resignation->hrAdmin)
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="form-label">HR Admin</label>
-                                        <p class="form-control-plaintext">{{ $resignation->hrAdmin->name }}</p>
-                                    </div>
-                                </div>
-                            @endif
-                            @if($resignation->approver)
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="form-label">Final Approver</label>
-                                        <p class="form-control-plaintext">{{ $resignation->approver->name }}</p>
-                                    </div>
-                                </div>
-                            @endif
+                
+                <div class="card mt-4 shadow-glass border-0">
+                   <div class="d-flex align-items-center bg-primary py-2 px-2 text-white rounded-3">
+                      <i class="fas fa-user-check me-2"></i>
+                      <h5 class="mb-0">Approval Information</h5>
+                   </div>
+
+                <div class="card-body">
+                <!-- Approvers Row -->
+                   <div class="row mb-4">
+                   @if($resignation->reportingManager)
+                      <div class="col-md-4 mb-3 mb-md-0">
+                         <div class="info-box p-3 rounded-3 hover-glow">
+                            <i class="fas fa-briefcase text-primary mb-2 fs-4"></i>
+                            <label class="form-label text-muted d-block">Reporting Manager</label>
+                            <p class="fw-semibold text-dark mb-0">{{ $resignation->reportingManager->name }}</p>
+                         </div>
+                      </div>
+                   @endif
+
+                   @if($resignation->hrAdmin)
+                      <div class="col-md-4 mb-3 mb-md-0">
+                         <div class="info-box p-3 rounded-3 hover-glow">
+                            <i class="fas fa-user-tie text-info mb-2 fs-4"></i>
+                            <label class="form-label text-muted d-block">HR Admin</label>
+                            <p class="fw-semibold text-dark mb-0">{{ $resignation->hrAdmin->name }}</p>
+                         </div>
+                      </div>
+                   @endif
+
+                   @if($resignation->approver)
+                      <div class="col-md-4">
+                         <div class="info-box p-3 rounded-3 hover-glow">
+                            <i class="fas fa-user-shield text-success mb-2 fs-4"></i>
+                            <label class="form-label text-muted d-block">Final Approver</label>
+                            <p class="fw-semibold text-dark mb-0">{{ $resignation->approver->name }}</p>
+                         </div>
+                       </div>
+                   @endif
+                  </div>
+
+                  <!-- Remarks Section -->
+                  <div class="mt-4">
+                     @if($resignation->manager_remarks)
+                        <div class="remark-box mb-3 p-3 rounded-3 shadow-sm bg-light">
+                           <label class="form-label text-primary"><i class="fas fa-comments me-1"></i>Manager Remarks</label>
+                           <p class="fw-semibold mb-0">{{ $resignation->manager_remarks }}</p>
                         </div>
+                     @endif
 
-                        @if($resignation->manager_remarks)
-                            <div class="form-group">
-                                <label class="form-label">Manager Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->manager_remarks }}</p>
-                            </div>
-                        @endif
+                     @if($resignation->hr_remarks)
+                        <div class="remark-box mb-3 p-3 rounded-3 shadow-sm bg-light">
+                           <label class="form-label text-info"><i class="fas fa-comment-alt me-1"></i>HR Remarks</label>
+                           <p class="fw-semibold mb-0">{{ $resignation->hr_remarks }}</p>
+                        </div>
+                     @endif
 
-                        @if($resignation->hr_remarks)
-                            <div class="form-group">
-                                <label class="form-label">HR Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->hr_remarks }}</p>
-                            </div>
-                        @endif
-
-                        @if($resignation->admin_remarks)
-                            <div class="form-group">
-                                <label class="form-label">Admin Remarks</label>
-                                <p class="form-control-plaintext">{{ $resignation->admin_remarks }}</p>
-                            </div>
-                        @endif
-                    </div>
+                     @if($resignation->admin_remarks)
+                        <div class="remark-box p-3 rounded-3 shadow-sm bg-light">
+                           <label class="form-label text-success"><i class="fas fa-sticky-note me-1"></i>Admin Remarks</label>
+                           <p class="fw-semibold mb-0">{{ $resignation->admin_remarks }}</p>
+                        </div>
+                     @endif
+                  </div>
                 </div>
+                </div>
+
 
                 <!-- Exit Process Management -->
                 @if($resignation->status === 'approved')
@@ -343,7 +320,7 @@
                 @endif
 
                 <!-- Action Buttons -->
-                <div class="card mt-4">
+                <div class="">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-12">

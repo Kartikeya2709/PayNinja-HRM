@@ -15,8 +15,8 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                        <h3 class="card-title">Academic Holidays</h3>
+                    <div class="card-header d-flex justify-content-center align-items-center">
+                        <h3 class="card-title mb-3">Academic Holidays</h3>
                         <div class="academic d-flex align-items-center gap-2">
                             @if(!$isReadOnly)
                             <a href="{{ route('company.academic-holidays.create') }}"
