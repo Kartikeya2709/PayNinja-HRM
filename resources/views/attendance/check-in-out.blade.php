@@ -39,7 +39,7 @@
                             <div class="card check-in-bg">
                                 <div class="card-body p-3">
                                     <div class="row text-center">
-                                        <div class="col-4">
+                                        <div class="col-md-3 col-sm-6">
                                            
                                         <i class="bi bi-box-arrow-in-right"></i>
                                         
@@ -52,7 +52,7 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-4 check-out-mar">
+                                        <div class="col-md-3 col-sm-6">
                                             <i class="bi bi-box-arrow-left me-2"></i>
                                             <div class="text-muted small">Check Out </div>
                                             <div class="h5 mb-0">
@@ -63,9 +63,20 @@
                                                 @endif
                                             </div>
                                         </div>
-                                        <div class="col-4">
+                                        <div class="col-md-3 col-sm-6 grace-mar-top">
                                             <i class="bi bi-clock"></i>
                                             <div class="text-muted small">Grace Period</div>
+                                            <div class="h5 mb-0">
+                                                @if(isset($settings) && $settings && $settings->grace_period)
+                                                    {{ \Carbon\Carbon::parse($settings->grace_period)->format('h:i A') }}
+                                                @else
+                                                    --
+                                                @endif
+                                            </div>
+                                        </div>
+                                         <div class="col-md-3 col-sm-6 grace-mar-top">
+                                            <i class="bi bi-clock-history"></i>
+                                            <div class="text-muted small">Working Hours</div>
                                             <div class="h5 mb-0">
                                                 @if(isset($settings) && $settings && $settings->grace_period)
                                                     {{ \Carbon\Carbon::parse($settings->grace_period)->format('h:i A') }}

@@ -14,105 +14,83 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-3">Reimbursement Details</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3 detail-label">
-                             <label><i class="fas fa-user"></i> Employee:</label>
-                            <p>{{ $reimbursement->employee->name ?? 'N/A' }}</p>
-                        </div>
-                        <div class="mb-3 detail-label">
-                            
-                            <label> <i class="fas fa-wallet"></i>Amount:</label>
-                            <p>₹{{ number_format($reimbursement->amount, 2) }}</p>
-                        </div>
-                        <div class="mb-3 detail-label">
-                            <label> <i class="fas fa-tag"></i>Title:</label>
-                            <p>{{ $reimbursement->title }}</p>
-                        </div>
-                        <div class="mb-3 detail-label">
-                            <label> <i class="fas fa-align-left"></i>Description:</label>
-                            <p>{{ $reimbursement->description }}</p>
-                        </div>
+                    
+                    <div class="reimbursement-card">
+                       <div class="accent-bar mb-3"></div>
+                          <h5 class="fw-bold text-dark mb-4">
+                          <i class="fas fa-file-invoice-dollar me-2 text-primary"></i>Reimbursement Details
+                          </h5>
 
-                        @if($reimbursement->receipt_path)
-                        <div class="mb-3 detail-label">
-                            <label> <i class="fas fa-receipt"></i>Receipt:</label>
-                            @php
-                                $extension = strtolower(pathinfo($reimbursement->receipt_path, PATHINFO_EXTENSION));
-                                $receiptUrl = asset('storage/' . $reimbursement->receipt_path);
-                            @endphp
-                            @if(in_array($extension, ['jpg', 'jpeg', 'png']))
-                                <div>
-                                    <img src="{{ $receiptUrl }}" alt="Receipt Image" class="img-fluid rounded border" style="max-width:300px; max-height:400px;" />
-                                </div>
-                                <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-outline-secondary mt-2">View Full Image</a>
-                            @elseif($extension === 'pdf')
-                                <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-outline-primary mt-2">View Receipt PDF</a>
-                            @endif
-                            <a href="{{ $receiptUrl }}" download class="btn btn-outline-secondary mt-2">Download Receipt</a>
-                        </div>
-                        @endif
-                        <div class="mb-3 detail-label">
-                            <label> <i class="fas fa-calendar-alt"></i>Expense Date:</label>
-                            <p>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('M d, Y') }}</p>
-                        </div>
-                        <div class="mb-3 detail-label">
-                            <label><i class="fas fa-flag"></i>Status:</label>
-                            @php
-                                $statusColors = [
-                                    'pending' => 'warning',
-                                    'reporter_approved' => 'info',
-                                    'admin_approved' => 'success',
-                                    'approved' => 'success',
-                                    'rejected' => 'danger'
-                                ];
-                                $statusText = [
-                                    'pending' => 'Pending',
-                                    'reporter_approved' => 'Approved by Reporter',
-                                    'admin_approved' => 'Approved by Admin',
-                                    'approved' => 'Approved',
-                                    'rejected' => 'Rejected'
-                                ];
-                            @endphp
-                            <span class="badge bg-{{ $statusColors[$reimbursement->status] ?? 'secondary' }}">
-                                {{ $statusText[$reimbursement->status] ?? ucfirst($reimbursement->status) }}
-                            </span>
-                        </div>
-                        <div class="mb-3 detail-label">
-                            <label><i class="fas fa-calendar-plus"></i>Created At:</label>
-                            <p>{{ $reimbursement->created_at->format('Y-m-d H:i:s') }}</p>
-                        </div>
-                        
-                        @if($reimbursement->status === 'approved')
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Admin Remarks:</label>
-                                <p>{{ $reimbursement->admin_remarks }}</p>
-                            </div>
-                        @endif
-                        
-                        @if($reimbursement->reporter_remarks)
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Reporter Remarks:</label>
-                                <p>{{ $reimbursement->reporter_remarks }}</p>
-                            </div>
-                        @endif
-                        
-                        @if($reimbursement->status === 'rejected')
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Rejection Reason:</label>
-                                <p>{{ $reimbursement->remarks }}</p>
-                            </div>
-                        @endif
-                    </div>
+                   <div class="info-grid">
+                      <div><span>Employee:</span> {{ $reimbursement->employee->name ?? 'N/A' }}</div>
+                      <div><span>Amount:</span> ₹{{ number_format($reimbursement->amount, 2) }}</div>
+                      <div><span>Title:</span> {{ $reimbursement->title }}</div>
+                      <div><span>Description:</span> {{ $reimbursement->description }}</div>
+                      <div><span>Expense Date:</span> {{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('M d, Y') }}</div>
+                   <div>
+                      <span>Status:</span> 
+                          @php
+                          $statusColors = [
+                          'pending' => 'warning',
+                          'reporter_approved' => 'info',
+                          'admin_approved' => 'success',
+                          'approved' => 'success',
+                          'rejected' => 'danger'
+                          ];
+                          $statusText = [
+                          'pending' => 'Pending',
+                          'reporter_approved' => 'Approved by Reporter',
+                          'admin_approved' => 'Approved by Admin',
+                          'approved' => 'Approved',
+                          'rejected' => 'Rejected'
+                          ];
+                          @endphp
+                       <span class="badge bg-{{ $statusColors[$reimbursement->status] ?? 'secondary' }}">
+                          {{ $statusText[$reimbursement->status] ?? ucfirst($reimbursement->status) }}
+                       </span>
+                  </div>
+                  <div><span>Created At:</span> {{ $reimbursement->created_at->format('Y-m-d H:i:s') }}</div>
+
+                    @if($reimbursement->status === 'approved')
+                  <div><span>Admin Remarks:</span> {{ $reimbursement->admin_remarks }}</div>
+                    @endif
+
+                    @if($reimbursement->reporter_remarks)
+                  <div><span>Reporter Remarks:</span> {{ $reimbursement->reporter_remarks }}</div>
+                    @endif
+
+                    @if($reimbursement->status === 'rejected')
+                  <div><span>Rejection Reason:</span> {{ $reimbursement->remarks }}</div>
+                    @endif
+               </div>
+
+                   @if($reimbursement->receipt_path)
+                 <div class="mt-4">
+                   <h6 class="fw-bold text-dark mb-2"><i class="fas fa-receipt me-2 text-primary"></i>Receipt</h6>
+                   @php
+                   $extension = strtolower(pathinfo($reimbursement->receipt_path, PATHINFO_EXTENSION));
+                   $receiptUrl = asset('storage/' . $reimbursement->receipt_path);
+                   @endphp
+                   @if(in_array($extension, ['jpg', 'jpeg', 'png']))
+                   <img src="{{ $receiptUrl }}" alt="Receipt Image" class="img-fluid" style="max-width:300px; max-height:400px;">
+                <div class="mt-2">
+                  <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-outline-primary">View Full Image</a>
+                  <a href="{{ $receiptUrl }}" download class="btn btn-outline-secondary">Download</a>
+                </div>
+                    @elseif($extension === 'pdf')
+                   <a href="{{ $receiptUrl }}" target="_blank" class="btn btn-outline-primary mt-2">View Receipt PDF</a>
+                   <a href="{{ $receiptUrl }}" download class="btn btn-outline-secondary mt-2">Download</a>
+                   @endif
+                </div>
+            @endif
+        </div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="card">
-                    <div class="card-header">
-                        <h4>Actions</h4>
-                    </div>
+                    <div class="accent-bar mb-3"></div>
+                    <h5 class="fw-bold text-dark mb-4"><i class="fas fa-cogs text-primary me-2"></i>Actions</h5>
+                       
                     <div class="card-body">
                         <a href="{{ route('reimbursements.index') }}" class="btn btn-primary mb-2">Back to List</a>
                         

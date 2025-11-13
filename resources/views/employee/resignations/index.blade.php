@@ -76,6 +76,7 @@
                                     @endif
                                 </td>
                                 <td>
+                                    <div class="btn-group btn-group-sm">
                                     <a href="{{ route('employee.resignations.show', $resignation) }}"
                                         class="btn btn-outline-info action-btn" data-id="{{ $resignation->id }}"
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="View Resignation"
@@ -88,11 +89,20 @@
                                     </a>
 
                                     @if($resignation->canBeWithdrawn())
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                        onclick="withdrawResignation({{ $resignation->id }})">
-                                        <i class="fas fa-times"></i> Withdraw
+                                    <button type="button" 
+                                    class="btn btn-outline-danger withdraw-resignation btn-sm" 
+                                    data-id="{{ $resignation->id }}" 
+                                    data-bs-toggle="tooltip" 
+                                    data-bs-placement="top" 
+                                    title="Withdraw Resignation" 
+                                    onclick="withdrawResignation(this)">
+                                    <span class="btn-content">
+                                    <i class="fas fa-times"></i>
+                                    </span>
+                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                     </button>
                                     @endif
+                                    </div>
                                 </td>
                             </tr>
                             @empty

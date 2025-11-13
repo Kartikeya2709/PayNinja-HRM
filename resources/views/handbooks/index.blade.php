@@ -2,11 +2,20 @@
 
 @section('content')
 <div class="container-fluid">
+
+      <section class="section">
+    <div class="section-header">
+            <h1>HR Handbooks</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">HR Handbooks</a></div>
+            </div>
+        </div>
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h4>HR Handbooks</h4>
+                <div class="card-header justify-content-center">
+                    <h4 class="mb-3">HR Handbooks</h4>
                     @if(Auth::user()->hasRole(['admin', 'company_admin']))
                         <a href="{{ route('handbooks.create') }}" class="btn btn-primary">Create New Handbook</a>
                     @endif

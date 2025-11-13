@@ -5,48 +5,40 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title">Category: {{ $category->name }}</h3>
-                    <a href="{{ route('admin.assets.categories.index') }}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to Categories
-                    </a>
+                <div class="card-1">
+                    <h5 class="mb-0">Category</h5>
+                        <div class="card-tools">
+                           <a href="{{ route('admin.assets.categories.index') }}" class="btn btn-secondary">
+                           <i class="fas fa-arrow-left"></i> Back to Categories
+                           </a>
+                        </div>
                 </div>
+            </div>
                 <div class="card-body">
-                    <div class="row mb-5">
+                    <div class="row mt-4">
                         <div class="col-md-12">
-                            <div class="card shadow border-0 rounded-4 overflow-hidden">
-                            <div class="detail-page bg-primary text-white fw-semibold py-3 px-2 rounded-2 mb-4">
-                            Category Details
-                            </div>
-                                <div class="card-body">
-                                <div class="row mb-3">
-                                    <div class="col-md-4 fw-semibold text-muted">Name:</div>
-                                    <div class="col-md-8">{{ $category->name }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4 fw-semibold text-muted">Description:</div>
-                                    <div class="col-md-8">{{ $category->description ?? 'N/A' }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4 fw-semibold text-muted">Total Assets:</div>
-                                    <div class="col-md-8">{{ $category->assets->count() }}</div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-4 fw-semibold text-muted">Created At:</div>
-                                    <div class="col-md-8">{{ $category->created_at->format('Y-m-d H:i:s') }}</div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4 fw-semibold text-muted">Last Updated:</div>
-                                    <div class="col-md-8">{{ $category->updated_at->format('Y-m-d H:i:s') }}</div>
+                            <div class="category-card card">
+                                <div class="category-info-card">
+                                <div class="accent-bar mb-3"></div>
+                                    <h5 class="fw-bold text-dark mb-4"><i class="fas fa-folder-open me-2 text-primary"></i>Category Details</h5>
+
+                                    <div class="info-grid">
+                                        <div><span>Name:</span>{{ $category->name }}</div>
+                                        <div><span>Description:</span> {{ $category->description ?? 'N/A' }}</div>
+                                        <div><span>Total Assets:</span> {{ $category->assets->count() }}</div>
+                                        <div><span>Created At:</span> {{ $category->created_at->format('Y-m-d H:i:s') }}</div>
+                                        <div><span>Last Updated:</span> {{ $category->updated_at->format('Y-m-d H:i:s') }}</div>
+                                    </div>
                                 </div>
                             </div>
-                            </div>
+
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12">
-                            <h5 class="text-center">Assets in this Category</h5>
+                            <div class="card mt-4">
+                            <h5 class="text-center mb-3">Assets in this Category</h5>
                             <div class="table-responsive">
                                 <table class="table table-bordered table-striped">
                                     <thead>
@@ -78,12 +70,37 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i>
+                                                <div class="btn-group btn-group-sm">
+
+                                                <!-- View Asset Button -->
+                                                <a href="{{ route('admin.assets.show', $asset->id) }}"
+                                                class="btn btn-outline-info btn-sm action-btn"
+                                                data-id="{{ $asset->id }}"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="View Asset"
+                                                aria-label="View">
+                                                <span class="btn-content">
+                                                <i class="fas fa-eye"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                 </a>
-                                                <a href="{{ route('admin.assets.edit', $asset->id) }}" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-edit"></i>
+
+                                                <!-- Edit Asset Button -->
+                                                <a href="{{ route('admin.assets.edit', $asset->id) }}"
+                                                class="btn btn-outline-primary btn-sm action-btn"
+                                                data-id="{{ $asset->id }}"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Edit Asset"
+                                                aria-label="Edit">
+                                                <span class="btn-content">
+                                                <i class="fas fa-edit"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                 </a>
+                                               </div>
+
                                             </td>
                                         </tr>
                                         @empty
@@ -93,6 +110,7 @@
                                         @endforelse
                                     </tbody>
                                 </table>
+                            </div>
                             </div>
                         </div>
                     </div>

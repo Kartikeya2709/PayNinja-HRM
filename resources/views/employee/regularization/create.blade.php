@@ -10,7 +10,7 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col-md-8 mx-auto">
+        <div class="col-md-12 mx-auto">
             <div class="card">
                 <div class="card-header justify-content-center mb-3">
                     <h5>New Attendance Regularization Request</h5>
@@ -48,11 +48,15 @@
                             </div>
 
                         </div>
-                        <div class="text-center">
-                            <button type="button" id="add-entry" class="btn btn-secondary margin-bottom">Add Another
-                                Date</button>
-                            <button type="submit" class="btn btn-primary">Submit Requests</button>
+                        <div class="d-flex gap-3 justify-content-center mt-4">
+                           <button type="button" id="add-entry" class="btn btn-secondary px-4 rounded-pill shadow-sm">
+                           <i class="bi bi-plus-circle me-2"></i>Add Another Date
+                           </button>
+                           <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                           <i class="bi bi-send-check me-2"></i>Submit Requests
+                           </button>
                         </div>
+
                     </form>
                 </div>
             </div>

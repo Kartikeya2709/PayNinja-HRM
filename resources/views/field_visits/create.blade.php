@@ -11,19 +11,14 @@
                 <div class="breadcrumb-item active">Schedule New Visit</div>
             </div>
         </div>
-
         <div class="section-body">
             <div class="row">
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header justify-content-center">
-                            <h5>Visit Details</h5>
+                            <h5 class="mb-3">Visit Details</h5>
                         </div>
-
-
-
-                        
-                        <div class="card-body">
+                            <div class="card-body">
                             <form action="{{ route('field-visits.store') }}" method="POST" id="fieldVisitForm">
                                 @csrf
                                 <div class="row">
@@ -37,8 +32,6 @@
                                         </div>
                                     </div>
                                 
-
-                               
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="visit_title">Visit Title <span class="text-danger">*</span></label>
@@ -150,13 +143,13 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-12 text-center">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-paper-plane"></i> Submit for Approval
-                                        </button>
-                                        <a href="{{ route('field-visits.index') }}" class="btn btn-danger">
-                                            <i class="fas fa-times"></i> Cancel
-                                        </a>
+                                    <div class="col-12 d-flex justify-content-center gap-3 mt-4">
+                                       <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                                       <i class="fas fa-paper-plane me-2"></i>Submit for Approval
+                                       </button>
+                                       <a href="{{ route('field-visits.index') }}" class="btn btn-danger px-4 rounded-pill shadow-sm">
+                                       <i class="fas fa-times me-2"></i>Cancel
+                                       </a>
                                     </div>
                                 </div>
                             </form>

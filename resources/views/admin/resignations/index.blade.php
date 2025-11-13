@@ -91,7 +91,7 @@
         <!-- Filters -->
          <div class="row px-1">
         <div class="card mt-4">
-            <div class="card-header">
+            <div class="card-header justify-content-center mb-3">
                 <h5>Filter Resignations</h5>
             </div>
             <div class="card-body">
@@ -148,14 +148,15 @@
                             <input type="date" name="date_to" class="form-control" value="{{ request('date_to') }}">
                         </div>
                     </div>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-filter"></i> Apply Filters
-                        </button>
-                        <a href="{{ route('admin.resignations.index') }}" class="btn btn-secondary">
-                            <i class="fas fa-times"></i> Clear Filters
-                        </a>
+                   <div class="col-12 d-flex gap-3 justify-content-center mt-4">
+                      <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                      <i class="fas fa-filter me-2"></i>Apply Filters
+                      </button>
+                           <a href="{{ route('admin.resignations.index') }}" class="btn btn-danger px-4 rounded-pill">
+                           <i class="fas fa-times me-2"></i>Clear Filters
+                           </a>
                     </div>
+
                 </form>
             </div>
         </div>
@@ -164,7 +165,7 @@
         <!-- Resignations Table -->
          <div class="row px-1">
         <div class="card mt-4">
-            <div class="card-header">
+            <div class="card-header justify-content-center mb-3">
                 <h5>Resignation Requests</h5>
             </div>
             <div class="card-body">

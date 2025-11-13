@@ -18,7 +18,7 @@
             <div class="col-12 px-1">
                 <div class="card">
                     <div class="card-header btn-center justify-content-center">
-                        <h5>Leave Balances</h5>
+                        <h5 class="mb-3">Leave Balances</h5>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -151,9 +151,13 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="form-group text-center">
-                                    <button type="submit" class="btn btn-primary">Submit Leave Request</button>
-                                <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-link btn-danger">Cancel</a>
+                                <div class="d-flex gap-3 justify-content-center">
+                                   <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                                   <i class="bi bi-send-check me-2"></i>Submit Leave Request
+                                   </button>
+                                   <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
+                                   <i class="bi bi-x-circle me-2"></i>Cancel
+                                   </a>
                                 </div>
                         </form>
                     </div>

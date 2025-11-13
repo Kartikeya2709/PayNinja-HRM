@@ -44,10 +44,15 @@
                             <small class="form-text text-muted">Check to make this employment type active</small>
                         </div>
 
-                        <div class="form-group mt-4 text-center">
-                            <button type="submit" class="btn btn-primary">Create Employment Type</button>
-                            <a href="{{ route('company.employment-types.index') }}" class="btn btn-danger">Cancel</a>
-                        </div>
+                      <div class="d-flex gap-3 justify-content-center mt-4">
+                         <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                         <i class="bi bi-save me-2"></i>Create Employment Type
+                         </button>
+                         <a href="{{ route('company.employment-types.index') }}" class="btn btn-danger px-4 rounded-pill">
+                         <i class="bi bi-x-circle me-2"></i>Cancel
+                         </a>
+                      </div>
+
                     </form>
                 </div>
             </div>

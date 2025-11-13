@@ -15,7 +15,7 @@
         <div class="section-body">
             <div class="row">
                 <div class="col-12">
-                    <div class="card">
+                    <div class="card field-visit-card">
                         <div class="card-header">
                             <h4>{{ $fieldVisit->visit_title }}</h4>
                             <div class="card-header-action">
@@ -84,150 +84,280 @@
                             <div class="row">
                                 <!-- Basic Information -->
                                 <div class="col-md-6">
-                                    <div class="card visit-info">
-                                        <div class="card-header">
-                                            <h5>Visit Information</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-12 mb-3">
-                                                    <strong>Employee:</strong><br>
-                                                    {{ $fieldVisit->employee->name }}
+                                    <div class="visit-info-card field-visit rounded-4 shadow-sm border-0 p-4 mb-4 position-relative overflow-hidden">
+                                       <!-- Floating Title -->
+                                       <div class="visit-info-title position-absolute top-0 start-0 w-100 text-center py-2">
+                                          <h5 class="fw-bold mb-0 text-white">
+                                          <i class="fas fa-briefcase me-2"></i>Visit Information
+                                          </h5>
+                                       </div>
+
+                                       <!-- Card Body -->
+                                       <div class="visit-info-content mt-5">
+                                          <div class="info-item mb-3">
+                                             <div class="d-flex align-items-center gap-3">
+                                                <div class="icon-circle bg-primary bg-opacity-10 text-primary">
+                                                   <i class="fas fa-user"></i>
                                                 </div>
-                                                <div class="col-12 mb-3">
-                                                    <strong>Reporting Manager:</strong><br>
-                                                    {{ $fieldVisit->reportingManager->name }}
+                                                <div>
+                                                   <h6 class="mb-1 fw-semibold text-dark">Employee</h6>
+                                                   <p class="mb-0 text-muted">{{ $fieldVisit->employee->name }}</p>
                                                 </div>
-                                                <div class="col-12 mb-3">
-                                                    <strong>Description:</strong><br>
-                                                    {{ $fieldVisit->visit_description ?: 'No description provided' }}
+                                             </div>
+                                          </div>
+
+                                          <div class="info-item mb-3">
+                                             <div class="d-flex align-items-center gap-3">
+                                                <div class="icon-circle bg-success bg-opacity-10 text-success">
+                                                   <i class="fas fa-user-tie"></i>
                                                 </div>
+                                            <div>
+                                               <h6 class="mb-1 fw-semibold text-dark">Reporting Manager</h6>
+                                               <p class="mb-0 text-muted">{{ $fieldVisit->reportingManager->name }}</p>
                                             </div>
                                         </div>
                                     </div>
+
+                                   <div class="info-item">
+                                      <div class="d-flex align-items-center gap-3">
+                                      <div class="icon-circle bg-warning bg-opacity-10 text-warning">
+                                         <i class="fas fa-align-left"></i>
+                                      </div>
+                                      <div>
+                                         <h6 class="mb-1 fw-semibold text-dark">Description</h6>
+                                         <p class="mb-0 text-muted">{{ $fieldVisit->visit_description ?: 'No description provided' }}</p>
+                                      </div>
+                                      </div>
+                                   </div>
                                 </div>
+                            </div>
+                            </div>
 
                                 <!-- Location Information -->
                                 <div class="col-md-6">
-                                    <div class="card visit-info">
-                                        <div class="card-header">
-                                            <h5>Location Details</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-12 mb-3">
-                                                    <strong>Location Name:</strong><br>
-                                                    {{ $fieldVisit->location_name }}
-                                                </div>
-                                                <div class="col-12 mb-3">
-                                                    <strong>Address:</strong><br>
-                                                    {{ $fieldVisit->location_address }}
-                                                </div>
-                                                @if($fieldVisit->latitude && $fieldVisit->longitude)
-                                                    <div class="col-12 mb-3">
-                                                        <strong>Coordinates:</strong><br>
-                                                        {{ $fieldVisit->latitude }}, {{ $fieldVisit->longitude }}
-                                                        <br>
-                                                        <a href="https://www.google.com/maps?q={{ $fieldVisit->latitude }},{{ $fieldVisit->longitude }}"
-                                                            target="_blank" class="btn btn-sm btn-info mt-1">
-                                                            <i class="fas fa-map-marker-alt"></i> View on Map
-                                                        </a>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div class="card field-visit location-info glass-card rounded-4 shadow-sm border-0 p-4 mb-4 position-relative overflow-hidden">
+                                <!-- Floating Title -->
+                                <div class="visit-info-title position-absolute top-0 start-0 w-100 text-center py-2">
+                                   <h5 class="fw-bold mb-0 text-white">
+                                   <i class="fas fa-map-marker-alt me-2"></i>Location Details
+                                   </h5>
                                 </div>
+
+                                <!-- Card Body -->
+                                <div class="location-info-content mt-5">
+                                   <div class="info-item mb-3">
+                                      <div class="d-flex align-items-center gap-3">
+                                         <div class="icon-circle bg-info bg-opacity-10 text-info">
+                                            <i class="fas fa-location-dot"></i>
+                                        </div>
+                                        <div>
+                                        <h6 class="mb-1 fw-semibold text-dark">Location Name</h6>
+                                        <p class="mb-0 text-muted">{{ $fieldVisit->location_name }}</p>
+                                        </div>
+                                     </div>
+                                   </div>
+
+                                  <div class="info-item mb-3">
+                                     <div class="d-flex align-items-center gap-3">
+                                        <div class="icon-circle bg-primary bg-opacity-10 text-primary">
+                                           <i class="fas fa-map"></i>
+                                        </div>
+                                    <div>
+                                       <h6 class="mb-1 fw-semibold text-dark">Address</h6>
+                                       <p class="mb-0 text-muted">{{ $fieldVisit->location_address }}</p>
+                                    </div>
+                               </div>
                             </div>
 
-                            <div class="row mt-3">
-                                <!-- Schedule Information -->
-                                <div class="col-md-6">
-                                    <div class="card visit-info">
-                                        <div class="card-header">
-                                            <h5>Schedule</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-12 mb-3">
-                                                    <strong>Scheduled Start:</strong><br>
-                                                    {{ $fieldVisit->scheduled_start_datetime->format('M d, Y H:i') }}
-                                                </div>
-                                                <div class="col-12 mb-3">
-                                                    <strong>Scheduled End:</strong><br>
-                                                    {{ $fieldVisit->scheduled_end_datetime->format('M d, Y H:i') }}
-                                                </div>
-                                                @if($fieldVisit->actual_start_datetime)
-                                                    <div class="col-12 mb-3">
-                                                        <strong>Actual Start:</strong><br>
-                                                        {{ $fieldVisit->actual_start_datetime->format('M d, Y H:i') }}
-                                                    </div>
-                                                @endif
-                                                @if($fieldVisit->actual_end_datetime)
-                                                    <div class="col-12 mb-3">
-                                                        <strong>Actual End:</strong><br>
-                                                        {{ $fieldVisit->actual_end_datetime->format('M d, Y H:i') }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            @if($fieldVisit->latitude && $fieldVisit->longitude)
+                           <div class="info-item">
+                              <div class="d-flex align-items-center gap-3">
+                                 <div class="icon-circle bg-success bg-opacity-10 text-success">
+                                    <i class="fas fa-compass"></i>
+                                 </div>
+                                 <div>
+                                    <h6 class="mb-1 fw-semibold text-dark">Coordinates</h6>
+                                    <p class="mb-1 text-muted">
+                                    {{ $fieldVisit->latitude }}, {{ $fieldVisit->longitude }}
+                                    </p>
+                                    <a href="https://www.google.com/maps?q={{ $fieldVisit->latitude }},{{ $fieldVisit->longitude }}"
+                                     target="_blank" class="btn btn-glass btn-sm btn-outline-info">
+                                    <i class="fas fa-map-marker-alt me-1"></i> View on Map
+                                    </a>
+                                 </div>
+                              </div>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                                <!-- Visit Notes & attachments -->
-                                <div class="col-md-6">
-                                    <div class="card visit-info">
-                                        <div class="card-header">
-                                            <h5>Visit Details</h5>
-                                        </div>
-                                        <div class="card-body">
-                                            @if($fieldVisit->visit_notes)
-                                                <div class="mb-3">
-                                                    <strong>Visit Notes:</strong><br>
-                                                    {{ $fieldVisit->visit_notes }}
-                                                </div>
-                                            @endif
 
-                                            @if($fieldVisit->manager_feedback)
-                                                <div class="mb-3">
-                                                    <strong>Manager Feedback:</strong><br>
-                                                    <div class="alert alert-info">
-                                                        {{ $fieldVisit->manager_feedback }}
-                                                    </div>
-                                                </div>
-                                            @endif
+            <div class="row mt-3">
+               <!-- Schedule Information -->
+               <div class="col-md-6">
+                                    
+                  <div class="card field-visit schedule-info glass-card rounded-4 shadow-sm border-0 p-4 mb-4 position-relative overflow-hidden">
+                     <!-- Floating Title -->
+                     <div class="visit-info-title position-absolute top-0 start-0 w-100 text-center py-2">
+                        <h5 class="fw-bold mb-0 text-white">
+                        <i class="fas fa-clock me-2"></i>Schedule
+                        </h5>
+                     </div>
 
-                                            @if($fieldVisit->visit_attachments && count($fieldVisit->visit_attachments) > 0)
-                                                <div class="mb-3">
-                                                    <strong>Visit Photos:</strong><br>
-                                                    <div class="row">
-                                                        @foreach($fieldVisit->visit_attachments as $attachment)
-                                                            <a href="{{ Storage::url($attachment) }}" target="_blank"
-                                                                class="btn btn-sm btn-primary">
-                                                                <i class="fas fa-image"></i> {{ basename($attachment) }}
-                                                            </a>
-                                                        @endforeach
-                                                    </div>
-                                                </div>
-                                            @endif
+                     <!-- Card Body -->
+                     <div class="schedule-info-content mt-5">
+                        <div class="info-item mb-3">
+                           <div class="d-flex align-items-center gap-3">
+                              <div class="icon-circle bg-primary bg-opacity-10 text-primary">
+                                 <i class="fas fa-calendar-day"></i>
+                              </div>
+                              <div>
+                                  <h6 class="mb-1 fw-semibold text-dark">Scheduled Start</h6>
+                                  <p class="mb-0 text-muted">
+                                  {{ $fieldVisit->scheduled_start_datetime->format('M d, Y H:i') }}
+                                  </p>
+                              </div>
+                           </div>
+                        </div>
 
-                                                @if($fieldVisit->approved_at && $fieldVisit->approver)
-                                                    <div class="mb-3">
-                                                        <strong>Approved By:</strong><br>
-                                                        {{ $fieldVisit->approver->name }} on
-                                                        {{ $fieldVisit->approved_at->format('M d, Y H:i') }}
-                                                    </div>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                        <div class="info-item mb-3">
+                           <div class="d-flex align-items-center gap-3">
+                              <div class="icon-circle bg-primary bg-opacity-10 text-primary">
+                                 <i class="fas fa-calendar-check"></i>
+                              </div>
+                                  <div>
+                                  <h6 class="mb-1 fw-semibold text-dark">Scheduled End</h6>
+                                  <p class="mb-0 text-muted">
+                                  {{ $fieldVisit->scheduled_end_datetime->format('M d, Y H:i') }}
+                                  </p>
+                                  </div>
+                            </div>
+            </div>
+
+            @if($fieldVisit->actual_start_datetime)
+                <div class="info-item mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-circle bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Actual Start</h6>
+                            <p class="mb-0 text-muted">
+                                {{ $fieldVisit->actual_start_datetime->format('M d, Y H:i') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($fieldVisit->actual_end_datetime)
+                <div class="info-item">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="icon-circle bg-danger bg-opacity-10 text-danger">
+                            <i class="fas fa-stop-circle"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Actual End</h6>
+                            <p class="mb-0 text-muted">
+                                {{ $fieldVisit->actual_end_datetime->format('M d, Y H:i') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+    </div>
+    
+    <!-- Visit Notes & attachments -->
+        <div class="col-md-6">
+            <div class="card field-visit visit-details glass-card rounded-4 shadow-sm border-0 p-4 mb-4 position-relative overflow-hidden">
+            <!-- Floating Title -->
+            <div class="visit-info-title  position-absolute top-0 start-0 w-100 text-center py-2">
+            <h5 class="fw-bold mb-0 text-white">
+                <i class="fas fa-clipboard-list me-2"></i>Visit Details
+            </h5>
+            </div>
+            <!-- Body Content -->
+            <div class="visit-details-content mt-5">
+               @if($fieldVisit->visit_notes)
+                <div class="info-item mb-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="icon-circle bg-primary bg-opacity-10 text-primary">
+                            <i class="fas fa-sticky-note"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Visit Notes</h6>
+                            <p class="mb-0 text-muted">{{ $fieldVisit->visit_notes }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($fieldVisit->manager_feedback)
+                <div class="info-item mb-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="icon-circle bg-info bg-opacity-10 text-info">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Manager Feedback</h6>
+                            <div class="alert alert-info mt-1 mb-0 py-2 px-3 rounded-3">
+                                {{ $fieldVisit->manager_feedback }}
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
+            @endif
+
+            @if($fieldVisit->visit_attachments && count($fieldVisit->visit_attachments) > 0)
+                <div class="info-item mb-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="icon-circle bg-warning bg-opacity-10 text-warning">
+                            <i class="fas fa-image"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Visit Photos</h6>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                @foreach($fieldVisit->visit_attachments as $attachment)
+                                    <a href="{{ Storage::url($attachment) }}" target="_blank" 
+                                        class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                                        <i class="fas fa-file-image me-1"></i>{{ basename($attachment) }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($fieldVisit->approved_at && $fieldVisit->approver)
+                <div class="info-item">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="icon-circle bg-success bg-opacity-10 text-success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 fw-semibold text-dark">Approved By</h6>
+                            <p class="mb-0 text-muted">
+                                {{ $fieldVisit->approver->name }} 
+                                <br><small>on {{ $fieldVisit->approved_at->format('M d, Y H:i') }}</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
     </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
 
     <!-- Approval Modal -->
     <div class="modal fade" id="approvalModal" tabindex="-1" role="dialog">

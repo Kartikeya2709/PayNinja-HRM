@@ -92,10 +92,15 @@
                                 </div>
                             </div>
 
-                            <div class="form-group text-center">
-                                <button type="submit" class="btn btn-primary">Create Leave Type</button>
-                                <a href="{{ route('company.leave-types.index') }}" class="btn btn-danger">Cancel</a>
-                            </div>
+                           <div class="d-flex gap-3 justify-content-center mt-4">
+                              <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                              <i class="bi bi-save me-2"></i>Create Leave Type
+                              </button>
+                              <a href="{{ route('company.leave-types.index') }}" class="btn btn-danger px-4 rounded-pill">
+                              <i class="bi bi-x-circle me-2"></i>Cancel
+                              </a>
+                           </div>
+
                         </form>
                     </div>
                 </div>

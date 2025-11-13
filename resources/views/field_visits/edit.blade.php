@@ -154,13 +154,13 @@
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-12 text-center">
-                                        <button type="submit" class="btn btn-primary">
-                                            <i class="fas fa-save"></i> Update Visit
-                                        </button>
-                                        <a href="{{ route('field-visits.show', $fieldVisit) }}" class="btn btn-danger">
-                                            <i class="fas fa-times"></i> Cancel
-                                        </a>
+                                    <div class="col-12 d-flex justify-content-center gap-3 mt-3">
+                                       <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                                       <i class="fas fa-save me-2"></i>Update Visit
+                                       </button>
+                                       <a href="{{ route('field-visits.show', $fieldVisit) }}" class="btn btn-danger px-4 rounded-pill shadow-sm">
+                                       <i class="fas fa-times me-2"></i>Cancel
+                                       </a>
                                     </div>
                                 </div>
                             </form>

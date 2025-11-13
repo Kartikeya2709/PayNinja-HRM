@@ -7,74 +7,65 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Asset Details</h3>
+                <div class="card-1">
+                    <h5 class="mb-0">Asset Details</h3>
                     <div class="card-tools">
                         <a href="{{ route('admin.assets.index') }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-arrow-left"></i> Back to List
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+            </div>
+                <div class="card-body card mt-4">
                     <div class="row">
-                        <div class="col-md-6">
-                            <table class="table table-bordered">
-                                <tr>
-                                    <th>Name</th>
-                                    <td>{{ $asset->name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Category</th>
-                                    <td>{{ $asset->category->name }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Asset Code</th>
-                                    <td>{{ $asset->asset_code }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Status</th>
-                                    <td>
-                                        <span class="badge badge-{{ $asset->status === 'available' ? 'success' : 'warning' }}">
-                                            {{ ucfirst($asset->status) }}
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Description</th>
-                                    <td>{{ $asset->description ?? '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Purchase Date</th>
-                                    <td>{{ $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '-' }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Current Assignment</th>
-                                    <td>
-                                        @if($asset->assignments && $asset->assignments->last() && $asset->assignments->last()->returned_date === null)
-                                            {{ $asset->assignments->last()->employee->name }}
-                                        @else
-                                            N/A
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th>Condition</th>
-                                    <td>
-                                        @if($asset->currentAssignment)
-                                            {{ $asset->currentAssignment->condition_on_assignment ??$asset->currentAssignment->condition_on_return }}
-                                        @else
-                                            {{ $asset->condition ?? 'N/A' }}
-                                        @endif
-                                    </td>
-                                </tr>
-                            </table>
+                        <div class="col-md-12">
+                            <div class="asset-card rounded-4 p-4">
+                                <div class="asset-info-card">
+                                <div class="accent-bar mb-3"></div>
+                                <h5 class="fw-bold text-dark mb-4">
+                                <i class="fas fa-cube me-2 text-primary"></i>Asset Details
+                                </h5>
+
+                                <div class="info-grid">
+                                <div><span>Name:</span> {{ $asset->name }}</div>
+                                <div><span>Category:</span> {{ $asset->category->name }}</div>
+                                <div><span>Asset Code:</span> {{ $asset->asset_code }}</div>
+                                <div>
+                                <span>Status:</span> 
+                                <span class="badge badge-{{ $asset->status === 'available' ? 'success' : 'warning' }}">
+                                {{ ucfirst($asset->status) }}
+                                </span>
+                                </div>
+                                <div><span>Description:</span> {{ $asset->description ?? '-' }}</div>
+                                <div><span>Purchase Date:</span> {{ $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '-' }}</div>
+                                <div>
+                                <span>Current Assignment:</span>
+                                @if($asset->assignments && $asset->assignments->last() && $asset->assignments->last()->returned_date === null)
+                                {{ $asset->assignments->last()->employee->name }}
+                                @else
+                                N/A
+                                @endif
+                                </div>
+                                <div>
+                                <span>Condition:</span>
+                                @if($asset->currentAssignment)
+                                {{ $asset->currentAssignment->condition_on_assignment ?? $asset->currentAssignment->condition_on_return }}
+                                @else
+                               {{ $asset->condition ?? 'N/A' }}
+                               @endif
+                               </div>
+                               </div>
+                               </div>
+                            </div>
+
                         </div>
                     </div>
-
+                </div>
                     <!-- Asset Assignment History -->
-                    <div class="row mt-5">
+                    <div class="row">
                         <div class="col-12">
-                            <h5>Assignment History</h5>
+                            <div class="card mt-4">
+                            <h5 class="text-center mb-3">Assignment History</h5>
                             <table class="table table-bordered table-striped">
                                 <thead>
                                     <tr>

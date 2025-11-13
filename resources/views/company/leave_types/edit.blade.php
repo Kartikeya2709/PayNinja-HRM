@@ -93,9 +93,13 @@
                                 </div>
                             </div>
 
-                            <div class="form-group ">
-                                <button type="submit" class="btn btn-primary">Update Leave Type</button>
-                                <a href="{{ route('company.leave-types.index') }}" class="btn btn-danger">Cancel</a>
+                           <div class="d-flex gap-3 justify-content-center mt-4">
+                              <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                              <i class="bi bi-save me-2"></i>Update Leave Type
+                              </button>
+                              <a href="{{ route('company.leave-types.index') }}" class="btn btn-danger px-4 rounded-pill">
+                              <i class="bi bi-x-circle me-2"></i>Cancel
+                              </a>
                             </div>
                         </form>
                     </div>
