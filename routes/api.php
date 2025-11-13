@@ -24,7 +24,7 @@ use App\Http\Controllers\API\DemoRequestController;
 |
 | Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| is assigned the "api" middleware group. Enjoy building your application!
 |
 */
 
@@ -66,7 +66,7 @@ Route::prefix('v1')->group(function () {
             Route::post('/apply', [LeaveController::class, 'applyLeave']);
             Route::post('/{id}/cancel', [LeaveController::class, 'cancelLeave']);
         }); 
- 
+  
         // Announcements 
         Route::prefix('announcements')->group(function () {
             Route::get('/', [AnnouncementController::class, 'getAnnouncements']);
@@ -102,9 +102,10 @@ Route::prefix('v1')->group(function () {
             Route::get('/upcoming/list ', [FieldVisitController::class, 'getUpcomingFieldVisits']);
             Route::get('/stats/summary', [FieldVisitController::class, 'getFieldVisitStats']);
             Route::post('/', [FieldVisitController::class, 'createFieldVisit']);
-            Route::post('/{id}/complete', [FieldVisitController::class, 'completeFieldVisit']);
-            Route::post('/{id}/start', [FieldVisitController::class, 'startFieldVisit']);
-        });  
+            Route::post('/{id}/approve', [FieldVisitController::class, 'approveFieldVisit']);
+            Route::post('/{id}/reject', [FieldVisitController::class, 'rejectFieldVisit']);
+            Route::get('/pending', [FieldVisitController::class, 'getPendingApprovals']);
+        });
 
         // Resignation Management
         Route::prefix('resignations')->group(function () {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\FieldVisit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\URL;
 class FieldVisitController extends Controller
 {
     /**
-     * Store a new field visit (employee creates it).
+     * Store a new field visit (employee creates it with all details).
      */
     public function store(Request $request)
     {
@@ -19,11 +20,43 @@ class FieldVisitController extends Controller
             'visit_description' => 'nullable|string',
             'location_name' => 'required|string|max:255',
             'location_address' => 'required|string|max:255',
-            'scheduled_start_datetime' => 'required|date',
-            'scheduled_end_datetime' => 'required|date|after:scheduled_start_datetime',
+            'visit_notes' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'visit_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20048',
+            'scheduled_start_datetime' => 'nullable|date',
+            'scheduled_end_datetime' => 'nullable|date|after:scheduled_start_datetime',
         ]);
 
         $employee = Auth::user()->employee;
+
+        // Only check for overlapping visits if both start and end dates are provided
+        // if ($request->filled('scheduled_start_datetime') && $request->filled('scheduled_end_datetime')) {
+        //     $startDateTime = Carbon::parse($request->scheduled_start_datetime);
+        //     $endDateTime = Carbon::parse($request->scheduled_end_datetime);
+            
+        //     $overlappingVisits = FieldVisit::where('employee_id', $employee->id)
+        //         ->where(function ($query) use ($startDateTime, $endDateTime) {
+        //             $query->where(function ($q) use ($startDateTime, $endDateTime) {
+        //                 // Check for overlapping time ranges
+        //                 $q->where('scheduled_start_datetime', '<', $endDateTime)
+        //                   ->where('scheduled_end_datetime', '>', $startDateTime);
+        //             })->whereIn('approval_status', ['approved'])
+        //               ;
+        //         })->exists();
+
+        //     if ($overlappingVisits) {   
+        //         return back()->withInput()->withErrors(['scheduled_start_datetime' => 'You already have an approved/active field visit during this time period. Please choose a different time slot.']);
+        //     }
+        // }
+
+        // Handle photo uploads
+        $photoPaths = [];
+        if ($request->hasFile('visit_photos')) {
+            foreach ($request->file('visit_photos') as $photo) {
+                $photoPaths[] = $photo->store('field-visit-photos', 'public');
+            }
+        }
 
         $fieldVisit = FieldVisit::create([
             'employee_id' => $employee->id,
@@ -32,11 +65,16 @@ class FieldVisitController extends Controller
             'visit_description' => $request->visit_description,
             'location_name' => $request->location_name,
             'location_address' => $request->location_address,
-            'scheduled_start_datetime' => $request->scheduled_start_datetime,
-            'scheduled_end_datetime' => $request->scheduled_end_datetime,
+            'latitude' => $request->latitude ?? null,
+            'longitude' => $request->longitude ?? null,
+            'visit_notes' => $request->visit_notes ?? 'N/A',
+            'visit_attachments' => $photoPaths,
+            'scheduled_start_datetime' => $request->scheduled_start_datetime ?? null,
+            'scheduled_end_datetime' => $request->scheduled_end_datetime ?? null,
+            'status' => 'scheduled'
         ]);
 
-        return redirect()->to('/field-visits')->with('success', 'Field visit created and sent for approval.');
+        return redirect()->to('/field-visits')->with('success', 'Field visit request submitted with details and sent for approval.');
     }
 
     /**
@@ -69,60 +107,6 @@ class FieldVisitController extends Controller
         $fieldVisit->reject($manager);
 
         return redirect()->back()->with('success', 'Field visit rejected.');
-    }
-
-    /**
-     * Employee starts visit after approval.
-     */
-    public function start(FieldVisit $fieldVisit)
-    {
-        $employee = Auth::user()->employee;
-
-        if ($employee->id !== $fieldVisit->employee_id || !$fieldVisit->isApproved()) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $fieldVisit->startVisit();
-
-        return redirect()->back()->with('success', 'Field visit started.');
-    }
-
-    /**
-     * Employee completes visit.
-     */
-public function complete(Request $request, FieldVisit $fieldVisit)
-{
-    $employee = Auth::user()->employee;
-
-        if ($employee->id !== $fieldVisit->employee_id || !$fieldVisit->isInProgress()) {
-            return response()->json(['error' => 'Unauthorized action.'], 403);
-        }
-
-        $request->validate([
-            'visit_notes' => 'required|string',
-            'visit_photos' => 'nullable|array',
-            'visit_photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:20048',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-        ]);
-
-        $photoPaths = [];
-        if ($request->hasFile('visit_photos')) {
-            foreach ($request->file('visit_photos') as $photo) {
-                $photoPaths[] = $photo->store('field-visit-photos', 'public');
-            }
-        }
-
-        $fieldVisit->completeVisit([
-            'visit_notes' => $request->visit_notes,
-            'visit_attachments' => $photoPaths,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-        ]);
-            //    return redirect()->back()->with('success', 'Field visit completed.');
-                // return response()->json(['success' => 'Field visit completed.']);
-
-        return redirect()->route('field-visits.index')->with('success', 'Field Visit completed successfully!');
     }
 
     /**
@@ -229,14 +213,34 @@ public function complete(Request $request, FieldVisit $fieldVisit)
             'visit_description' => 'nullable|string',
             'location_name' => 'required|string|max:255',
             'location_address' => 'required|string|max:255',
-            'scheduled_start_datetime' => 'required|date',
-            'scheduled_end_datetime' => 'required|date|after:scheduled_start_datetime',
+            'visit_notes' => 'nullable|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'visit_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20048',
+            'scheduled_start_datetime' => 'nullable|date',
+            'scheduled_end_datetime' => 'nullable|date|after:scheduled_start_datetime',
         ]);
 
-        $fieldVisit->update($request->only([
-            'visit_title', 'visit_description', 'location_name', 'location_address',
-            'scheduled_start_datetime', 'scheduled_end_datetime'
-        ]));
+        // Handle photo uploads
+        $photoPaths = $fieldVisit->visit_attachments ?? [];
+        if ($request->hasFile('visit_photos')) {
+            foreach ($request->file('visit_photos') as $photo) {
+                $photoPaths[] = $photo->store('field-visit-photos', 'public');
+            }
+        }
+
+        $fieldVisit->update([
+            'visit_title' => $request->visit_title,
+            'visit_description' => $request->visit_description,
+            'location_name' => $request->location_name,
+            'location_address' => $request->location_address,
+            'latitude' => $request->latitude ?? null,
+            'longitude' => $request->longitude ?? null,
+            'visit_notes' => $request->visit_notes ?? 'N/A',
+            'visit_attachments' => $photoPaths,
+            'scheduled_start_datetime' => $request->scheduled_start_datetime ?? null,
+            'scheduled_end_datetime' => $request->scheduled_end_datetime ?? null,
+        ]);
 
         return redirect()->route('field-visits.show', $fieldVisit)->with('success', 'Field visit updated successfully.');
     }

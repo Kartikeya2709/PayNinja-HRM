@@ -7,7 +7,7 @@ use App\Models\FieldVisit;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Current;
+use Illuminate\Support\Facades\Validator;
 
 class FieldVisitController extends Controller
 {
@@ -17,8 +17,8 @@ class FieldVisitController extends Controller
     public function getFieldVisits(Request $request)
     {
         try {
-            $validator = validator($request->all(), [
-                'status' => 'nullable|in:scheduled,in_progress,completed,cancelled',
+            $validator = Validator::make($request->all(), [
+                'status' => 'nullable|in:scheduled,approved,completed,cancelled',
                 'approval_status' => 'nullable|in:pending,approved,rejected',
                 'start_date' => 'nullable|date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
@@ -106,8 +106,6 @@ class FieldVisitController extends Controller
                     'longitude' => $visit->longitude,
                     'scheduled_start_datetime' => $visit->scheduled_start_datetime,
                     'scheduled_end_datetime' => $visit->scheduled_end_datetime,
-                    'actual_start_datetime' => $visit->actual_start_datetime,
-                    'actual_end_datetime' => $visit->actual_end_datetime,
                     'status' => $visit->status,
                     'approval_status' => $visit->approval_status,
                     'visit_notes' => $visit->visit_notes,
@@ -129,7 +127,7 @@ class FieldVisitController extends Controller
                 'total_visits' => $query->count(),
                 'status_summary' => [
                     'scheduled' => $query->where('status', 'scheduled')->count(),
-                    'in_progress' => $query->where('status', 'in_progress')->count(),
+                    'approved' => $query->where('status', 'approved')->count(),
                     'completed' => $query->where('status', 'completed')->count(),
                     'cancelled' => $query->where('status', 'cancelled')->count()
                 ],
@@ -186,8 +184,6 @@ class FieldVisitController extends Controller
                 'longitude' => $visit->longitude,
                 'scheduled_start_datetime' => $visit->scheduled_start_datetime,
                 'scheduled_end_datetime' => $visit->scheduled_end_datetime,
-                'actual_start_datetime' => $visit->actual_start_datetime,
-                'actual_end_datetime' => $visit->actual_end_datetime,
                 'status' => $visit->status,
                 'approval_status' => $visit->approval_status,
                 'visit_notes' => $visit->visit_notes,
@@ -262,8 +258,8 @@ class FieldVisitController extends Controller
             'total_visits' => $employee->fieldVisits()->count(),
             'completed_visits' => $employee->fieldVisits()->where('status', 'completed')->count(),
             'pending_visits' => $employee->fieldVisits()->where('status', 'scheduled')->count(),
-            'in_progress_visits' => $employee->fieldVisits()->where('status', 'in_progress')->count(),
-            'approved_visits' => $employee->fieldVisits()->where('approval_status', 'approved')->count(),
+            'approved_visits' => $employee->fieldVisits()->where('status', 'approved')->count(),
+            'approved_visits_count' => $employee->fieldVisits()->where('approval_status', 'approved')->count(),
             'pending_approval_visits' => $employee->fieldVisits()->where('approval_status', 'pending')->count(),
         ];
 
@@ -272,9 +268,11 @@ class FieldVisitController extends Controller
         ]);
     }
 
-    public function CreateFieldVisit()
+    /**
+     * Get pending approvals for managers
+     */
+    public function getPendingApprovals()
     {
-
         $user = Auth::user();
         $employee = $user->employee;
 
@@ -282,12 +280,60 @@ class FieldVisitController extends Controller
             return response()->json(['message' => 'Employee record not found'], 404);
         }
 
-        $validator = validator(request()->all(), [
+        $pendingVisits = FieldVisit::where('reporting_manager_id', $employee->id)
+            ->where('approval_status', 'pending')
+            ->with(['employee'])
+            ->orderBy('scheduled_start_datetime', 'desc')
+            ->get()
+            ->map(function ($visit) {
+                return [
+                    'id' => $visit->id,
+                    'visit_title' => $visit->visit_title,
+                    'visit_description' => $visit->visit_description,
+                    'location_name' => $visit->location_name,
+                    'location_address' => $visit->location_address,
+                    'latitude' => $visit->latitude,
+                    'longitude' => $visit->longitude,
+                    'scheduled_start_datetime' => $visit->scheduled_start_datetime,
+                    'scheduled_end_datetime' => $visit->scheduled_end_datetime,
+                    'visit_notes' => $visit->visit_notes,
+                    'visit_attachments' => $visit->visit_attachments,
+                    'employee' => [
+                        'id' => $visit->employee->id,
+                        'name' => $visit->employee->name,
+                        'employee_code' => $visit->employee->employee_code,
+                    ],
+                    'created_at' => $visit->created_at,
+                ];
+            });
+
+        return response()->json([
+            'pending_approvals' => $pendingVisits
+        ]);
+    }
+
+    /**
+     * Create a new field visit with all details
+     */
+    public function createFieldVisit(Request $request)
+    {
+        $user = Auth::user();
+        $employee = $user->employee;
+
+        if (!$employee) {
+            return response()->json(['message' => 'Employee record not found'], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
             'visit_title' => 'required|string|max:255',
             'visit_description' => 'nullable|string',
             'location_name' => 'required|string|max:255',
             'location_address' => 'required|string|max:500',
-            'scheduled_start_datetime' => 'required|date|after:now',
+            'visit_notes' => 'string',
+            'latitude' => 'numeric',
+            'longitude' => 'numeric',
+            'visit_photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:20048',
+            'scheduled_start_datetime' => 'required|date',
             'scheduled_end_datetime' => 'required|date|after:scheduled_start_datetime',
         ]);
 
@@ -297,13 +343,48 @@ class FieldVisitController extends Controller
 
         $validated = $validator->validated();
 
+        // Edge Case 1: Check for overlapping approved/active visits
+        // $startDateTime = Carbon::parse($validated['scheduled_start_datetime']);
+        // $endDateTime = Carbon::parse($validated['scheduled_end_datetime']);
+        
+        // $overlappingVisits = FieldVisit::where('employee_id', $employee->id)
+        //     ->where(function ($query) use ($startDateTime, $endDateTime) {
+        //         // Check for time overlap
+        //         $query->where('scheduled_start_datetime', '<', $endDateTime)
+        //               ->where('scheduled_end_datetime', '>', $startDateTime)
+        //               ->where(function ($q) {
+        //                   // Check for approved visits OR visits with active statuses
+        //                   $q->where('approval_status', 'approved')
+        //                     ->orWhereIn('status', ['completed']);
+        //               });
+        //     })->exists();
+
+        // if ($overlappingVisits) {
+        //     return response()->json([
+        //         'message' => 'You already have an approved field visit during this time period. Please choose a different time slot.',
+        //         'error_code' => 'OVERLAPPING_VISIT_FOUND'
+        //     ], 409);
+        // }
+
+        // Handle photo uploads
+        $photoPaths = [];
+        if ($request->hasFile('visit_photos')) {
+            foreach ($request->file('visit_photos') as $photo) {
+                $photoPaths[] = $photo->store('field-visit-photos', 'public');
+            }
+        }
+
         $fieldVisit = FieldVisit::create([
             'employee_id' => $employee->id,
+            'reporting_manager_id' => $employee->reporting_manager_id,
             'visit_title' => $validated['visit_title'],
             'visit_description' => $validated['visit_description'] ?? null,
-            'reporting_manager_id' => $employee->reporting_manager_id,
             'location_name' => $validated['location_name'],
             'location_address' => $validated['location_address'],
+            'latitude' => $validated['latitude'] ?? null,
+            'longitude' => $validated['longitude'] ?? null,
+            'visit_notes' => $validated['visit_notes'] ?? 'N/A',
+            'visit_attachments' => $photoPaths,
             'scheduled_start_datetime' => $validated['scheduled_start_datetime'],
             'scheduled_end_datetime' => $validated['scheduled_end_datetime'],
             'status' => 'scheduled',
@@ -311,80 +392,115 @@ class FieldVisitController extends Controller
         ]);
 
         return response()->json([
-            'message' => 'Field visit created successfully',
-            'field_visit' => $fieldVisit
+            'message' => 'Field visit request created successfully',
+            'field_visit' => [
+                'id' => $fieldVisit->id,
+                'visit_title' => $fieldVisit->visit_title,
+                'status' => $fieldVisit->status,
+                'approval_status' => $fieldVisit->approval_status,
+            ]
         ], 201);
-
-
     }
 
-    public function StartFieldVisit()
+    /**
+     * Approve a field visit
+     */
+    public function approveFieldVisit($id)
     {
         $user = Auth::user();
         $employee = $user->employee;
 
-        $fieldVisit = FieldVisit::where('employee_id', $employee->id)
-            ->where('id', request()->id)
-            ->where('status', 'scheduled')
-            ->first();
+        if (!$employee) {
+            return response()->json(['message' => 'Employee record not found'], 404);
+        }
 
-        if (!$fieldVisit) {
-            return response()->json(['message' => 'Field visit not found or cannot be started'], 404);
+        $fieldVisit = FieldVisit::findOrFail($id);
+
+        // Check if user is the reporting manager
+        if ($fieldVisit->reporting_manager_id !== $employee->id && !$this->hasAdminRole($user)) {
+            return response()->json(['message' => 'Unauthorized to approve this field visit'], 403);
+        }
+
+        // Check if visit is still pending
+        if ($fieldVisit->approval_status !== 'pending') {
+            return response()->json(['message' => 'Field visit is not pending approval'], 400);
         }
 
         $fieldVisit->update([
-            'actual_start_datetime' => now(),
-            'status' => 'in_progress',
+            'approval_status' => 'approved',
+            'approved_at' => now(),
+            'approved_by' => $employee->id,
+            'status' => 'approved'
         ]);
 
         return response()->json([
-            'message' => 'Field visit started successfully',
-            'field_visit' => $fieldVisit
+            'message' => 'Field visit approved successfully',
+            'field_visit' => [
+                'id' => $fieldVisit->id,
+                'approval_status' => $fieldVisit->approval_status,
+                'status' => $fieldVisit->status,
+                'approved_at' => $fieldVisit->approved_at,
+            ]
         ]);
     }
 
-    public function CompleteFieldVisit()
+    /**
+     * Reject a field visit
+     */
+    public function rejectFieldVisit(Request $request, $id)
     {
         $user = Auth::user();
         $employee = $user->employee;
 
-        $fieldVisit = FieldVisit::where('employee_id', $employee->id)
-            ->where('id', request()->id)
-            ->where('status', 'in_progress')
-            ->first();
+        if (!$employee) {
+            return response()->json(['message' => 'Employee record not found'], 404);
+        }
 
-        $validator = validator(request()->all(), [
-            'visit_notes' => 'nullable|string',
-            'manager_feedback' => 'nullable|string',
-            'visit_attachments' => 'nullable|array',
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-            'visit_attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048',
+        $validator = Validator::make($request->all(), [
+            'manager_feedback' => 'required|string|max:1000',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $validated = $validator->validated();
+        $fieldVisit = FieldVisit::findOrFail($id);
 
-        if (!$fieldVisit) {
-            return response()->json(['message' => 'Field visit not found or not in progress'], 404);
+        // Check if user is the reporting manager
+        if ($fieldVisit->reporting_manager_id !== $employee->id && !$this->hasAdminRole($user)) {
+            return response()->json(['message' => 'Unauthorized to reject this field visit'], 403);
         }
 
+        // Check if visit is still pending
+        if ($fieldVisit->approval_status !== 'pending') {
+            return response()->json(['message' => 'Field visit is not pending approval'], 400);
+        }
+
+        $validated = $validator->validated();
+
         $fieldVisit->update([
-            'actual_end_datetime' => now(),
-            'status' => 'completed',
-            'visit_notes' => $validated['visit_notes'] ?? $fieldVisit->visit_notes,
-            'manager_feedback' => $validated['manager_feedback'] ?? $fieldVisit->manager_feedback,
-            'latitude' => $validated['latitude'] ?? $fieldVisit->latitude,
-            'longitude' => $validated['longitude'] ?? $fieldVisit->longitude,
+            'approval_status' => 'rejected',
+            'approved_at' => now(),
+            'approved_by' => $employee->id,
+            'manager_feedback' => $validated['manager_feedback'],
         ]);
 
         return response()->json([
-            'message' => 'Field visit completed successfully',
-            'field_visit' => $fieldVisit
+            'message' => 'Field visit rejected successfully',
+            'field_visit' => [
+                'id' => $fieldVisit->id,
+                'approval_status' => $fieldVisit->approval_status,
+                'approved_at' => $fieldVisit->approved_at,
+                'manager_feedback' => $fieldVisit->manager_feedback,
+            ]
         ]);
     }
 
+    /**
+     * Helper method to check if user has admin roles
+     */
+    private function hasAdminRole($user)
+    {
+        return $user->hasRole && method_exists($user, 'hasRole') ? $user->hasRole(['admin', 'company_admin']) : false;
+    }
 }
