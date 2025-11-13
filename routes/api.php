@@ -50,6 +50,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/history', [AttendanceController::class, 'getAttendanceHistory']);
             Route::get('/check-in-out', [AttendanceController::class, 'getAttendanceSettingsAndToday']);
             Route::post('/check-in', [AttendanceController::class, 'checkIn']);
+            Route::post('/validate-location', [AttendanceController::class, 'validateLocation']);
             Route::post('/check-out', [AttendanceController::class, 'checkOut']);
 
             // Regularization

@@ -285,4 +285,37 @@ class AttendanceController extends BaseApiController
             return $this->sendError('Error during check-out', [$e->getMessage()], 500);
         }
     }
+
+    /**
+     * Validate user location for attendance
+     */
+    public function validateLocation(Request $request)
+    {
+        try {
+            $validator = validator($request->all(), [
+                'latitude' => 'required|numeric|between:-90,90',
+                'longitude' => 'required|numeric|between:-180,180',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->sendError('Validation Error', $validator->errors()->toArray(), 422);
+            }
+
+            $employee = Auth::user()->employee;
+            $validated = $validator->validated();
+            $latitude = (float) $validated['latitude'];
+            $longitude = (float) $validated['longitude'];
+
+            // Validate location using AttendanceService
+            $result = $this->attendanceService->validateLocation(
+                $latitude, 
+                $longitude, 
+                $employee->id
+            );
+
+            return $this->sendResponse($result, 'Location validation completed');
+        } catch (\Exception $e) {
+            return $this->sendError('Error validating location', [$e->getMessage()], 500);
+        }
+    }
 }

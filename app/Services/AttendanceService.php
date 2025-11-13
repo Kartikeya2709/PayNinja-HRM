@@ -25,9 +25,7 @@ class AttendanceService
     {
         $this->companyId = $companyId;
     }
-    /**
-     * Record employee check-in
-     */
+    
     /**
      * Get office timings from settings
      */
@@ -188,7 +186,7 @@ class AttendanceService
             return [
                 'success' => true,
                 'within_allowed_area' => true,
-                'message' => 'Location validation is not required or employee is exempted.'
+                'message' => 'employee is exempted'
             ];
         }
         
@@ -239,17 +237,74 @@ class AttendanceService
     protected function getAddressFromCoordinates($latitude, $longitude)
     {
         try {
-            $apiKey = config('services.google.maps_api_key');
-            $url = "https://maps.googleapis.com/maps/api/geocode/json?latlng={$latitude},{$longitude}&key={$apiKey}";
+            $apiKey = config('services.krutrim.maps_api_key');
+            if (empty($apiKey)) {
+                \Log::warning('OLA Maps API key not configured');
+                return null;
+            }
+
+            // Generate unique request IDs for OLA Maps
+            $requestId = \Str::uuid()->toString();
+            $correlationId = \Str::uuid()->toString();
+
+            $url = "https://api.olamaps.io/places/v1/reverse-geocode";
+            $params = http_build_query([
+                'latlng' => "{$latitude},{$longitude}",
+                'api_key' => $apiKey,
+                'language' => 'en'
+            ]);
             
-            $response = file_get_contents($url);
+            $fullUrl = $url . '?' . $params;
+            
+            // Initialize cURL for better error handling
+            $ch = curl_init();
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $fullUrl,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 10,
+                CURLOPT_HTTPHEADER => [
+                    'X-Request-Id: ' . $requestId,
+                    'X-Correlation-Id: ' . $correlationId,
+                    'Accept: application/json',
+                    'User-Agent: PayNinja-HRM/1.0'
+                ]
+            ]);
+            
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error = curl_error($ch);
+            curl_close($ch);
+            
+            if ($error) {
+                \Log::error('OLA Maps cURL error: ' . $error);
+                return null;
+            }
+            
+            if ($httpCode !== 200) {
+                \Log::warning('OLA Maps API returned HTTP code: ' . $httpCode);
+                return null;
+            }
+            
             $data = json_decode($response, true);
             
-            if ($data && $data['status'] === 'OK' && !empty($data['results'][0]['formatted_address'])) {
+            // Check for successful response
+            if ($data && $data['status'] === 'ok' && !empty($data['results'][0]['formatted_address'])) {
                 return $data['results'][0]['formatted_address'];
             }
+            
+            // Log unexpected response format
+            \Log::warning('OLA Maps API response format unexpected', [
+                'response' => $data,
+                'latitude' => $latitude,
+                'longitude' => $longitude
+            ]);
+            
         } catch (\Exception $e) {
-            \Log::error('Reverse geocoding failed: ' . $e->getMessage());
+            \Log::error('OLA Maps reverse geocoding failed: ' . $e->getMessage(), [
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'trace' => $e->getTraceAsString()
+            ]);
         }
         
         return null;
@@ -298,7 +353,7 @@ class AttendanceService
         if ($existingAttendance) {
             return [
                 'success' => false,
-                'message' => 'You have already checked in today.',
+                'message' => "You have already checked in today at $existingAttendance  " ,
                 'error_type' => 'already_checked_in',
                 'attendance' => $existingAttendance
             ];
@@ -397,7 +452,6 @@ class AttendanceService
             'current_time_check' => $now->format('H:i:s'),
             'office_end_time' => $officeEnd->format('H:i:s')
         ]);
-
 
         
         // Check if it's a holiday or academic holiday
@@ -534,143 +588,130 @@ class AttendanceService
             ];
         }
     }
-/**
- * Record employee check-out with optional geolocation
- *
- * @param Employee $employee
- * @param string|null $location
- * @param float|null $userLat
- * @param float|null $userLng
- * @param string|null $remarks
- * @return array
- */
-public function checkOut(Employee $employee, $location = null, $userLat = null, $userLng = null, $remarks = null)
-{
-    $today = now()->format('Y-m-d');
-    $now = now();
-    
-    try {
-        // Check if already checked out today
-        $attendance = Attendance::where('employee_id', $employee->id)
-            ->whereDate('date', $today)
-            ->first();
-            
-        if (!$attendance) {
-            return [
-                'success' => false,
-                'message' => 'No check-in found for today. Please check in first.',
-                'error_type' => 'no_check_in'
-            ];
-        }
-        
-        // Check if already checked out
-        if ($attendance->check_out) {
-            return [
-                'success' => false,
-                'message' => 'You have already checked out today.',
-                'error_type' => 'already_checked_out',
-                'attendance' => $attendance
-            ];
-        }
 
-        // if ($attendance->check_out) {
-        //     return [
-        //         'success' => false,
-        //         'message' => 'Already checked out today',
-        //         'error_type' => 'already_checked_out'
-        //     ];
-        // }
+    /**
+     * Record employee check-out with optional geolocation
+     *
+     * @param Employee $employee
+     * @param string|null $location
+     * @param float|null $userLat
+     * @param float|null $userLng
+     * @param string|null $remarks
+     * @return array
+     */
+    public function checkOut(Employee $employee, $location = null, $userLat = null, $userLng = null, $remarks = null)
+    {
+        $today = now()->format('Y-m-d');
+        $now = now();
         
-        // Get attendance settings
-        $settings = $this->getAttendanceSettings();
-        
-        // Check geolocation if enabled
-        if ($settings->enable_geolocation) {
-            // If employee is exempt, still require coordinates but skip radius enforcement
-            $isExempt = false;
-            try {
-                $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
-                    ->latest('updated_at')
-                    ->withoutGlobalScopes()
-                    ->first();
-                $isExempt = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id) : false;
-            } catch (\Throwable $t) {
-                \Log::warning('Failed checking geolocation exemption (checkout): ' . $t->getMessage());
-            }
-
-            if ($userLat === null || $userLng === null) {
+        try {
+            // Check if already checked out today
+            $attendance = Attendance::where('employee_id', $employee->id)
+                ->whereDate('date', $today)
+                ->first();
+                
+            if (!$attendance) {
                 return [
                     'success' => false,
-                    'message' => 'Location is required for check-out'
+                    'message' => 'No check-in found for today. Please check in first.',
+                    'error_type' => 'no_check_in'
                 ];
             }
             
-            if (!$isExempt) {
-                $locationCheck = $this->isWithinAllowedRadius(
-                    $userLat, 
-                    $userLng, 
-                    $settings->office_latitude, 
-                    $settings->office_longitude, 
-                    $settings->geofence_radius
-                );
-                
-                if (!$locationCheck['success']) {
-                    return [
-                        'success' => false,
-                        'message' => $locationCheck['message']
-                    ];
-                }
+            // Check if already checked out
+            if ($attendance->check_out) {
+                return [
+                    'success' => false,
+                    'message' => 'You have already checked out today.',
+                    'error_type' => 'already_checked_out',
+                    'attendance' => $attendance
+                ];
             }
             
-            // Store the exact location with coordinates
-            $location = $location ?: "$userLat,$userLng";
-        }
-        
-        // Prepare check-out data
-        $checkOutData = [
-            'check_out' => $now->format('H:i:s'),
-            'check_out_location' => $location,
-            'status' => $this->determineCheckOutStatus($attendance, $now)
-        ];
-        
-        // Add remarks if provided
-        if ($remarks) {
-            $checkOutData['remarks'] = $attendance->remarks 
-                ? $attendance->remarks . ' ' . $remarks 
-                : $remarks;
-        }
-        
-        // Add geolocation data if available
-        if ($userLat && $userLng) {
-            $checkOutData['check_out_latitude'] = $userLat;
-            $checkOutData['check_out_longitude'] = $userLng;
-        }
-        
-        $attendance->update($checkOutData);
+            // Get attendance settings
+            $settings = $this->getAttendanceSettings();
+            
+            // Check geolocation if enabled
+            if ($settings->enable_geolocation) {
+                // If employee is exempt, still require coordinates but skip radius enforcement
+                $isExempt = false;
+                try {
+                    $settingsModel = \App\Models\AttendanceSetting::where('company_id', $employee->company_id)
+                        ->latest('updated_at')
+                        ->withoutGlobalScopes()
+                        ->first();
+                    $isExempt = $settingsModel ? $settingsModel->isEmployeeExemptFromGeolocation($employee->id) : false;
+                } catch (\Throwable $t) {
+                    \Log::warning('Failed checking geolocation exemption (checkout): ' . $t->getMessage());
+                }
 
-        // Log the check-out
-        $this->logAttendanceAction($employee, 'Check Out', $location);
+                if ($userLat === null || $userLng === null) {
+                    return [
+                        'success' => false,
+                        'message' => 'Location is required for check-out'
+                    ];
+                }
+                
+                if (!$isExempt) {
+                    $locationCheck = $this->isWithinAllowedRadius(
+                        $userLat, 
+                        $userLng, 
+                        $settings->office_latitude, 
+                        $settings->office_longitude, 
+                        $settings->geofence_radius
+                    );
+                    
+                    if (!$locationCheck['success']) {
+                        return [
+                            'success' => false,
+                            'message' => $locationCheck['message']
+                        ];
+                    }
+                }
+                
+                // Store the exact location with coordinates
+                $location = $location ?: "$userLat,$userLng";
+            }
+            
+            // Prepare check-out data
+            $checkOutData = [
+                'check_out' => $now->format('H:i:s'),
+                'check_out_location' => $location,
+                'status' => $this->determineCheckOutStatus($attendance, $now)
+            ];
+            
+            // Add remarks if provided
+            if ($remarks) {
+                $checkOutData['remarks'] = $attendance->remarks 
+                    ? $attendance->remarks . ' ' . $remarks 
+                    : $remarks;
+            }
+            
+            // Add geolocation data if available
+            if ($userLat && $userLng) {
+                $checkOutData['check_out_latitude'] = $userLat;
+                $checkOutData['check_out_longitude'] = $userLng;
+            }
+            
+            $attendance->update($checkOutData);
 
-        return [
-            'success' => true,
-            'message' => 'Checked out successfully!',
-            'attendance' => $attendance
-        ];
-    } catch (\Exception $e) {
-        \Log::error('Check-out failed: ' . $e->getMessage());
-        // Get office timings
-        $officeTimings = $this->getOfficeTimings();
-        $checkIn = Carbon::parse($checkInTime);
-        $officeStart = Carbon::parse($checkIn->toDateString() . ' ' . $officeTimings->office_start_time);
-        $graceEnd = (clone $officeStart)->add($officeTimings->grace_period);
+            // Log the check-out
+            $this->logAttendanceAction($employee, 'Check Out', $location);
 
-        if ($checkIn->gt($graceEnd)) {
-            return 'Late';
+            return [
+                'success' => true,
+                'message' => 'Checked out successfully!',
+                'attendance' => $attendance
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Check-out failed: ' . $e->getMessage());
+            
+            return [
+                'success' => false,
+                'message' => 'Check-out failed: ' . $e->getMessage()
+            ];
         }
-
-        return 'Present';
     }
-}
 
     /**
      * Determine if check-out is early based on shift
@@ -880,11 +921,11 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
      */
     public function markAbsentEmployees($date = null)
     {
-        $user=auth()->user();
+        $user = auth()->user();
         $now = now();
         $date = $date ? Carbon::parse($date) : $now;
         $dateString = $date->toDateString();
-        // dd($user);
+
         // Get all unique company IDs that have employees
         $companyIds = Employee::distinct()->pluck('company_id');
         
@@ -929,21 +970,6 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
             }
             
             if ($this->isHoliday($date)) {
-                // Create or update attendance record with status 'Holiday'
-            //     Attendance::updateOrCreate(
-            //         [
-            //             'employee_id' => $employee->id,
-            //             'date' => $dateString
-            //         ],
-            //         [
-            //             'status' => 'Holiday',
-            //             'check_in_status' => 'Holiday',
-            //             'check_in_remarks' => 'Holiday - ' . $this->getHolidayName($date, $companyId),
-            //             'office_start_time' => $settings->office_start_time,
-            //             'office_end_time' => $settings->office_end_time,
-            //             'grace_period' => $settings->grace_period
-            //         ]
-            //     );
                 continue;
             }
             
@@ -1007,7 +1033,6 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
                     }
                 }
 
-
                 // If we reach here, the employee is not on leave and hasn't checked in
                 try {
                     // Mark as absent
@@ -1026,9 +1051,8 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
 
                     $markedAbsent++;
                     $companyMarkedAbsent++;
-                    $absentNames[] = $employee->name; // ← Add this line to collect the name
+                    $absentNames[] = $employee->name;
 
-                    
                     \Log::info('Marked employee as absent', [
                         'employee_id' => $employee->id,
                         'company_id' => $companyId,
@@ -1045,7 +1069,7 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
                         'trace' => $e->getTraceAsString()
                     ]);
                 }
-            } // End of employee loop
+            }
             
             // Log summary for this company
             \Log::info('Finished processing auto-absence for company', [
@@ -1054,14 +1078,12 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
                 'employees_processed' => $employees->count(),
                 'marked_absent' => $companyMarkedAbsent
             ]);
-        } // End of company loop
+        }
         
-        // return $markedAbsent;
         return [
             'count' => $markedAbsent,
             'names' => $absentNames,
         ];
-        
     }
 
     /**
@@ -1160,7 +1182,6 @@ public function checkOut(Employee $employee, $location = null, $userLat = null, 
         if (Auth::check()) {
             $companyId = Auth::user()->company_id;
         }
-
 
         // Check AcademicHoliday (date range based)
         $isAcademicHoliday = \App\Models\AcademicHoliday::where('company_id', $companyId)
