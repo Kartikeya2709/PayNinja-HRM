@@ -71,14 +71,14 @@ class FieldVisit extends Model
         return $this->status === 'scheduled';
     }
 
-    public function isInProgress()
-    {
-        return $this->status === 'in_progress';
-    }
-
     public function isCompleted()
     {
         return $this->status === 'completed';
+    }
+
+    public function isCancelled()
+    {
+        return $this->status === 'cancelled';
     }
 
     public function isPendingApproval()
@@ -91,41 +91,16 @@ class FieldVisit extends Model
         return $this->approval_status === 'approved';
     }
 
+    public function isRejected()
+    {
+        return $this->approval_status === 'rejected';
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Actions
     |--------------------------------------------------------------------------
     */
-    public function startVisit()
-    {
-        $this->update([
-            'status' => 'in_progress',
-            'actual_start_datetime' => now(),
-        ]);
-    }
-
-    // public function completeVisit(array $data)
-    // {
-    //     $this->update([
-    //         'status' => 'completed',
-    //         'actual_end_datetime' => now(),
-    //         'visit_notes' => $data['visit_notes'] ?? null,
-    //         'visit_attachments' => $data['visit_attachments'] ?? null,
-    //     ]);
-    // }
-
-
-    public function completeVisit(array $data)
-    {
-        $this->update([
-            'status' => 'completed',
-            'actual_end_datetime' => now(),
-            'visit_notes' => $data['visit_notes'] ?? null,
-            'visit_attachments' => $data['visit_attachments'] ?? null,
-            'latitude' => $data['latitude'] ?? $this->latitude,
-            'longitude' => $data['longitude'] ?? $this->longitude,
-        ]);
-    }
 
     public function approve(Employee $manager)
     {
@@ -133,6 +108,7 @@ class FieldVisit extends Model
             'approval_status' => 'approved',
             'approved_at' => now(),
             'approved_by' => $manager->id,
+            'status' => 'completed'
         ]);
     }
 
@@ -142,6 +118,7 @@ class FieldVisit extends Model
             'approval_status' => 'rejected',
             'approved_at' => now(),
             'approved_by' => $manager->id,
+            'status' => 'completed'
         ]);
     }
 }

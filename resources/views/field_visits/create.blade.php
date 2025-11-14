@@ -19,7 +19,7 @@
                             <h5 class="mb-3">Visit Details</h5>
                         </div>
                             <div class="card-body">
-                            <form action="{{ route('field-visits.store') }}" method="POST" id="fieldVisitForm">
+                            <form action="{{ route('field-visits.store') }}" method="POST" id="fieldVisitForm" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-12 mb-4">
@@ -44,7 +44,7 @@
                                     </div>
                                
 
-                                
+                                    
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="visit_description">Visit Description</label>
@@ -57,7 +57,7 @@
                                     </div>
                           
 
-                             
+                                      
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
                                             <label for="location_name">Location Name <span class="text-danger">*</span></label>
@@ -81,39 +81,59 @@
                                     </div>
                                
 
-                               
-                                    <!-- <div class="col-md-6 mb-4">
+                                
+                                    <div class="col-md-12 mb-4">
                                         <div class="form-group">
-                                            <label for="latitude">Latitude</label>
-                                            <input type="number" step="any" class="form-control @error('latitude') is-invalid @enderror"
-                                                   id="latitude" name="latitude" value="{{ old('latitude') }}"
-                                                   min="-90" max="90" placeholder="Optional">
-                                            @error('latitude')
+                                            <label for="visit_notes">Visit Notes</label>
+                                            <textarea class="form-control @error('visit_notes') is-invalid @enderror"
+                                                      id="visit_notes" name="visit_notes" rows="4">{{ old('visit_notes') }}</textarea>
+                                            <small class="form-text text-muted">Please provide detailed notes about the purpose and objectives of this visit</small>
+                                            @error('visit_notes')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div> -->
+                                    </div>
 
-                                    <!-- <div class="col-md-6 mb-4">
+                                    <div class="col-md-12 mb-4">
                                         <div class="form-group">
-                                            <label for="longitude">Longitude</label>
-                                            <input type="number" step="any" class="form-control @error('longitude') is-invalid @enderror"
-                                                   id="longitude" name="longitude" value="{{ old('longitude') }}"
-                                                   min="-180" max="180" placeholder="Optional">
-                                            @error('longitude')
+                                            <label for="visit_photos">Visit Photos</label>
+                                            <input type="file" class="form-control @error('visit_photos.*') is-invalid @enderror"
+                                                   id="visit_photos" name="visit_photos[]" multiple accept="image/*">
+                                            <small class="form-text text-muted">Upload relevant photos for this visit (optional, max 20MB each)</small>
+                                            @error('visit_photos.*')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
                                         </div>
-                                    </div> -->
+                                    </div>
+
+                                    <div class="col-md-12 mb-4">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" id="getCurrentLocation">
+                                                <i class="bi bi-geo-alt-fill me-2"></i> Update Location
+                                            </button>
+                                        </div>
+                                        
+                                        <div id="map" style="height: 300px; display:none;" class="rounded mt-3 position-relative"></div>
+                                        
+                                        <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude') }}">
+                                        <input type="hidden" name="longitude" id="longitude" value="{{ old('longitude') }}">
+                                        
+                                        @error('latitude')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                        @error('longitude')
+                                            <div class="text-danger mt-1">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label for="scheduled_start_datetime">Start Date & Time <span class="text-danger">*</span></label>
+                                            <label for="scheduled_start_datetime">Start Date & Time</label>
                                             <input type="datetime-local" class="form-control @error('scheduled_start_datetime') is-invalid @enderror"
                                                    id="scheduled_start_datetime" name="scheduled_start_datetime"
-                                                   value="{{ old('scheduled_start_datetime') }}" required>
+                                                   value="{{ old('scheduled_start_datetime') }}">
                                             @error('scheduled_start_datetime')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -122,10 +142,10 @@
 
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="scheduled_end_datetime">End Date & Time <span class="text-danger">*</span></label>
+                                            <label for="scheduled_end_datetime">End Date & Time</label>
                                             <input type="datetime-local" class="form-control @error('scheduled_end_datetime') is-invalid @enderror"
                                                    id="scheduled_end_datetime" name="scheduled_end_datetime"
-                                                   value="{{ old('scheduled_end_datetime') }}" required>
+                                                   value="{{ old('scheduled_end_datetime') }}">
                                             @error('scheduled_end_datetime')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
@@ -137,7 +157,7 @@
                                     <div class="col-12">
                                         <div class="alert alert-info">
                                             <i class="fas fa-info-circle"></i>
-                                            <strong>Note:</strong> This field visit request will be sent to your reporting manager for approval before it can be started.
+                                            <strong>Note:</strong> This field visit request will be sent to your reporting manager for approval. Please ensure all details including location, notes, and photos are accurate as they cannot be changed after submission.
                                         </div>
                                     </div>
                                 </div>
@@ -162,14 +182,17 @@
 </div>
 @endsection
 
+@push('styles')
+<link rel="stylesheet" href="https://api.olamaps.io/olamaps/1.0.0/olamaps.css">
+@endpush
+
 @push('scripts')
+<script src="https://api.olamaps.io/olamaps/1.0.0/olamaps.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Set minimum date for datetime inputs
+    // Set minimum date for datetime inputs (allow same day requests)
     const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    const minDateTime = tomorrow.toISOString().slice(0, 16);
+    const minDateTime = now.toISOString().slice(0, 16);
 
     $('#scheduled_start_datetime, #scheduled_end_datetime').attr('min', minDateTime);
 
@@ -184,18 +207,100 @@ $(document).ready(function() {
         }
     });
 
+    let myMap = null;
+    let userMarker = null;
+    const OLA_API_KEY = "{{ config('services.krutrim.maps_api_key') }}";
+
+    function resetLocationButton() {
+        $('#getCurrentLocation').prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+        $('#map').hide();
+        $('#latitude').val('');
+        $('#longitude').val('');
+        $('#map .map-loader').remove();
+        if(userMarker && typeof userMarker.remove === 'function'){ userMarker.remove(); userMarker = null; }
+        if(myMap && typeof myMap.resize === 'function') myMap.resize();
+    }
+
     // Get current location
     $('#getCurrentLocation').click(function() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                $('#latitude').val(position.coords.latitude);
-                $('#longitude').val(position.coords.longitude);
-            }, function(error) {
-                alert('Error getting location: ' + error.message);
-            });
-        } else {
+        const btn = $(this);
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span> Getting location...');
+
+        if (!navigator.geolocation) {
             alert('Geolocation is not supported by this browser.');
+            resetLocationButton();
+            return;
         }
+
+        navigator.geolocation.getCurrentPosition(function(position) {
+            const lat = position.coords.latitude ?? null;
+            const lng = position.coords.longitude ?? null;
+
+            if (lat == null || lng == null) {
+                alert('Unable to get valid coordinates.');
+                resetLocationButton();
+                return;
+            }
+
+            $('#latitude').val(lat);
+            $('#longitude').val(lng);
+            $('#map').show();
+
+            // Map loader overlay
+            $('#map').append('<div class="map-loader" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;"><span class="spinner-border text-primary"></span></div>');
+
+            try {
+                const olaMaps = new OlaMaps({ apiKey: OLA_API_KEY });
+
+                if (!myMap) {
+                    myMap = olaMaps.init({
+                        container: 'map',
+                        center: [lng, lat],
+                        zoom: 15,
+                        style: "https://api.olamaps.io/tiles/vector/v1/styles/default-light-standard/style.json"
+                    });
+                }
+
+                // User marker
+                if (!userMarker) {
+                    userMarker = olaMaps.addMarker({ color: 'red', draggable: false }).setLngLat([lng, lat]).addTo(myMap);
+                } else {
+                    userMarker.setLngLat([lng, lat]);
+                }
+
+                if (typeof myMap.setCenter === 'function') myMap.setCenter([lng, lat]);
+                if (typeof myMap.resize === 'function') myMap.resize();
+
+            } catch (e) {
+                console.error('Map error:', e);
+                alert('Error initializing map: ' + e.message);
+            } finally {
+                btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+                $('#map .map-loader').remove();
+            }
+        }, function(err) {
+            alert('Unable to fetch location: ' + err.message);
+            resetLocationButton();
+        }, { enableHighAccuracy: true, timeout: 10000 });
+    });
+
+    // Form validation (now optional: location, visit notes, start/end date time)
+    $('#fieldVisitForm').submit(function(e) {
+        const startTime = $('#scheduled_start_datetime').val();
+        const endTime = $('#scheduled_end_datetime').val();
+
+        // Only validate date/time sequence if both are provided
+        if (startTime && endTime) {
+            if (endTime <= startTime) {
+                e.preventDefault();
+                alert('End time must be after start time.');
+                $('#scheduled_end_datetime').focus();
+                return false;
+            }
+        }
+        
+        // Note: Start time, end time, location coordinates, and visit notes are now optional
+        // Form can be submitted without these fields
     });
 });
 </script>
