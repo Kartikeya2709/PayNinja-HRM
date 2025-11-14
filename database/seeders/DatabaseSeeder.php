@@ -24,7 +24,6 @@ class DatabaseSeeder extends Seeder
             SuperAdminUserSeeder::class,
             SlugSeeder::class,
             PackageSeeder::class,
-            PackageModuleSeeder::class,
             DiscountSeeder::class,
             TaxSeeder::class,
         ]);

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Package;
-use App\Models\PackageModule;
 use App\Models\PackagePricingTier;
 use App\Http\Requests\StorePackageRequest;
 use App\Http\Requests\UpdatePackageRequest;
@@ -28,7 +27,7 @@ class PackageController extends Controller
     {
         $this->authorize('viewAny', Package::class);
 
-        $query = Package::with(['packageModules', 'pricingTiers']);
+        $query = Package::with(['pricingTiers']);
 
         // Filtering
         if ($request->has('search') && !empty($request->search)) {
@@ -139,7 +138,7 @@ class PackageController extends Controller
 
     public function show($id)
     {
-        $package = Package::with(['packageModules', 'pricingTiers', 'companyPackages.company'])
+        $package = Package::with(['pricingTiers', 'companyPackages.company'])
             ->findOrFail($id);
 
         $this->authorize('view', $package);

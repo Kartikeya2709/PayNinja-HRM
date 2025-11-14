@@ -40,7 +40,6 @@ use App\Http\Controllers\LeadController;
 // Test logging route - can be removed after testing
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\CompanyPackageController;
-use App\Http\Controllers\PackageModuleController;
 use App\Http\Controllers\PackagePricingController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\TaxController;
@@ -248,10 +247,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/get-company-packages', [CompanyPackageController::class, 'getCompanyPackages'])->name('get-company-packages');
             Route::post('/bulk-assign', [CompanyPackageController::class, 'bulkAssign'])->name('bulk-assign');
         });
-
-        // Package Module Management Routes
-        Route::put('packages/{package}/modules', [PackageModuleController::class, 'updateModules'])->name('packages.modules.update');
-        Route::get('packages/{package}/modules', [PackageModuleController::class, 'getPackageModules'])->name('packages.modules.get');
 
         // Pricing Management Routes
         Route::post('packages/{package}/pricing-tiers', [PackagePricingController::class, 'storeTier'])->name('packages.pricing-tiers.store');
