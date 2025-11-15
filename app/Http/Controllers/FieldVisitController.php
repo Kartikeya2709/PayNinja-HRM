@@ -25,7 +25,7 @@ class FieldVisitController extends Controller
             'longitude' => 'nullable|numeric',
             'visit_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20048',
             'scheduled_start_datetime' => 'nullable|date',
-            'scheduled_end_datetime' => 'nullable|date|after:scheduled_start_datetime',
+            'scheduled_end_datetime' => 'nullable|date|after_or_equal:scheduled_start_datetime',
         ]);
 
         $employee = Auth::user()->employee;

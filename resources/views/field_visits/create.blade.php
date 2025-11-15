@@ -130,8 +130,8 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-4">
                                         <div class="form-group">
-                                            <label for="scheduled_start_datetime">Start Date & Time</label>
-                                            <input type="datetime-local" class="form-control @error('scheduled_start_datetime') is-invalid @enderror"
+                                            <label for="scheduled_start_datetime">Start Date</label>
+                                            <input type="date" class="form-control @error('scheduled_start_datetime') is-invalid @enderror"
                                                    id="scheduled_start_datetime" name="scheduled_start_datetime"
                                                    value="{{ old('scheduled_start_datetime') }}">
                                             @error('scheduled_start_datetime')
@@ -142,8 +142,8 @@
 
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="scheduled_end_datetime">End Date & Time</label>
-                                            <input type="datetime-local" class="form-control @error('scheduled_end_datetime') is-invalid @enderror"
+                                            <label for="scheduled_end_datetime">End Date</label>
+                                            <input type="date" class="form-control @error('scheduled_end_datetime') is-invalid @enderror"
                                                    id="scheduled_end_datetime" name="scheduled_end_datetime"
                                                    value="{{ old('scheduled_end_datetime') }}">
                                             @error('scheduled_end_datetime')
@@ -190,22 +190,11 @@
 <script src="https://api.olamaps.io/olamaps/1.0.0/olamaps.min.js"></script>
 <script>
 $(document).ready(function() {
-    // Set minimum date for datetime inputs (allow same day requests)
+    // Set minimum date for date inputs
     const now = new Date();
-    const minDateTime = now.toISOString().slice(0, 16);
+    const minDate = now.toISOString().slice(0, 10);
 
-    $('#scheduled_start_datetime, #scheduled_end_datetime').attr('min', minDateTime);
-
-    // Validate end time is after start time
-    $('#scheduled_end_datetime').change(function() {
-        const startTime = $('#scheduled_start_datetime').val();
-        const endTime = $(this).val();
-
-        if (startTime && endTime && endTime <= startTime) {
-            alert('End time must be after start time');
-            $(this).val('');
-        }
-    });
+    $('#scheduled_start_datetime, #scheduled_end_datetime').attr('min', minDate);
 
     let myMap = null;
     let userMarker = null;
@@ -284,23 +273,10 @@ $(document).ready(function() {
         }, { enableHighAccuracy: true, timeout: 10000 });
     });
 
-    // Form validation (now optional: location, visit notes, start/end date time)
-    $('#fieldVisitForm').submit(function(e) {
-        const startTime = $('#scheduled_start_datetime').val();
-        const endTime = $('#scheduled_end_datetime').val();
-
-        // Only validate date/time sequence if both are provided
-        if (startTime && endTime) {
-            if (endTime <= startTime) {
-                e.preventDefault();
-                alert('End time must be after start time.');
-                $('#scheduled_end_datetime').focus();
-                return false;
-            }
-        }
-        
-        // Note: Start time, end time, location coordinates, and visit notes are now optional
-        // Form can be submitted without these fields
+    // Form validation handled by backend validation rules
+    $('#fieldVisitForm').submit(function() {
+        // Backend will handle date validation
+        return true;
     });
 });
 </script>

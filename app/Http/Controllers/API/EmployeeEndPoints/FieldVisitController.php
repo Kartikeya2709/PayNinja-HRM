@@ -336,7 +336,7 @@ class FieldVisitController extends Controller
             'longitude' => 'numeric',
             'visit_photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:20048',
             'scheduled_start_datetime' => 'required|date',
-            'scheduled_end_datetime' => 'required|date|after:scheduled_start_datetime',
+            'scheduled_end_datetime' => 'required|date|after_or_equal:scheduled_start_datetime',
         ]);
 
         if ($validator->fails()) {
