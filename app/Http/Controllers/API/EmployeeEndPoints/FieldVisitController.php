@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
+use function Laravel\Prompts\error;
+
 class FieldVisitController extends Controller
 {
     /**
@@ -338,7 +340,8 @@ class FieldVisitController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
+            return response()->json( ['success'=>'false',
+            'message' => $validator->errors()->first()], 422);
         }
 
         $validated = $validator->validated();
@@ -392,6 +395,7 @@ class FieldVisitController extends Controller
         ]);
 
         return response()->json([
+            'success'=>'true',
             'message' => 'Field visit request created successfully',
             'field_visit' => [
                 'id' => $fieldVisit->id,
