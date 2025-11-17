@@ -23,9 +23,10 @@ class FieldVisitController extends Controller
             'visit_notes' => 'nullable|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'current_location' => 'nullable|array',
             'visit_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20048',
             'scheduled_start_datetime' => 'nullable|date',
-            'scheduled_end_datetime' => 'nullable|date|after:scheduled_start_datetime',
+            'scheduled_end_datetime' => 'nullable|date|after_or_equal:scheduled_start_datetime',
         ]);
 
         $employee = Auth::user()->employee;
@@ -67,6 +68,7 @@ class FieldVisitController extends Controller
             'location_address' => $request->location_address,
             'latitude' => $request->latitude ?? null,
             'longitude' => $request->longitude ?? null,
+            'current_location' =>$request->current_location ?? null,
             'visit_notes' => $request->visit_notes ?? 'N/A',
             'visit_attachments' => $photoPaths,
             'scheduled_start_datetime' => $request->scheduled_start_datetime ?? null,
@@ -216,6 +218,7 @@ class FieldVisitController extends Controller
             'visit_notes' => 'nullable|string',
             'latitude' => 'nullable|numeric',
             'longitude' => 'nullable|numeric',
+            'current_location' => 'nullable|array',
             'visit_photos.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:20048',
             'scheduled_start_datetime' => 'nullable|date',
             'scheduled_end_datetime' => 'nullable|date|after:scheduled_start_datetime',
@@ -236,6 +239,7 @@ class FieldVisitController extends Controller
             'location_address' => $request->location_address,
             'latitude' => $request->latitude ?? null,
             'longitude' => $request->longitude ?? null,
+            'current_location' => $request->current_location ?? 'N/A',
             'visit_notes' => $request->visit_notes ?? 'N/A',
             'visit_attachments' => $photoPaths,
             'scheduled_start_datetime' => $request->scheduled_start_datetime ?? null,
