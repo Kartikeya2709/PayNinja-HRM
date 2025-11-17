@@ -19,6 +19,7 @@ class FieldVisit extends Model
         'location_address',
         'latitude',
         'longitude',
+        'current_location',
         'scheduled_start_datetime',
         'scheduled_end_datetime',
         'actual_start_datetime',
@@ -34,6 +35,7 @@ class FieldVisit extends Model
 
     protected $casts = [
         'visit_attachments' => 'array',
+        'current_location' => 'array',
         'scheduled_start_datetime' => 'datetime',
         'scheduled_end_datetime' => 'datetime',
         'actual_start_datetime' => 'datetime',
