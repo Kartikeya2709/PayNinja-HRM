@@ -35,7 +35,7 @@ class FieldVisit extends Model
 
     protected $casts = [
         'visit_attachments' => 'array',
-        'current_location' => 'array',
+        'current_location' => 'string',
         'scheduled_start_datetime' => 'datetime',
         'scheduled_end_datetime' => 'datetime',
         'actual_start_datetime' => 'datetime',
