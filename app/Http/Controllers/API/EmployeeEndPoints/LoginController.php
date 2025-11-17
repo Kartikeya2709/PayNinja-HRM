@@ -39,7 +39,8 @@ class LoginController extends Controller
 
             // Check if user exists
             $user = User::where('email', $email)->first();
-            $superadmin = SuperAdmin::where('email', $email)->first();
+            // $superadmin = SuperAdmin::where('email', $email)->first();
+            $superadmin= User::where('email', $email)->where('role', 'superadmin')->first();
 
             if (!$user && !$superadmin) {
                 Log::warning('API Login failed: email not found for ' . $email);
@@ -50,8 +51,17 @@ class LoginController extends Controller
             }
 
             // Try superadmin authentication first
-            if (Auth::guard('superadmin')->attempt($credentials)) {
+            if ($superadmin)  {
                 $user = Auth::guard('superadmin')->user();
+                
+                // Restrict superadmin role from accessing this API
+                Auth::guard('superadmin')->logout();
+                Log::warning('API Login denied: superadmin role not allowed for ' . $email);
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Super admins are not allowed to access this APP.',
+                ], 403);
+                
                 $token = $user->createToken('SuperAdminToken')->plainTextToken;
 
                 Log::info('API Login successful as SuperAdmin for user: ' . $user->email);
@@ -71,6 +81,17 @@ class LoginController extends Controller
             // Try user authentication
             if (Auth::guard('web')->attempt($credentials)) {
                 $user = Auth::guard('web')->user();
+                
+                // Restrict company_admin role from accessing this API
+                if ($user->role === 'company_admin') {
+                    Auth::guard('web')->logout();
+                    Log::warning('API Login denied: company_admin role not allowed for ' . $email);
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Company admins are not allowed to access this APP.',
+                    ], 403);
+                }
+                
                 $token = $user->createToken('UserToken')->plainTextToken;
 
                 Log::info('API Login successful as User for: ' . $user->email . ' with role: ' . $user->role);
