@@ -45,7 +45,7 @@ class HakaksesController extends Controller
             'role' => $validated['role']
         ]);
 
-        return redirect()->route('hakakses.index')
+        return redirect()->route('superadmin.users.index')
             ->with('success', 'User role updated successfully');
     }
 
@@ -55,13 +55,13 @@ class HakaksesController extends Controller
     public function destroy(User $user)
     {
         if ($user->id === auth()->id()) {
-            return redirect()->route('hakakses.index')
+            return redirect()->route('superadmin.users.index')
                 ->with('error', 'You cannot delete your own account');
         }
 
         $user->delete();
 
-        return redirect()->route('hakakses.index')
+        return redirect()->route('superadmin.users.index')
             ->with('success', 'User deleted successfully');
     }
 }

@@ -118,8 +118,8 @@
                 <!-- Superadmin Routes -->
                 @if (Auth::user()->hasRole('superadmin'))
                     <li class="menu-header">Superadmin</li>
-                    <li class="{{ Request::is('hakakses') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ url('hakakses') }}">
+                    <li class="{{ Request::is('superadmin/user/*') || Request::is('superadmin/users')? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('superadmin/users') }}">
                             <i class="fas fa-user-shield"></i>
                             <span>All Users</span>
                         </a>

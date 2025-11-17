@@ -15,7 +15,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0">User Access Rights</h4>
                     <div class="search-form">
-                        <form action="{{ route('hakakses.index') }}" method="GET" class="form-inline">
+                        <form action="{{ route('superadmin.users.index') }}" method="GET" class="form-inline">
                             <div class="input-group">
                                 <input type="text" name="search" class="form-control" placeholder="Search by name or email..." value="{{ request('search') }}">
                                 <div class="input-group-append">
@@ -69,8 +69,8 @@
                                         </td>
                                         <td>
                                             @if ($user->id !== auth()->id())
-                                                <a href="{{ route('hakakses.edit', $user->id) }}" class="btn btn-sm btn-info">Edit</a>
-                                                <form action="{{ route('hakakses.delete', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                <a href="{{ route('superadmin.users.edit', $user->id) }}" class="btn btn-sm btn-info">Edit</a>
+                                                <form action="{{ route('superadmin.users.delete', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn btn-sm btn-danger">Delete</button>

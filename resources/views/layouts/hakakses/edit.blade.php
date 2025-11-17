@@ -27,7 +27,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('hakakses.update', $user->id) }}" method="POST">
+                    <form action="{{ route('superadmin.users.update', $user->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -52,7 +52,7 @@
 
                         <div class="form-group mb-0 text-center">
                             <button type="submit" class="btn btn-primary">Update Role</button>
-                            <a href="{{ route('hakakses.index') }}" class="btn btn-secondary">Cancel</a>
+                            <a href="{{ route('superadmin.users.index') }}" class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>
                 </div>
