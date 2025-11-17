@@ -59,11 +59,7 @@
                 </span>
                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
             </a>
-<<<<<<< Updated upstream
-
-=======
             
->>>>>>> Stashed changes
             @if($employee->user->role !== 'company_admin')
             <button type="button" class="btn btn-outline-primary btn-sm change-role-btn action-btn" data-bs-toggle="modal"
                 data-bs-target="#roleModal" data-employee-id="{{ $employee->id }}"
@@ -71,13 +67,6 @@
                 data-update-url="{{ route('company-admin.employees.update-role', $employee->id) }}" title="Change Role">
                 <i class="fas fa-user-edit"></i>
             </button>
-<<<<<<< Updated upstream
-        </div>
-        @endif
-    </td>
-</tr>
-@endforeach
-=======
              <!-- Active/Inactive Toggle Button -->
             <button 
                 type="button"
@@ -93,12 +82,7 @@
                 @endif
             </button>
             @endif
-        </td>
-    </tr>
-
-
+        </div>
+    </td>
+</tr>
 @endforeach
-
-
-
->>>>>>> Stashed changes
