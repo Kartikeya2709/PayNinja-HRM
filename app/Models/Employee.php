@@ -57,10 +57,17 @@ class Employee extends Model
         'joining_date' => 'date',
     ];
 
+    protected static function booted()
+    {
+        static::addGlobalScope('active', function ($query) {
+            $query->where('is_active', true);
+        });
+    }
+
     // Relationships
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withoutGlobalScopes();
     }
 
     public function company()

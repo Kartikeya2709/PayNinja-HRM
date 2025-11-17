@@ -24,7 +24,15 @@ class User extends Authenticatable
         'password',
         'role',
         'company_id',
+        'is_active',
     ];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('active', function ($query) {
+            $query->where('is_active', true);
+        });
+    }
     
     /**
      * Get the user's role name.
@@ -69,7 +77,7 @@ class User extends Authenticatable
     }
     public function employeeDetail()
     {
-        return $this->hasOne(EmployeeDetail::class);
+        return $this->hasOne(EmployeeDetail::class)->withoutGlobalScopes();
     }
 
     /**
@@ -77,7 +85,7 @@ class User extends Authenticatable
      */
     public function employee()
     {
-        return $this->hasOne(Employee::class);
+        return $this->hasOne(Employee::class)->withoutGlobalScopes();
     }
 
     /**
