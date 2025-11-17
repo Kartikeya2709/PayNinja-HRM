@@ -523,6 +523,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/employees/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('employees.edit');
         Route::put('/employees/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('employees.update');
         Route::put('/employees/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('employees.update-role');
+        Route::post('/employees/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('employees.toggleStatus');
 
         // Company Settings
         Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');

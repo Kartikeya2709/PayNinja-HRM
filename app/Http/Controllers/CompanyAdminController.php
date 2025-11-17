@@ -954,5 +954,40 @@ class CompanyAdminController extends Controller
         }
     }
 
+
+
+     /* 
+       Employee Status Toggle (Activate/Deactivate)
+     */
+
+         public function toggleStatus( Request $request, $id)
+        {
+          
+                        // Find employee and related user
+                $employee = Employee::findOrFail($id);
+                $user = User::findOrFail($employee->user_id ?? $id); // use user_id if Employee linked to User
+
+                // Toggle is_active (1 ↔ 0)
+                $newStatus = !$employee->is_active;
+
+                // Update Employee
+                $employee->is_active = $newStatus;
+                $employee->remark = $request->remark;
+                $employee->save();
+
+                // Update User
+                $user->is_active = $newStatus;
+                $user->remark = $request->remark;
+                $user->save();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => $newStatus ? 'Employee Activated' : 'Employee Deactivated',
+                    'is_active' => $newStatus,
+                ]);
+                        
+           
+        }
+
 }
 
