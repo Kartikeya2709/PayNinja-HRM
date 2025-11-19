@@ -21,10 +21,10 @@
                 <div class="d-flex flex-wrap gap-2 mt-2 mt-md-0">
                     <form method="GET" class="d-flex gap-2">
                         <input type="month" name="month" class="form-control" value="{{ $month }}" onchange="this.form.submit()">
-                        <a href="{{ route('attendance.export', ['month' => $month]) }}" class="btn btn-success btn-sm">
+                        <a href="{{ route('admin-attendance.export', ['month' => $month]) }}" class="btn btn-success btn-sm">
                             <i class="fas fa-file-excel"></i> Export Excel
                         </a>
-                        <a href="{{ route('attendance.exportPdf', ['month' => $month]) }}" class="btn btn-danger btn-sm">
+                        <a href="{{ route('exportPdf', ['month' => $month]) }}" class="btn btn-danger btn-sm">
                             <i class="fas fa-file-pdf"></i> Export PDF
                         </a>
                     </form>

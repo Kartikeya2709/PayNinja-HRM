@@ -19,7 +19,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('admin.assets.assignments.store') }}" method="POST" class="mt-3">
+                    <form action="{{ route('assets.assignments.store') }}" method="POST" class="mt-3">
                         @csrf
 
                         <div class="form-group">
@@ -137,7 +137,7 @@
                         <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                            <i class="bi bi-link-45deg me-2"></i>Assign Asset
                         </button>
-                        <a href="{{ route('admin.assets.index') }}" class="btn btn-danger px-4 rounded-pill">
+                        <a href="{{ route('assets.index') }}" class="btn btn-danger px-4 rounded-pill">
                         <i class="bi bi-x-circle me-2"></i>Cancel
                        </a>
                        </div>

@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Asset Assignments</h3>
-                    <a href="{{ route('admin.assets.assignments.create') }}" class="btn btn-primary">
+                    <a href="{{ route('assets.assignments.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> New Assignment
                     </a>
                 </div>
@@ -47,7 +47,7 @@
                                         <td>{{ $assignment->condition_on_assignment }}</td>
                                     @endif
                                     <td>
-                                        <a href="{{ route('admin.assets.assignments.show', $assignment->id) }}" class="btn btn-info btn-sm">
+                                        <a href="{{ route('assets.assignments.show', $assignment->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <!-- Return Button -->
@@ -63,7 +63,7 @@
                                         <div class="modal fade" id="returnModal{{ $assignment->id }}" tabindex="-1" aria-labelledby="returnModalLabel{{ $assignment->id }}" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <form action="{{ route('admin.assets.assignments.return', $assignment->id) }}" method="POST">
+                                                    <form action="{{ route('assets.assignments.return', $assignment->id) }}" method="POST">
                                                         @csrf
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="returnModalLabel{{ $assignment->id }}">Return Asset</h5>

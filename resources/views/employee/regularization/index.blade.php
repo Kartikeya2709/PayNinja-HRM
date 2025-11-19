@@ -21,7 +21,7 @@
 
                             <div class="btn-center">
                                 @if (!is_null(Auth::user()->employee->reporting_manager_id))
-                                    <a href="{{ route('regularization.requests.create') }}" class="btn btn-primary">New
+                                    <a href="{{ route('regularization-requests.create') }}" class="btn btn-primary">New
                                         Request</a>
                             </div>
 
@@ -41,7 +41,7 @@
                         @endif
 
                         @if (is_null(Auth::user()->employee->reporting_manager_id))
-                            <form action="{{ route('regularization.requests.bulk-update') }}" method="POST"
+                            <form action="{{ route('regularization-requests.bulk-update') }}" method="POST"
                                 id="bulk-action-form">
                                 @csrf
 

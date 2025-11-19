@@ -22,8 +22,8 @@
                     @endif
 
                     <form action="{{ isset($holiday) 
-                        ? route('company.academic-holidays.update', $holiday->id) 
-                        : route('company.academic-holidays.store') }}" 
+                        ? route('academic-holidays.update', $holiday->id) 
+                        : route('academic-holidays.store') }}" 
                           method="POST">
                         @csrf
                         @if(isset($holiday))
@@ -72,7 +72,7 @@
                             <button type="submit" class="btn btn-primary">
                                 {{ isset($holiday) ? 'Update' : 'Create' }} Holiday
                             </button>
-                            <a href="{{ route('company.academic-holidays.index') }}" 
+                            <a href="{{ route('academic-holidays.index') }}" 
                                class="btn btn-secondary">Cancel</a>
                         </div>
                     </form>

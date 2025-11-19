@@ -8,7 +8,7 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Asset Assignment Details</h3>
                     <div class="card-tools">
-                        <a href="{{ route('admin.assets.assignments.index') }}" class="btn btn-sm btn-default">
+                        <a href="{{ route('assets.assignments.index') }}" class="btn btn-sm btn-default">
                             <i class="fas fa-arrow-left"></i> Back to List
                         </a>
                         @if($assignment->status === 'assigned')
@@ -168,7 +168,7 @@
 <div class="modal fade" id="returnAssetModal" tabindex="-1" role="dialog" aria-labelledby="returnAssetModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form action="{{ route('admin.assets.assignments.return', $assignment->id) }}" method="POST">
+            <form action="{{ route('assets.assignments.return', $assignment->id) }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="returnAssetModalLabel">Return Asset</h5>

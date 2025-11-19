@@ -12,6 +12,7 @@ use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AssetAssignmentController;
 use App\Http\Controllers\DesignationManagementController;
 use App\Http\Controllers\DepartmentManagementController;
+use App\Http\Controllers\Employee\AttendanceRegularizationController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\LeaveTypeController;
 use App\Http\Controllers\LeaveRequestController;
@@ -42,6 +43,7 @@ use App\Http\Controllers\PackageController;
 use App\Http\Controllers\CompanyPackageController;
 use App\Http\Controllers\PackagePricingController;
 use App\Http\Controllers\DiscountController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\InvoiceController;
 require __DIR__ . '/test-logging.php';
@@ -78,9 +80,11 @@ Route::get('/run-attendance/{date?}', function ($date = null) {
     }
 });
 
-Route::prefix('company-admin')->name('company-admin.')->group(function () {
-    Route::resource('announcements', AnnouncementController::class)->middleware('auth');
-});
+// Route::prefix('company-admin')->name('company-admin.')->group(function () {
+//     Route::resource('announcements', AnnouncementController::class)->middleware('auth');
+// });
+
+
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -198,25 +202,18 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::post('/dashboard/switch', [App\Http\Controllers\HomeController::class, 'switchDashboard'])->name('dashboard.switch');
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.change-password');
-    Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
-    Route::get('/blank-page', [App\Http\Controllers\HomeController::class, 'blank'])->name('blank');
+    Route::middleware(['role:company_admin,admin,employee'])->group(function () {
 
-    // Attendance Management
-    // Attendance Regularization
-    Route::prefix('regularization')->name('regularization.')->group(function () {
-        Route::resource('requests', App\Http\Controllers\Employee\AttendanceRegularizationController::class);
-        Route::put('requests/{id}/approve', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
-        Route::post('requests/bulk-update', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
-    });
+        //Announcements Routes
+        Route::resource('announcements', AnnouncementController::class);
 
-    Route::prefix('attendance')->name('attendance.')->group(function () {
-        Route::get('/', [EmployeeAttendanceController::class, 'dashboard'])->name('dashboard');
-        Route::get('/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in');
+        //Regularization Routes
+        Route::resource('regularization-requests', AttendanceRegularizationController::class);
+        Route::put('regularization-requests/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('regularization-requests.approve');
+        Route::post('regularization-requests/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');
+
+        //Attendance Routes
+        Route::get('/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in-out');
         Route::get('/my-attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('my-attendance');
 
         // Export routes
@@ -232,49 +229,50 @@ Route::middleware(['auth'])->group(function () {
         // Get geolocation settings
         Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])
             ->name('geolocation-settings');
-    });
 
-    // Employee Payroll Management
-    Route::prefix('employee/payroll')->name('employee.payroll.')->group(function () {
-        Route::get('/', [EmployeePayrollController::class, 'index'])->name('index'); // List my payslips
-        Route::get('/{payroll}', [EmployeePayrollController::class, 'show'])->name('show'); // View a specific payslip
-        Route::get('/{payroll}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('download'); // Download payslip PDF
-    });
+        // dashboard routes
+        Route::get('/home', [HomeController::class, 'index'])->name('home');
+        Route::post('/dashboard/switch', [HomeController::class, 'switchDashboard'])->name('dashboard.switch');
 
-    // Admin Attendance Management
-    Route::middleware(['role:admin,company_admin'])->prefix('admin/attendance')->name('admin.attendance.')->group(function () {
+        // Profile routes
+        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+        Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.change-password');
+        Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
 
-        Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
-        Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
-        Route::post('/', [AdminAttendanceController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [AdminAttendanceController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [AdminAttendanceController::class, 'update'])->name('update');
-        Route::delete('/{id}', [AdminAttendanceController::class, 'destroy'])->name('destroy');
-        Route::post('/import', [AdminAttendanceController::class, 'import'])->name('import');
-        Route::get('/import-results', [AdminAttendanceController::class, 'importResults'])->name('import-results');
-        Route::get('/export', [AdminAttendanceController::class, 'export'])->name('export');
-        Route::get('/template', [AdminAttendanceController::class, 'template'])->name('template');
+        //Blank Page
+        Route::get('/blank-page', [HomeController::class, 'blank'])->name('blank');
+
+        // Employee Payroll Management
+        Route::prefix('employee/payroll')->name('employee.payroll.')->group(function () {
+            Route::get('/', [EmployeePayrollController::class, 'index'])->name('index'); // List my payslips
+            Route::get('/{payroll}', [EmployeePayrollController::class, 'show'])->name('show'); // View a specific payslip
+            Route::get('/{payroll}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('download'); // Download payslip PDF
+        });
+
+        // Admin Attendance Management
+        Route::get('/admin/attendance', [AdminAttendanceController::class, 'index'])->name('admin-attendance.index');
+        Route::get('/admin-attendance/summary', [AdminAttendanceController::class, 'summary'])->name('admin-attendance.summary');
+        Route::post('/admin-attendance', [AdminAttendanceController::class, 'store'])->name('admin-attendance.store');
+        Route::get('admin-attendance/{id}/edit', [AdminAttendanceController::class, 'edit'])->name('admin-attendance.edit');
+        Route::put('admin-attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin-attendance.update');
+        Route::delete('admin-attendance/{id}', [AdminAttendanceController::class, 'destroy'])->name('admin-attendance.destroy');
+        Route::post('admin-attendance/import', [AdminAttendanceController::class, 'import'])->name('admin-attendance.import');
+        Route::get('admin-attendance/import-results', [AdminAttendanceController::class, 'importResults'])->name('admin-attendance.import-results');
+        Route::get('admin-attendance/export', [AdminAttendanceController::class, 'export'])->name('admin-attendance.export');
+        Route::get('admin-attendance/template', [AdminAttendanceController::class, 'template'])->name('admin-attendance.template');
 
         // Attendance Settings
-        Route::get('/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'index'])
-            ->name('settings');
-        Route::get('/settings/view', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'show'])
-            ->name('settings.view');
+        Route::get('admin-attendance/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'index'])
+            ->name('admin-attendance.settings');
+        Route::get('admin-attendance/settings/view', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'show'])
+            ->name('admin-attendance.settings.view');
         Route::match(['post', 'put'], '/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])
-            ->name('settings.update');
+            ->name('admin-attendance.settings.update');
         Route::get('/api/office-timings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'getOfficeTimings'])
             ->name('api.office-timings');
-    });
 
-    // Admin Regularization Management
-    Route::middleware(['role:admin,company_admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
-        Route::resource('requests', \App\Http\Controllers\Employee\AttendanceRegularizationController::class);
-        Route::put('requests/{id}/approve', [\App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
-        Route::post('requests/bulk-update', [\App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
-    });
 
-    // Employee Leave Management
-    Route::prefix('leave-management')->name('leave-management.')->group(function () {
         // Leave Requests
         Route::get('leave-requests', [LeaveRequestController::class, 'employeeIndex'])->name('leave-requests.index');
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
@@ -290,17 +288,7 @@ Route::middleware(['auth'])->group(function () {
         // Leave Balances
         Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
         Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
-    });
-
-    Route::get('/gallery-example', [App\Http\Controllers\ExampleController::class, 'gallery'])->name('gallery.example');
-    Route::get('/todo-example', [App\Http\Controllers\ExampleController::class, 'todo'])->name('todo.example');
-    Route::get('/contact-example', [App\Http\Controllers\ExampleController::class, 'contact'])->name('contact.example');
-    Route::get('/faq-example', [App\Http\Controllers\ExampleController::class, 'faq'])->name('faq.example');
-    Route::get('/news-example', [App\Http\Controllers\ExampleController::class, 'news'])->name('news.example');
-    Route::get('/about-example', [App\Http\Controllers\ExampleController::class, 'about'])->name('about.example');    
-
-    // Shift Management
-    Route::middleware(['auth', 'role:admin,company_admin'])->prefix('admin')->name('admin.')->group(function () {
+        // Shift Management
         Route::resource('shifts', '\App\Http\Controllers\Admin\ShiftController');
 
         // Additional shift routes
@@ -308,15 +296,6 @@ Route::middleware(['auth'])->group(function () {
             ->name('shifts.assign.show');
         Route::post('shifts/{shift}/assign', '\App\Http\Controllers\Admin\ShiftController@assignShift')
             ->name('shifts.assign');
-
-        // Salary Management
-        // Route::get('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'index'])->name('salary.index');
-        // Route::get('salary/create', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'create'])->name('salary.create');
-        // Route::post('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'store'])->name('salary.store');
-        // Route::get('salary/{employee}/edit', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'edit'])->name('salary.edit');
-        // Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
-        // Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
-        // Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
 
         // Asset Management Routes        
         // Asset Categories
@@ -331,9 +310,9 @@ Route::middleware(['auth'])->group(function () {
         ]);
         Route::prefix('assets')->name('assets.')->group(function () {
             // Asset routes
-            Route::get('/', [AssetController::class, 'index'])->name('index');
+            Route::get('/index', [AssetController::class, 'index'])->name('index');
             Route::get('/create', [AssetController::class, 'create'])->name('create');
-            Route::post('/', [AssetController::class, 'store'])->name('store');
+            Route::post('/store', [AssetController::class, 'store'])->name('store');
             Route::get('/show/{asset}', [AssetController::class, 'show'])->name('show');
             Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');
             Route::put('/{asset}', [AssetController::class, 'update'])->name('update');
@@ -351,6 +330,56 @@ Route::middleware(['auth'])->group(function () {
                 Route::post('/{assignment}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
             });
         });
+
+
+        // Academic Holidays Management
+        Route::get('academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
+        Route::get('academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
+        Route::post('academic-holidays', [AcademicHolidayController::class, 'store'])->name('academic-holidays.store');
+        Route::get('academic-holidays/{holiday}/edit', [AcademicHolidayController::class, 'edit'])->name('academic-holidays.edit');
+        Route::put('academic-holidays/{holiday}', [AcademicHolidayController::class, 'update'])->name('academic-holidays.update');
+        Route::delete('academic-holidays/{holiday}', [AcademicHolidayController::class, 'destroy'])->name('academic-holidays.destroy');
+        Route::post('academic-holidays/import', [AcademicHolidayController::class, 'import'])->name('academic-holidays.import');
+        Route::get('academic-holidays/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('academic-holidays.template');
+
+        // Employee Handbook Management
+        Route::resource('handbooks', HandbookController::class);
+        Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
+
+        // Field Visit Management
+        Route::get('/field-visits/pending', [FieldVisitController::class, 'pendingApprovals'])->name('field-visits.pending');
+        Route::resource('field-visits', FieldVisitController::class)->except(['store']);
+        Route::post('/field-visits', [FieldVisitController::class, 'store'])->name('field-visits.store');
+        Route::post('/field-visits/{fieldVisit}/approve', [FieldVisitController::class, 'approve'])->name('field-visits.approve');
+        Route::post('/field-visits/{fieldVisit}/reject', [FieldVisitController::class, 'reject'])->name('field-visits.reject');
+        Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
+        Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
+
+
+    });
+
+    // // Admin Regularization Management
+    // Route::middleware(['role:admin,company_admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
+    //     Route::resource('requests', AttendanceRegularizationController::class);
+    //     Route::put('requests/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
+    //     Route::post('requests/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
+    // });
+
+    // Employee Leave Management
+
+    // Shift Management
+    Route::middleware(['auth', 'role:admin,company_admin'])->prefix('admin')->name('admin.')->group(function () {
+
+
+        // Salary Management
+        // Route::get('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'index'])->name('salary.index');
+        // Route::get('salary/create', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'create'])->name('salary.create');
+        // Route::post('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'store'])->name('salary.store');
+        // Route::get('salary/{employee}/edit', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'edit'])->name('salary.edit');
+        // Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
+        // Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
+        // Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
+
     });
 
     // Admin Payroll Management
@@ -423,15 +452,6 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('company/academic-holidays', [AcademicHolidayController::class, 'index'])->name('company.academic-holidays.index');
 
     Route::middleware(['auth', 'role:admin,company_admin,employee', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
-        // Academic Holidays Management
-        Route::get('academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
-        Route::get('academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
-        Route::post('academic-holidays', [AcademicHolidayController::class, 'store'])->name('academic-holidays.store');
-        Route::get('academic-holidays/{holiday}/edit', [AcademicHolidayController::class, 'edit'])->name('academic-holidays.edit');
-        Route::put('academic-holidays/{holiday}', [AcademicHolidayController::class, 'update'])->name('academic-holidays.update');
-        Route::delete('academic-holidays/{holiday}', [AcademicHolidayController::class, 'destroy'])->name('academic-holidays.destroy');
-        Route::post('academic-holidays/import', [AcademicHolidayController::class, 'import'])->name('academic-holidays.import');
-        Route::get('academic-holidays/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('academic-holidays.template');
 
         // Employee Management
         Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
@@ -500,7 +520,7 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-             
+
 
     // Debug route for attendance data
     Route::get('/debug/attendance', function () {
@@ -541,10 +561,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('assets', [AssetController::class, 'employeeAssets'])->name('assets.index');
         // Salary Routes
         Route::prefix('salary')->name('salary.')->group(function () {
-            // Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');
-            // Route::get('monthly/{year}/{month}', [\App\Http\Controllers\Employee\SalaryController::class, 'monthlyDetails'])
-            //     ->where(['year' => '[0-9]{4}', 'month' => '0[1-9]|1[0-2]'])
-            //     ->name('monthly.details');
+            Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');
+            Route::get('monthly/{year}/{month}', [\App\Http\Controllers\Employee\SalaryController::class, 'monthlyDetails'])
+                ->where(['year' => '[0-9]{4}', 'month' => '0[1-9]|1[0-2]'])
+                ->name('monthly.details');
 
             // PDF Payslip Routes
             Route::get('payslips', [\App\Http\Controllers\PayslipController::class, 'listPayslips'])->name('payslips');
@@ -654,23 +674,5 @@ Route::middleware(['auth'])->group(function () {
             ->name('resignations.complete-final-settlement');
     });
 
-
-    Route::middleware(['auth'])->group(function () {
-        Route::get('/field-visits/pending', [FieldVisitController::class, 'pendingApprovals'])->name('field-visits.pending');
-        Route::resource('field-visits', FieldVisitController::class)->except(['store']);
-        Route::post('/field-visits', [FieldVisitController::class, 'store'])->name('field-visits.store');
-        Route::post('/field-visits/{fieldVisit}/approve', [FieldVisitController::class, 'approve'])->name('field-visits.approve');
-        Route::post('/field-visits/{fieldVisit}/reject', [FieldVisitController::class, 'reject'])->name('field-visits.reject');
-        Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
-        Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
-    });
-    Route::middleware(['auth'])->group(function () {
-        Route::resource('handbooks', HandbookController::class);
-        Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
-    });
-    Route::middleware(['auth'])->group(function () {
-        Route::resource('handbooks', HandbookController::class);
-        Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
-    });
 
 }); // End of auth middleware group

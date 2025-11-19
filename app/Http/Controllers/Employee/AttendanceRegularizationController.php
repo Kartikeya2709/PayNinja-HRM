@@ -88,7 +88,7 @@ class AttendanceRegularizationController extends Controller
     public function create()
     {
         if (is_null(Auth::user()->employee->reporting_manager_id)) {
-            return redirect()->route('regularization.requests.index')->with('error', 'Managers cannot create regularization requests.');
+            return redirect()->route('regularization-requests.index')->with('error', 'Managers cannot create regularization requests.');
         }
         return view('employee.regularization.create');
     }
@@ -100,7 +100,7 @@ class AttendanceRegularizationController extends Controller
     {
         $employee = Auth::user()->employee;
         if (is_null($employee->reporting_manager_id)) {
-            return redirect()->route('regularization.requests.index')->with('error', 'Managers cannot create regularization requests.');
+            return redirect()->route('regularization-requests.index')->with('error', 'Managers cannot create regularization requests.');
         }
 
         $validator = Validator::make($request->all(), [
@@ -135,7 +135,7 @@ class AttendanceRegularizationController extends Controller
             ]);
         }
 
-        return redirect()->route('regularization.requests.index')
+        return redirect()->route('regularization-requests.index')
             ->with('success', 'Your regularization requests have been submitted successfully.');
     }
 
@@ -206,7 +206,7 @@ class AttendanceRegularizationController extends Controller
             $this->updateAttendanceFromRegularization($regularizationRequest, $validated['attendance_status']);
         }
 
-        return redirect()->route('regularization.requests.index')
+        return redirect()->route('regularization-requests.index')
             ->with('success', 'Request has been ' . $validated['status'] . '.');
     }
 
@@ -222,7 +222,7 @@ class AttendanceRegularizationController extends Controller
     {
         $regularization->delete();
 
-        return redirect()->route('regularization.requests.index')
+        return redirect()->route('regularization-requests.index')
             ->with('success', 'Request deleted successfully.');
     }
 
@@ -266,7 +266,7 @@ class AttendanceRegularizationController extends Controller
             }
         }
 
-        return redirect()->route('regularization.requests.index')
+        return redirect()->route('regularization-requests.index')
             ->with('success', 'Selected requests have been ' . $status . '.');
     }
 

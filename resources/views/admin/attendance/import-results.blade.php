@@ -50,8 +50,8 @@
                     @endif
 
                     <div class="mt-4">
-                        <a href="{{ route('admin.attendance.index') }}" class="btn btn-secondary">Back to Attendance List</a>
-                        <a href="{{ route('admin.attendance.import') }}" class="btn btn-primary">Import Another File</a>
+                        <a href="{{ route('admin-attendance.index') }}" class="btn btn-secondary">Back to Attendance List</a>
+                        <a href="{{ route('admin-attendance.import') }}" class="btn btn-primary">Import Another File</a>
                     </div>
                 </div>
             </div>

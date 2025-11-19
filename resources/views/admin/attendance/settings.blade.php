@@ -25,7 +25,7 @@
                             <i class="fas fa-clock me-2"></i>Attendance Settings
                         </h5>
                         <div class="attendance-btn">
-                            <a href="{{ route('admin.attendance.settings.view') }}" class="btn btn-outline-primary btn-md me-2">
+                            <a href="{{ route('admin-attendance.settings.view') }}" class="btn btn-outline-primary btn-md me-2">
                                 <i class="fas fa-eye me-1"></i> View Current Settings
                             </a>
                             <button type="submit" form="attendance-settings-form" class="btn btn-primary btn-md">
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('admin.attendance.settings.update') }}" method="POST" id="attendance-settings-form" enctype="multipart/form-data">
+                    <form action="{{ route('admin-attendance.settings.update') }}" method="POST" id="attendance-settings-form" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="row mb-4">

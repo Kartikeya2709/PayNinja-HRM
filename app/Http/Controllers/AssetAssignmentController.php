@@ -74,7 +74,7 @@ class AssetAssignmentController extends Controller
         // Update asset status to assigned
         $assignment->asset->update(['status' => 'assigned', 'condition' => $request->condition_on_assignment]);
 
-        return redirect()->route('admin.assets.assignments.index')
+        return redirect()->route('assets.assignments.index')
             ->with('success', 'Asset assigned successfully.');
     }
 
@@ -144,7 +144,7 @@ class AssetAssignmentController extends Controller
 
         $assignment->delete();
 
-        return redirect()->route('admin.assets.assignments.index')
+        return redirect()->route('assets.assignments.index')
             ->with('success', 'Asset assignment deleted successfully.');
     }
 
@@ -171,7 +171,7 @@ class AssetAssignmentController extends Controller
         $assignment->asset->update(['status' => 'available']);
          $assignment->asset->update(['condition' => $request->return_condition]);
 
-        return redirect()->route('admin.assets.assignments.show', $assignment->id)
+        return redirect()->route('assets.assignments.show', $assignment->id)
             ->with('success', 'Asset returned successfully.');
     }
 }

@@ -10,7 +10,7 @@
                 <div class="card-1">
                     <h5 class="mb-0">Asset Details</h3>
                     <div class="card-tools">
-                        <a href="{{ route('admin.assets.index') }}" class="btn btn-sm btn-primary">
+                        <a href="{{ route('assets.index') }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-arrow-left"></i> Back to List
                         </a>
                     </div>

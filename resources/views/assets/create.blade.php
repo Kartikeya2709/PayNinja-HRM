@@ -19,7 +19,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($asset) ? route('admin.assets.update', $asset->id) : route('admin.assets.store') }}" 
+                    <form action="{{ isset($asset) ? route('assets.update', $asset->id) : route('assets.store') }}" 
                           method="POST">
                         @csrf
                         @if(isset($asset))
@@ -102,7 +102,7 @@
                             <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                                <i class="bi bi-save me-2"></i>{{ isset($asset) ? 'Update' : 'Create' }} Asset
                             </button>
-                            <a href="{{ route('admin.assets.index') }}" class="btn btn-danger px-4 rounded-pill">
+                            <a href="{{ route('assets.index') }}" class="btn btn-danger px-4 rounded-pill">
                                <i class="bi bi-x-circle me-2"></i>Cancel
                             </a>
                         </div>

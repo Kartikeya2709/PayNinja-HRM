@@ -17,7 +17,7 @@
                         <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#importModal">
                             <i class="bi bi-upload me-1"></i> Import
                         </button>
-                        <a href="{{ route('admin.attendance.export') }}" class="btn btn-info btn-sm ms-2">
+                        <a href="{{ route('admin-attendance.export') }}" class="btn btn-info btn-sm ms-2">
                             <i class="bi bi-download me-1"></i> Export
                         </a>
                     </div>
@@ -67,7 +67,7 @@
                                 <button type="submit" class="btn btn-primary me-2">
                                     <i class="bi bi-funnel me-1"></i> Filter
                                 </button>
-                                <a href="{{ route('admin.attendance.index') }}" class="btn btn-outline-secondary">
+                                <a href="{{ route('admin-attendance.index') }}" class="btn btn-outline-secondary">
                                     <i class="bi bi-arrow-counterclockwise"></i>
                                 </a>
                             </div>

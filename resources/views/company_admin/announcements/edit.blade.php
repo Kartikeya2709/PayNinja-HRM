@@ -17,7 +17,7 @@
 				<h5>Edit Announcement</h5>
 			</div>
 			<div class="card-body">
-				<form method="POST" action="{{ route('company-admin.announcements.update', $announcement->id) }}">
+				<form method="POST" action="{{ route('announcements.update', $announcement->id) }}">
 					@csrf
 					@method('PUT')
 					<div class="row">
@@ -63,7 +63,7 @@
                        <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                            <i class="bi bi-save me-2"></i>Update Announcement
                        </button>
-                           <a href="{{ route('company-admin.announcements.index') }}" class="btn btn-danger px-4 rounded-pill">
+                           <a href="{{ route('announcements.index') }}" class="btn btn-danger px-4 rounded-pill">
                            <i class="bi bi-x-circle me-2"></i>Back to List
                            </a>
                     </div>

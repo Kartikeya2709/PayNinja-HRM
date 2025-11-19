@@ -17,7 +17,7 @@
                 <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center px-2 py-2">
                     <h5 class="card-title mb-0">Attendance Settings</h5>
-                    <a href="{{ route('admin.attendance.settings') }}" class="btn btn-primary btn-sm">
+                    <a href="{{ route('admin-attendance.settings') }}" class="btn btn-primary btn-sm">
                         <i class="fas fa-edit me-1"></i> Edit Settings
                     </a>
                 </div>
@@ -206,9 +206,6 @@
                                      </div>
                                  </div>
                              </div>
-                           
-
-
 
                             <!-- Additional Settings -->
                             {{-- <div class="col-12 mt-4">

@@ -502,8 +502,8 @@ $(document).ready(function() {
         
         // Determine URL based on action
         const url = action === 'check-in' 
-            ? '{{ route("attendance.check-in.post") }}' 
-            : '{{ route("attendance.check-out.post") }}';
+            ? '{{ route("check-in.post") }}' 
+            : '{{ route("check-out.post") }}';
         
         // Send request
         $.ajax({
