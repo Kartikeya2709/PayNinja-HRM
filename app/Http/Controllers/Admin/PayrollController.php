@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Services\PayrollService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -50,7 +51,8 @@ class PayrollController extends Controller
      */
     public function create()
     {
-        $companyId = Auth::user()->company_id;
+        $company = Auth::user()->company;
+        $companyId = $company?->id;
         if (!$companyId && !Auth::user()->hasRole('superadmin')) {
             return redirect()->route('home')->with('error', 'Company context not found. Please ensure your user is associated with a company.');
         }
@@ -88,8 +90,7 @@ class PayrollController extends Controller
         try {
             $request->validate([
                 'payroll_type' => 'required|in:single,bulk',
-                'pay_period_start' => 'required|date',
-                'pay_period_end' => 'required|date|after_or_equal:pay_period_start',
+                'month' => 'required|date_format:Y-m',
                 'employee_id' => 'required_if:payroll_type,single|exists:employees,id',
                 'skip_processed' => 'sometimes|boolean',
             ]);
@@ -102,17 +103,22 @@ class PayrollController extends Controller
             // For single employee payroll
             if ($request->payroll_type === 'single') {
                 $employee = Employee::with('company')->findOrFail($request->employee_id);
-                
+
                 // Authorization check
                 if (!auth()->user()->hasRole('superadmin') && $company->id !== $employee->company_id) {
                     return back()->with('error', 'You are not authorized to generate payroll for this employee.');
                 }
 
+                // Derive pay period start and end from month
+                $month = Carbon::createFromFormat('Y-m', $request->month);
+                $payPeriodStart = $month->copy()->startOfMonth();
+                $payPeriodEnd = $month->copy()->endOfMonth();
+
                 $payroll = $this->payrollService->generatePayrollForEmployee(
                     $employee,
-                    Carbon::parse($request->pay_period_start),
-                    Carbon::parse($request->pay_period_end),
-                    $employee->company
+                    $payPeriodStart,
+                    $payPeriodEnd,
+                    $employee->company ?? $company
                 );
 
                 return redirect()->route('admin.payroll.show', $payroll->id)
@@ -121,8 +127,10 @@ class PayrollController extends Controller
             // For bulk payroll generation
             else if ($request->payroll_type === 'bulk') {
                 $skipProcessed = $request->boolean('skip_processed', true);
-                $payPeriodStart = Carbon::parse($request->pay_period_start);
-                $payPeriodEnd = Carbon::parse($request->pay_period_end);
+                // Derive pay period start and end from month
+                $month = Carbon::createFromFormat('Y-m', $request->month);
+                $payPeriodStart = $month->copy()->startOfMonth();
+                $payPeriodEnd = $month->copy()->endOfMonth();
 
                 // Get all active employees for the company
                 // $query = Employee::with('company')
@@ -130,6 +138,7 @@ class PayrollController extends Controller
                 //     ->where('company_id', $company->id);
 
                 $query = Employee::with(['company', 'user'])
+                ->where('company_id', $company->id)
                 ->whereHas('user', function($q) {
                     $q->where('role', '!=', 'company_admin')
                       ->orWhereNull('role');
@@ -165,12 +174,12 @@ class PayrollController extends Controller
                             $employee,
                             $payPeriodStart,
                             $payPeriodEnd,
-                            $employee->company
+                            $employee->company ?? $company
                         );
                         $processed++;
                     } catch (\Exception $e) {
                         Log::error('Error generating payroll for employee ' . $employee->id . ': ' . $e->getMessage());
-                        $errors[] = 'Employee ' . $employee->name . ': ' . $e->getMessage();
+                        $errors[] = 'Employee ' . ($employee->name ?? 'Unknown') . ': ' . $e->getMessage();
                     }
                 }
 
@@ -194,8 +203,7 @@ class PayrollController extends Controller
         } catch (\Exception $e) {
             Log::error('Payroll Generation Error: ' . $e->getMessage(), [
                 'employee_id' => $request->employee_id,
-                'pay_period_start' => $request->pay_period_start,
-                'pay_period_end' => $request->pay_period_end,
+                'month' => $request->month,
                 'trace' => $e->getTraceAsString()
             ]);
             return redirect()->back()
@@ -228,7 +236,22 @@ class PayrollController extends Controller
      */
     public function edit(Payroll $payroll)
     {
-        //
+        $this->authorize('update', $payroll);
+
+        if ($payroll->status === 'paid') {
+            return redirect()->route('admin.payroll.index')->with('error', 'Cannot edit a paid payroll record.');
+        }
+
+        $payroll->load([
+            'items',
+            'employee.user',
+            'employee.designation',
+            'employee.department',
+            'processedBy',
+            'company'
+        ]);
+
+        return view('admin.payroll.edit', compact('payroll'));
     }
 
     /**
@@ -236,7 +259,65 @@ class PayrollController extends Controller
      */
     public function update(Request $request, Payroll $payroll)
     {
-        //
+        $this->authorize('update', $payroll);
+
+        if ($payroll->status === 'paid') {
+            return redirect()->route('admin.payroll.index')->with('error', 'Cannot update a paid payroll record.');
+        }
+
+        $request->validate([
+            'items' => 'required|array',
+            'items.*.description' => 'required|string|max:255',
+            'items.*.amount' => 'required|numeric|min:0',
+            'items.*.type' => 'required|in:earning,deduction,reimbursement',
+            'items.*.is_taxable' => 'nullable|boolean',
+            'notes' => 'nullable|string|max:1000'
+        ]);
+
+        DB::beginTransaction();
+        try {
+            // Update payroll items
+            $payroll->items()->delete(); // Remove existing items
+
+            $totalEarnings = 0;
+            $totalDeductions = 0;
+
+            foreach ($request->items as $itemData) {
+                $payroll->items()->create([
+                    'description' => $itemData['description'],
+                    'amount' => $itemData['amount'],
+                    'type' => $itemData['type'],
+                    'is_taxable' => $itemData['is_taxable'] ?? false,
+                    'meta' => []
+                ]);
+
+                if (in_array($itemData['type'], ['earning', 'reimbursement'])) {
+                    $totalEarnings += $itemData['amount'];
+                } elseif ($itemData['type'] === 'deduction') {
+                    $totalDeductions += $itemData['amount'];
+                }
+            }
+
+            // Update payroll totals
+            $payroll->gross_salary = $totalEarnings;
+            $payroll->total_deductions = $totalDeductions;
+            $payroll->net_salary = max(0, $totalEarnings - $totalDeductions);
+            $payroll->notes = $request->notes;
+
+            $payroll->save();
+
+            DB::commit();
+
+            return redirect()->route('admin.payroll.show', $payroll->id)
+                ->with('success', 'Payroll updated successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error updating payroll {$payroll->id}: " . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Failed to update payroll: ' . $e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -275,7 +356,8 @@ class PayrollController extends Controller
             $payroll->status = 'paid';
             $payroll->payment_date = now();
             $payroll->save();
-            return redirect()->route('admin.payroll.index')->with('success', "Payroll for {$payroll->employee->user->name} marked as paid.");
+            $employeeName = $payroll->employee?->user?->name ?? 'Unknown Employee';
+            return redirect()->route('admin.payroll.index')->with('success', "Payroll for {$employeeName} marked as paid.");
         } catch (\Exception $e) {
             Log::error("Error marking payroll {$payroll->id} as paid: " . $e->getMessage());
             return redirect()->route('admin.payroll.index')->with('error', 'Failed to mark payroll as paid.');
@@ -299,10 +381,57 @@ class PayrollController extends Controller
         try {
             $payroll->status = 'cancelled';
             $payroll->save();
-            return redirect()->route('admin.payroll.index')->with('success', "Payroll for {$payroll->employee->user->name} has been cancelled.");
+            $employeeName = $payroll->employee?->user?->name ?? 'Unknown Employee';
+            return redirect()->route('admin.payroll.index')->with('success', "Payroll for {$employeeName} has been cancelled.");
         } catch (\Exception $e) {
             Log::error("Error cancelling payroll {$payroll->id}: " . $e->getMessage());
             return redirect()->route('admin.payroll.index')->with('error', 'Failed to cancel payroll.');
         }
+    }
+
+    /**
+     * Bulk approve and mark multiple payrolls as paid.
+     */
+    public function bulkApprove(Request $request)
+    {
+        $request->validate([
+            'payroll_ids' => 'required|array',
+            'payroll_ids.*' => 'exists:payrolls,id'
+        ]);
+
+        $payrollIds = $request->payroll_ids;
+        $processed = 0;
+        $errors = [];
+
+        foreach ($payrollIds as $payrollId) {
+            try {
+                $payroll = Payroll::findOrFail($payrollId);
+
+                $this->authorize('update', $payroll);
+
+                if (!in_array($payroll->status, ['pending', 'processed'])) {
+                    $employeeName = $payroll->employee?->user?->name ?? 'Unknown Employee';
+                    $errors[] = "Payroll #{$payrollId} for {$employeeName} is already {$payroll->status}.";
+                    continue;
+                }
+
+                $payroll->status = 'paid';
+                $payroll->payment_date = now();
+                $payroll->save();
+
+                $processed++;
+            } catch (\Exception $e) {
+                Log::error("Error bulk approving payroll {$payrollId}: " . $e->getMessage());
+                $errors[] = "Failed to approve payroll #{$payrollId}.";
+            }
+        }
+
+        $message = "Bulk approval completed. {$processed} payroll(s) approved successfully.";
+        if (!empty($errors)) {
+            $message .= " " . count($errors) . " error(s) occurred.";
+            return redirect()->route('admin.payroll.index')->with('warning', $message)->with('bulk_errors', $errors);
+        }
+
+        return redirect()->route('admin.payroll.index')->with('success', $message);
     }
 }

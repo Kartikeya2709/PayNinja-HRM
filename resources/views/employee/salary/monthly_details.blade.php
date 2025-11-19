@@ -18,9 +18,9 @@
                     <h5 class="mb-0">Salary Details - {{ $month }}
                         <small class="text-muted">({{ $period }})</small>
                     </h5>
-                    <a href="{{ route('employee.salary.details') }}" class="btn btn-sm btn-outline-secondary">
+                    {{-- <a href="{{ route('employee.salary.details') }}" class="btn btn-sm btn-outline-secondary">
                         <i class="fas fa-arrow-left mr-1"></i> Back to Salary
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="card-body">
                     <div class="row mb-4">

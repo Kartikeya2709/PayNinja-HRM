@@ -24,17 +24,17 @@ class PayrollCalculationService
      * @return PayrollSetting
      */
     protected function ensurePayrollSettingsExist($companyId)
-    {
-        return PayrollSetting::firstOrCreate(
-            ['company_id' => $companyId],
-            [
-                'enable_halfday_deduction' => true,
-                'enable_reimbursement' => true,
-                'days_in_month' => 30,
-                'deductible_leave_type_ids' => []
-            ]
-        );
-    }
+     {
+         return PayrollSetting::firstOrCreate(
+             ['company_id' => $companyId],
+             [
+                 'days_in_month' => 30,
+                 'deductible_leave_type_ids' => [],
+                 'enable_halfday_deduction' => true,
+                 'enable_reimbursement' => true
+             ]
+         );
+     }
 
     /**
      * Calculate monthly payroll with half-day deductions and reimbursements
@@ -63,29 +63,30 @@ class PayrollCalculationService
             $halfDays = 0;
             
             // Calculate half day deductions if enabled
-            if ($this->payrollSettings->enable_halfday_deduction) {
-                $halfDays = $employee->halfDays()
-                    ->whereBetween('date', [$startDate, $endDate])
-                    ->approved()
-                    ->count();
-                
+            // if ($this->payrollSettings->enable_halfday_deduction) {
+            //     $halfDays = $employee->halfDays()
+            //         ->whereBetween('date', [$startDate, $endDate])
+            //         ->approved()
+            //         ->count();
+
                 if ($halfDays > 0) {
                     $daysInMonth = $this->payrollSettings->days_in_month ?: 30;
                     $dailyRate = $basicSalary / $daysInMonth;
                     $halfDayDeduction = ($dailyRate / 2) * $halfDays;
                 }
-            }
-            
+            // }
+
             // Calculate reimbursements if enabled
             if ($this->payrollSettings->enable_reimbursement) {
                 $reimbursementAmount = $employee->reimbursements()
-                    ->whereBetween('date', [$startDate, $endDate])
-                    ->approved()
+                ->whereBetween('expense_date', [$startDate, $endDate])
+                    // ->approved()
+                    ->where('status', 'admin_approved')
                     ->sum('amount');
             }
             
             // Calculate net salary
-            $netSalary = $basicSalary - $halfDayDeduction + $reimbursementAmount;
+            $netSalary = max(0, $basicSalary - $halfDayDeduction + $reimbursementAmount);
             
             return [
                 'basic_salary' => $basicSalary,
@@ -146,10 +147,10 @@ class PayrollCalculationService
         if (!$this->payrollSettings) {
             // Return default settings if none set
             return new PayrollSetting([
-                'enable_halfday_deduction' => true,
-                'enable_reimbursement' => true,
                 'days_in_month' => 30,
-                'deductible_leave_type_ids' => []
+                'deductible_leave_type_ids' => [],
+                'enable_halfday_deduction' => true,
+                'enable_reimbursement' => true
             ]);
         }
         return $this->payrollSettings;

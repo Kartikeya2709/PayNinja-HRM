@@ -240,12 +240,12 @@ class PayrollService
             // Apply half-day deductions if enabled and there are any
             if ($payrollSettings->enable_halfday_deduction && isset($calculation['half_day_deduction']) && $calculation['half_day_deduction'] > 0) {
                 $payrollItems[] = [
-                    'type' => 'deduction', 
-                    'description' => 'Half Day Deduction', 
-                    'amount' => $calculation['half_day_deduction'], 
+                    'type' => 'deduction',
+                    'description' => 'Half Day Deduction',
+                    'amount' => $calculation['half_day_deduction'],
                     'is_taxable' => false
                 ];
-                
+
                 // Log the deduction for debugging
                 Log::debug('Applied half-day deduction', [
                     'employee_id' => $employee->id,
@@ -254,33 +254,34 @@ class PayrollService
                     'period' => $calculation['period'] ?? []
                 ]);
             }
-            
-            // Skipping reimbursements as per user request
-            // if ($payrollSettings->enable_reimbursement && isset($calculation['reimbursement_amount']) && $calculation['reimbursement_amount'] > 0) {
-            //     $payrollItems[] = [
-            //         'type' => 'reimbursement',
-            //         'description' => 'Reimbursement', 
-            //         'amount' => $calculation['reimbursement_amount'], 
-            //         'is_taxable' => false // Assuming reimbursements are non-taxable by default
-            //     ];
-            //     // Log the reimbursement for debugging
-            //     Log::debug('Skipped reimbursement as per user request', [
-            //         'employee_id' => $employee->id,
-            //         'amount' => $calculation['reimbursement_amount'],
-            //         'pay_period' => $payPeriodStart->format('Y-m-d') . ' to ' . $payPeriodEnd->format('Y-m-d')
-            //     ]);
-            // }
 
-            Log::info('Skipping reimbursements in payroll calculation as per user request', [
-                'employee_id' => $employee->id,
-                'pay_period_start' => $payPeriodStart->toDateString(),
-                'pay_period_end' => $payPeriodEnd->toDateString()
-            ]);
-
+            // Handle reimbursements based on settings
+            if ($payrollSettings->enable_reimbursement == true) {
+                if ($calculation['reimbursement_amount'] > 0) {
+                    $payrollItems[] = [
+                        'type' => 'reimbursement',
+                        'description' => 'Reimbursement',
+                        'amount' => $calculation['reimbursement_amount'],
+                        'is_taxable' => false // Assuming reimbursements are non-taxable by default
+                    ];
+                    
+                    Log::info('Added reimbursement to payroll', [
+                        'employee_id' => $employee->id,
+                        'amount' => $calculation['reimbursement_amount'],
+                        'pay_period' => $payPeriodStart->format('Y-m-d') . ' to ' . $payPeriodEnd->format('Y-m-d')
+                    ]);
+                }
+            } else {
+                Log::info('Skipping reimbursements in payroll calculation as per settings', [
+                    'employee_id' => $employee->id,
+                    'pay_period_start' => $payPeriodStart->toDateString(),
+                    'pay_period_end' => $payPeriodEnd->toDateString()
+                ]);
+            }
             // 4. Calculate Deductible Leave Deductions
             $deductibleLeaveDeductions = $this->calculateDeductibleLeaveDeductions($employee, $payPeriodStart, $payPeriodEnd, $payrollItems);
             if ($deductibleLeaveDeductions > 0) {
-                \Log::info('Added deductible leave deductions to payroll', [
+                Log::info('Added deductible leave deductions to payroll', [
                     'employee_id' => $employee->id,
                     'deduction_amount' => $deductibleLeaveDeductions
                 ]);
@@ -373,6 +374,7 @@ class PayrollService
             }
 
             // Log key payroll figures before commit
+        // Log key payroll figures before commit
         $finalGrossSalary = $payroll->gross_salary; // Assuming these are calculated and set on $payroll object
         $finalTotalDeductions = $payroll->total_deductions;
         $finalNetSalary = $payroll->net_salary;
@@ -386,9 +388,9 @@ class PayrollService
         ]);
 
         DB::commit();
-            return $payroll;
+        return $payroll;
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log the error: Log::error("Payroll generation failed for employee {$employee->id}: " . $e->getMessage());
             throw $e; // Re-throw for controller to handle
@@ -576,7 +578,7 @@ protected function getApprovedReimbursementsForPeriod(Employee $employee, \Carbo
      */
     protected function calculateDeductibleLeaveDeductions(Employee $employee, Carbon $payPeriodStart, Carbon $payPeriodEnd, array &$payrollItems): float
     {
-        \Log::info('Starting calculateDeductibleLeaveDeductions', [
+        Log::info('Starting calculateDeductibleLeaveDeductions', [
             'employee_id' => $employee->id,
             'pay_period' => $payPeriodStart->format('Y-m-d') . ' to ' . $payPeriodEnd->format('Y-m-d')
         ]);
@@ -828,7 +830,7 @@ protected function getApprovedReimbursementsForPeriod(Employee $employee, \Carbo
 
         // $companyHolidays will be checked day by day using isHoliday()
 
-        $period = new \DatePeriod($payPeriodStart, new \DateInterval('P1D'), $payPeriodEnd->copy()->addDay());
+        $period = new \DatePeriod($payPeriodStart, new \DateInterval('P1D'), $payPeriodEnd);
 
         foreach ($period as $date) {
             $currentDate = Carbon::instance($date);

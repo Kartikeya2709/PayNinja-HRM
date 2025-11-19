@@ -78,8 +78,17 @@
                                             <i class="bi bi-clock-history"></i>
                                             <div class="text-muted small">Working Hours</div>
                                             <div class="h5 mb-0">
-                                                @if(isset($settings) && $settings && $settings->grace_period)
-                                                    {{ \Carbon\Carbon::parse($settings->grace_period)->format('h:i A') }}
+                                                @if(isset($todayAttendance) && $todayAttendance && $todayAttendance->check_in)
+                                                    @php
+                                                        $checkInTime = \Carbon\Carbon::parse($todayAttendance->check_in);
+                                                        $endTime = $todayAttendance->check_out ? \Carbon\Carbon::parse($todayAttendance->check_out) : \Carbon\Carbon::now();
+                                                        $duration = $checkInTime->diff($endTime);
+                                                        $hours = $duration->h + ($duration->days * 24);
+                                                        $minutes = $duration->i;
+                                                        $seconds= $duration->s;
+                                                        $formattedTime = sprintf('%02d:%02d', $hours, $minutes);
+                                                    @endphp
+                                                    {{ $formattedTime }}
                                                 @else
                                                     --
                                                 @endif
