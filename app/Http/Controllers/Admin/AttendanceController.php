@@ -55,7 +55,7 @@ class AttendanceController extends Controller
 
                     // Validate date range is not too large (max 1 year)
                     if ($endDate->diffInDays($startDate) > 365) {
-                        return redirect()->route('admin.attendance.index')
+                        return redirect()->route('admin-attendance.index')
                             ->with('error', 'Date range cannot be more than 1 year.');
                     }
                 } else {
@@ -65,7 +65,7 @@ class AttendanceController extends Controller
                 $query->whereBetween('date', [$startDate, $endDate]);
 
             } catch (\Exception $e) {
-                return redirect()->route('admin.attendance.index')
+                return redirect()->route('admin-attendance.index')
                     ->with('error', 'Invalid date format. Please use YYYY-MM-DD format or select a date from the calendar.');
             }
         }
@@ -160,7 +160,7 @@ class AttendanceController extends Controller
 
         $attendance->save();
 
-        return redirect()->route('admin.attendance.index')
+        return redirect()->route('admin-attendance.index')
             ->with('success', 'Attendance record created successfully.');
     }
 
@@ -559,12 +559,12 @@ class AttendanceController extends Controller
                 $message .= " " . count($errors) . " records had errors.";
 
                 // Store errors in session
-                return redirect()->route('admin.attendance.import-results')
+                return redirect()->route('admin-attendance.import-results')
                     ->with('warning', $message)
                     ->with('import_results', $results);
             }
 
-            return redirect()->route('admin.attendance.import-results')
+            return redirect()->route('admin-attendance.import-results')
                 ->with('success', $message)
                 ->with('import_results', $results);
 

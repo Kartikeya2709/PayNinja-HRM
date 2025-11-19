@@ -9,7 +9,7 @@
     <div class="section-header">
         <h1>{{ isset($holiday) ? 'Edit Holiday' : 'Create Holiday' }}</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('company.academic-holidays.index') }}">Academic
+            <div class="breadcrumb-item"><a href="{{ route('academic-holidays.index') }}">Academic
                     Holidays</a></div>
             <div class="breadcrumb-item"><a href="#">Create</a></div>
         </div>
@@ -36,8 +36,8 @@
 
                         <form
                             action="{{ isset($holiday)
-                                ? route('company.academic-holidays.update', $holiday->id)
-                                : route('company.academic-holidays.store') }}"
+                                ? route('academic-holidays.update', $holiday->id)
+                                : route('academic-holidays.store') }}"
                             method="POST">
                             @csrf
                             @if (isset($holiday))
@@ -112,7 +112,7 @@
                                    <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                                    <i class="bi bi-calendar-event me-2"></i>{{ isset($holiday) ? 'Update' : 'Create' }} Holiday
                                    </button>
-                                   <a href="{{ route('company.academic-holidays.index') }}" class="btn btn-danger px-4 rounded-pill">
+                                   <a href="{{ route('academic-holidays.index') }}" class="btn btn-danger px-4 rounded-pill">
                                    <i class="bi bi-x-circle me-2"></i>Cancel
                                    </a>
                                 </div>

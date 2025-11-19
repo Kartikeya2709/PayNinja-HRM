@@ -57,7 +57,7 @@ class AssetController extends Controller
 
         Asset::create($validated);
 
-        return redirect()->route('admin.assets.index')
+        return redirect()->route('assets.index')
             ->with('success', 'Asset created successfully.');
     }
 
@@ -109,7 +109,7 @@ class AssetController extends Controller
 
         $asset->update($validated);
 
-        return redirect()->route('admin.assets.index')
+        return redirect()->route('assets.index')
             ->with('success', 'Asset updated successfully.');
     }
 
@@ -123,13 +123,13 @@ class AssetController extends Controller
 
         // Check if asset is currently assigned
         if ($asset->status === 'assigned') {
-            return redirect()->route('admin.assets.index')
+            return redirect()->route('assets.index')
                 ->with('error', 'Cannot delete an asset that is currently assigned.');
         }
 
         $asset->delete();
 
-        return redirect()->route('admin.assets.index')
+        return redirect()->route('assets.index')
             ->with('success', 'Asset deleted successfully.');
     }
 

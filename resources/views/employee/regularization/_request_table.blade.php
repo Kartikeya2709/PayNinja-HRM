@@ -38,7 +38,7 @@
                         <td>{{ $request->approver->name ?? '' }}</td>
                         @if ($show_actions)
                             <td>
-                                <a href="{{ route('regularization.requests.edit', $request->id) }}"
+                                <a href="{{ route('regularization-requests.edit', $request->id) }}"
                                     class="btn btn-primary btn-sm">Edit</a>
                             </td>
                         @endif

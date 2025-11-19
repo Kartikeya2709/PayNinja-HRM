@@ -360,7 +360,7 @@
 
                         <!-- Reports -->
                         <div class="col-xl-12">
-                            <a href="{{ route('company-admin.announcements.index') }}" class="action-card">
+                            <a href="{{ route('announcements.index') }}" class="action-card">
                                 <div class="card-body p-3">
                                     <div class="action-icon">
                                         <i class="fas fa-chart-bar"></i>
@@ -430,12 +430,12 @@
                                                 class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
                                         </td>
                                         <td>
-                                            <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
+                                            <a href="{{ route('announcements.show', $announcement->id) }}"
                                                 class="btn btn-sm btn-info">Show</a>
                                             @if($announcement->created_by === auth()->id())
-                                                <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
+                                                <a href="{{ route('announcements.edit', $announcement->id) }}"
                                                     class="btn btn-sm btn-primary ms-1">Edit</a>
-                                                <form action="{{ route('company-admin.announcements.destroy', $announcement->id) }}"
+                                                <form action="{{ route('announcements.destroy', $announcement->id) }}"
                                                     method="POST" style="display:inline;">
                                                     @csrf
                                                     @method('DELETE')

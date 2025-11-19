@@ -8,7 +8,7 @@
                 <div class="card-1">
                     <h5 class="mb-0">Category</h5>
                         <div class="card-tools">
-                           <a href="{{ route('admin.assets.categories.index') }}" class="btn btn-secondary">
+                           <a href="{{ route('assets.categories.index') }}" class="btn btn-secondary">
                            <i class="fas fa-arrow-left"></i> Back to Categories
                            </a>
                         </div>
@@ -73,7 +73,7 @@
                                                 <div class="btn-group btn-group-sm">
 
                                                 <!-- View Asset Button -->
-                                                <a href="{{ route('admin.assets.show', $asset->id) }}"
+                                                <a href="{{ route('assets.show', $asset->id) }}"
                                                 class="btn btn-outline-info btn-sm action-btn"
                                                 data-id="{{ $asset->id }}"
                                                 data-bs-toggle="tooltip"
@@ -87,7 +87,7 @@
                                                 </a>
 
                                                 <!-- Edit Asset Button -->
-                                                <a href="{{ route('admin.assets.edit', $asset->id) }}"
+                                                <a href="{{ route('assets.edit', $asset->id) }}"
                                                 class="btn btn-outline-primary btn-sm action-btn"
                                                 data-id="{{ $asset->id }}"
                                                 data-bs-toggle="tooltip"

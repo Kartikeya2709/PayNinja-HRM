@@ -17,7 +17,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form action="{{ route('regularization.requests.store') }}" method="POST">
+                    <form action="{{ route('regularization-requests.store') }}" method="POST">
                         @csrf
                         <div id="regularization-forms">
                             <div class="regularization-entry mb-4">

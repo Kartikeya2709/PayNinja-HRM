@@ -8,17 +8,17 @@
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('attendance.dashboard') ? 'active' : '' }}" href="{{ route('attendance.dashboard') }}">
+                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
                             <i class="bi bi-speedometer2 me-2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('attendance.check-in') ? 'active' : '' }}" href="{{ route('attendance.check-in') }}">
+                        <a class="nav-link {{ request()->routeIs('check-in-out') ? 'active' : '' }}" href="{{ route('check-in-out') }}">
                             <i class="bi bi-box-arrow-in-right me-2"></i> Check In/Out
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('attendance.my-attendance*') ? 'active' : '' }}" href="{{ route('attendance.my-attendance') }}">
+                        <a class="nav-link {{ request()->routeIs('my-attendance*') ? 'active' : '' }}" href="{{ route('my-attendance') }}">
                             <i class="bi bi-calendar-check me-2"></i> My Attendance
                         </a>
                     </li>

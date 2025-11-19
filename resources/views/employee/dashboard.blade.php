@@ -68,7 +68,7 @@
 
 
                             <div class="col-lg-12">
-                                <a href="{{ route('attendance.check-in') }}" class="card card-link">
+                                <a href="{{ route('check-in-out') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
                                         <i class="fas fa-clock fa-3x"></i>
@@ -79,7 +79,7 @@
                             </div>
 
                             <div class="col-lg-12">
-                                <a href="{{ route('attendance.my-attendance') }}" class="card card-link">
+                                <a href="{{ route('my-attendance') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
                                         <i class="fas fa-calendar-check fa-3x"></i>
@@ -101,7 +101,7 @@
                             </div>
 
                             <div class="col-lg-12">
-                                <a href="{{ route('regularization.requests.index') }}" class="card card-link">
+                                <a href="{{ route('regularization-requests.index') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
                                         <i class="fas fa-user-clock"></i>
@@ -220,7 +220,7 @@
                                                             class="badge bg-{{ $status[1] }}{{ $status[0] == 'Ongoing' ? ' text-dark' : '' }}">{{ $status[0] }}</span>
                                                     </td>
                                                     <td>
-                                                        <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
+                                                        <a href="{{ route('announcements.show', $announcement->id) }}"
                                                          class="btn btn-outline-info action-btn"
                                                          data-id="{{ $announcement->id }}"
                                                          data-bs-toggle="tooltip"

@@ -19,7 +19,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($category) ? route('admin.assets.categories.update', $category->id) : route('admin.assets.categories.store') }}" method="POST">
+                    <form action="{{ isset($category) ? route('assets.categories.update', $category->id) : route('assets.categories.store') }}" method="POST">
                     @csrf
                     @if(isset($category))
                     @method('PUT')
@@ -53,7 +53,7 @@
                   <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                   <i class="bi bi-save me-2"></i>{{ isset($category) ? 'Update' : 'Create' }}
                   </button>
-                  <a href="{{ route('admin.assets.categories.index') }}" class="btn btn-danger px-4 rounded-pill">
+                  <a href="{{ route('assets.categories.index') }}" class="btn btn-danger px-4 rounded-pill">
                   <i class="bi bi-x-circle me-2"></i>Cancel
                   </a>
                   </div>

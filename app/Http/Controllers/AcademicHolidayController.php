@@ -65,7 +65,7 @@ class AcademicHolidayController extends Controller
             'created_by' => Auth::id()
         ]);
 
-        return redirect()->route('company.academic-holidays.index', $companyId)
+        return redirect()->route('academic-holidays.index', $companyId)
             ->with('success', 'Holiday created successfully');
     }
 
@@ -106,7 +106,7 @@ class AcademicHolidayController extends Controller
 
         $holiday->update($validated);
 
-        return redirect()->route('company.academic-holidays.index')
+        return redirect()->route('academic-holidays.index')
             ->with('success', 'Holiday updated successfully');
     }
 
@@ -119,7 +119,7 @@ class AcademicHolidayController extends Controller
         $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
         $holiday->delete();
 
-        return redirect()->route('company.academic-holidays.index')
+        return redirect()->route('academic-holidays.index')
             ->with('success', 'Holiday deleted successfully');
     }
 
@@ -168,7 +168,7 @@ class AcademicHolidayController extends Controller
             if (count($errors) > 0) {
                 // If there were some successes but also errors
                 if ($imported > 0) {
-                    return redirect()->route('company.academic-holidays.index', $companyId)
+                    return redirect()->route('academic-holidays.index', $companyId)
                         ->with('warning', implode(' ', $message) . ' Some rows had errors: ' . implode('; ', $errors));
                 }
                 // If there were only errors
@@ -178,7 +178,7 @@ class AcademicHolidayController extends Controller
             }
 
             // If everything was successful
-            return redirect()->route('company.academic-holidays.index', $companyId)
+            return redirect()->route('academic-holidays.index', $companyId)
                 ->with('success', implode(' ', $message));
 
         } catch (\Exception $e) {

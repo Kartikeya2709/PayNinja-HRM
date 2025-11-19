@@ -42,7 +42,7 @@ class AssetCategoryController extends Controller
 
         AssetCategory::create($validated);
 
-        return redirect()->route('admin.assets.categories.index')
+        return redirect()->route('assets.categories.index')
             ->with('success', 'Asset category created successfully.');
     }
 
@@ -86,7 +86,7 @@ class AssetCategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('admin.assets.categories.index')
+        return redirect()->route('assets.categories.index')
             ->with('success', 'Asset category updated successfully.');
     }
 
@@ -100,13 +100,13 @@ class AssetCategoryController extends Controller
 
         // Check if category has any assets
         if ($category->assets()->exists()) {
-            return redirect()->route('admin.assets.categories.index')
+            return redirect()->route('assets.categories.index')
                 ->with('error', 'Cannot delete category that has assets assigned to it.');
         }
 
         $category->delete();
 
-        return redirect()->route('admin.assets.categories.index')
+        return redirect()->route('assets.categories.index')
             ->with('success', 'Asset category deleted successfully.');
     }
 }

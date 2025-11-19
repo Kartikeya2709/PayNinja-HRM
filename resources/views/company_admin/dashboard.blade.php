@@ -254,7 +254,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-group btn-group-sm">
-                                                    <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
+                                                    <a href="{{ route('announcements.show', $announcement->id) }}"
                                                     class="btn btn-outline-info action-btn" data-id="{{ $announcement->id }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Show Announcement" aria-label="Show">
                                                     <span class="btn-content">
@@ -263,7 +263,7 @@
                                                     <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                     </a>
 
-                                                    <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
+                                                    <a href="{{ route('announcements.edit', $announcement->id) }}"
                                                     class="btn btn-outline-primary action-btn"
                                                     data-id="{{ $announcement->id }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Announcement" aria-label="Edit">
@@ -274,7 +274,7 @@
                                                     </a>
 
                                                     <form
-                                                        action="{{ route('company-admin.announcements.destroy', $announcement->id) }}"
+                                                        action="{{ route('announcements.destroy', $announcement->id) }}"
                                                         method="POST" style="display:inline;">
                                                         @csrf
                                                         @method('DELETE')
@@ -310,7 +310,7 @@
                         <h5 class="pt-3 pb-3 ps-3">Quick Actions</h5>
                         <!-- Attendance Card -->
                         <div class="col-xl-12">
-                            <a href="{{ route('attendance.dashboard') }}" class="action-card h-100">
+                            <a href="{{ route('home') }}" class="action-card h-100">
                                 <div class="card-body p-3">
                                     <div class="action-icon">
                                         <i class="fas fa-calendar-check"></i>
@@ -448,7 +448,7 @@
                             </table>
                         </div>
                         <div class="">
-                            <a href="{{ route('admin.attendance.index') }}" class="float-end">View All</a>
+                            <a href="{{ route('admin-attendance.index') }}" class="float-end">View All</a>
                             <p class="text-muted small mb-0 float-start">*These employees have not clocked in today</p>
                         </div>
                     </div>
@@ -530,7 +530,7 @@
                                                     <td>{{ $request->id }}</td>
                                                     <td>{{ $request->employee->name ?? 'N/A' }}</td>
                                                     <td>
-                                                        <a href="{{ route('regularization.requests.edit', $request->id) }}"
+                                                        <a href="{{ route('regularization-requests.edit', $request->id) }}"
                                                         class="btn btn-outline-info btn-sm action-btn"
                                                         data-id="{{ $request->id }}" data-bs-toggle="tooltip" data-bs-placement="top" title="View Regularization Request"
                                                         aria-label="View">
@@ -551,7 +551,7 @@
                                     </table>
                                 </div>
                                 <div class="mt-3">
-                                    <a href="{{ route('regularization.requests.index') }}" class="float-end">View All</a>
+                                    <a href="{{ route('regularization-requests.index') }}" class="float-end">View All</a>
                                 </div>
                             </div>
                         </div>

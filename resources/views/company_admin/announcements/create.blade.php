@@ -14,7 +14,7 @@
                 <h5>Create Announcement</h5>
             </div>
             <div class="card-body">
-                <form method="POST" action="{{ route('company-admin.announcements.store') }}">
+                <form method="POST" action="{{ route('announcements.store') }}">
                     @csrf
                     <div class="row">
                          <div class="col-lg-12 mb-3 form-group">

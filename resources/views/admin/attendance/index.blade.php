@@ -46,7 +46,7 @@
                                                 class="bi bi-file-pdf me-2"></i>Export to PDF</a></li>
                                 </ul>
                             </div>
-                            <a href="{{ route('admin.attendance.template') }}"
+                            <a href="{{ route('admin-attendance.template') }}"
                                 class="btn btn-outline-secondary btn-sm ms-2" title="Download Import Template">
                                 <i class="bi bi-file-earmark-arrow-down me-1"></i> Template
                             </a>
@@ -119,7 +119,7 @@
                                             <button type="submit" class="btn btn-primary btn-md me-2 flex-grow-1">
                                                 <i class="bi bi-funnel me-1"></i> Filter
                                             </button>
-                                            <a href="{{ route('admin.attendance.index') }}"
+                                            <a href="{{ route('admin-attendance.index') }}"
                                                 class="btn btn-outline-secondary btn-sm d-flex align-items-center"
                                                 title="Reset filters" style="min-width: 36px;">
                                                 <i class="bi bi-arrow-counterclockwise"></i>
@@ -255,7 +255,7 @@
                                                 No attendance records found for the selected criteria.
                                                 @if(request()->hasAny(['date_range', 'employee_id', 'department_id',
                                                 'status']))
-                                                <a href="{{ route('admin.attendance.index') }}"
+                                                <a href="{{ route('admin-attendance.index') }}"
                                                     class="alert-link ms-2">Clear filters</a>
                                                 @endif
                                             </div>
@@ -285,7 +285,7 @@
 <div class="modal fade" id="addAttendanceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="addAttendanceForm" action="{{ route('admin.attendance.store') }}" method="POST">
+            <form id="addAttendanceForm" action="{{ route('admin-attendance.store') }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Add Attendance Record</h5>
@@ -417,7 +417,7 @@
 <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form id="importForm" action="{{ route('admin.attendance.import') }}" method="POST"
+            <form id="importForm" action="{{ route('admin-attendance.import') }}" method="POST"
                 enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
@@ -442,7 +442,7 @@
                             required>
                         <div class="form-text">
                             Please upload an Excel/CSV file with the correct format.
-                            <a href="{{ route('admin.attendance.template') }}" id="downloadTemplate">
+                            <a href="{{ route('admin-attendance.template') }}" id="downloadTemplate">
                                 <i class="bi bi-download"></i> Download template
                             </a>
                         </div>
@@ -487,7 +487,7 @@
 <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="exportForm" action="{{ route('admin.attendance.export') }}" method="POST">
+            <form id="exportForm" action="{{ route('admin-attendance.export') }}" method="POST">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title">Export Attendance Records</h5>
@@ -661,7 +661,7 @@ $(document).ready(function() {
     $('.export-btn').on('click', function(e) {
         e.preventDefault();
         const exportType = $(this).data('type');
-        let url = new URL('{{ route("admin.attendance.export") }}');
+        let url = new URL('{{ route("admin-attendance.export") }}');
 
         // Get current filter values
         const params = new URLSearchParams(window.location.search);
@@ -842,7 +842,7 @@ $(document).ready(function() {
 
                     // Send delete request
                     $.ajax({
-                        url: `{{ route('admin.attendance.destroy', ':id') }}`
+                        url: `{{ route('admin-attendance.destroy', ':id') }}`
                             .replace(':id', id),
                         type: 'DELETE',
                         data: {

@@ -98,7 +98,7 @@ class AttendanceSettingController extends Controller
             ->first();
 
         if (!$settings) {
-            return redirect()->route('admin.attendance.settings')
+            return redirect()->route('admin-attendance.settings')
                 ->with('info', 'No attendance settings found. Please configure them first.');
         }
         
@@ -359,7 +359,7 @@ class AttendanceSettingController extends Controller
                 ]);
             }
 
-            return redirect()->route('admin.attendance.settings')
+            return redirect()->route('admin-attendance.settings')
                 ->with('success', 'Office timings updated successfully');
                 
         } catch (\Illuminate\Validation\ValidationException $e) {

@@ -38,7 +38,7 @@
             <!-- <div class="quick-actions quick-actions-header">
                 <div class="d-grid d-lg-flex gap-2">
                     @if(!Auth::user()->hasRole(['superadmin']))
-                    <a href="{{ route('attendance.check-in') }}" class="btn button">
+                    <a href="{{ route('check-in-out') }}" class="btn button">
                         <i class="fas fa-clock me-2"></i> Quick Attendance
                     </a>
                     @endif

@@ -53,7 +53,7 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('company-admin.announcements.show', $announcement->id) }}"
+                                            <a href="{{ route('announcements.show', $announcement->id) }}"
                                                 class="btn btn-outline-info btn-sm action-btn"
                                                 data-id="{{ $announcement->id }}" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Show Announcement" aria-label="Show">
@@ -66,7 +66,7 @@
 
                                             @if(auth()->id() === $announcement->created_by ||
                                             auth()->user()->hasRole('company_admin'))
-                                            <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}"
+                                            <a href="{{ route('announcements.edit', $announcement->id) }}"
                                                 class="btn btn-outline-primary btn-sm action-btn"
                                                 data-id="{{ $announcement->id }}" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Edit Announcement" aria-label="Edit">
@@ -78,7 +78,7 @@
                                             </a>
 
                                             <form
-                                                action="{{ route('company-admin.announcements.destroy', $announcement->id) }}"
+                                                action="{{ route('announcements.destroy', $announcement->id) }}"
                                                 method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')

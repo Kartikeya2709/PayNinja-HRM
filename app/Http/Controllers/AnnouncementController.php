@@ -63,7 +63,7 @@ class AnnouncementController extends Controller
             'expires_at' => $request->expires_at,
         ]);
 
-        return redirect()->route('company-admin.announcements.index')
+        return redirect()->route('announcements.index')
             ->with('success', 'Announcement created successfully!');
     }
 
@@ -132,7 +132,7 @@ class AnnouncementController extends Controller
             'expires_at' => $request->expires_at,
         ]);
 
-        return redirect()->route('company-admin.announcements.index')
+        return redirect()->route('announcements.index')
             ->with('success', 'Announcement updated successfully!');
     }
 
@@ -150,7 +150,7 @@ class AnnouncementController extends Controller
 
         $announcement->delete();
 
-        return redirect()->route('company-admin.announcements.index')
+        return redirect()->route('announcements.index')
             ->with('success', 'Announcement deleted (soft deleted) successfully!');
     }
 }

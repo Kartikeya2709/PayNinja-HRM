@@ -16,7 +16,7 @@
 
                     <hr>
 
-                    <form action="{{ route('regularization.requests.update', $request->id) }}" method="POST">
+                    <form action="{{ route('regularization-requests.update', $request->id) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -45,7 +45,7 @@
                         </div>
 
                         <button type="submit" class="btn btn-primary">Submit</button>
-                        <a href="{{ route('regularization.requests.index') }}" class="btn btn-secondary">Cancel</a>
+                        <a href="{{ route('regularization-requests.index') }}" class="btn btn-secondary">Cancel</a>
                     </form>
                 </div>
             </div>

@@ -37,7 +37,7 @@
                          <i class="fas fa-arrow-left me-1"></i> Back
                          </a>
                          @if(auth()->id() === $announcement->created_by || auth()->user()->hasRole('company_admin'))
-                         <a href="{{ route('company-admin.announcements.edit', $announcement->id) }}" class="btn btn-primary ms-2">
+                         <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-primary ms-2">
                          <i class="fas fa-edit me-1"></i> Edit
                          </a>
                          @endif

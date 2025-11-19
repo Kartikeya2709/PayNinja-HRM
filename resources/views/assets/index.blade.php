@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Assets</h3>
-                    <a href="{{ route('admin.assets.create') }}" class="btn btn-primary">
+                    <a href="{{ route('assets.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Add Asset
                     </a>
                 </div>
@@ -59,7 +59,7 @@
                                     <td>
                                         <div class="btn-group btn-group-sm">
                                         <!-- View Asset -->
-                                        <a href="{{ route('admin.assets.show', $asset->id) }}"
+                                        <a href="{{ route('assets.show', $asset->id) }}"
                                         class="btn btn-outline-info btn-sm action-btn"
                                         data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="View Asset" aria-label="View">
@@ -70,7 +70,7 @@
                                         </a>
 
                                         <!-- Edit Asset -->
-                                        <a href="{{ route('admin.assets.edit', $asset->id) }}"
+                                        <a href="{{ route('assets.edit', $asset->id) }}"
                                         class="btn btn-outline-primary btn-sm action-btn"
                                         data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="Edit Asset" aria-label="Edit">
@@ -82,7 +82,7 @@
 
                                         <!-- Assign Asset -->
                                         @if($asset->status === 'available')
-                                        <a href="{{ route('admin.assets.assignments.create', ['asset' => $asset->id]) }}"
+                                        <a href="{{ route('assets.assignments.create', ['asset' => $asset->id]) }}"
                                         class="btn btn-outline-success btn-sm action-btn"
                                         data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="Assign Asset" aria-label="Assign">

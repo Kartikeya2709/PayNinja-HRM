@@ -19,7 +19,7 @@
                         <h3 class="card-title mb-3">Academic Holidays</h3>
                         <div class="academic d-flex align-items-center gap-2">
                             @if(!$isReadOnly)
-                            <a href="{{ route('company.academic-holidays.create') }}"
+                            <a href="{{ route('academic-holidays.create') }}"
                                 class="btn btn-primary d-flex align-items-center gap-1">
                                 <i class="fas fa-plus"></i> Add Holiday
                             </a>
@@ -27,7 +27,7 @@
                                 data-bs-toggle="modal" data-bs-target="#importModal">
                                 <i class="fas fa-file-import"></i> Import Holidays
                             </button>
-                            <a href="{{ route('company.academic-holidays.template') }}"
+                            <a href="{{ route('academic-holidays.template') }}"
                                 class="btn btn-info d-flex align-items-center gap-1">
                                 <i class="fas fa-download"></i> Download Template
                             </a>
@@ -67,7 +67,7 @@
                                           @if(!$isReadOnly)
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('company.academic-holidays.edit', $holiday->id) }}"
+                                            <a href="{{ route('academic-holidays.edit', $holiday->id) }}"
                                                 class="btn btn-outline-primary btn-sm action-btn"
                                                 data-id="{{ $holiday->id }}" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Edit Holiday" aria-label="Edit">
@@ -79,7 +79,7 @@
                                             </a>
                                           
                                             <form
-                                                action="{{ route('company.academic-holidays.destroy', $holiday->id) }}"
+                                                action="{{ route('academic-holidays.destroy', $holiday->id) }}"
                                                 method="POST" class="d-inline-block">
                                                 @csrf
                                                 @method('DELETE')
@@ -124,7 +124,7 @@
                 <h5 class="modal-title" id="importModalLabel">Import Academic Holidays</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('company.academic-holidays.import') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('academic-holidays.import') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="mb-3">
