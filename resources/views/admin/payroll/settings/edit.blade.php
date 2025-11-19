@@ -132,7 +132,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group row align-items-center mb-4">
+                                {{-- <div class="form-group row align-items-center mb-4">
                                     <label for="days_in_month" class="col-sm-3 col-form-label">Days in Month for
                                         Payroll</label>
                                     <div class="col-sm-9">
@@ -149,7 +149,14 @@
                                         </div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
+
+                           <input type="checkbox"
+       name="enable_reimbursement"
+       value="1"
+       {{ old('enable_reimbursement', $settings->enable_reimbursement ?? false) ? 'checked' : '' }}>
+Enable reimbursement calculation in payroll
+
 
 
                                 <div class="form-group row mb-4">
@@ -272,6 +279,64 @@
     color: #34395e;
     font-weight: 600;
 }
+
+/* Custom switch styling */
+.custom-control-input:checked ~ .custom-control-label::before {
+    color: #fff;
+    border-color: #6777ef;
+    background-color: #6777ef;
+}
+
+.custom-control-input:focus ~ .custom-control-label::before {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 0.2rem rgba(103, 119, 239, 0.25);
+}
+
+.custom-control-label::before {
+    position: absolute;
+    top: 0.25rem;
+    left: -1.5rem;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    pointer-events: none;
+    content: "";
+    background-color: #fff;
+    border: 1px solid #adb5bd;
+    transition: all 0.15s ease-in-out;
+}
+
+.custom-control-label::after {
+    position: absolute;
+    top: 0.25rem;
+    left: -1.5rem;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    content: "";
+    background: no-repeat 50% / 50% 50%;
+}
+
+.custom-switch .custom-control-label::before {
+    left: -2.25rem;
+    width: 1.75rem;
+    pointer-events: all;
+    border-radius: 0.5rem;
+}
+
+.custom-switch .custom-control-label::after {
+    top: calc(0.25rem + 2px);
+    left: calc(-2.25rem + 2px);
+    width: calc(1rem - 4px);
+    height: calc(1rem - 4px);
+    background-color: #adb5bd;
+    border-radius: 0.5rem;
+    transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out;
+}
+
+.custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+    background-color: #fff;
+    transform: translateX(0.75rem);
+}
 </style>
 @endpush
 
@@ -295,6 +360,5 @@
         });
     }, false);
 })();
-Deductible Leave Types
 </script>
 @endpush

@@ -65,6 +65,7 @@ class PayrollSettingsController extends Controller
         if (!$settings->exists) {
             $settings->deductible_leave_type_ids = [];
             $settings->days_in_month = 30; // Default to 30 days in month
+            $settings->enable_reimbursement = false; // Default reimbursement disabled
             // You can set other defaults here if needed, e.g.:
             // $settings->late_arrival_threshold = config('payroll.late_arrival_threshold', 3);
             // $settings->late_arrival_deduction_days = config('payroll.late_arrival_deduction_days', 0.5);
@@ -96,8 +97,12 @@ class PayrollSettingsController extends Controller
             'deductible_leave_type_ids.*' => 'exists:leave_types,id', // Ensure selected IDs exist
             'late_arrival_threshold' => 'nullable|integer|min:0',
             'late_arrival_deduction_days' => 'nullable|numeric|min:0|max:30', // Max 30 days deduction
-            'days_in_month' => 'required|integer|min:1|max:31' // Days in month for payroll calculations
+            // 'days_in_month' => 'required|integer|min:1|max:31', // Days in month for payroll calculations
+            'enable_reimbursement' => 'nullable|boolean' // Enable reimbursement in payroll calculations
         ]);
+
+        // Handle checkbox conversion (checkbox only submits value when checked)
+        $validatedData['enable_reimbursement'] = $request->has('enable_reimbursement') ? true : false;
 
         // Ensure deductible_leave_type_ids is an empty array if not provided or null, to prevent DB errors with JSON field
         $validatedData['deductible_leave_type_ids'] = $validatedData['deductible_leave_type_ids'] ?? [];

@@ -373,8 +373,11 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{payroll}', [AdminPayrollController::class, 'update'])->name('update');
         Route::patch('/{payroll}/process', [AdminPayrollController::class, 'processPayroll'])->name('process'); // Mark as processed
         Route::patch('/{payroll}/mark-as-paid', [AdminPayrollController::class, 'markAsPaid'])->name('mark-as-paid'); // Mark as paid
+        Route::patch('/{payroll}/mark-as-paid', [AdminPayrollController::class, 'markAsPaid'])->name('markAsPaid'); // Mark as paid (alternative name)
         Route::patch('/{payroll}/cancel', [AdminPayrollController::class, 'cancel'])->name('cancel'); // Cancel a payroll run
         Route::delete('/{payroll}', [AdminPayrollController::class, 'destroy'])->name('destroy'); // Delete/cancel a payroll run
+        Route::post('/bulk-approve', [AdminPayrollController::class, 'bulkApprove'])->name('bulk-approve'); // Bulk approve payrolls
+        Route::post('/bulk-approve', [AdminPayrollController::class, 'bulkApprove'])->name('bulkApprove'); // Bulk approve payrolls (alternative name)
         // e.g., Route::get('/reports', [AdminPayrollController::class, 'reports'])->name('reports');
 
         // Beneficiary Badges Management (Allowances/Deductions)

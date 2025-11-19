@@ -71,25 +71,12 @@
                                         @enderror
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label for="pay_period_start" class="form-label">Pay Period Start <span class="text-danger">*</span></label>
-                                                <input type="date" name="pay_period_start" id="pay_period_start" class="form-control @error('pay_period_start') is-invalid @enderror" value="{{ old('pay_period_start') }}" required>
-                                                @error('pay_period_start')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label for="pay_period_end" class="form-label">Pay Period End <span class="text-danger">*</span></label>
-                                                <input type="date" name="pay_period_end" id="pay_period_end" class="form-control @error('pay_period_end') is-invalid @enderror" value="{{ old('pay_period_end') }}" required>
-                                                @error('pay_period_end')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                    <div class="form-group mb-3">
+                                        <label for="month" class="form-label">Pay Period Month <span class="text-danger">*</span></label>
+                                        <input type="month" name="month" id="month" class="form-control @error('month') is-invalid @enderror" value="{{ old('month') }}" required>
+                                        @error('month')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="mt-4 text-center">
@@ -110,25 +97,12 @@
                                     @csrf
                                     <input type="hidden" name="payroll_type" value="bulk">
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label for="bulk_pay_period_start" class="form-label">Pay Period Start <span class="text-danger">*</span></label>
-                                                <input type="date" name="pay_period_start" id="bulk_pay_period_start" class="form-control @error('pay_period_start') is-invalid @enderror" value="{{ old('pay_period_start') }}" required>
-                                                @error('pay_period_start')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group mb-3">
-                                                <label for="bulk_pay_period_end" class="form-label">Pay Period End <span class="text-danger">*</span></label>
-                                                <input type="date" name="pay_period_end" id="bulk_pay_period_end" class="form-control @error('pay_period_end') is-invalid @enderror" value="{{ old('pay_period_end') }}" required>
-                                                @error('pay_period_end')
-                                                    <div class="invalid-feedback">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                        </div>
+                                    <div class="form-group mb-3">
+                                        <label for="bulk_month" class="form-label">Pay Period Month <span class="text-danger">*</span></label>
+                                        <input type="month" name="month" id="bulk_month" class="form-control @error('month') is-invalid @enderror" value="{{ old('month') }}" required>
+                                        @error('month')
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
                                     </div>
 
                                     <div class="form-check mb-3">
@@ -164,27 +138,16 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize date pickers with default values if not set
+        // Initialize month pickers with default values if not set
         const today = new Date();
-        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-        
-        const formatDate = (date) => {
-            return date.toISOString().split('T')[0];
-        };
+        const currentMonth = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
 
-        // Set default dates if not already set
-        if (!document.getElementById('pay_period_start').value) {
-            document.getElementById('pay_period_start').value = formatDate(firstDay);
+        // Set default month if not already set
+        if (!document.getElementById('month').value) {
+            document.getElementById('month').value = currentMonth;
         }
-        if (!document.getElementById('pay_period_end').value) {
-            document.getElementById('pay_period_end').value = formatDate(today);
-        }
-        if (!document.getElementById('bulk_pay_period_start').value) {
-            document.getElementById('bulk_pay_period_start').value = formatDate(firstDay);
-        }
-        if (!document.getElementById('bulk_pay_period_end').value) {
-            document.getElementById('bulk_pay_period_end').value = formatDate(today);
+        if (!document.getElementById('bulk_month').value) {
+            document.getElementById('bulk_month').value = currentMonth;
         }
 
         // Handle bulk form submission
@@ -193,11 +156,11 @@
             bulkForm.addEventListener('submit', function(e) {
                 const submitBtn = document.querySelector('#process-bulk-payroll');
                 const spinner = submitBtn.querySelector('.spinner-border');
-                
+
                 // Show loading state
                 submitBtn.disabled = true;
                 spinner.classList.remove('d-none');
-                
+
                 // Optional: Show a confirmation dialog
                 if (!confirm('Are you sure you want to generate payroll for all employees? This action cannot be undone.')) {
                     e.preventDefault();

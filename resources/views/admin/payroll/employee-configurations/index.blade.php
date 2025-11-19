@@ -70,7 +70,7 @@
                                 <tbody>
                                     @foreach ($employees as $employee)
                                     <tr>
-                                        <td>{{ $employee->employee_id ?? 'N/A' }}</td>
+                                        <td>{{ $employee->employee_code ?? 'N/A' }}</td>
                                         <td>{{ $employee->user->name ?? 'N/A' }}</td>
                                         <td>{{ $employee->user->email ?? 'N/A' }}</td>
                                         <td>
