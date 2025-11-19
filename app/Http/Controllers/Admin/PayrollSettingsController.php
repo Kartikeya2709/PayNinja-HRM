@@ -97,7 +97,7 @@ class PayrollSettingsController extends Controller
             'deductible_leave_type_ids.*' => 'exists:leave_types,id', // Ensure selected IDs exist
             'late_arrival_threshold' => 'nullable|integer|min:0',
             'late_arrival_deduction_days' => 'nullable|numeric|min:0|max:30', // Max 30 days deduction
-            'days_in_month' => 'required|integer|min:1|max:31', // Days in month for payroll calculations
+            // 'days_in_month' => 'required|integer|min:1|max:31', // Days in month for payroll calculations
             'enable_reimbursement' => 'nullable|boolean' // Enable reimbursement in payroll calculations
         ]);
 
