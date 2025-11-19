@@ -141,6 +141,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{id}/toggle-active', [CompanyPackageController::class, 'toggleActive'])->name('toggle-active');
             Route::get('/get-company-packages', [CompanyPackageController::class, 'getCompanyPackages'])->name('get-company-packages');
             Route::post('/bulk-assign', [CompanyPackageController::class, 'bulkAssign'])->name('bulk-assign');
+            Route::get('/validate-permission-state/{companyId}', [CompanyPackageController::class, 'validatePermissionState'])->name('validate-permission-state');
         });
 
         // Pricing Management Routes

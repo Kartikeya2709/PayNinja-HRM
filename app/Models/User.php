@@ -32,7 +32,7 @@ class User extends Authenticatable
     public function getRoleNameAttribute()
     {
         // First check if we have a role_id relationship
-        if ($this->roleModel()) {
+        if ($this->role_id && $this->roleModel()) {
             return $this->roleModel()->first()->name;
         }
         // Fallback to the old role string

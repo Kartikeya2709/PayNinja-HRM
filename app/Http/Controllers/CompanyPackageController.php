@@ -8,6 +8,7 @@ use App\Models\Package;
 use App\Http\Requests\AssignPackageRequest;
 use App\Http\Requests\BulkAssignPackageRequest;
 use App\Services\AuditLogService;
+use App\Services\PermissionTransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -115,12 +116,29 @@ class CompanyPackageController extends Controller
 
             // Handle status change and update role permissions accordingly
             if (isset($updateData['is_active']) && $updateData['is_active'] !== $oldValues['is_active']) {
-                if ($updateData['is_active']) {
-                    // Package is being activated, update permissions with current package
-                    $this->updateCompanyRolePermissions($companyPackage->company_id, $companyPackage->package_id);
-                } else {
-                    // Package is being deactivated, clear permissions
-                    $this->clearCompanyRolePermissions($companyPackage->company_id);
+                $permissionService = app(PermissionTransactionService::class);
+
+                try {
+                    $permissionService->executeWithPermissionSync(
+                        function () {
+                            // Status change already handled above, just sync permissions
+                            return true;
+                        },
+                        $companyPackage->company_id,
+                        $updateData['is_active'] ? $companyPackage->package_id : null,
+                        [
+                            'action' => 'status_change',
+                            'old_status' => $oldValues['is_active'],
+                            'new_status' => $updateData['is_active'],
+                            'package_name' => $companyPackage->package->name ?? 'Unknown'
+                        ]
+                    );
+                } catch (\Exception $e) {
+                    // Log permission sync failure but don't fail the entire update
+                    Log::error('Permission sync failed during status change', [
+                        'company_package_id' => $companyPackage->id,
+                        'error' => $e->getMessage()
+                    ]);
                 }
             }
 
@@ -197,118 +215,67 @@ class CompanyPackageController extends Controller
             'generate_invoice' => 'boolean',
         ]);
 
-        DB::beginTransaction();
+        $permissionService = app(PermissionTransactionService::class);
+
         try {
-            // Check if company already has an active package
-            $existingActive = CompanyPackage::where('company_id', $request->company_id)
-                ->active()
-                ->first();
+            $companyPackage = $permissionService->executeWithPermissionSync(
+                function () use ($request) {
+                    // Check if company already has an active package
+                    $existingActive = CompanyPackage::where('company_id', $request->company_id)
+                        ->active()
+                        ->first();
 
-            if ($existingActive) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Company already has an active package. Please reassign or deactivate the current package first.'
-                ], 422);
-            }
+                    if ($existingActive) {
+                        throw new \Exception('Company already has an active package. Please reassign or deactivate the current package first.');
+                    }
 
-            $companyPackage = CompanyPackage::create([
-                'company_id' => $request->company_id,
-                'package_id' => $request->package_id,
-                'assigned_by' => auth()->id(),
-                'assigned_at' => $request->assigned_at ?? now(),
-                'expires_at' => $request->expires_at,
-                'is_active' => true,
-                'activated_at' => now(),
-            ]);
+                    // Create the package assignment
+                    $companyPackage = CompanyPackage::create([
+                        'company_id' => $request->company_id,
+                        'package_id' => $request->package_id,
+                        'assigned_by' => auth()->id(),
+                        'assigned_at' => $request->assigned_at ?? now(),
+                        'expires_at' => $request->expires_at,
+                        'is_active' => true,
+                        'activated_at' => now(),
+                    ]);
 
-            // Update role permissions based on package modules
-            $this->updateCompanyRolePermissions($request->company_id, $request->package_id);
+                    // Generate invoice if requested
+                    if ($request->boolean('generate_invoice')) {
+                        $billingService = app(\App\Services\BillingService::class);
+                        $billingService->generateInvoice($companyPackage, now(), now()->addMonth());
+                    }
 
-            // Generate invoice if requested
-            if ($request->boolean('generate_invoice')) {
-                $billingService = app(\App\Services\BillingService::class);
-                $billingService->generateInvoice($companyPackage, now(), now()->addMonth());
-            }
+                    return $companyPackage;
+                },
+                $request->company_id,
+                $request->package_id,
+                [
+                    'action' => 'assign',
+                    'package_name' => Package::find($request->package_id)->name ?? 'Unknown',
+                    'generate_invoice' => $request->boolean('generate_invoice')
+                ]
+            );
 
-            // Log audit
-            AuditLogService::logAssigned($companyPackage, 'Package assigned to company successfully');
+            // Log successful assignment
+            AuditLogService::logAssigned($companyPackage, 'Package assigned to company successfully with permissions synchronized');
 
-            DB::commit();
-            return redirect()->route('superadmin.company-packages.index')->with('success', 'Package assigned to company successfully');
+            return redirect()->route('superadmin.company-packages.index')
+                ->with('success', 'Package assigned to company successfully with permissions updated');
+
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Failed to assign package', [
                 'error' => $e->getMessage(),
                 'company_id' => $request->company_id,
                 'package_id' => $request->package_id,
                 'user_id' => auth()->id()
             ]);
-            return redirect()->route('superadmin.company-packages.index')->with('error', 'Failed to assign package: ' . $e->getMessage());
+
+            return redirect()->route('superadmin.company-packages.index')
+                ->with('error', 'Failed to assign package: ' . $e->getMessage());
         }
     }
 
-    /**
-     * Update company role permissions based on package modules
-     */
-    private function updateCompanyRolePermissions($companyId, $packageId)
-    {
-        try {
-            // Get the package with its modules
-            $package = Package::findOrFail($packageId);
-            
-            // Update all roles for this company
-            $roles = \App\Models\Role::where('company_id', $companyId)->get();
-            
-            foreach ($roles as $role) {
-                $role->update([
-                    'permissions' => $package->modules
-                ]);
-            }
-            
-            Log::info('Updated role permissions for company', [
-                'company_id' => $companyId,
-                'package_id' => $packageId,
-                'roles_updated' => $roles->count()
-            ]);
-            
-        } catch (\Exception $e) {
-            Log::error('Failed to update role permissions', [
-                'error' => $e->getMessage(),
-                'company_id' => $companyId,
-                'package_id' => $packageId
-            ]);
-            throw $e; // Re-throw to trigger rollback
-        }
-    }
-
-    /**
-     * Clear company role permissions
-     */
-    private function clearCompanyRolePermissions($companyId)
-    {
-        try {
-            // Update all roles for this company to clear permissions
-            $roles = \App\Models\Role::where('company_id', $companyId)->get();
-            
-            foreach ($roles as $role) {
-                $role->update([
-                    'permissions' => null
-                ]);
-            }
-            
-            Log::info('Cleared role permissions for company', [
-                'company_id' => $companyId,
-                'roles_updated' => $roles->count()
-            ]);
-            
-        } catch (\Exception $e) {
-            Log::error('Failed to clear role permissions', [
-                'error' => $e->getMessage(),
-                'company_id' => $companyId
-            ]);
-            throw $e; // Re-throw to trigger rollback
-        }
-    }
 
     public function reassign(Request $request, $id)
     {
@@ -336,40 +303,54 @@ class CompanyPackageController extends Controller
             ], 422);
         }
 
-        DB::beginTransaction();
+        $permissionService = app(PermissionTransactionService::class);
+
         try {
-            $oldValues = $companyPackage->toArray();
+            $result = $permissionService->executeWithPermissionSync(
+                function () use ($companyPackage, $request) {
+                    $oldValues = $companyPackage->toArray();
 
-            // Deactivate current package
-            $companyPackage->update([
-                'is_active' => false,
-                'deactivated_at' => now()
-            ]);
+                    // Deactivate current package
+                    $companyPackage->update([
+                        'is_active' => false,
+                        'deactivated_at' => now()
+                    ]);
 
-            // Create new assignment
-            $newAssignment = CompanyPackage::create([
-                'company_id' => $companyPackage->company_id,
-                'package_id' => $request->package_id,
-                'assigned_by' => auth()->id(),
-                'assigned_at' => now(),
-                'is_active' => true,
-                'activated_at' => now(),
-            ]);
+                    // Create new assignment
+                    $newAssignment = CompanyPackage::create([
+                        'company_id' => $companyPackage->company_id,
+                        'package_id' => $request->package_id,
+                        'assigned_by' => auth()->id(),
+                        'assigned_at' => now(),
+                        'is_active' => true,
+                        'activated_at' => now(),
+                    ]);
 
-            // Update role permissions based on new package modules
-            $this->updateCompanyRolePermissions($companyPackage->company_id, $request->package_id);
+                    return [
+                        'old_assignment' => $companyPackage,
+                        'new_assignment' => $newAssignment,
+                        'old_values' => $oldValues
+                    ];
+                },
+                $companyPackage->company_id,
+                $request->package_id,
+                [
+                    'action' => 'reassign',
+                    'old_package_id' => $companyPackage->package_id,
+                    'old_package_name' => $companyPackage->package->name ?? 'Unknown',
+                    'new_package_name' => $newPackage->name ?? 'Unknown'
+                ]
+            );
 
-            // Log audit
-            AuditLogService::log('reassigned', $companyPackage, $oldValues, $newAssignment->toArray(), 'Package reassigned for company successfully');
+            // Log successful reassignment
+            AuditLogService::log('reassigned', $result['old_assignment'], $result['old_values'], $result['new_assignment']->toArray(), 'Package reassigned for company successfully with permissions synchronized');
 
-            DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'Package reassigned successfully',
-                'company_package' => $newAssignment->load(['company', 'package'])
+                'company_package' => $result['new_assignment']->load(['company', 'package'])
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Failed to reassign package', [
                 'error' => $e->getMessage(),
                 'company_package_id' => $id,
@@ -387,23 +368,30 @@ class CompanyPackageController extends Controller
         $companyPackage = CompanyPackage::findOrFail($id);
         $this->authorize('delete', $companyPackage);
 
-        DB::beginTransaction();
+        $permissionService = app(PermissionTransactionService::class);
+
         try {
-            $companyPackage->deactivate();
+            $permissionService->executeWithPermissionSync(
+                function () use ($companyPackage) {
+                    $companyPackage->deactivate();
+                    return $companyPackage;
+                },
+                $companyPackage->company_id,
+                null, // Clear permissions
+                [
+                    'action' => 'unassign',
+                    'package_name' => $companyPackage->package->name ?? 'Unknown'
+                ]
+            );
 
-            // Clear role permissions when package is unassigned
-            $this->clearCompanyRolePermissions($companyPackage->company_id);
+            // Log successful unassignment
+            AuditLogService::logDeleted($companyPackage, 'Package unassigned from company successfully with permissions cleared');
 
-            // Log audit
-            AuditLogService::logDeleted($companyPackage, 'Package unassigned from company successfully');
-
-            DB::commit();
             return response()->json([
                 'success' => true,
                 'message' => 'Package unassigned successfully'
             ]);
         } catch (\Exception $e) {
-            DB::rollBack();
             Log::error('Failed to unassign package', [
                 'error' => $e->getMessage(),
                 'company_package_id' => $id,
@@ -411,7 +399,7 @@ class CompanyPackageController extends Controller
             ]);
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to unassign package'
+                'message' => 'Failed to unassign package: ' . $e->getMessage()
             ], 500);
         }
     }
@@ -497,63 +485,68 @@ class CompanyPackageController extends Controller
             'package_id' => 'required|exists:packages,id',
         ]);
 
-        DB::beginTransaction();
-        try {
-            $assigned = [];
-            $errors = [];
+        $permissionService = app(PermissionTransactionService::class);
+        $assigned = [];
+        $errors = [];
 
-            foreach ($request->company_ids as $companyId) {
-                try {
-                    // Check if company already has an active package
-                    $existingActive = CompanyPackage::where('company_id', $companyId)
-                        ->active()
-                        ->first();
+        foreach ($request->company_ids as $companyId) {
+            try {
+                $companyPackage = $permissionService->executeWithPermissionSync(
+                    function () use ($companyId, $request) {
+                        // Check if company already has an active package
+                        $existingActive = CompanyPackage::where('company_id', $companyId)
+                            ->active()
+                            ->first();
 
-                    if ($existingActive) {
-                        $errors[] = "Company ID {$companyId} already has an active package";
-                        continue;
-                    }
+                        if ($existingActive) {
+                            throw new \Exception('Company already has an active package');
+                        }
 
-                    $companyPackage = CompanyPackage::create([
-                        'company_id' => $companyId,
-                        'package_id' => $request->package_id,
-                        'assigned_by' => auth()->id(),
-                        'assigned_at' => now(),
-                        'is_active' => true,
-                        'activated_at' => now(),
-                    ]);
+                        // Create the package assignment
+                        return CompanyPackage::create([
+                            'company_id' => $companyId,
+                            'package_id' => $request->package_id,
+                            'assigned_by' => auth()->id(),
+                            'assigned_at' => now(),
+                            'is_active' => true,
+                            'activated_at' => now(),
+                        ]);
+                    },
+                    $companyId,
+                    $request->package_id,
+                    [
+                        'action' => 'bulk_assign',
+                        'batch_id' => uniqid('bulk_'),
+                        'package_name' => Package::find($request->package_id)->name ?? 'Unknown'
+                    ]
+                );
 
-                    $assigned[] = $companyPackage;
-                    
-                    // Update role permissions for each assigned company
-                    $this->updateCompanyRolePermissions($companyId, $request->package_id);
-                } catch (\Exception $e) {
-                    $errors[] = "Failed to assign package to company ID {$companyId}: " . $e->getMessage();
-                }
+                $assigned[] = $companyPackage;
+
+            } catch (\Exception $e) {
+                $errors[] = "Failed to assign package to company ID {$companyId}: " . $e->getMessage();
+                Log::error('Bulk assignment failed for company', [
+                    'company_id' => $companyId,
+                    'package_id' => $request->package_id,
+                    'error' => $e->getMessage()
+                ]);
             }
-
-            // Log audit for bulk assignment
-            AuditLogService::log('bulk_assigned', new CompanyPackage(), [], ['package_id' => $request->package_id, 'assigned_count' => count($assigned)], 'Bulk package assignment completed successfully');
-
-            DB::commit();
-            return response()->json([
-                'success' => true,
-                'message' => "Bulk assignment completed. Assigned to " . count($assigned) . " companies.",
-                'assigned' => $assigned,
-                'errors' => $errors
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            Log::error('Failed bulk package assignment', [
-                'error' => $e->getMessage(),
-                'package_id' => $request->package_id,
-                'user_id' => auth()->id()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to complete bulk assignment'
-            ], 500);
         }
+
+        // Log bulk assignment summary
+        AuditLogService::log('bulk_assigned', new CompanyPackage(), [], [
+            'package_id' => $request->package_id,
+            'assigned_count' => count($assigned),
+            'error_count' => count($errors),
+            'company_ids' => $request->company_ids
+        ], 'Bulk package assignment completed with permissions synchronized');
+
+        return response()->json([
+            'success' => true,
+            'message' => "Bulk assignment completed. Assigned to " . count($assigned) . " companies.",
+            'assigned' => $assigned,
+            'errors' => $errors
+        ]);
     }
 
     public function toggleActive($id)
@@ -566,46 +559,35 @@ class CompanyPackageController extends Controller
             $newStatus = !$companyPackage->is_active;
             $statusText = $newStatus ? 'activated' : 'deactivated';
 
-            DB::beginTransaction();
-            try {
-                $companyPackage->update([
-                    'is_active' => $newStatus,
-                    'deactivated_at' => $newStatus ? null : now(),
-                    'activated_at' => $newStatus ? now() : null
-                ]);
+            $permissionService = app(PermissionTransactionService::class);
 
-                // Update role permissions based on package status
-                if ($newStatus) {
-                    // Package is being activated, update permissions with current package
-                    $this->updateCompanyRolePermissions($companyPackage->company_id, $companyPackage->package_id);
-                } else {
-                    // Package is being deactivated, clear permissions
-                    $this->clearCompanyRolePermissions($companyPackage->company_id);
-                }
+            $permissionService->executeWithPermissionSync(
+                function () use ($companyPackage, $newStatus) {
+                    $companyPackage->update([
+                        'is_active' => $newStatus,
+                        'deactivated_at' => $newStatus ? null : now(),
+                        'activated_at' => $newStatus ? now() : null
+                    ]);
+                    return $companyPackage;
+                },
+                $companyPackage->company_id,
+                $newStatus ? $companyPackage->package_id : null, // Set or clear permissions
+                [
+                    'action' => 'toggle_status',
+                    'old_status' => $oldValues['is_active'],
+                    'new_status' => $newStatus,
+                    'package_name' => $companyPackage->package->name ?? 'Unknown'
+                ]
+            );
 
-                // Log audit
-                AuditLogService::log('status_toggled', $companyPackage, $oldValues, ['is_active' => $newStatus], "Assignment {$statusText} successfully");
+            // Log successful status change
+            AuditLogService::log('status_toggled', $companyPackage, $oldValues, ['is_active' => $newStatus], "Assignment {$statusText} successfully with permissions synchronized");
 
-                DB::commit();
-                
-                return response()->json([
-                    'success' => true,
-                    'is_active' => $newStatus,
-                    'message' => "Assignment has been {$statusText} successfully"
-                ]);
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Failed to toggle assignment status', [
-                    'error' => $e->getMessage(),
-                    'company_package_id' => $id,
-                    'user_id' => auth()->id()
-                ]);
-                return response()->json([
-                    'success' => false,
-                    'is_active' => $companyPackage->is_active,
-                    'message' => 'Failed to update assignment status: ' . $e->getMessage()
-                ], 500);
-            }
+            return response()->json([
+                'success' => true,
+                'is_active' => $newStatus,
+                'message' => "Assignment has been {$statusText} successfully"
+            ]);
         } catch (\Exception $e) {
             Log::error('Assignment toggle error', [
                 'error' => $e->getMessage(),
@@ -615,8 +597,36 @@ class CompanyPackageController extends Controller
             return response()->json([
                 'success' => false,
                 'is_active' => false,
-                'message' => 'Assignment not found or access denied'
-            ], 404);
+                'message' => 'Failed to toggle assignment status: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Validate company permission state (for debugging/admin purposes)
+     */
+    public function validatePermissionState($companyId)
+    {
+        try {
+            $this->authorize('viewAny', CompanyPackage::class);
+
+            $permissionService = app(PermissionTransactionService::class);
+            $validationResult = $permissionService->validateCompanyPermissionState($companyId);
+
+            return response()->json([
+                'success' => true,
+                'validation_result' => $validationResult
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Failed to validate permission state', [
+                'error' => $e->getMessage(),
+                'company_id' => $companyId,
+                'user_id' => auth()->id()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to validate permission state: ' . $e->getMessage()
+            ], 500);
         }
     }
 
