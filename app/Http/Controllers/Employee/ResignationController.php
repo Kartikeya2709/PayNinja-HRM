@@ -40,7 +40,7 @@ class ResignationController extends Controller
             ->first();
             
         if ($activeResignation) {
-            return redirect()->route('employee.resignations.index')
+            return redirect()->route('resignations.index')
                 ->with('error', 'You already have an active resignation request.');
         }
         
@@ -110,7 +110,7 @@ class ResignationController extends Controller
 
         // TODO: Send notification to HR and reporting manager
 
-        return redirect()->route('employee.resignations.index')
+        return redirect()->route('resignations.index')
             ->with('success', 'Resignation request submitted successfully. You will be notified once it is reviewed.');
     }
 
@@ -156,7 +156,7 @@ class ResignationController extends Controller
         
         // TODO: Send notification to HR and reporting manager about withdrawal
         
-        return redirect()->route('employee.resignations.index')
+        return redirect()->route('resignations.index')
             ->with('success', 'Resignation request withdrawn successfully.');
     }
 
@@ -174,7 +174,7 @@ class ResignationController extends Controller
         
         // Check if resignation can be edited (only pending status)
         if ($resignation->status !== 'pending') {
-            return redirect()->route('employee.resignations.index')
+            return redirect()->route('resignations.index')
                 ->with('error', 'Only pending resignation requests can be edited.');
         }
         
@@ -195,7 +195,7 @@ class ResignationController extends Controller
         
         // Check if resignation can be updated (only pending status)
         if ($resignation->status !== 'pending') {
-            return redirect()->route('employee.resignations.index')
+            return redirect()->route('resignations.index')
                 ->with('error', 'Only pending resignation requests can be updated.');
         }
         
@@ -234,7 +234,7 @@ class ResignationController extends Controller
 
         $resignation->update($validated);
 
-        return redirect()->route('employee.resignations.index')
+        return redirect()->route('resignations.index')
             ->with('success', 'Resignation request updated successfully.');
     }
 }

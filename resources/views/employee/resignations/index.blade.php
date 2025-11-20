@@ -17,7 +17,7 @@
             <div class="card-header">
                 <h5 class="mb-0">My Resignation Requests</h5>
                 <div class="card-header-action">
-                    <a href="{{ route('employee.resignations.create') }}" class="btn btn-primary">
+                    <a href="{{ route('resignations.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Submit Resignation
                     </a>
                 </div>
@@ -77,7 +77,7 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('employee.resignations.show', $resignation) }}"
+                                    <a href="{{ route('resignations.show', $resignation) }}"
                                         class="btn btn-outline-info action-btn" data-id="{{ $resignation->id }}"
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="View Resignation"
                                         aria-label="View">
@@ -112,7 +112,7 @@
                                         <i class="fas fa-file-signature fa-3x text-muted mb-3"></i>
                                         <h6>No resignation requests found</h6>
                                         <p class="text-muted">You haven't submitted any resignation requests yet.</p>
-                                        <a href="{{ route('employee.resignations.create') }}" class="btn btn-primary">
+                                        <a href="{{ route('resignations.create') }}" class="btn btn-primary">
                                             Submit Your First Resignation
                                         </a>
                                     </div>

@@ -9,7 +9,7 @@
             <h1>Submit Resignation Request</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('employee.resignations.index') }}">Resignations</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('resignations.index') }}">Resignations</a></div>
                 <div class="breadcrumb-item">Submit Request</div>
             </div>
         </div>
@@ -19,7 +19,7 @@
                 <h4>Resignation Details</h4>
             </div>
             <div class="card-body">
-                <form action="{{ route('employee.resignations.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('resignations.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <div class="row">
@@ -127,7 +127,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-paper-plane"></i> Submit Resignation
                         </button>
-                        <a href="{{ route('employee.resignations.index') }}" class="btn btn-secondary">
+                        <a href="{{ route('resignations.index') }}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Cancel
                         </a>
                     </div>

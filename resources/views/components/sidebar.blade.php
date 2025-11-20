@@ -355,14 +355,14 @@
                     <!-- Resignations -->
                     <li class="menu-header">Resignations</li>
                     <li
-                        class="{{ Request::is('employee/resignations') && !Request::is('employee/resignations/create') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('employee.resignations.index') }}">
+                        class="{{ Request::is('resignations') && !Request::is('resignations/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('resignations.index') }}">
                             <i class="fas fa-file-signature"></i>
                             <span>My Resignations</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('employee/resignations/create') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('employee.resignations.create') }}">
+                    <li class="{{ Request::is('resignations/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('resignations.create') }}">
                             <i class="fas fa-plus-circle"></i>
                             <span>Submit Resignation</span>
                         </a>

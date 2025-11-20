@@ -111,7 +111,7 @@
                                 </a>
                             </div>
                             <div class="col-lg-12">
-                                <a href="{{ route('employee.resignations.index') }}" class="card card-link">
+                                <a href="{{ route('resignations.index') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
                                         <i class="fas fa-file-signature"></i>
