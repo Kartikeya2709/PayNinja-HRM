@@ -83,6 +83,13 @@
                  <!-- Asset Management -->
                 @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
                     <li class="menu-header">Asset Management</li>
+
+                    <li class="{{ Request::is('company-admin/assets/dashboard') ? 'active' : '' }}">
+                       <a class="nav-link" href="{{ route('company-admin.assets.dashboard') }}">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Asset Dashboard</span>
+                        </a>
+                    </li>
                     <li class="{{ Request::is('admin/assets-categories*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin.assets.categories.index') }}">
                             <i class="fas fa-tags"></i>
@@ -100,8 +107,27 @@
                             <i class="fas fa-hand-holding"></i>
                             <span>Asset Assignments</span>
                         </a>
-                       
+
                     </li>
+                    
+                    {{-- <li class="{{ Request::is('company-admin/assets/inventory') ? 'active' : '' }}">
+                       <a class="nav-link" href="{{ route('company-admin.assets.inventory') }}">
+                            <i class="fas fa-boxes"></i>
+                            <span>Asset Inventory</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('company-admin/assets/employees') ? 'active' : '' }}">
+                       <a class="nav-link" href="{{ route('company-admin.assets.employees') }}">
+                            <i class="fas fa-user-tag"></i>
+                            <span>Employees with Assets</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('company-admin/assets/assignments') ? 'active' : '' }}">
+                       <a class="nav-link" href="{{ route('company-admin.assets.assignments') }}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Asset Assignments</span>
+                        </a>
+                    </li> --}}
                 @endif
 
                  {{-- <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
