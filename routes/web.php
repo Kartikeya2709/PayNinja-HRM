@@ -537,6 +537,11 @@ Route::middleware(['auth'])->group(function () {
         // Employee code generation for company-admin (AJAX)
         Route::get('/employees/next-code', [\App\Http\Controllers\EmployeeController::class, 'getNextEmployeeCode'])->name('employees.next-code');
 
+        // Asset Dashboard
+        Route::get('/assets/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'assetDashboard'])->name('assets.dashboard');
+        Route::get('/assets/inventory', [\App\Http\Controllers\CompanyAdminController::class, 'assetInventory'])->name('assets.inventory');
+        Route::get('/assets/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employeesWithAssets'])->name('assets.employees');
+        Route::get('/assets/assignments', [\App\Http\Controllers\CompanyAdminController::class, 'recentAssignments'])->name('assets.assignments');
 
     });
 
