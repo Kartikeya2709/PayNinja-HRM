@@ -94,6 +94,15 @@ Route::get('/', function () {
 Auth::routes(['register' => false]);
 
 Route::middleware(['auth'])->group(function () {
+    
+    // dashboard routes
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    
+    // Profile routes
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.change-password');
+    Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
 
     // SuperAdmin Routes (Can manage Companies)
     Route::middleware(['superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
@@ -230,15 +239,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])
             ->name('geolocation-settings');
 
-        // dashboard routes
-        Route::get('/home', [HomeController::class, 'index'])->name('home');
         Route::post('/dashboard/switch', [HomeController::class, 'switchDashboard'])->name('dashboard.switch');
-
-        // Profile routes
-        Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
-        Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.change-password');
-        Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
 
         //Blank Page
         Route::get('/blank-page', [HomeController::class, 'blank'])->name('blank');
