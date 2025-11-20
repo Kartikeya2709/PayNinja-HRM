@@ -51,13 +51,16 @@ class PayslipController extends Controller
         $currentSalary = $employee->currentSalary;
         
         if (!$currentSalary) {
-            return redirect()->route('employee.salary.details')
-                ->with('error', 'No active salary record found.');
+            // return redirect()->route('employee.salary.details')
+                // ->with('error', 'No active salary record found.');
+                return redirect()->back()
+                    ->with('error', 'No active salary record found.');
         }
         
         // Get all payroll records for the employee
         $payrolls = Payroll::with('processedBy')
             ->where('employee_id', $employee->id)
+            ->where('status', '=', 'Paid')
             ->orderBy('pay_period_end', 'desc')
             ->orderBy('pay_period_start', 'desc')
             ->paginate(12); // Show 12 payslips per page

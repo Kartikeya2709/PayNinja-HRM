@@ -21,7 +21,7 @@
                     <div class="card-header margin-bottom">
                         <h3 class="card-title">Payroll History</h3>
                         <!-- <div class="card-tools">
-                                <a href="{{ route('employee.salary.details') }}" class="btn btn-default btn-sm">
+                                <a href="{{-- route('employee.salary.details') --}}" class="btn btn-default btn-sm">
                                     <i class="fas fa-arrow-left"></i> Back to Salary Details
                                 </a>
                             </div> -->

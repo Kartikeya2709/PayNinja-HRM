@@ -75,6 +75,7 @@ class PayrollController extends Controller
 
         $query = Payroll::where('employee_id', $employee->id)
             ->where('company_id', $employee->company_id)
+            ->where('status', 'paid')
             ->orderBy('payment_date', 'desc');
 
         // Filter by year if provided

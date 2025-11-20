@@ -282,9 +282,22 @@ class FieldVisitController extends Controller
             return response()->json(['message' => 'Employee record not found'], 404);
         }
 
-        $pendingVisits = FieldVisit::where('reporting_manager_id', $employee->id)
+        // Build query with company scoping
+        $query = FieldVisit::query()
             ->where('approval_status', 'pending')
-            ->with(['employee'])
+            ->whereHas('employee', function ($q) use ($user) {
+                $q->where('company_id', $user->company_id);
+            });
+
+        // Filter based on user role
+        if ($user->hasRole(['admin', 'company_admin'])) {
+            // Admins see all pending visits within their company
+        } else {
+            // Regular managers see only their own pending approvals
+            $query->where('reporting_manager_id', $employee->id);
+        }
+
+        $pendingVisits = $query->with(['employee'])
             ->orderBy('scheduled_start_datetime', 'desc')
             ->get()
             ->map(function ($visit) {

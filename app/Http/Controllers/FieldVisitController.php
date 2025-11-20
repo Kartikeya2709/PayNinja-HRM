@@ -269,15 +269,24 @@ class FieldVisitController extends Controller
     public function pendingApprovals()
     {
         $user = Auth::user();
+        $companyId = $user->company_id;
+
+        // Build base query with company scoping
+        $query = FieldVisit::where('approval_status', 'pending')
+            ->whereHas('employee', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            });
 
         if ($user->hasRole(['admin', 'company_admin'])) {
-            $visits = FieldVisit::where('approval_status', 'pending')->with(['employee'])->get();
+            // Admins see all pending visits within their company
         } else {
-            $visits = FieldVisit::where('reporting_manager_id', $user->employee->id)
-                ->where('approval_status', 'pending')
-                ->with(['employee'])
-                ->get();
+            // Regular managers see only their own pending approvals
+            $query->where('reporting_manager_id', $user->employee->id);
         }
+
+        $visits = $query->with(['employee'])
+            ->orderBy('scheduled_start_datetime', 'desc')
+            ->get();
 
         return view('field_visits.pending', compact('visits'));
     }

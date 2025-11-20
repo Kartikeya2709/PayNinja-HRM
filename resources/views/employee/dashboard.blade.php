@@ -122,7 +122,7 @@
                             </div>
 
                             <!-- <div class="col-lg-12 salary-details">
-                    <a href="{{ route('employee.salary.details') }}" class="card card-link">
+                    {{-- <a href="{{ route('employee.salary.details') }}" class="card card-link"> --}}
                       <div class="card-body text-center d-flex align-items-center">
 
                         <i class="fas fa-money-bill-wave fa-3x"></i>

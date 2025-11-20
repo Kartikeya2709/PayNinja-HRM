@@ -103,7 +103,7 @@
                                                 </div>
                                             <div>
                                                <h6 class="mb-1 fw-semibold text-dark">Reporting Manager</h6>
-                                               <p class="mb-0 text-muted">{{ $fieldVisit->reportingManager->name }}</p>
+                                               <p class="mb-0 text-muted">{{ $fieldVisit->reportingManager->name ?? 'N/A'}}</p>
                                            </div>
                                        </div>
                                    </div>
