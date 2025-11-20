@@ -33,7 +33,7 @@
                                 @forelse($assignments as $assignment)
                                 <tr>
                                     <td>{{ $assignment->asset->name }} ({{ $assignment->asset->asset_code }})</td>
-                                    <td>{{ $assignment->employee->name }}</td>
+                                    <td>{{ $assignment->employee->name ?? 'N/A'}}</td>
                                     <td>{{ $assignment->assigned_date->format('Y-m-d') }}</td>
                                     <td>{{ $assignment->expected_return_date ? $assignment->expected_return_date->format('Y-m-d') : '-' }}</td>
                                     <td>
