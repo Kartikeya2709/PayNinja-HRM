@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if ($('#department_filter').val()) params.append('department_id', $('#department_filter').val());
             if ($('#status_filter').val()) params.append('status', $('#status_filter').val());
 
-            fetch("{{ route('company.leave-requests.calendar-events') }}?" + params.toString())
+            fetch("{{ route('leave-requests.calendar-events') }}?" + params.toString())
                 .then(res => res.json())
                 .then(data => success(data))
                 .catch(err => failure(err));
@@ -265,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 $('#actionButtons').addClass('d-none');
             }
 
-            $('#viewDetailsBtn').attr('href', "{{ route('company.leave-requests.index') }}");
+            $('#viewDetailsBtn').attr('href', "{{ route('leave-requests.index') }}");
             $('#leaveRequestModal').modal('show');
         }
     });

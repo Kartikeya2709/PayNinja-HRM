@@ -30,7 +30,7 @@
         <h1>Create Leave Request</h1>
         <div class="section-header-breadcrumb">
             <div class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></div>
-            <div class="breadcrumb-item"><a href="{{ route('company.leave-requests.index') }}">Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">Leave Requests</a></div>
             <div class="breadcrumb-item active">Create</div>
         </div>
     </div>
@@ -97,7 +97,7 @@
                     </div>
                     <div class="card-body">
 
-                        <form method="POST" action="{{ route('company.leave-requests.store') }}" enctype="multipart/form-data" id="leaveRequestForm">
+                        <form method="POST" action="{{ route('leave-requests.store') }}" enctype="multipart/form-data" id="leaveRequestForm">
                             @csrf
 
                             <div class="row">
@@ -172,7 +172,7 @@
                             @endif
 
                             <div class="d-flex gap-3 justify-content-center mt-4">
-                               <a href="{{ route('company.leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
+                               <a href="{{ route('leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
                                <i class="fas fa-arrow-left me-2"></i>Back
                                </a>
                                <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">

@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>View Leave Request</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('company.leave-requests.index') }}">Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">Leave Requests</a></div>
             <div class="breadcrumb-item active"><a href="">View</a></div>
         </div>
     </div>
@@ -97,7 +97,7 @@
         @if($leaveRequest->status === 'pending')
             <div class="row mt-4 text-center">
                 <div class="col-md-6 mb-2">
-                    <form action="{{ route('company.leave-requests.approve', $leaveRequest->id) }}" method="POST" class="d-inline">
+                    <form action="{{ route('leave-requests.approve', $leaveRequest->id) }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-glass text-success">
                             <i class="fas fa-check"></i> Approve
@@ -113,7 +113,7 @@
         @endif
 
         <div class="d-flex gap-3 justify-content-center mt-4">
-             <a href="{{ route('company.leave-requests.index') }}" 
+             <a href="{{ route('leave-requests.index') }}" 
               class="btn btn-secondary px-4 rounded-pill shadow-sm">
               <i class="bi bi-arrow-left me-2"></i>Back to Leave Requests
               </a>
@@ -130,7 +130,7 @@
     <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('company.leave-requests.reject', $leaveRequest->id) }}" method="POST">
+                <form action="{{ route('leave-requests.reject', $leaveRequest->id) }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="rejectModalLabel">Reject Leave Request</h5>

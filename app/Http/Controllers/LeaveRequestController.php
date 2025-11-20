@@ -116,9 +116,9 @@ class LeaveRequestController extends Controller
                     'totalDays' => $request->total_days,
                     'reason' => $request->reason,
                     'adminRemarks' => $request->admin_remarks,
-                    'detailsUrl' => route('company.leave-requests.show', $request->id),
-                    'approveUrl' => route('company.leave-requests.approve', $request->id),
-                    'rejectUrl' => route('company.leave-requests.reject', $request->id)
+                    'detailsUrl' => route('leave-requests.show', $request->id),
+                    'approveUrl' => route('leave-requests.approve', $request->id),
+                    'rejectUrl' => route('leave-requests.reject', $request->id)
                 ]
             ];
         }));
@@ -629,7 +629,7 @@ protected function isWeekend($date)
             'reason' => $validated['reason']
         ]);
         
-        return redirect()->route('company.leave-requests.index')
+        return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request has been created successfully.');
     }
 
@@ -1028,7 +1028,7 @@ protected function isWeekend($date)
         
         // Check if leave request is pending
         if ($leaveRequest->status !== 'pending') {
-            return redirect()->route('company.leave-requests.index')
+            return redirect()->route('leave-requests.index')
                 ->with('error', 'Only pending leave requests can be approved.');
         }
         
@@ -1058,7 +1058,7 @@ protected function isWeekend($date)
             'approved_at' => now(),
         ]);
         
-        return redirect()->route('company.leave-requests.index')
+        return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request approved successfully.');
     }
 
@@ -1102,7 +1102,7 @@ protected function isWeekend($date)
             if ($request->ajax()) {
                 return response()->json(['success' => false, 'message' => $message]);
             }
-            return redirect()->route('company.leave-requests.index')
+            return redirect()->route('leave-requests.index')
                 ->with('error', $message);
         }
         
@@ -1126,7 +1126,7 @@ protected function isWeekend($date)
                 ]);
             }
             
-            return redirect()->route('company.leave-requests.index')
+            return redirect()->route('leave-requests.index')
                 ->with('success', 'Leave request rejected successfully.');
                 
         } catch (\Exception $e) {

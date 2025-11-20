@@ -15,7 +15,7 @@
     <div class="container card-emp">
         <h2>Create Employee for {{ $company->name }}</h2>
         
-        <form action="{{ route('company.employees.store') }}" method="POST">
+        <form action="{{ route('employees.store') }}" method="POST">
             @csrf
 
             <div class="form-group">
@@ -92,7 +92,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary mt-3">Create Employee</button>
-            <a href="{{ route('company.employees.index') }}" class="btn btn-secondary mt-3">Cancel</a>
+            <a href="{{ route('employees.index') }}" class="btn btn-secondary mt-3">Cancel</a>
         </form>
     </div>
 @endsection

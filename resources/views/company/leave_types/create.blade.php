@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Create Leave Type</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('company.leave-types.index') }}">Leave Types</a></div>
+            <div class="breadcrumb-item"><a href="{{ route(' leave-types.index') }}">Leave Types</a></div>
             <div class="breadcrumb-item active"><a href="">Create</a></div>
         </div>
     </div>
@@ -17,7 +17,7 @@
             <div class="col-8 mx-auto">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('company.leave-types.store') }}" method="POST">
+                        <form action="{{ route('leave-types.store') }}" method="POST">
                             @csrf
 
                             <div class="form-group mb-4">
@@ -96,7 +96,7 @@
                               <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                               <i class="bi bi-save me-2"></i>Create Leave Type
                               </button>
-                              <a href="{{ route('company.leave-types.index') }}" class="btn btn-danger px-4 rounded-pill">
+                              <a href="{{ route('leave-types.index') }}" class="btn btn-danger px-4 rounded-pill">
                               <i class="bi bi-x-circle me-2"></i>Cancel
                               </a>
                            </div>

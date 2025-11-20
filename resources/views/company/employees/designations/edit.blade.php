@@ -16,7 +16,7 @@
                     <h3 class="card-title">Edit Designation</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('company.designations.update', $designation) }}" method="POST">
+                    <form action="{{ route('designations.update', $designation) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="row">
@@ -71,7 +71,7 @@
                            <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                                  <i class="bi bi-save me-2"></i>Update Designation
                            </button>
-                           <a href="{{ route('company.designations.index') }}" class="btn btn-danger px-4 rounded-pill">
+                           <a href="{{ route('designations.index') }}" class="btn btn-danger px-4 rounded-pill">
                                  <i class="bi bi-x-circle me-2"></i>Cancel
                            </a>
                         </div>

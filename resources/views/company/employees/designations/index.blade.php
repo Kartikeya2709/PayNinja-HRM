@@ -16,7 +16,7 @@
                 <div class="card-header">
                     <h5 class="card-title">Designations</h5>
                     <div class="card-tools">
-                        <a href="{{ route('company.designations.create') }}" class="btn btn-primary">
+                        <a href="{{ route('designations.create') }}" class="btn btn-primary">
                             Add New Designation
                         </a>
                     </div>
@@ -47,7 +47,7 @@
                                     <td>{{ $designation->description ?? 'N/A' }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('company.designations.edit', $designation) }}" class="btn btn-outline-info">
+                                            <a href="{{ route('designations.edit', $designation) }}" class="btn btn-outline-info">
                                                 <i class="bi bi-pencil"></i>
                                             </a>
                                             {{-- <form action="{{ route('company.designations.destroy', $designation) }}" method="POST" class="d-inline">

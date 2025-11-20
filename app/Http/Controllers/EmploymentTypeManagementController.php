@@ -59,7 +59,7 @@ class EmploymentTypeManagementController extends Controller
             'is_active' => $request->is_active ?? true,
         ]);
 
-        return redirect()->route('company.employment-types.index')
+        return redirect()->route('employment-types.index')
             ->with('success', 'Employment type created successfully.');
     }
 
@@ -103,7 +103,7 @@ class EmploymentTypeManagementController extends Controller
             'is_active' => $request->is_active ?? $employmentType->is_active,
         ]);
 
-        return redirect()->route('company.employment-types.index')
+        return redirect()->route('employment-types.index')
             ->with('success', 'Employment type updated successfully.');
     }
 }

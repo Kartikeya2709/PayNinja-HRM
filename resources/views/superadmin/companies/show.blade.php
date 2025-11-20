@@ -227,7 +227,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Employees</h4>
-                <a href="{{ route('company.employees.index', $company->id) }}" class="btn btn-primary">View All</a>
+                <a href="{{ route('employees.index', $company->id) }}" class="btn btn-primary">View All</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -265,7 +265,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Departments</h4>
-                <a href="{{ route('company.departments.index', $company->id) }}" class="btn btn-primary">View All</a>
+                <a href="{{ route('departments.index', $company->id) }}" class="btn btn-primary">View All</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -301,7 +301,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Designations</h4>
-                <a href="{{ route('company.designations.index', $company->id) }}" class="btn btn-primary">View All</a>
+                <a href="{{ route('designations.index', $company->id) }}" class="btn btn-primary">View All</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

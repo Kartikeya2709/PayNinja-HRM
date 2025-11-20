@@ -16,7 +16,7 @@
                     <div class="card-header">
                         <h5 class="card-title">Employment Types</h5>
                         <div class="card-tools">
-                            <a href="{{ route('company.employment-types.create') }}" class="btn btn-primary">
+                            <a href="{{ route('employment-types.create') }}" class="btn btn-primary">
                                 Add New Employment Type
                             </a>
                         </div>
@@ -49,7 +49,7 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                                <a href="{{ route('company.employment-types.edit', $employmentType) }}" class="btn btn-outline-info">
+                                                <a href="{{ route('employment-types.edit', $employmentType) }}" class="btn btn-outline-info">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                             </div>

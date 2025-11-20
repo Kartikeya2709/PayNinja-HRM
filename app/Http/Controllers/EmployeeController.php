@@ -154,7 +154,7 @@ class EmployeeController extends Controller
             'employment_type_id' => $validated['employment_type_id']
         ]);
 
-        return redirect()->route('company.employees.index')
+        return redirect()->route('employees.index')
             ->with('success', 'Employee created successfully');
     }
     public function show()
@@ -296,7 +296,7 @@ class EmployeeController extends Controller
             ]
         );
 
-        return redirect()->route('company.employees.index')
+        return redirect()->route('employees.index')
             ->with('success', 'Employee updated successfully');
     }
     
@@ -337,14 +337,14 @@ class EmployeeController extends Controller
             //     $user->delete();
             // }
             
-            return redirect()->route('company.employees.index', $companyId)
+            return redirect()->route('employees.index', $companyId)
                 ->with('success', 'Employee deleted successfully');
                 
         } catch (\Exception $e) {
             // Log the error
             \Log::error('Error deleting employee: ' . $e->getMessage());
             
-            return redirect()->route('company.employees.index', $companyId)
+            return redirect()->route('employees.index', $companyId)
                 ->with('error', 'Error deleting employee: ' . $e->getMessage());
         }
     }

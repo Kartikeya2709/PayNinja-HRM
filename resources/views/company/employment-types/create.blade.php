@@ -16,7 +16,7 @@
                     <h3 class="card-title">Create New Employment Type</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('company.employment-types.store') }}" method="POST">
+                    <form action="{{ route('employment-types.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="name">Name<span class="text-danger">*</span></label>
@@ -48,7 +48,7 @@
                          <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                          <i class="bi bi-save me-2"></i>Create Employment Type
                          </button>
-                         <a href="{{ route('company.employment-types.index') }}" class="btn btn-danger px-4 rounded-pill">
+                         <a href="{{ route('employment-types.index') }}" class="btn btn-danger px-4 rounded-pill">
                          <i class="bi bi-x-circle me-2"></i>Cancel
                          </a>
                       </div>

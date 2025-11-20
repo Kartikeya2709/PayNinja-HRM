@@ -17,7 +17,7 @@
                     <h3 class="card-title">Create New Designation </h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('company.designations.store') }}" method="POST">
+                    <form action="{{ route('designations.store') }}" method="POST">
                         @csrf
                         <div class="form-group">
                             <label for="title">Title</label>
@@ -59,7 +59,7 @@
 
                         <div class="form-group mt-4 text-center">
                             <button type="submit" class="btn btn-primary">Create Designation</button>
-                            <a href="{{ route('company.designations.index') }}" class="btn btn-danger">Cancel</a>
+                            <a href="{{ route('designations.index') }}" class="btn btn-danger">Cancel</a>
                         </div>
                     </form>
                 </div>

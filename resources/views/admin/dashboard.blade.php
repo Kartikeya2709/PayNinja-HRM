@@ -346,7 +346,7 @@
 
                         <!-- Leave Management -->
                         <div class="col-xl-12">
-                            <a href="{{ route('company.leave-requests.index') }}" class="action-card">
+                            <a href="{{ route('leave-requests.index') }}" class="action-card">
                                 <div class="card-body p-3">
                                     <div class="action-icon">
                                         <i class="fas fa-calendar-minus"></i>

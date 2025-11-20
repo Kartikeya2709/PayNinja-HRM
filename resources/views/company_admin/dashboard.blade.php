@@ -322,7 +322,7 @@
 
                         <!-- Departments Card -->
                         <div class="col-xl-12">
-                            <a href="{{ route('company.departments.index') }}" class="action-card h-100">
+                            <a href="{{ route('departments.index') }}" class="action-card h-100">
                                 <div class="card-body p-3">
                                     <div class="action-icon">
                                         <i class="fas fa-building"></i>
@@ -335,7 +335,7 @@
 
                         <!-- Leave Requests Card -->
                         <div class="col-xl-12">
-                            <a href="{{ route('company.leave-requests.index') }}" class="action-card h-100">
+                            <a href="{{ route('leave-requests.index') }}" class="action-card h-100">
                                 <div class="card-body p-3">
                                     <div class="action-icon">
                                         <i class="fas fa-calendar-minus"></i>

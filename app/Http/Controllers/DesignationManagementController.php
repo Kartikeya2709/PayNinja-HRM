@@ -57,7 +57,7 @@ class DesignationManagementController extends Controller
             'department_id'=>$request->department_id,
         ]);
 
-        return redirect()->route('company.designations.index', ['companyId' => auth()->user()->company_id])
+        return redirect()->route('designations.index', ['companyId' => auth()->user()->company_id])
             ->with('success', 'Designation created successfully.');
     }
 
@@ -100,7 +100,7 @@ class DesignationManagementController extends Controller
         ]);
 
             // Redirect back with success message
-            return redirect()->route('company.designations.index', ['companyId' => auth()->user()->company_id])
+            return redirect()->route('designations.index', ['companyId' => auth()->user()->company_id])
                             ->with('success', 'Designation updated successfully.');
     }
 
@@ -113,7 +113,7 @@ class DesignationManagementController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $designation->delete();
-        return redirect()->route('company.designations.index', ['companyId' => auth()->user()->company_id])
+        return redirect()->route('designations.index', ['companyId' => auth()->user()->company_id])
             ->with('success', 'Designation deleted successfully.');
     }
 }

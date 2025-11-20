@@ -27,7 +27,7 @@
                             <h5>Filter Leave Requests</h5>
                         </div>
                         <div class="card-body">
-                            <form action="{{ route('company.leave-requests.index') }}" method="GET" class="row">
+                            <form action="{{ route('leave-requests.index') }}" method="GET" class="row">
                                 <div class="form-group col-md-3 mb-4">
                                     <label for="department_id">Department</label>
                                     <select name="department_id" id="department_id" class="form-control select2">
@@ -70,7 +70,7 @@
 
                                 <div class="col-12 btn-center">
                                     <button type="submit" class="btn btn-primary">Filter</button>
-                                    <a href="{{ route('company.leave-requests.index') }}"
+                                    <a href="{{ route('leave-requests.index') }}"
                                         class="btn btn-secondary">Reset</a>
                                 </div>
                             </form>
@@ -134,7 +134,7 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('company.leave-requests.show', $request->id) }}"
+                                                <a href="{{ route('leave-requests.show', $request->id) }}"
                                                     class="btn btn-outline-info btn-sm action-btn"
                                                     data-id="{{ $request->id }}" data-bs-toggle="tooltip"
                                                     data-bs-placement="top" title="View Leave Request"
@@ -148,7 +148,7 @@
 
                                                 @if($request->status === 'pending')
                                                 <form
-                                                    action="{{ route('company.leave-requests.approve', $request->id) }}"
+                                                    action="{{ route('leave-requests.approve', $request->id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-success btn-sm"
@@ -157,7 +157,7 @@
                                                     </button>
                                                 </form>
                                                 <form
-                                                    action="{{ route('company.leave-requests.reject', $request->id) }}"
+                                                    action="{{ route('leave-requests.reject', $request->id) }}"
                                                     method="POST" class="d-inline">
                                                     @csrf
                                                     <button type="submit" class="btn btn-danger btn-sm" title="Reject">

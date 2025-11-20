@@ -100,7 +100,7 @@ class CompanyController extends Controller
         ]);
     
         // Redirect to the employee list with a success message
-        return redirect()->route('company.employees.index', $companyId)->with('success', 'Employee Created Successfully');
+        return redirect()->route('employees.index', $companyId)->with('success', 'Employee Created Successfully');
     }
     
 
@@ -155,7 +155,7 @@ class CompanyController extends Controller
         }
 
         // Redirect to the employee list with success message
-        return redirect()->route('company.employees.index', $companyId)->with('success', 'Employee Updated Successfully');
+        return redirect()->route('employees.index', $companyId)->with('success', 'Employee Updated Successfully');
     }
 
     public function destroy($companyId, $employeeId)
@@ -170,6 +170,6 @@ class CompanyController extends Controller
             $employeeDetail->delete();
         }
 
-        return redirect()->route('company.employees.index', $companyId)->with('success', 'Employee Deleted Successfully');
+        return redirect()->route('employees.index', $companyId)->with('success', 'Employee Deleted Successfully');
     }
 }

@@ -46,7 +46,7 @@ class DepartmentManagementController extends Controller
             'description' => $request->description
         ]);
 
-        return redirect()->route('company.departments.index', ['companyId' => auth()->user()->company_id])
+        return redirect()->route('departments.index', ['companyId' => auth()->user()->company_id])
             ->with('success', 'Department created successfully.');
     }
 
@@ -80,7 +80,7 @@ class DepartmentManagementController extends Controller
             'description' => $request->description
         ]);
 
-        return redirect()->route('company.departments.index', ['companyId' => auth()->user()->company_id])
+        return redirect()->route('departments.index', ['companyId' => auth()->user()->company_id])
             ->with('success', 'Department updated successfully.');
     }
 
@@ -93,7 +93,7 @@ class DepartmentManagementController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $department->delete();
-        return redirect()->route('company.departments.index', ['companyId' => auth()->user()->company_id])
+        return redirect()->route('departments.index', ['companyId' => auth()->user()->company_id])
             ->with('success', 'Department deleted successfully.');
     }
 }

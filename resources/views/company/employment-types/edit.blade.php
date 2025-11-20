@@ -16,7 +16,7 @@
                     <h3 class="card-title">Edit Employment Type</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('company.employment-types.update', $employmentType) }}" method="POST">
+                    <form action="{{ route('employment-types.update', $employmentType) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="form-group">
@@ -47,7 +47,7 @@
 
                         <div class="form-group mt-4 text-center">
                             <button type="submit" class="btn btn-primary">Update Employment Type</button>
-                            <a href="{{ route('company.employment-types.index') }}" class="btn btn-danger">Cancel</a>
+                            <a href="{{ route('employment-types.index') }}" class="btn btn-danger">Cancel</a>
                         </div>
                     </form>
                 </div>

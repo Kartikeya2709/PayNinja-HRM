@@ -111,9 +111,9 @@
             var departmentId = $(this).val();
             if (departmentId) {
                 $.ajax({
-                    url: '{{ url("company/departments") }}/' + departmentId + '/employees',
+                    url: '{{ url("departments") }}/' + departmentId + '/employees',
                     type: 'GET',
-                    success: function(data) {
+                    success: function(data){
                         // Clear existing options
                         $('#reporter_id').html('<option value="">Select Reporter</option>');
                         $('#reportee_ids').empty();

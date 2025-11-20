@@ -35,6 +35,7 @@ use App\Http\Controllers\FieldVisitController;
 use App\Http\Controllers\SuperAdmin\SlugController;
 use App\Http\Controllers\SuperAdmin\RoleController;
 use App\Http\Controllers\HandbookController;
+use App\Http\Controllers\Employee\ResignationController;
 use App\Http\Controllers\SuperAdmin\DemoRequestsController;
 use App\Http\Controllers\SuperAdmin\ContactMessagesController;
 use App\Http\Controllers\LeadController;
@@ -94,10 +95,10 @@ Route::get('/', function () {
 Auth::routes(['register' => false]);
 
 Route::middleware(['auth'])->group(function () {
-    
+
     // dashboard routes
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    
+
     // Profile routes
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
@@ -274,6 +275,9 @@ Route::middleware(['auth'])->group(function () {
             ->name('api.office-timings');
 
 
+        // Leave Management
+        Route::resource('leave-types', LeaveTypeController::class);
+
         // Leave Requests
         Route::get('leave-requests', [LeaveRequestController::class, 'employeeIndex'])->name('leave-requests.index');
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
@@ -309,6 +313,7 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'assets.categories.update',
             'destroy' => 'assets.categories.destroy',
         ]);
+
         Route::prefix('assets')->name('assets.')->group(function () {
             // Asset routes
             Route::get('/index', [AssetController::class, 'index'])->name('index');
@@ -356,7 +361,81 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
         Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
 
+        // Admin Management for Company
+        Route::get('admins', [EmployeeController::class, 'admins'])->name('admins.index');
+        Route::put('employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+        Route::delete('employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
 
+        // Employee Management
+        Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
+        Route::get('employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+        Route::post('employees', [EmployeeController::class, 'store'])->name('employees.store');
+        Route::get('employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
+
+        // Designation Management
+        Route::resource('designations', DesignationManagementController::class)->except(['show'])->names([
+            'index' => 'designations.index',
+            'create' => 'designations.create',
+            'store' => 'designations.store',
+            'edit' => 'designations.edit',
+            'update' => 'designations.update',
+            'destroy' => 'designations.destroy',
+        ]);
+
+        // Employment Type Management
+        Route::resource('employment-types', \App\Http\Controllers\EmploymentTypeManagementController::class)->except(['show', 'destroy'])->names([
+            'index' => 'employment-types.index',
+            'create' => 'employment-types.create',
+            'store' => 'employment-types.store',
+            'edit' => 'employment-types.edit',
+            'update' => 'employment-types.update',
+        ]);
+
+        // Department Management
+        Route::resource('departments', DepartmentManagementController::class)->except(['show'])->names([
+            'index' => 'departments.index',
+            'create' => 'departments.create',
+            'store' => 'departments.store',
+            'edit' => 'departments.edit',
+            'update' => 'departments.update',
+            'destroy' => 'departments.destroy',
+        ]);
+
+
+        // Leave Requests
+        Route::get('leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('leave-requests.index');
+        Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
+        Route::get('leave-requests/create', [LeaveRequestController::class, 'adminCreate'])->name('leave-requests.create');
+        Route::post('leave-requests', [LeaveRequestController::class, 'adminStore'])->name('leave-requests.store');
+        Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'adminCalendarEvents'])->name('leave-requests.calendar-events');
+        Route::get('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'adminShow'])->name('leave-requests.show');
+        Route::post('leave-requests/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('leave-requests.approve');
+        Route::post('leave-requests/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('leave-requests.reject');
+        Route::get('leave-requests/export', [LeaveRequestController::class, 'export'])->name('leave-requests.export');
+        Route::get('leave-requests/report', [LeaveRequestController::class, 'report'])->name('leave-requests.report');
+
+        // Leave Balances
+        Route::resource('leave-balances', LeaveBalanceController::class)->except(['show', 'destroy']);
+        Route::post('leave-balances/bulk-allocate', [LeaveBalanceController::class, 'bulkAllocate'])->name('leave-balances.bulk-allocate');
+        Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
+        Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
+
+
+        // Reimbursement Management
+        Route::get('/reimbursements', [ReimbursementController::class, 'index'])->name('reimbursements.index');
+        Route::get('/reimbursements/create', [ReimbursementController::class, 'create'])->name('reimbursements.create');
+        Route::post('/reimbursements', [ReimbursementController::class, 'store'])->name('reimbursements.store');
+        Route::get('/reimbursements/{reimbursement}', [ReimbursementController::class, 'show'])->name('reimbursements.show');
+        Route::post('/reimbursements/{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
+        Route::post('/reimbursements/{reimbursement}/approve/reporter', [ReimbursementController::class, 'approveReporter'])->name('reimbursements.approve.reporter');
+        Route::post('/reimbursements/{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
+        Route::get('/reimbursements/pending', [ReimbursementController::class, 'pending'])->name('reimbursements.pending');
+
+        // Employee Resignation Management
+        Route::resource('resignations', ResignationController::class)
+            ->only(['index', 'create', 'store', 'show', 'edit', 'update']);
+        Route::post('resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])
+            ->name('resignations.withdraw');
     });
 
     // // Admin Regularization Management
@@ -453,72 +532,9 @@ Route::middleware(['auth'])->group(function () {
     // Route::get('company/academic-holidays', [AcademicHolidayController::class, 'index'])->name('company.academic-holidays.index');
 
     Route::middleware(['auth', 'role:admin,company_admin,employee', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
-
-        // Employee Management
-        Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
-        Route::get('employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-        Route::post('employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::get('employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
-
-        // Admin Management for Company
-        Route::get('admins', [EmployeeController::class, 'admins'])->name('admins.index');
-        Route::put('employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-
-        // Designation Management
-        Route::resource('designations', DesignationManagementController::class)->except(['show'])->names([
-            'index' => 'designations.index',
-            'create' => 'designations.create',
-            'store' => 'designations.store',
-            'edit' => 'designations.edit',
-            'update' => 'designations.update',
-            'destroy' => 'designations.destroy',
-        ]);
-
-        // Employment Type Management
-        Route::resource('employment-types', \App\Http\Controllers\EmploymentTypeManagementController::class)->except(['show', 'destroy'])->names([
-            'index' => 'employment-types.index',
-            'create' => 'employment-types.create',
-            'store' => 'employment-types.store',
-            'edit' => 'employment-types.edit',
-            'update' => 'employment-types.update',
-        ]);
-
-        // Department Management
-        Route::resource('departments', DepartmentManagementController::class)->except(['show'])->names([
-            'index' => 'departments.index',
-            'create' => 'departments.create',
-            'store' => 'departments.store',
-            'edit' => 'departments.edit',
-            'update' => 'departments.update',
-            'destroy' => 'departments.destroy',
-        ]);
-
-        // Team Management
-        Route::get('departments/{department}/employees', [TeamController::class, 'getEmployeesByDepartment'])->name('departments.employees');
-        Route::resource('teams', TeamController::class)->except(['show']);
-
-        // Leave Management
-        Route::resource('leave-types', LeaveTypeController::class);
-
-        // Leave Requests
-        Route::get('leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('leave-requests.index');
-        Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
-        Route::get('leave-requests/create', [LeaveRequestController::class, 'adminCreate'])->name('leave-requests.create');
-        Route::post('leave-requests', [LeaveRequestController::class, 'adminStore'])->name('leave-requests.store');
-        Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'adminCalendarEvents'])->name('leave-requests.calendar-events');
-        Route::get('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'adminShow'])->name('leave-requests.show');
-        Route::post('leave-requests/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('leave-requests.approve');
-        Route::post('leave-requests/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('leave-requests.reject');
-        Route::get('leave-requests/export', [LeaveRequestController::class, 'export'])->name('leave-requests.export');
-        Route::get('leave-requests/report', [LeaveRequestController::class, 'report'])->name('leave-requests.report');
-
-        // Leave Balances
-        Route::resource('leave-balances', LeaveBalanceController::class)->except(['show', 'destroy']);
-        Route::post('leave-balances/bulk-allocate', [LeaveBalanceController::class, 'bulkAllocate'])->name('leave-balances.bulk-allocate');
-        Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
-        Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
-
+        // // Team Management
+        // Route::get('departments/{department}/employees', [TeamController::class, 'getEmployeesByDepartment'])->name('departments.employees');
+        // Route::resource('teams', TeamController::class)->except(['show']);
     });
 
 
@@ -598,14 +614,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Reimbursement Routes
     Route::prefix('reimbursements')->name('reimbursements.')->group(function () {
-        Route::get('/', [ReimbursementController::class, 'index'])->name('index');
-        Route::get('/create', [ReimbursementController::class, 'create'])->name('create');
-        Route::post('/', [ReimbursementController::class, 'store'])->name('store');
-        Route::get('/{reimbursement}', [ReimbursementController::class, 'show'])->name('show');
-        Route::post('/{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('approve');
-        Route::post('/{reimbursement}/approve/reporter', [ReimbursementController::class, 'approveReporter'])->name('approve.reporter');
-        Route::post('/{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reject');
-        Route::get('/pending', [ReimbursementController::class, 'pending'])->name('pending');
+
     });
 
     // Company Admin Routes (accessible to company_admin and admin roles)
@@ -649,10 +658,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Employee Resignation Routes
     Route::middleware(['role:user,employee'])->prefix('employee')->name('employee.')->group(function () {
-        Route::resource('resignations', App\Http\Controllers\Employee\ResignationController::class)
-            ->only(['index', 'create', 'store', 'show', 'edit', 'update']);
-        Route::post('resignations/{resignation}/withdraw', [App\Http\Controllers\Employee\ResignationController::class, 'withdraw'])
-            ->name('resignations.withdraw');
+
     });
 
     // Admin Resignation Routes

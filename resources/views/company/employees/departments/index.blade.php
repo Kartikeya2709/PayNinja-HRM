@@ -21,7 +21,7 @@
                 <div class="card-header">
                     <h3 class="card-title">Departments</h3>
                     <div class="card-tools">
-                        <a href="{{ route('company.departments.create', ['companyId' => Auth::user()->company_id]) }}" class="btn btn-primary">
+                        <a href="{{ route('departments.create', ['companyId' => Auth::user()->company_id]) }}" class="btn btn-primary">
                             Add New Department
                         </a>
                     </div>
@@ -49,7 +49,7 @@
                                         <td>{{ $department->description ?? 'N/A' }}</td>
                                         <td>
                                             <div class="btn-group btn-group-sm" >
-                                                <a href="{{ route('company.departments.edit', ['companyId' => Auth::user()->company_id, 'department' => $department]) }}" class="btn btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Record" aria-label="Edit">
+                                                <a href="{{ route('departments.edit', ['companyId' => Auth::user()->company_id, 'department' => $department]) }}" class="btn btn-outline-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Record" aria-label="Edit">
                                                     <span class="btn-content">
                                                         <i class="bi bi-pencil"></i>
                                                     </span>
