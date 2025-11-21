@@ -7,8 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
 
-    protected $fillable = ['name', 'domain', 'email', 'phone', 'address', 'created_by'];
+    protected $fillable = ['name', 'domain', 'email', 'phone', 'address', 'created_by', 'is_active'];
     // protected $fillable = ['name', 'domain', 'email', 'phone', 'address', 'logo', 'created_by'];
+
+    protected static function booted()
+    {
+        static::addGlobalScope('active', function ($query) {
+            $query->where('is_active', true);
+        });
+    }
 
     public function superAdmin()
     {

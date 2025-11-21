@@ -210,6 +210,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{document}/verify', [CompanyDocumentController::class, 'verify'])->name('verify');
             Route::post('/{document}/reject', [CompanyDocumentController::class, 'reject'])->name('reject');
         });
+        
+        // Company and Employee Deactivation
+        Route::post('companies/{id}/deactivate', [SuperAdminController::class, 'deactivateCompany'])->name('companies.deactivate');
+        Route::post('companies/{id}/activate', [SuperAdminController::class, 'activateCompany'])->name('companies.activate');
+        Route::post('companies/{companyId}/employees/{employeeId}/deactivate', [SuperAdminController::class, 'deactivateEmployee'])->name('companies.employees.deactivate');
+        Route::post('companies/{companyId}/employees/{employeeId}/activate', [SuperAdminController::class, 'activateEmployee'])->name('companies.employees.activate');
     });
 
     Route::middleware(['role:company_admin,admin,employee'])->group(function () {
@@ -647,6 +653,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/employees/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('employees.edit');
         Route::put('/employees/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('employees.update');
         Route::put('/employees/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('employees.update-role');
+        Route::post('/employees/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('employees.toggleStatus');
 
         // Company Settings
         Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');

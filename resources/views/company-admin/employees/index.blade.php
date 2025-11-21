@@ -75,6 +75,11 @@
                     @if(session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
+                    <div id="statusAlert" class="alert d-none" role="alert"></div>
+
+                     <!-- Alert message placeholder -->
+                       <div id="messageBox"></div>
+
 
                     <div class="table-responsive">
                         <table class="table table-bordered">
@@ -131,6 +136,46 @@
         </div>
     </div>
 </div>
+
+
+
+    <!-- Status Toggle Modal -->
+<div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-3">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="statusModalLabel">Update Employee Status</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="statusForm">
+          <input type="hidden" id="employeeId">
+          <div class="mb-3">
+            <label class="form-label">Employee Name</label>
+            <input type="text" id="employeeName" class="form-control" readonly>
+          </div>
+
+          <div class="form-check form-switch mb-3">
+            <input class="form-check-input" type="checkbox" id="employeeActive">
+            <label class="form-check-label" for="employeeActive">Active</label>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Remark</label>
+            <textarea id="employeeRemark" class="form-control" rows="3" placeholder="Enter remark..."></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" id="saveStatusBtn" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -268,4 +313,96 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+    const employeeIdInput = document.getElementById('employeeId');
+    const employeeNameInput = document.getElementById('employeeName');
+    const employeeActiveInput = document.getElementById('employeeActive');
+    const employeeRemarkInput = document.getElementById('employeeRemark');
+
+    const messageBox = document.getElementById('messageBox'); // ✅ For showing messages
+
+    // 🟩 Open modal when button clicked
+    document.querySelectorAll('.toggle-status-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.dataset.id;
+            const name = this.dataset.name;
+            const status = this.dataset.status;
+
+            employeeIdInput.value = id;
+            employeeNameInput.value = name;
+            employeeActiveInput.checked = (status === 'active');
+            employeeRemarkInput.value = '';
+
+            statusModal.show();
+        });
+    });
+
+    // 🟦 Save Button: send AJAX to controller
+    document.getElementById('saveStatusBtn').addEventListener('click', function () {
+        const id = employeeIdInput.value;
+        const isActive = employeeActiveInput.checked ? 1 : 0;
+        const remark = employeeRemarkInput.value.trim();
+
+        fetch(`/company-admin/employees/${id}/toggle-status`, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                is_active: isActive,
+                remark: remark
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                // ✅ Update button UI
+                const btn = document.querySelector(`.toggle-status-btn[data-id="${id}"]`);
+                if (data.is_active) {
+                    btn.classList.remove('btn-outline-danger');
+                    btn.classList.add('btn-outline-success');
+                    btn.innerHTML = `<i class="fas fa-check-circle me-1"></i>`;
+                    btn.dataset.status = 'active';
+                } else {
+                    btn.classList.remove('btn-outline-success');
+                    btn.classList.add('btn-outline-danger');
+                    btn.innerHTML = `<i class="fas fa-times-circle me-1"></i>`;
+                    btn.dataset.status = 'inactive';
+                }
+
+                // ✅ Show success message on top
+                messageBox.innerHTML = `
+                    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+                        ${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                `;
+
+                // Auto-hide after 3 seconds
+                setTimeout(() => {
+                    const alert = bootstrap.Alert.getOrCreateInstance(document.querySelector('.alert'));
+                    if (alert) alert.close();
+                }, 3000);
+
+                statusModal.hide();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            messageBox.innerHTML = `
+                <div class="alert alert-danger mt-3" role="alert">
+                    Something went wrong. Please try again.
+                </div>
+            `;
+        });
+    });
+});
+</script>
+
 @endsection

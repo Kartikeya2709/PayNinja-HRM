@@ -478,7 +478,7 @@
                                             <td>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('d M Y') }}
                                             </td>
 
-                                            <td>{{ $reimbursement->employee->user->name }}</td>
+                                            <td>{{ $reimbursement->employee->user->name ?? 'N/A'}}</td>
 
                                             <td>₹{{ number_format($reimbursement->amount, 2) }}</td>
                                             <td>

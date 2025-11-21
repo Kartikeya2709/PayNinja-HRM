@@ -148,6 +148,7 @@ class CompanyAdminController extends Controller
 
         // Build query with filters
         $query = Employee::with(['user', 'department', 'designation'])
+            ->withoutGlobalScopes()
             ->where('company_id', $companyId);
 
         // Apply search filter
@@ -258,6 +259,7 @@ class CompanyAdminController extends Controller
         $company = $user->employee->company;
 
         $employee = \App\Models\Employee::with(['department', 'designation', 'reportingManager', 'currentSalary'])
+            ->withoutGlobalScopes()
             ->where('company_id', $company->id)
             ->findOrFail($id);
 
@@ -301,6 +303,7 @@ class CompanyAdminController extends Controller
         $company = $user->employee->company;
 
         $employee = \App\Models\Employee::with(['currentSalary'])
+            ->withoutGlobalScopes()
             ->where('company_id', $company->id)
             ->findOrFail($id);
 
@@ -336,7 +339,7 @@ class CompanyAdminController extends Controller
         $user = Auth::user();
         $company = $user->employee->company;
 
-        $employee = \App\Models\Employee::where('company_id', $company->id)->findOrFail($id);
+        $employee = \App\Models\Employee::withoutGlobalScopes()->where('company_id', $company->id)->findOrFail($id);
 
         $validated = $request->validate([
             // Basic Information
@@ -493,6 +496,7 @@ class CompanyAdminController extends Controller
 
             // Get the highest existing employee code with this prefix
             $lastEmployee = Employee::where('company_id', $company->id)
+                ->withoutGlobalScopes()
                 ->whereNotNull('employee_code')
                 ->where('employee_code', 'like', $prefix . '%')
                 ->orderByRaw('LENGTH(employee_code) DESC, employee_code DESC')
@@ -509,7 +513,7 @@ class CompanyAdminController extends Controller
             // Generate the new code and ensure it's unique
             do {
                 $newCode = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-                $exists = Employee::where('employee_code', $newCode)->exists();
+                $exists = Employee::where('employee_code', $newCode)->withoutGlobalScopes()->exists();
                 if (!$exists) {
                     return $newCode;
                 }
@@ -541,6 +545,7 @@ class CompanyAdminController extends Controller
 
             // Get the highest existing employee code with this prefix
             $lastEmployee = Employee::where('company_id', $company->id)
+                ->withoutGlobalScopes()
                 ->whereNotNull('employee_code')
                 ->where('employee_code', 'like', $prefix . '%')
                 ->orderByRaw('LENGTH(employee_code) DESC, employee_code DESC')
@@ -557,7 +562,7 @@ class CompanyAdminController extends Controller
             // Generate the new code and ensure it's unique
             do {
                 $newCode = $prefix . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
-                $exists = Employee::where('employee_code', $newCode)->exists();
+                $exists = Employee::where('employee_code', $newCode)->withoutGlobalScopes()->exists();
                 if (!$exists) {
                     return $newCode;
                 }
@@ -572,6 +577,7 @@ class CompanyAdminController extends Controller
         do {
             // Get the last employee number for this prefix
             $lastEmployee = Employee::where('company_id', $company->id)
+                ->withoutGlobalScopes()
                 ->where('employee_code', 'LIKE', $prefixSetting->prefix . '%')
                 ->orderByRaw('LENGTH(employee_code) DESC, employee_code DESC')
                 ->first();
@@ -588,7 +594,7 @@ class CompanyAdminController extends Controller
             $newCode = $prefixSetting->prefix . $formattedNumber;
 
             // Check if the code already exists
-            $exists = Employee::where('employee_code', $newCode)->exists();
+            $exists = Employee::where('employee_code', $newCode)->withoutGlobalScopes()->exists();
             if (!$exists) {
                 return $newCode;
             }
@@ -951,6 +957,36 @@ class CompanyAdminController extends Controller
             Log::error('Error updating company settings: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Error updating company settings.');
         }
+    }
+
+     /* 
+       Employee Status Toggle (Activate/Deactivate)
+     */
+    public function toggleStatus( Request $request, $id)
+    {
+        // Find employee and related user
+        $employee = Employee::withoutGlobalScopes()->findOrFail($id);
+        $user = $employee->user; // use user_id if Employee linked to User
+
+        // Get the desired status from request
+        $newStatus = $request->is_active ? 1 : 0;
+
+        // Update Employee
+        $employee->is_active = $newStatus;
+        $employee->remark = $request->remark;
+        $employee->save();
+
+        // Update User
+        $user->is_active = $newStatus;
+        $user->remark = $request->remark;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => $newStatus ? 'Employee Activated' : 'Employee Deactivated',
+            'is_active' => $newStatus,
+        ]);
+
     }
 
     /**

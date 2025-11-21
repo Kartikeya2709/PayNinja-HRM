@@ -52,7 +52,7 @@
                             <table class="table table-bordered">
                                 <tr>
                                     <th style="width: 30%">Employee</th>
-                                    <td>{{ $assignment->employee->name }}</td>
+                                    <td>{{ $assignment->employee->name ?? 'N/A' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Assigned By</th>

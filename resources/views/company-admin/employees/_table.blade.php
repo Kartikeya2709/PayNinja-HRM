@@ -59,7 +59,7 @@
                 </span>
                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
             </a>
-
+            
             @if($employee->user->role !== 'company_admin')
             <button type="button" class="btn btn-outline-primary btn-sm change-role-btn action-btn" data-bs-toggle="modal"
                 data-bs-target="#roleModal" data-employee-id="{{ $employee->id }}"
@@ -67,8 +67,22 @@
                 data-update-url="{{ route('company-admin.employees.update-role', $employee->id) }}" title="Change Role">
                 <i class="fas fa-user-edit"></i>
             </button>
+             <!-- Active/Inactive Toggle Button -->
+            <button 
+                type="button"
+                class="btn btn-sm btn-outline-{{ $employee->is_active ? 'success' : 'danger' }} toggle-status-btn"
+                data-id="{{ $employee->id }}"
+                data-status="{{ $employee->is_active ? 'active' : 'inactive' }}"
+                data-name="{{ $employee->name }}"
+                title="Toggle Status">
+                @if($employee->is_active)
+                    <i class="fas fa-check-circle me-1"></i>
+                @else
+                    <i class="fas fa-times-circle me-1"></i>
+                @endif
+            </button>
+            @endif
         </div>
-        @endif
     </td>
 </tr>
 @endforeach
