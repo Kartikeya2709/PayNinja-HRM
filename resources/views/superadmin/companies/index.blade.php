@@ -37,6 +37,7 @@
                                 <th>Company Email</th>
                                 <th>Domain</th>
                                 <th>Phone</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -48,10 +49,30 @@
                                     <td>{{ $company->email }}</td>
                                     <td>{{ $company->domain ?? '-' }}</td>
                                     <td>{{ $company->phone ?? '-' }}</td>
+                                    <td>
+                                        <span class="badge {{ $company->is_active ? 'badge-success' : 'badge-danger' }}">
+                                            {{ $company->is_active ? 'Active' : 'Inactive' }}
+                                        </span>
+                                    </td>
                                     <td class="w-25">
                                         <a href="{{ route('superadmin.companies.show', $company->id) }}" class="btn btn-sm btn-success">View</a>
                                         <a href="{{ route('superadmin.companies.documents.index', $company->id) }}" class="btn btn-sm btn-primary">Documents</a>
                                         <a href="{{ route('superadmin.companies.edit', $company->id) }}" class="btn btn-sm btn-warning">Edit</a>
+
+                                        @if($company->is_active)
+                                            <form action="{{ route('superadmin.companies.deactivate', $company->id) }}" method="POST" style="display: inline-block;">
+                                                @csrf
+                                                @method('POST')
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to deactivate this company and all its users?')">Deactivate</button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('superadmin.companies.activate', $company->id) }}" method="POST" style="display: inline-block;">
+                                                @csrf
+                                                @method('POST')
+                                                <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to activate this company and all its users?')">Activate</button>
+                                            </form>
+                                        @endif
+
                                         <form action="{{ route('superadmin.companies.destroy', $company->id) }}" method="POST" style="display: inline-block;">
                                             @csrf
                                             @method('DELETE')
@@ -61,7 +82,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center">No companies found.</td>
+                                    <td colspan="7" class="text-center">No companies found.</td>
                                 </tr>
                             @endforelse
                         </tbody>

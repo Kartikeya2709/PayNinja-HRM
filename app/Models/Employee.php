@@ -60,7 +60,7 @@ class Employee extends Model
     protected static function booted()
     {
         static::addGlobalScope('active', function ($query) {
-            $query->where('is_active', true);
+            $query->where('employees.is_active', true);
         });
     }
 

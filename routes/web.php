@@ -211,6 +211,12 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{document}/verify', [CompanyDocumentController::class, 'verify'])->name('verify');
             Route::post('/{document}/reject', [CompanyDocumentController::class, 'reject'])->name('reject');
         });
+
+        // Company and Employee Deactivation
+        Route::post('companies/{id}/deactivate', [SuperAdminController::class, 'deactivateCompany'])->name('companies.deactivate');
+        Route::post('companies/{id}/activate', [SuperAdminController::class, 'activateCompany'])->name('companies.activate');
+        Route::post('companies/{companyId}/employees/{employeeId}/deactivate', [SuperAdminController::class, 'deactivateEmployee'])->name('companies.employees.deactivate');
+        Route::post('companies/{companyId}/employees/{employeeId}/activate', [SuperAdminController::class, 'activateEmployee'])->name('companies.employees.activate');
     });
 
     // Shift Management

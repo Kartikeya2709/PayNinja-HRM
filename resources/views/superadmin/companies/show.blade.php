@@ -109,8 +109,27 @@
 <div class="row mt-4">
     <div class="col-12 px-1">
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Company Information</h4>
+                <div>
+                    @if($company->is_active)
+                        <form action="{{ route('superadmin.companies.deactivate', $company->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('POST')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to deactivate this company and all its users?')">
+                                <i class="fas fa-ban"></i> Deactivate Company
+                            </button>
+                        </form>
+                    @else
+                        <form action="{{ route('superadmin.companies.activate', $company->id) }}" method="POST" style="display: inline;">
+                            @csrf
+                            @method('POST')
+                            <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Are you sure you want to activate this company and all its users?')">
+                                <i class="fas fa-check"></i> Activate Company
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
             <div class="card-body">
                 <div class="row">
@@ -155,7 +174,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Company Admins</h4>
-                <a href="{{ route('superadmin.assigned-company-admins.index') }}" class="btn btn-primary">View All</a>
+                {{-- <a href="{{ route('superadmin.assigned-company-admins.index') }}" class="btn btn-primary">View All</a> --}}
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -191,7 +210,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Admins</h4>
-                <a href="{{ route('company.admins.index', $company->id) }}" class="btn btn-primary">View All</a>
+                {{-- <a href="{{ route('company.admins.index', $company->id) }}" class="btn btn-primary">View All</a> --}}
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -227,7 +246,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Employees</h4>
-                <a href="{{ route('company.employees.index', $company->id) }}" class="btn btn-primary">View All</a>
+                {{-- <a href="{{ route('company.employees.index', $company->id) }}" class="btn btn-primary">View All</a> --}}
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -238,6 +257,8 @@
                                 <th>Email</th>
                                 <th>Department</th>
                                 <th>Designation</th>
+                                <th>Status</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -247,10 +268,36 @@
                                 <td>{{ $employee->user->email }}</td>
                                 <td>{{ $employee->department->name ?? 'N/A' }}</td>
                                 <td>{{ $employee->designation->name ?? 'N/A' }}</td>
+                                <td>
+                                    <span class="badge {{ $employee->is_active ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $employee->is_active ? 'Active' : 'Inactive' }}
+                                    </span>
+                                </td>
+                                <td>
+                                    @if($employee->is_active)
+                                        <form action="{{ route('superadmin.companies.employees.deactivate', [$company->id, $employee->id]) }}" method="POST" style="display: inline;">
+                                            @csrf
+                                            @method('POST')
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to deactivate this employee?')">
+                                                <i class="fas fa-ban"></i> Deactivate
+                                            </button>
+                                        </form>
+                                    @else
+                                        @if($company->is_active)
+                                            <form action="{{ route('superadmin.companies.employees.activate', [$company->id, $employee->id]) }}" method="POST" style="display: inline;">
+                                                @csrf
+                                                @method('POST')
+                                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Are you sure you want to activate this employee?')">
+                                                    <i class="fas fa-check"></i> Activate
+                                                </button>
+                                            </form>
+                                        @endif
+                                    @endif
+                                </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="text-center">No employees found</td>
+                                <td colspan="6" class="text-center">No employees found</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -265,7 +312,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Departments</h4>
-                <a href="{{ route('company.departments.index', $company->id) }}" class="btn btn-primary">View All</a>
+                {{-- <a href="{{ route('company.departments.index', $company->id) }}" class="btn btn-primary">View All</a> --}}
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -301,7 +348,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4>Designations</h4>
-                <a href="{{ route('company.designations.index', $company->id) }}" class="btn btn-primary">View All</a>
+                {{-- <a href="{{ route('company.designations.index', $company->id) }}" class="btn btn-primary">View All</a> --}}
             </div>
             <div class="card-body">
                 <div class="table-responsive">

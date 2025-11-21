@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Employee;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +18,7 @@ class SuperAdminController extends Controller
 
     public function index()
     {
-        $companies = Company::with('admin')->get();
+        $companies = Company::withoutGlobalScopes()->with('admin')->get();
         $users = User::with('company')->get();
         return view('superadmin.companies.index', compact('users', 'companies'));
     }
@@ -93,34 +94,37 @@ class SuperAdminController extends Controller
 
     public function show($id)
     {
-        $company = Company::findOrFail($id);
-        
+        $company = Company::withoutGlobalScopes()->findOrFail($id);
+
         // Get entities and their counts
         $companyAdmins = \App\Models\Employee::with('user')
+            ->withoutGlobalScopes()
             ->whereHas('user', function($q) {
                 $q->where('role', 'company_admin');
             })
             ->where('company_id', $id)
             ->get();
-        
+
         $admins = \App\Models\Employee::with('user')
+            ->withoutGlobalScopes()
             ->whereHas('user', function($q) {
                 $q->where('role', 'admin');
             })
             ->where('company_id', $id)
             ->get();
-        
+
         $employees = \App\Models\Employee::with(['user', 'department', 'designation'])
+            ->withoutGlobalScopes()
             ->whereHas('user', function($q) {
                 $q->where('role', 'employee');
             })
             ->where('company_id', $id)
             ->get();
-        
+
         $departments = \App\Models\Department::where('company_id', $id)
             ->withCount('employees')
             ->get();
-            
+
         $designations = \App\Models\Designation::where('company_id', $id)
             ->withCount('employees')
             ->get();
@@ -140,10 +144,88 @@ class SuperAdminController extends Controller
             'departments',
             'designations',
             'companyAdminsCount',
-            'adminsCount', 
+            'adminsCount',
             'employeesCount',
             'departmentsCount',
             'designationsCount'
         ));
+    }
+
+    /**
+     * Deactivate the entire company and all its users and employees.
+     */
+    public function deactivateCompany($id)
+    {
+        $company = Company::withoutGlobalScopes()->findOrFail($id);
+
+        // Deactivate company
+        $company->is_active = false;
+        $company->save();
+
+        // Deactivate all users in the company
+        User::withoutGlobalScopes()->where('company_id', $company->id)->update(['is_active' => false]);
+
+        // Deactivate all employees in the company
+        Employee::withoutGlobalScopes()->where('company_id', $company->id)->update(['is_active' => false]);
+
+        return redirect()->back()->with('success', 'Company and all its users deactivated successfully.');
+    }
+
+    /**
+     * Activate the entire company and all its users and employees.
+     */
+    public function activateCompany($id)
+    {
+        $company = Company::withoutGlobalScopes()->findOrFail($id);
+
+        // Activate company
+        $company->is_active = true;
+        $company->save();
+
+        // Activate all users in the company
+        User::withoutGlobalScopes()->where('company_id', $company->id)->update(['is_active' => true]);
+
+        // Activate all employees in the company
+        Employee::withoutGlobalScopes()->where('company_id', $company->id)->update(['is_active' => true]);
+
+        return redirect()->back()->with('success', 'Company and all its users activated successfully.');
+    }
+
+    /**
+     * Deactivate a specific employee.
+     */
+    public function deactivateEmployee($companyId, $employeeId)
+    {
+        $employee = Employee::withoutGlobalScopes()->where('company_id', $companyId)->findOrFail($employeeId);
+        $user = $employee->user;
+
+        $employee->is_active = false;
+        $employee->save();
+
+        if ($user) {
+            $user->is_active = false;
+            $user->save();
+        }
+
+        return redirect()->back()->with('success', 'Employee deactivated successfully.');
+    }
+
+    /**
+     * Activate a specific employee.
+     */
+    public function activateEmployee($companyId, $employeeId)
+    {
+        $employee = Employee::withoutGlobalScopes()->where('company_id', $companyId)->findOrFail($employeeId);
+        $user = $employee->user;
+
+        $employee->is_active = true;
+        $employee->save();
+
+        if ($user) {
+            $user->is_active = true;
+            $user->save();
+        }
+
+        return redirect()->back()->with('success', 'Employee activated successfully.');
     }
 }
