@@ -2,6 +2,10 @@
 
 @section('title', 'Create Role')
 
+@push('style')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+@endpush
+
 @section('content')
 <div class="main-content-01">
     <section class="section container">
@@ -44,7 +48,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="company_id" class="form-label">Company <span class="text-danger">*</span></label>
                                     <select class="form-control @error('company_id') is-invalid @enderror"
@@ -63,7 +67,7 @@
                             </div>
                         </div>
 
-                        <div class="row mb-3">
+                        <div class="row mb-3"> --}}
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
@@ -77,7 +81,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="is_default" class="form-label">Is Default Role</label>
                                     <div class="form-check">
@@ -92,7 +96,7 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="row">

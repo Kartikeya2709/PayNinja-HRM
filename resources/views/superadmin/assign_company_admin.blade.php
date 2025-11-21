@@ -377,6 +377,41 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                {{-- Role Selection Section --}}
+                                <h6 class="text-muted mb-3 mt-4">
+                                    <i class="fas fa-user-tag mr-2"></i>
+                                    Role Assignment
+                                </h6>
+
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="role_id" class="form-label">Assign Role <span class="text-danger">*</span></label>
+                                            <select
+                                                name="role_id"
+                                                id="role_id"
+                                                class="form-control @error('role_id') is-invalid @enderror"
+                                            >
+                                                <option value="">-- Select Role --</option>
+                                                @foreach($roles as $role)
+                                                    <option
+                                                        value="{{ $role->id }}"
+                                                        {{ old('role_id', isset($admin) ? $admin->user->role_id : '') == $role->id ? 'selected' : '' }}
+                                                    >
+                                                        {{ $role->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                            @error('role_id')
+                                                <span class="invalid-feedback">{{ $message }}</span>
+                                            @else
+                                                <div class="invalid-feedback">Please select a role for this admin.</div>
+                                            @enderror
+                                            <small class="form-text text-muted">Select the role that defines the permissions for this company admin.</small>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

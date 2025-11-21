@@ -45,15 +45,15 @@ class User extends Authenticatable
     public function hasRole($role)
     {
         // If we have a roleModel, check against it first
-        if ($this->role_id && $this->roleModel()) {
-            $roleModel = $this->roleModel()->first();
-            if ($roleModel) {
-                if (is_array($role)) {
-                    return in_array($roleModel->name, $role);
-                }
-                return $roleModel->name === $role;
-            }
-        }
+        // if ($this->role_id && $this->roleModel()) {
+        //     $roleModel = $this->roleModel()->first();
+        //     if ($roleModel) {
+        //         if (is_array($role)) {
+        //             return in_array($roleModel->name, $role);
+        //         }
+        //         return $roleModel->name === $role;
+        //     }
+        // }
         
         // Fallback to the old role string
         if (is_array($role)) {

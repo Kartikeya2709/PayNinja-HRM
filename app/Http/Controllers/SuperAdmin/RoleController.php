@@ -36,6 +36,7 @@ class RoleController extends Controller
             ->when($status, function ($query) use ($status) {
                 $query->where('is_active', $status);
             })
+            ->whereNull('company_id')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -60,8 +61,8 @@ class RoleController extends Controller
             'name' => 'required|string|max:255',
             'permissions' => 'nullable|array',
             'permissions.*' => 'in:true,false',
-            'company_id' => 'required|exists:companies,id',
-            'is_default' => 'boolean',
+            // 'company_id' => 'required|exists:companies,id',
+            // 'is_default' => 'boolean',
             'status' => 'required|in:active,inactive',
         ]);
 
@@ -121,8 +122,8 @@ class RoleController extends Controller
             'name' => 'required|string|max:255',
             'permissions' => 'nullable|array',
             'permissions.*' => 'in:true,false',
-            'company_id' => 'required|exists:companies,id',
-            'is_default' => 'boolean',
+            // 'company_id' => 'required|exists:companies,id',
+            // 'is_default' => 'boolean',
             'status' => 'required|in:active,inactive',
         ]);
 

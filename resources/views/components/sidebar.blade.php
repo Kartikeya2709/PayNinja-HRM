@@ -189,7 +189,7 @@
                     </li>
 
                     <!-- Package Management -->
-                    <li class="menu-header">Package Management</li>
+                    {{-- <li class="menu-header">Package Management</li>
                     <li class="{{ Request::is('superadmin/packages*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('superadmin.packages.index') }}">
                             <i class="fas fa-box"></i>
@@ -219,7 +219,7 @@
                             <i class="fas fa-file-invoice"></i>
                             <span>Invoices</span>
                         </a>
-                    </li>
+                    </li> --}}
                 @endif
 
 
