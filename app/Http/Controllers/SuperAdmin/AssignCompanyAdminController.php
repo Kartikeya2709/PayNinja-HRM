@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Employee;
+use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -46,12 +47,16 @@ class AssignCompanyAdminController extends Controller
 
         // Get existing users for potential reassignment (if implementing user selection)
         $users = User::where('role', 'user')->get();
-        
+
+        // Get all active roles
+        $roles = Role::where('is_active', true)->whereNull('company_id')->get();
+
         // View variables for improved template
         $viewData = [
             'companies' => $companies,
             'assignedCompanies' => $assignedCompanies,
             'users' => $users,
+            'roles' => $roles,
             'pageTitle' => 'Create Company Admin',
             'formAction' => route('superadmin.assign-company-admin.store'),
             'isEditMode' => false
@@ -117,12 +122,16 @@ class AssignCompanyAdminController extends Controller
             $users = User::where('role', 'user')
                 ->orWhere('id', $admin->user_id)
                 ->get();
-            
+
+            // Get all active roles
+            $roles = Role::where('is_active', true)->whereNull('company_id')->get();
+
             $viewData = [
                 'admin' => $admin,
                 'companies' => $companies,
                 'assignedCompanies' => $assignedCompanies,
                 'users' => $users,
+                'roles' => $roles,
                 'pageTitle' => 'Edit Company Admin',
                 'formAction' => route('superadmin.assign-company-admin.update', $admin->id),
                 'isEditMode' => true
@@ -206,6 +215,7 @@ class AssignCompanyAdminController extends Controller
     {
         return Validator::make($request->all(), [
             'company_id' => 'required|exists:companies,id',
+            'role_id' => 'required|exists:roles,id',
             'name' => [
                 'required',
                 'string',
@@ -249,6 +259,8 @@ class AssignCompanyAdminController extends Controller
             'emergency_contact.regex' => 'Emergency contact must be exactly 10 digits.',
             'dob.before' => 'Company admin must be at least 18 years old.',
             'dob.after' => 'Please provide a valid date of birth.',
+            'role_id.required' => 'Please select a role for the company admin.',
+            'role_id.exists' => 'Selected role does not exist.',
         ]);
     }
 
@@ -259,6 +271,7 @@ class AssignCompanyAdminController extends Controller
     {
         return Validator::make($request->all(), [
             'company_id' => 'required|exists:companies,id',
+            'role_id' => 'required|exists:roles,id',
             'user_id' => 'required|exists:users,id',
             'name' => [
                 'required',
@@ -303,6 +316,8 @@ class AssignCompanyAdminController extends Controller
             'emergency_contact.regex' => 'Emergency contact must be exactly 10 digits.',
             'dob.before' => 'Company admin must be at least 18 years old.',
             'dob.after' => 'Please provide a valid date of birth.',
+            'role_id.required' => 'Please select a role for the company admin.',
+            'role_id.exists' => 'Selected role does not exist.',
             'user_id.required' => 'User ID is required.',
             'user_id.exists' => 'Selected user does not exist.',
         ]);
@@ -325,13 +340,15 @@ class AssignCompanyAdminController extends Controller
                 'email' => $validated['email'],
                 'password' => bcrypt($password),
                 'role' => 'company_admin',
+                'role_id' => $validated['role_id'],
                 'company_id' => $validated['company_id'],
             ]);
-            
-            $user->assignRole('Company Admin');
+
+            // $user->assignRole('Company Admin');
             Log::info('AssignCompanyAdminController@store: User created', [
-                'user_id' => $user->id, 
-                'role' => $user->role, 
+                'user_id' => $user->id,
+                'role' => $user->role,
+                'role_id' => $user->role_id,
                 'company_id' => $user->company_id
             ]);
 
@@ -397,13 +414,15 @@ class AssignCompanyAdminController extends Controller
             $user->update([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
+                'role_id' => $validated['role_id'],
                 'company_id' => $validated['company_id'],
             ]);
-            
-            $user->assignRole('Company Admin');
+
+            // $user->assignRole('Company Admin');
             Log::info('AssignCompanyAdminController@update: User updated', [
-                'user_id' => $user->id, 
-                'role' => $user->role, 
+                'user_id' => $user->id,
+                'role' => $user->role,
+                'role_id' => $user->role_id,
                 'company_id' => $user->company_id
             ]);
 
