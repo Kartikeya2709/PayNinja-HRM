@@ -46,7 +46,7 @@
 
                                     <td>
                                         @if($asset->currentAssignment)
-                                            {{ $asset->currentAssignment->employee->name }}
+                                            {{ $asset->currentAssignment->employee->name ?? 'N/A'}}
                                         @else
                                             -
                                         @endif
