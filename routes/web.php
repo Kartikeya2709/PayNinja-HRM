@@ -223,6 +223,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('regularization-requests/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');
 
         //Attendance Routes
+        Route::get('/attendance/dashboard', [EmployeeAttendanceController::class, 'dashboard'])->name('attendance.dashboard');
         Route::get('/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in-out');
         Route::get('/my-attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('my-attendance');
 
@@ -302,7 +303,15 @@ Route::middleware(['auth'])->group(function () {
         Route::post('shifts/{shift}/assign', '\App\Http\Controllers\Admin\ShiftController@assignShift')
             ->name('shifts.assign');
 
-        // Asset Management Routes        
+
+        // Asset Management Routes    
+
+        // Asset Dashboard
+        Route::get('/assets/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'assetDashboard'])->name('assets.dashboard');
+        Route::get('/assets/inventory', [\App\Http\Controllers\CompanyAdminController::class, 'assetInventory'])->name('assets.inventory');
+        Route::get('/assets/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employeesWithAssets'])->name('assets.employees');
+        Route::get('/recent/assets/assignments', [\App\Http\Controllers\CompanyAdminController::class, 'recentAssignments'])->name('recent.assets.assignments');
+
         // Asset Categories
         Route::resource('assets-categories', AssetCategoryController::class)->names([
             'index' => 'assets.categories.index',
@@ -436,6 +445,7 @@ Route::middleware(['auth'])->group(function () {
             ->only(['index', 'create', 'store', 'show', 'edit', 'update']);
         Route::post('resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])
             ->name('resignations.withdraw');
+
     });
 
     // // Admin Regularization Management
@@ -612,11 +622,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
     });
 
-    // Reimbursement Routes
-    Route::prefix('reimbursements')->name('reimbursements.')->group(function () {
-
-    });
-
     // Company Admin Routes (accessible to company_admin and admin roles)
     Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
         // Leads Management
@@ -652,12 +657,6 @@ Route::middleware(['auth'])->group(function () {
 
         // Employee code generation for company-admin (AJAX)
         Route::get('/employees/next-code', [\App\Http\Controllers\EmployeeController::class, 'getNextEmployeeCode'])->name('employees.next-code');
-
-        // Asset Dashboard
-        Route::get('/assets/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'assetDashboard'])->name('assets.dashboard');
-        Route::get('/assets/inventory', [\App\Http\Controllers\CompanyAdminController::class, 'assetInventory'])->name('assets.inventory');
-        Route::get('/assets/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employeesWithAssets'])->name('assets.employees');
-        Route::get('/assets/assignments', [\App\Http\Controllers\CompanyAdminController::class, 'recentAssignments'])->name('assets.assignments');
 
     });
 

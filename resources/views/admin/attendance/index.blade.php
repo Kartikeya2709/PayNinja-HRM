@@ -733,7 +733,7 @@ $(document).ready(function() {
 
         // Fetch attendance data via AJAX
         $.ajax({
-            url: `/admin/attendance/${id}/edit`,
+            url: `/admin-attendance/${id}/edit`,
             type: 'GET',
             success: function(response) {
                 console.log(response);
@@ -780,7 +780,7 @@ $(document).ready(function() {
 
         // Submit form data
         $.ajax({
-            url: `/admin/attendance/${id}`,
+            url: `/admin-attendance/${id}`,
             type: 'POST',
             data: $form.serialize(),
             success: function(response) {

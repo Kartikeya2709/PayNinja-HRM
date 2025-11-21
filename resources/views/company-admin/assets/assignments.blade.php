@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Recent Asset Assignments</h3>
-                    <a href="{{ route('company-admin.assets.dashboard') }}" class="btn btn-secondary">
+                    <a href="{{ route('assets.dashboard') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </a>
                 </div>
@@ -49,7 +49,7 @@
                                     </td>
                                     <td>{{ $assignment->returned_date ? $assignment->condition_on_return : $assignment->condition_on_assignment }}</td>
                                     <td>
-                                        <a href="{{ route('admin.assets.assignments.show', $assignment->id) }}" class="btn btn-info btn-sm">
+                                        <a href="{{ route('assets.assignments.show', $assignment->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                     </td>

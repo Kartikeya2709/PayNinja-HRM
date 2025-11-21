@@ -85,7 +85,7 @@
                     <li class="menu-header">Asset Management</li>
 
                     <li class="{{ Request::is('company-admin/assets/dashboard') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.dashboard') }}">
+                       <a class="nav-link" href="{{ route('assets.dashboard') }}">
                             <i class="fas fa-chart-line"></i>
                             <span>Asset Dashboard</span>
                         </a>
@@ -712,34 +712,34 @@
                                 <span>Regularization Requests</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('admin/attendance') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('admin.attendance.index') }}">
+                        <li class="{{ Request::is('admin-attendance') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('admin-attendance.index') }}">
                                 <i class="fas fa-user-clock"></i>
                                 <span>Manage Attendance</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('admin/attendance/summary') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('admin.attendance.summary') }}">
+                        <li class="{{ Request::is('admin-attendance/summary') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('admin-attendance.summary') }}">
                                 <i class="fas fa-chart-pie"></i>
                                 <span>Attendance Summary</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('attendance/check-in-out') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('attendance.check-in') }}"><i class="fas fa-sign-in-alt"></i>
+                        <li class="{{ Request::is('check-in-out') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('check-in-out') }}"><i class="fas fa-sign-in-alt"></i>
                                 <span>Check In/Out</span></a>
                         </li>
-                        <li class="{{ Request::is('attendance/my-attendance') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('attendance.my-attendance') }}"><i class="fas fa-calendar-check"></i>
+                        <li class="{{ Request::is('my-attendance') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('my-attendance') }}"><i class="fas fa-calendar-check"></i>
                                 <span>My Attendance</span></a>
                         </li>
-                        <li class="{{ Request::is('admin/attendance/settings*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('admin.attendance.settings') }}"><i class="fas fa-cog"></i>
+                        <li class="{{ Request::is('admin-attendance/settings*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('admin-attendance.settings') }}"><i class="fas fa-cog"></i>
                                 <span>Attendance Settings</span></a>
                         </li>
-                        <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::is('admin/shifts*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('admin.shifts.index') }}"><i class="fas fa-clock"></i>
                                 <span>Manage Shifts</span></a>
-                        </li>
+                        </li> --}}
                     @endif
 
                     <!-- Leave Management -->
@@ -749,8 +749,8 @@
                             <a class="nav-link" href="{{ route('leave-types.index') }}"><i class="fas fa-calendar-alt"></i>
                                 <span>Leave Types</span></a>
                         </li>
-                        <li class="{{ Request::is('company/leave-balances*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('company.leave-balances.index') }}"><i
+                        <li class="{{ Request::is('leave-balances*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('leave-balances.index') }}"><i
                                     class="fas fa-balance-scale"></i> <span>Leave Balances</span></a>
                         </li>
                         <li class="{{ Request::is('leave-requests/create') ? 'active' : '' }}">
@@ -758,7 +758,7 @@
                                     class="fas fa-calendar-plus"></i> <span>Apply for Leave</span></a>
                         </li>
                         <li
-                            class="{{ Request::is('company/leave-requests') && !Request::is('company/leave-requests/calendar') ? 'active' : '' }}">
+                            class="{{ Request::is('leave-requests') && !Request::is('leave-requests/calendar') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('leave-requests.index') }}"><i
                                     class="fas fa-clipboard-list"></i> <span>Leave Requests</span></a>
                         </li>

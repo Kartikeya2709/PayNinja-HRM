@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Employees with Assigned Assets</h3>
-                    <a href="{{ route('company-admin.assets.dashboard') }}" class="btn btn-secondary">
+                    <a href="{{ route('assets.dashboard') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </a>
                 </div>

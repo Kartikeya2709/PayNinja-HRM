@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Asset Inventory</h3>
-                    <a href="{{ route('company-admin.assets.dashboard') }}" class="btn btn-secondary">
+                    <a href="{{ route('assets.dashboard') }}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </a>
                 </div>
@@ -47,7 +47,7 @@
                                     <td>{{ $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '-' }}</td>
                                     <td>{{ $asset->currentAssignment?->employee->name ?? '-' }}</td>
                                     <td>
-                                        <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
+                                        <a href="{{ route('assets.show', $asset->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i> View
                                         </a>
                                     </td>
