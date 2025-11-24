@@ -281,20 +281,90 @@ class ResignationController extends Controller
         }
 
         $validated = $request->validate([
+            'asset_ids' => 'nullable|array',
+            'asset_ids.*' => 'exists:asset_assignments,id',
             'assets_remarks' => 'nullable|string|max:1000',
         ]);
 
-        $updateData = ['assets_returned' => true];
+        // Get assigned assets for the employee
+        $assignedAssets = \App\Models\AssetAssignment::where('employee_id', $resignation->employee_id)
+            ->whereNull('returned_date')
+            ->with('asset')
+            ->get();
 
-        if (isset($validated['assets_remarks'])) {
-            $updateData['hr_remarks'] = ($resignation->hr_remarks ? $resignation->hr_remarks . "\n\n" : '') .
-                'Assets Return: ' . $validated['assets_remarks'];
+        // If no assets selected, just mark as returned if all assets are already returned
+        if (empty($validated['asset_ids'])) {
+            if ($assignedAssets->isEmpty()) {
+                // No assets assigned, mark as returned
+                $updateData = ['assets_returned' => true];
+                if (isset($validated['assets_remarks'])) {
+                    $updateData['hr_remarks'] = ($resignation->hr_remarks ? $resignation->hr_remarks . "\n\n" : '') .
+                        'Assets Return: ' . $validated['assets_remarks'];
+                }
+                $resignation->update($updateData);
+                return redirect()->back()->with('success', 'Assets marked as returned.');
+            } else {
+                return redirect()->back()->with('error', 'Please select assets to return.');
+            }
         }
 
-        $resignation->update($updateData);
+        // Mark selected assets as returned
+        $assignments = \App\Models\AssetAssignment::whereIn('id', $validated['asset_ids'])->get();
+
+        foreach ($assignments as $assignment) {
+            $assignment->update([
+                'returned_date' => now(),
+                'condition_on_return' => 'returned',
+                'notes' => ($assignment->notes ? $assignment->notes . "\n" : '') . ($validated['assets_remarks'] ?? '') . ' - Returned during resignation process'
+            ]);
+
+            // Update asset status to available
+            $assignment->asset->update(['status' => 'available']);
+        }
+
+        // Check if all assigned assets are now returned
+        $remainingAssets = \App\Models\AssetAssignment::where('employee_id', $resignation->employee_id)
+            ->whereNull('returned_date')
+            ->count();
+
+        if ($remainingAssets === 0) {
+            $updateData = ['assets_returned' => true];
+            if (isset($validated['assets_remarks'])) {
+                $updateData['hr_remarks'] = ($resignation->hr_remarks ? $resignation->hr_remarks . "\n\n" : '') .
+                    'Assets Return: ' . $validated['assets_remarks'];
+            }
+            $resignation->update($updateData);
+        }
 
         return redirect()->back()
-            ->with('success', 'Assets marked as returned.');
+            ->with('success', 'Selected assets marked as returned.');
+    }
+
+    /**
+     * Get assigned assets for an employee (for AJAX).
+     */
+    public function getAssignedAssets(EmployeeResignation $resignation)
+    {
+        // Check if resignation belongs to the admin's company
+        if ($resignation->company_id !== Auth::user()->company_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $assignedAssets = \App\Models\AssetAssignment::where('employee_id', $resignation->employee_id)
+            ->whereNull('returned_date')
+            ->with('asset')
+            ->get()
+            ->map(function ($assignment) {
+                return [
+                    'id' => $assignment->id,
+                    'asset_name' => $assignment->asset->name ?? 'Unknown Asset',
+                    'asset_code' => $assignment->asset->asset_code ?? '',
+                    'assigned_date' => $assignment->assigned_date?->format('M d, Y'),
+                    'condition_on_assignment' => $assignment->condition_on_assignment,
+                ];
+            });
+
+        return response()->json($assignedAssets);
     }
 
     /**

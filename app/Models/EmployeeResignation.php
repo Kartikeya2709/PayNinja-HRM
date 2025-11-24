@@ -220,15 +220,55 @@ class EmployeeResignation extends Model
     }
 
     /**
+     * Get exit interview status.
+     *
+     * @return string
+     */
+    public function getExitInterviewStatusAttribute()
+    {
+        return $this->exit_interview_completed ? 'completed' : 'pending';
+    }
+
+    /**
+     * Get handover status.
+     *
+     * @return string
+     */
+    public function getHandoverStatusAttribute()
+    {
+        return $this->handover_completed ? 'completed' : 'pending';
+    }
+
+    /**
+     * Get assets status.
+     *
+     * @return string
+     */
+    public function getAssetsStatusAttribute()
+    {
+        return $this->assets_returned ? 'completed' : 'pending';
+    }
+
+    /**
+     * Get settlement status.
+     *
+     * @return string
+     */
+    public function getSettlementStatusAttribute()
+    {
+        return $this->final_settlement_completed ? 'completed' : 'pending';
+    }
+
+    /**
      * Check if exit process is complete.
      *
      * @return bool
      */
     public function isExitProcessComplete()
     {
-        return $this->exit_interview_completed && 
-               $this->handover_completed && 
-               $this->assets_returned && 
+        return $this->exit_interview_completed &&
+               $this->handover_completed &&
+               $this->assets_returned &&
                $this->final_settlement_completed;
     }
 }

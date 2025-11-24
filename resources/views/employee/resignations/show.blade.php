@@ -33,9 +33,15 @@
         <h2><i class="fas fa-user-slash me-2 text-primary"></i> Resignation Summary</h2>
         <p>Your resignation request overview and exit process details</p>
         <div class="mt-2">
-            <span class="status-badge status-{{ $resignation->status }}">
-                {{ ucfirst($resignation->status_label) }}
-            </span>
+            @if($resignation->isExitProcessComplete())
+                <span class="status-badge status-success">
+                    Process Completed
+                </span>
+            @else
+                <span class="status-badge status-{{ $resignation->status }}">
+                    {{ ucfirst($resignation->status_label) }}
+                </span>
+            @endif
         </div>
     </div>
 
@@ -60,8 +66,21 @@
     </div>
 
     <!-- Timeline -->
+    @php
+    $steps = [
+        $resignation->exit_interview_status ?? 'pending',
+        $resignation->handover_status ?? 'pending',
+        $resignation->assets_status ?? 'pending',
+        $resignation->settlement_status ?? 'pending'
+    ];
+    $processed = 0;
+    foreach($steps as $status) {
+        if($status != 'pending') $processed++;
+    }
+    $progress = ($processed / 4) * 100;
+    @endphp
     <div class="timeline">
-        <div class="timeline-line"></div>
+        <div class="timeline-line" style="background: linear-gradient(to right, green {{ $progress }}%, #e5e5e5 {{ $progress }}%);"></div>
         <div class="timeline-steps">
 
             <!-- Exit Interview -->
