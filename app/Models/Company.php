@@ -13,7 +13,7 @@ class Company extends Model
     protected static function booted()
     {
         static::addGlobalScope('active', function ($query) {
-            $query->where('is_active', true);
+            $query->where('companies.is_active', true);
         });
     }
 
