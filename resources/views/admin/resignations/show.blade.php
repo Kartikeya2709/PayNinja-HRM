@@ -540,37 +540,119 @@ function completeHandover(resignationId) {
 }
 
 function markAssetsReturned(resignationId) {
-    Swal.fire({
-        title: 'Mark Assets as Returned',
-        input: 'textarea',
-        inputLabel: 'Assets Return Remarks (Optional)',
-        inputPlaceholder: 'Enter details about returned assets...',
-        showCancelButton: true,
-        confirmButtonText: 'Mark as Returned',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#28a745',
-        preConfirm: (remarks) => {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/mark-assets-returned`;
-
-            const csrfToken = document.createElement('input');
-            csrfToken.type = 'hidden';
-            csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}';
-            form.appendChild(csrfToken);
-
-            if (remarks) {
-                const remarksInput = document.createElement('input');
-                remarksInput.type = 'hidden';
-                remarksInput.name = 'assets_remarks';
-                remarksInput.value = remarks;
-                form.appendChild(remarksInput);
-            }
-
-            document.body.appendChild(form);
-            form.submit();
+    // First, fetch assigned assets
+    fetch(`/admin/resignations/${resignationId}/assigned-assets`, {
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json',
         }
+    })
+    .then(response => response.json())
+    .then(assets => {
+        if (assets.length === 0) {
+            // No assets assigned, proceed with simple confirmation
+            Swal.fire({
+                title: 'Mark Assets as Returned',
+                text: 'No assets are currently assigned to this employee. Mark as returned?',
+                input: 'textarea',
+                inputLabel: 'Remarks (Optional)',
+                inputPlaceholder: 'Enter details...',
+                showCancelButton: true,
+                confirmButtonText: 'Mark as Returned',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#28a745',
+                preConfirm: (remarks) => {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/admin/resignations/${resignationId}/mark-assets-returned`;
+
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+
+                    if (remarks) {
+                        const remarksInput = document.createElement('input');
+                        remarksInput.type = 'hidden';
+                        remarksInput.name = 'assets_remarks';
+                        remarksInput.value = remarks;
+                        form.appendChild(remarksInput);
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        } else {
+            // Show assets selection modal
+            let assetsHtml = '<div class="form-group"><label>Select Assets to Return:</label><br>';
+            assets.forEach(asset => {
+                assetsHtml += `
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${asset.id}" id="asset_${asset.id}" name="asset_ids[]">
+                        <label class="form-check-label"   for="asset_${asset.id}">
+                            <strong>${asset.asset_name}</strong> (${asset.asset_code})
+                            ${asset.assigned_date ? `<br><small class="text-muted">Assigned: ${asset.assigned_date}</small>` : ''}
+                            ${asset.condition_on_assignment ? `<br><small class="text-muted">Condition: ${asset.condition_on_assignment}</small>` : ''}
+                        </label>
+                    </div>
+                `;
+            });
+            assetsHtml += '</div><div class="form-group"><label for="assets_remarks">Remarks (Optional)</label><textarea id="assets_remarks" class="form-control" rows="3" placeholder="Enter details about returned assets..."></textarea></div>';
+
+            Swal.fire({
+                title: 'Mark Assets as Returned',
+                html: assetsHtml,
+                showCancelButton: true,
+                confirmButtonText: 'Mark Selected as Returned',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#28a745',
+                preConfirm: () => {
+                    const selectedAssets = Array.from(document.querySelectorAll('input[name="asset_ids[]"]:checked')).map(cb => cb.value);
+                    const remarks = document.getElementById('assets_remarks').value;
+
+                    if (selectedAssets.length === 0) {
+                        Swal.showValidationMessage('Please select at least one asset to return');
+                        return false;
+                    }
+
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = `/admin/resignations/${resignationId}/mark-assets-returned`;
+
+                    const csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+
+                    selectedAssets.forEach(assetId => {
+                        const assetInput = document.createElement('input');
+                        assetInput.type = 'hidden';
+                        assetInput.name = 'asset_ids[]';
+                        assetInput.value = assetId;
+                        form.appendChild(assetInput);
+                    });
+
+                    if (remarks) {
+                        const remarksInput = document.createElement('input');
+                        remarksInput.type = 'hidden';
+                        remarksInput.name = 'assets_remarks';
+                        remarksInput.value = remarks;
+                        form.appendChild(remarksInput);
+                    }
+
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching assets:', error);
+        Swal.fire('Error', 'Failed to load assigned assets.', 'error');
     });
 }
 

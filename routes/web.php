@@ -686,6 +686,8 @@ Route::middleware(['auth'])->group(function () {
             ->name('resignations.complete-exit-interview');
         Route::post('resignations/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])
             ->name('resignations.complete-handover');
+        Route::get('resignations/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])
+            ->name('resignations.assigned-assets');
         Route::post('resignations/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])
             ->name('resignations.mark-assets-returned');
         Route::post('resignations/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
