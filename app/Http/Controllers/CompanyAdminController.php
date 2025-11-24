@@ -186,7 +186,7 @@ class CompanyAdminController extends Controller
     {
         try {
             $user = Auth::user();
-            $company = $user->employee->company;
+            $company = $user->company;
 
             // Ensure employee belongs to the same company
             if ($employee->company_id !== $company->id) {
@@ -194,7 +194,7 @@ class CompanyAdminController extends Controller
             }
 
             $request->validate([
-                'role' => 'required|in:admin,employee,reporter'
+                'role' => 'required|exists:roles,id',
             ]);
 
             DB::beginTransaction();
@@ -213,7 +213,7 @@ class CompanyAdminController extends Controller
             }
 
             // Update user role
-            $employee->user->role = $request->role;
+            $employee->user->role_id = $request->role;
             $employee->user->save();
 
             DB::commit();
