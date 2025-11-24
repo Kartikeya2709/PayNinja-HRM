@@ -45,7 +45,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="company_id" class="form-label">Company <span class="text-danger">*</span></label>
                                     <select class="form-control @error('company_id') is-invalid @enderror"
@@ -64,7 +64,7 @@
                             </div>
                         </div>
 
-                        <div class="row">
+                        <div class="row"> --}}
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
@@ -78,7 +78,7 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                            {{-- <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="is_default" class="form-label">Is Default Role</label>
                                     <div class="form-check">
@@ -93,7 +93,7 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
                         <div class="row">

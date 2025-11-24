@@ -418,6 +418,12 @@
                             <span>Module Access</span>
                         </a>
                     </li>
+                    <li class="{{ Request::is('company-admin/roles*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company-admin.roles.index') }}">
+                            <i class="fas fa-user-tag"></i>
+                            <span>Role Management</span>
+                        </a>
+                    </li>
                     <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('company-admin.settings.index') }}">
                             <i class="fas fa-cog"></i>

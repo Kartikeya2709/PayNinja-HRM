@@ -209,6 +209,18 @@
                                         @error('reporting_manager')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="role_id" class="form-label">Role <span class="text-danger">*</span></label>
+                                        <select class="form-select @error('role_id') is-invalid @enderror" id="role_id" name="role_id" >
+                                            <option value="">Select Role</option>
+                                            @foreach($roles as $role)
+                                                <option value="{{ $role->id }}" {{ old('role_id', $employee->role_id) == $role->id ? 'selected' : '' }}>{{ $role->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('role_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                                    </div>
+                                </div>
                                 <div class="d-flex justify-content-between mt-4">
                                     <a href="{{ route('company-admin.employees.index') }}" class="btn btn-secondary">
                                         <i class="fas fa-arrow-left me-1"></i> Back to List

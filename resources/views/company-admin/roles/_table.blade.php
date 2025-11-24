@@ -1,4 +1,10 @@
 <div class="table-responsive">
+    <div id="table-loading" class="text-center py-4" style="display: none;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading roles...</p>
+    </div>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -24,10 +30,9 @@
                         <span class="badge bg-danger">Inactive</span>
                     @endif
                 </td>
-
                 <td>{{ $role->created_at->format('M d, Y') }}</td>
                 <td class="text-center">
-                    <div class="btn-group" role="group">
+                    <div class="btn-group btn-group-sm" role="group">
                         <a href="{{ route('company-admin.roles.show', $role->id) }}" 
                            class="btn btn-sm btn-outline-info" title="View">
                             <i class="fas fa-eye"></i>
@@ -44,30 +49,6 @@
                     </div>
                 </td>
             </tr>
-
-            <!-- Delete Confirmation Modal -->
-            <div class="modal fade" id="deleteModal{{ $role->id }}" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Confirm Delete</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete the role <strong>{{ $role->name }}</strong>? 
-                            This action cannot be undone.
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <form action="{{ route('company-admin.roles.destroy', $role->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
             @empty
             <tr>
                 <td colspan="4" class="text-center py-4">

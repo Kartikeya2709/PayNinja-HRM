@@ -79,8 +79,8 @@ class RoleController extends Controller
             Role::create([
                 'name' => $request->name,
                 'permissions' => $permissions,
-                'company_id' => $request->company_id,
-                'is_default' => $request->boolean('is_default', false),
+                // 'company_id' => $request->company_id,
+                // 'is_default' => $request->boolean('is_default', false),
                 'status' => $request->status,
             ]);
 
@@ -140,8 +140,8 @@ class RoleController extends Controller
             $role->update([
                 'name' => $request->name,
                 'permissions' => $permissions,
-                'company_id' => $request->company_id,
-                'is_default' => $request->boolean('is_default', false),
+                // 'company_id' => $request->company_id,
+                // 'is_default' => $request->boolean('is_default', false),
                 'status' => $request->status,
             ]);
 

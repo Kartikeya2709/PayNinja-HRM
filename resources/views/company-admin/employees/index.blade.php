@@ -123,8 +123,12 @@
                     <div class="mb-3">
                         <label for="roleSelect" class="form-label">Select Role</label>
                         <select name="role" id="roleSelect" class="form-select" required>
-                            <option value="admin">Admin</option>
-                            <option value="employee">Employee</option>
+                            <option value="" selected disabled>Select a role</option>
+                            @forelse($roles as $role)
+                                <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                            @empty
+                                <option value="">No roles available</option>
+                            @endforelse
                         </select>
                     </div>
                 </div>
@@ -188,7 +192,7 @@ document.addEventListener('DOMContentLoaded', function () {
     changeRoleButtons.forEach(function(button) {
         button.addEventListener('click', function() {
             var employeeName = this.getAttribute('data-employee-name');
-            var currentRole = this.getAttribute('data-current-role');
+            var currentRole = this.getAttribute('data-current-roleId');
             var updateUrl = this.getAttribute('data-update-url');
 
             modalEmployeeName.textContent = employeeName;
@@ -250,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
         changeRoleButtons.forEach(function(button) {
             button.addEventListener('click', function() {
                 var employeeName = this.getAttribute('data-employee-name');
-                var currentRole = this.getAttribute('data-current-role');
+                var currentRole = this.getAttribute('data-current-roleId');
                 var updateUrl = this.getAttribute('data-update-url');
 
                 modalEmployeeName.textContent = employeeName;

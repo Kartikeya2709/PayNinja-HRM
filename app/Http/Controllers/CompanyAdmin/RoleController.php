@@ -52,62 +52,49 @@ class RoleController extends Controller
         $user           = Auth::user();
         $companyId      = $user->company_id;
         $availableSlugs = [];
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-            // Admin gets all permissions
-            $slugs = Slug::with('children')->root()->orderBy('sort_order')->get();
-        } else {
-            // For company_admin, get company from employee relationship
-            $companyId = $user->employee->company->id;
             
-            // Get company_admin's permissions from their role
-            $companyAdminRole = Role::where('is_active', true)
-                // ->whereJsonContains('permissions->company_admin', true)
-                ->find($user->role_id);
+        // Get company_admin's permissions from their role
+        $companyAdminRole = Role::where('is_active', true)
+            // ->whereJsonContains('permissions->company_admin', true)
+            ->find($user->role_id);
+        
+        if ($companyAdminRole) {
+            $adminPermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
             
-            if ($companyAdminRole) {
-                $adminPermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
-                
-                // Filter slugs to only include those the company_admin has access to
-                $slugs = Slug::with('children')
-                    ->root()
-                    ->orderBy('sort_order')
-                    ->get()
-                    ->filter(function ($slug) use ($adminPermissions) {
-                        // Include parent slug if admin has access to it
-                        if (isset($adminPermissions[$slug->slug]) && $adminPermissions[$slug->slug]) {
-                            return true;
-                        }
-                        
-                        // Include parent slug if any child is accessible
-                        if ($slug->children) {
-                            foreach ($slug->children as $child) {
-                                if (isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug]) {
-                                    return true;
-                                }
+            // Filter slugs to only include those the company_admin has access to
+            $slugs = Slug::with('children')
+                ->root()
+                ->orderBy('sort_order')
+                ->get()
+                ->filter(function ($slug) use ($adminPermissions) {
+                    // Include parent slug if admin has access to it
+                    if (isset($adminPermissions[$slug->slug]) && $adminPermissions[$slug->slug]) {
+                        return true;
+                    }
+                    
+                    // Include parent slug if any child is accessible
+                    if ($slug->children) {
+                        foreach ($slug->children as $child) {
+                            if (isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug]) {
+                                return true;
                             }
                         }
-                        
-                        return false;
-                    })
-                    ->map(function ($slug) use ($adminPermissions) {
-                        // Filter children to only accessible ones
-                        if ($slug->children) {
-                            $slug->children = $slug->children->filter(function ($child) use ($adminPermissions) {
-                                return isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug];
-                            });
-                        }
-                        return $slug;
-                    });
-            } else {
-                // No role found or no permissions, show empty
-                $slugs = collect();
-            }
+                    }
+                    
+                    return false;
+                })
+                ->map(function ($slug) use ($adminPermissions) {
+                    // Filter children to only accessible ones
+                    if ($slug->children) {
+                        $slug->children = $slug->children->filter(function ($child) use ($adminPermissions) {
+                            return isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug];
+                        });
+                    }
+                    return $slug;
+                });
+        } else {
+            // No role found or no permissions, show empty
+            $slugs = collect();
         }
 
         return view('company-admin.roles.create', compact('slugs', 'companyId'));
@@ -119,39 +106,18 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $companyId = null;
+        $companyId = $user->company_id;
         $availablePermissions = [];
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-            // Admin gets all permissions
-            $allSlugs = Slug::with('children')->root()->orderBy('sort_order')->get();
-            foreach ($allSlugs as $slug) {
-                $availablePermissions[$slug->slug] = true;
-                if ($slug->children) {
-                    foreach ($slug->children as $child) {
-                        $availablePermissions[$child->slug] = true;
-                    }
-                }
-            }
+            
+        // Get company_admin's permissions from their role
+        $companyAdminRole = Role::where('is_active', true)
+            // ->whereJsonContains('permissions->company_admin', true)
+            ->find($user->role_id);
+        
+        if ($companyAdminRole) {
+            $availablePermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
         } else {
-            // For company_admin, get company from employee relationship
-            $companyId = $user->employee->company->id;
-            
-            // Get company_admin's permissions from their role
-            $companyAdminRole = Role::where('is_active', true)
-                // ->whereJsonContains('permissions->company_admin', true)
-                ->find($user->role_id);
-            
-            if ($companyAdminRole) {
-                $availablePermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
-            } else {
-                $availablePermissions = [];
-            }
+            $availablePermissions = [];
         }
 
         $validator = Validator::make($request->all(), [
@@ -170,20 +136,17 @@ class RoleController extends Controller
         try {
             $requestedPermissions = $request->permissions ?? [];
             
-            // Validate that company_admin can only assign permissions they have
-            if ($user->role !== 'admin') {
-                $invalidPermissions = [];
-                foreach ($requestedPermissions as $permission => $value) {
-                    if ($value && !isset($availablePermissions[$permission])) {
-                        $invalidPermissions[] = $permission;
-                    }
+            // Validate that company_admin can only assign permissions they have            
+            foreach ($requestedPermissions as $permission => $value) {
+                if ($value && !isset($availablePermissions[$permission])) {
+                    $invalidPermissions[] = $permission;
                 }
-                
-                if (!empty($invalidPermissions)) {
-                    return redirect()->back()
-                        ->withInput()
-                        ->with('error', 'You can only assign permissions that you have access to. Invalid permissions: ' . implode(', ', $invalidPermissions));
-                }
+            }
+            
+            if (!empty($invalidPermissions)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'You can only assign permissions that you have access to. Invalid permissions: ' . implode(', ', $invalidPermissions));
             }
 
             $permissions = $request->permissions ? str_replace('\\', '', json_encode($request->permissions)) : null;
@@ -210,18 +173,7 @@ class RoleController extends Controller
     public function show(string $id)
     {
         $user = Auth::user();
-        $companyId = null;
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-        } else {
-            // For company_admin, get company from employee relationship
-            $companyId = $user->employee->company->id;
-        }
+        $companyId = $user->company_id;
 
         $role = Role::where('company_id', $companyId)->findOrFail($id);
         return view('company-admin.roles.show', compact('role'));
@@ -233,68 +185,52 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $user = Auth::user();
-        $companyId = null;
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-        } else {
-            // For company_admin, get company from employee relationship
-            $companyId = $user->employee->company->id;
-        }
+        $companyId = $user->company_id;
 
         $role = Role::where('company_id', $companyId)->findOrFail($id);
         
         // Get available slugs based on user permissions
-        if ($user->role === 'admin') {
-            $slugs = Slug::with('children')->root()->orderBy('sort_order')->get();
-        } else {
-            // Get company_admin's permissions from their role
-            $companyAdminRole = Role::where('is_active', true)
-                // ->whereJsonContains('permissions->company_admin', true)
-                ->find($user->role_id);
+        $companyAdminRole = Role::where('is_active', true)
+            // ->whereJsonContains('permissions->company_admin', true)
+            ->find($user->role_id);
+        
+        if ($companyAdminRole) {
+            $adminPermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
             
-            if ($companyAdminRole) {
-                $adminPermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
-                
-                // Filter slugs to only include those the company_admin has access to
-                $slugs = Slug::with('children')
-                    ->root()
-                    ->orderBy('sort_order')
-                    ->get()
-                    ->filter(function ($slug) use ($adminPermissions) {
-                        // Include parent slug if admin has access to it
-                        if (isset($adminPermissions[$slug->slug]) && $adminPermissions[$slug->slug]) {
-                            return true;
-                        }
-                        
-                        // Include parent slug if any child is accessible
-                        if ($slug->children) {
-                            foreach ($slug->children as $child) {
-                                if (isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug]) {
-                                    return true;
-                                }
+            // Filter slugs to only include those the company_admin has access to
+            $slugs = Slug::with('children')
+                ->root()
+                ->orderBy('sort_order')
+                ->get()
+                ->filter(function ($slug) use ($adminPermissions) {
+                    // Include parent slug if admin has access to it
+                    if (isset($adminPermissions[$slug->slug]) && $adminPermissions[$slug->slug]) {
+                        return true;
+                    }
+                    
+                    // Include parent slug if any child is accessible
+                    if ($slug->children) {
+                        foreach ($slug->children as $child) {
+                            if (isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug]) {
+                                return true;
                             }
                         }
-                        
-                        return false;
-                    })
-                    ->map(function ($slug) use ($adminPermissions) {
-                        // Filter children to only accessible ones
-                        if ($slug->children) {
-                            $slug->children = $slug->children->filter(function ($child) use ($adminPermissions) {
-                                return isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug];
-                            });
-                        }
-                        return $slug;
-                    });
-            } else {
-                // No role found or no permissions, show empty
-                $slugs = collect();
-            }
+                    }
+                    
+                    return false;
+                })
+                ->map(function ($slug) use ($adminPermissions) {
+                    // Filter children to only accessible ones
+                    if ($slug->children) {
+                        $slug->children = $slug->children->filter(function ($child) use ($adminPermissions) {
+                            return isset($adminPermissions[$child->slug]) && $adminPermissions[$child->slug];
+                        });
+                    }
+                    return $slug;
+                });
+        } else {
+            // No role found or no permissions, show empty
+            $slugs = collect();
         }
         
         return view('company-admin.roles.edit', compact('role', 'slugs', 'companyId'));
@@ -306,40 +242,18 @@ class RoleController extends Controller
     public function update(Request $request, string $id)
     {
         $user = Auth::user();
-        $companyId = null;
+        $companyId = $user->company_id;
         $availablePermissions = [];
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-            // Admin gets all permissions
-            $allSlugs = Slug::with('children')->root()->orderBy('sort_order')->get();
-            foreach ($allSlugs as $slug) {
-                $availablePermissions[$slug->slug] = true;
-                if ($slug->children) {
-                    foreach ($slug->children as $child) {
-                        $availablePermissions[$child->slug] = true;
-                    }
-                }
-            }
+        
+        // Get company_admin's permissions from their role
+        $companyAdminRole = Role::where('is_active', true)
+            // ->whereJsonContains('permissions->company_admin', true)
+            ->find($user->role_id);
+        
+        if ($companyAdminRole) {
+            $availablePermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
         } else {
-            // For company_admin, get company from employee relationship
-            $companyId = $user->employee->company->id;
-            
-            // Get company_admin's permissions from their role
-            $companyAdminRole = Role::where('company_id', $companyId)
-                ->where('is_active', true)
-                ->whereJsonContains('permissions->company_admin', true)
-                ->first();
-            
-            if ($companyAdminRole) {
-                $availablePermissions = json_decode($companyAdminRole->permissions ?? '{}', true);
-            } else {
-                $availablePermissions = [];
-            }
+            $availablePermissions = [];
         }
 
         $role = Role::where('company_id', $companyId)->findOrFail($id);
@@ -360,20 +274,18 @@ class RoleController extends Controller
         try {
             $requestedPermissions = $request->permissions ?? [];
             
-            // Validate that company_admin can only assign permissions they have
-            if ($user->role !== 'admin') {
-                $invalidPermissions = [];
-                foreach ($requestedPermissions as $permission => $value) {
-                    if ($value && !isset($availablePermissions[$permission])) {
-                        $invalidPermissions[] = $permission;
-                    }
+            // Validate that user can only assign permissions they have
+            $invalidPermissions = [];
+            foreach ($requestedPermissions as $permission => $value) {
+                if ($value && !isset($availablePermissions[$permission])) {
+                    $invalidPermissions[] = $permission;
                 }
-                
-                if (!empty($invalidPermissions)) {
-                    return redirect()->back()
-                        ->withInput()
-                        ->with('error', 'You can only assign permissions that you have access to. Invalid permissions: ' . implode(', ', $invalidPermissions));
-                }
+            }
+            
+            if (!empty($invalidPermissions)) {
+                return redirect()->back()
+                    ->withInput()
+                    ->with('error', 'You can only assign permissions that you have access to. Invalid permissions: ' . implode(', ', $invalidPermissions));
             }
 
             $permissions = $request->permissions ? str_replace('\\', '', json_encode($request->permissions)) : null;
@@ -400,18 +312,7 @@ class RoleController extends Controller
     {
         try {
             $user = Auth::user();
-            $companyId = null;
-
-            // Handle both admin and company_admin roles
-            if ($user->role === 'admin') {
-                $companyId = $user->company_id;
-                if (!$companyId) {
-                    abort(403, 'Admin user must be assigned to a company.');
-                }
-            } else {
-                // For company_admin, get company from employee relationship
-                $companyId = $user->employee->company->id;
-            }
+            $companyId = $user->company_id;
 
             $role = Role::where('company_id', $companyId)->findOrFail($id);
             
@@ -419,10 +320,6 @@ class RoleController extends Controller
             $companyRolesCount = Role::where('company_id', $companyId)->count();
             if ($companyRolesCount <= 1) {
                 return redirect()->back()->with('error', 'Cannot delete the last remaining role.');
-            }
-
-            if ($role->is_default) {
-                return redirect()->back()->with('error', 'Cannot delete the default role.');
             }
 
             $role->delete(); // Soft delete

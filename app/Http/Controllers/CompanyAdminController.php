@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\EmployeeIdPrefix;
 use App\Models\EmploymentType;
@@ -125,26 +126,16 @@ class CompanyAdminController extends Controller
 
     public function employees(Request $request)
     {
-        $user = Auth::user();
-        
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            // For admin, get company from user's company_id
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-            // Get company object for admin
-            $company = \App\Models\Company::find($companyId);
-        } else {
-            // For company_admin, get company from employee relationship
-            $company = $user->employee->company;
-            $companyId = $company->id;
-        }
+        $user       = Auth::user();
+        $company    = $user->employee->company;
+        $companyId  = $company->id;
+
+        // Get roles for this company
+        $roles = \App\Models\Role::where('is_active', true)->where('company_id', $companyId)->get();
 
         // Get departments and designations for filters
-        $departments = Department::where('company_id', $company->id)->get();
-        $designations = Designation::where('company_id', $company->id)->get();
+        $departments    = Department::where('company_id', $company->id)->get();
+        $designations   = Designation::where('company_id', $company->id)->get();
 
         // Build query with filters
         $query = Employee::with(['user', 'department', 'designation'])
@@ -185,7 +176,7 @@ class CompanyAdminController extends Controller
             ]);
         }
 
-        return view('company-admin.employees.index', compact('employees', 'departments', 'designations'));
+        return view('company-admin.employees.index', compact('employees', 'roles', 'departments', 'designations'));
     }
 
     /**
@@ -246,8 +237,9 @@ class CompanyAdminController extends Controller
         $designations = \App\Models\Designation::where('company_id', $company->id)->get();
         $managers = \App\Models\Employee::where('company_id', $company->id)->get();
         $employmentTypes = \App\Models\EmploymentType::forCompany($company->id)->active()->get();
+        $roles = \App\Models\Role::where('company_id', $company->id)->where('is_active', true)->get();
 
-        return view('company-admin.employees.create', compact('company', 'departments', 'designations', 'managers', 'employmentTypes'));
+        return view('company-admin.employees.create', compact('company', 'departments', 'designations', 'managers', 'employmentTypes', 'roles'));
     }
 
     /**
@@ -324,9 +316,10 @@ class CompanyAdminController extends Controller
             ->groupBy('type');
 
         $employmentTypes = \App\Models\EmploymentType::forCompany($company->id)->active()->get();
+        $roles = \App\Models\Role::where('company_id', $company->id)->where('is_active', true)->get();
 
         return view('company-admin.employees.edit', compact(
-            'employee', 'departments', 'designations', 'managers', 'company', 'documents', 'employmentTypes'
+            'employee', 'departments', 'designations', 'managers', 'company', 'documents', 'employmentTypes', 'roles'
         ));
     }
 
@@ -341,7 +334,7 @@ class CompanyAdminController extends Controller
 
         $employee = \App\Models\Employee::withoutGlobalScopes()->where('company_id', $company->id)->findOrFail($id);
 
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             // Basic Information
             'name' => 'required|string|max:255',
             'parent_name' => 'required|string|max:255',
@@ -362,6 +355,7 @@ class CompanyAdminController extends Controller
             'location' => 'required|string',
             'probation_period' => 'nullable|integer',
             'reporting_manager' => 'required|exists:employees,id',
+            'role_id' => 'required|exists:roles,id',
             // Salary Details
             'ctc' => 'required|numeric|min:0|gte:basic_salary',
             'basic_salary' => 'required|numeric|min:0|lte:ctc',
@@ -387,6 +381,12 @@ class CompanyAdminController extends Controller
             'bank_passbook.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'signed_offer_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048'
         ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
 
         try {
             \DB::beginTransaction();
@@ -418,6 +418,10 @@ class CompanyAdminController extends Controller
                 'nominee_details' => $validated['nominee_details'],
                 'created_by' => $user->id,
             ]);
+
+            // Update user role
+            $employee->user->role_id = $validated['role_id'];
+            $employee->user->save();
 
             // Handle document uploads
             $documentTypes = [
@@ -615,8 +619,8 @@ class CompanyAdminController extends Controller
         \Log::info('CompanyAdminController@storeEmployee called');
         $user = Auth::user();
         $company = $user->employee->company;
-        // Validate the request
-        $validated = $request->validate([
+
+        $validator = Validator::make($request->all(), [
             // Basic Information
             'name' => 'required|string|max:255',
             'parent_name' => 'required|string|max:255',
@@ -637,6 +641,7 @@ class CompanyAdminController extends Controller
             'location' => 'required|string',
             'probation_period' => 'nullable|integer',
             'reporting_manager' => 'required|exists:employees,id',
+            'role_id' => 'required|exists:roles,id',
             // Salary Details
             'ctc' => 'required|numeric|min:0|gte:basic_salary',
             'basic_salary' => 'required|numeric|min:0|lte:ctc',
@@ -662,7 +667,16 @@ class CompanyAdminController extends Controller
             'bank_passbook.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
             'signed_offer_letter.*' => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048',
         ]);
-        \Log::info('Employee creation validation passed');
+        \Log::info($validator->errors()->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $validated = $validator->validated();
+        \Log::info('Employee creation validation passed', $validated);
+
+         // Start transaction
 
         try {
             DB::beginTransaction();
@@ -715,6 +729,10 @@ class CompanyAdminController extends Controller
                 // 'status' => 'active',
                 'created_by' => Auth::id(),
             ]);
+
+            // Assign role to the user
+            $user->role_id = $validated['role_id'];
+            $user->save();
 
             // Ensure values are properly formatted as floats
             $ctc = (float) $validated['ctc'];

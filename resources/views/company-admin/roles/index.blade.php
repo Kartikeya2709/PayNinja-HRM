@@ -65,11 +65,7 @@
                                     </button>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="d-flex align-items-center">
-                                        <div id="loading-indicator" class="spinner-border spinner-border-sm text-primary" role="status" style="display: none;">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                    </div>
+                                    <!-- Loading indicator moved to table section -->
                                 </div>
                             </div>
 
@@ -83,6 +79,32 @@
         </div>
     </section>
 </div>
+
+<!-- Delete Modals -->
+@foreach($roles as $role)
+<div class="modal fade" id="deleteModal{{ $role->id }}" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the role <strong>{{ $role->name }}</strong>? 
+                This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="{{ route('company-admin.roles.destroy', $role->id) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 @endsection
 @push('scripts')
 <script>
@@ -91,7 +113,7 @@ $(document).ready(function() {
     const searchInput = $('#search-input');
     const statusFilter = $('#status-filter');
     const clearFilters = $('#clear-filters');
-    const loadingIndicator = $('#loading-indicator');
+    const tableLoading = $('#table-loading');
     const tableContainer = $('#roles-table-container');
 
     // Debounced search function
@@ -99,8 +121,8 @@ $(document).ready(function() {
         const searchTerm = searchInput.val();
         const status = statusFilter.val();
         
-        // Show loading indicator
-        loadingIndicator.show();
+        // Show loading indicator inside table
+        tableLoading.show();
         
         // Make AJAX request
         $.ajax({
@@ -113,11 +135,11 @@ $(document).ready(function() {
             },
             success: function(response) {
                 tableContainer.html(response.html);
-                loadingIndicator.hide();
+                tableLoading.hide();
             },
             error: function(xhr) {
                 console.error('Search failed:', xhr);
-                loadingIndicator.hide();
+                tableLoading.hide();
                 // Show error message
                 alert('Search failed. Please try again.');
             }
@@ -149,8 +171,8 @@ $(document).ready(function() {
         const searchTerm = searchInput.val();
         const status = statusFilter.val();
         
-        // Show loading indicator
-        loadingIndicator.show();
+        // Show loading indicator inside table
+        tableLoading.show();
         
         $.ajax({
             url: url,
@@ -162,11 +184,11 @@ $(document).ready(function() {
             },
             success: function(response) {
                 tableContainer.html(response.html);
-                loadingIndicator.hide();
+                tableLoading.hide();
             },
             error: function(xhr) {
                 console.error('Pagination failed:', xhr);
-                loadingIndicator.hide();
+                tableLoading.hide();
                 alert('Failed to load page. Please try again.');
             }
         });

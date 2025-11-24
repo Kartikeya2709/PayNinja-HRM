@@ -63,7 +63,7 @@
             @if($employee->user->role !== 'company_admin')
             <button type="button" class="btn btn-outline-primary btn-sm change-role-btn action-btn" data-bs-toggle="modal"
                 data-bs-target="#roleModal" data-employee-id="{{ $employee->id }}"
-                data-employee-name="{{ $employee->user->name }}" data-current-role="{{ $employee->user->role }}"
+                data-employee-name="{{ $employee->user->name }}" data-current-roleId="{{ $employee->user->role_id }}"
                 data-update-url="{{ route('company-admin.employees.update-role', $employee->id) }}" title="Change Role">
                 <i class="fas fa-user-edit"></i>
             </button>
