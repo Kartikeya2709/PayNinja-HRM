@@ -30,7 +30,11 @@ class AttendanceMasterScheduler extends Command
     public function handle()
     {
         try {
-            $date = $this->argument('date') ? Carbon::parse($this->argument('date')) : now()->subDay();
+            if ($this->argument('date')) {
+                $date = Carbon::parse($this->argument('date'));
+            } else {
+                $date = now(); // Process for today
+            }
             $dateString = $date->toDateString();
 
             $logMessage = "Starting Master Attendance Scheduler for date: " . $dateString;

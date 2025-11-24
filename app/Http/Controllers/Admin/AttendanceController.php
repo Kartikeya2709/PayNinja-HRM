@@ -260,23 +260,17 @@ class AttendanceController extends Controller
             $companyId = auth()->user()->company_id;
 
             // Find the attendance record and ensure it belongs to the user's company
-            $attendance = Attendance::withTrashed()
-                ->whereHas('employee', function ($q) use ($companyId) {
-                    $q->where('company_id', $companyId);
-                })
+            $attendance = Attendance::whereHas('employee', function ($q) use ($companyId) {
+                $q->where('company_id', $companyId);
+            })
                 ->findOrFail($id);
 
-            // Force delete if already soft deleted, otherwise soft delete
-            if ($attendance->trashed()) {
-                $attendance->forceDelete();
-                $message = 'Attendance record permanently deleted successfully.';
-            } else {
-                $attendance->delete();
-                $message = 'Attendance record moved to trash successfully.';
-            }
+            // Permanently delete the attendance record
+            $attendance->forceDelete();
+            $message = 'Attendance record deleted successfully.';
 
             // Log the deletion
-            \Log::info('Attendance deleted', [
+            \Log::info('Attendance permanently deleted', [
                 'attendance_id' => $id,
                 'deleted_by' => auth()->id(),
                 'deleted_at' => now(),
