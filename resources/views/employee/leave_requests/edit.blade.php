@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Edit Leave Request</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('employee.leave-requests.index') }}">My Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">My Leave Requests</a></div>
             <div class="breadcrumb-item active">Edit Request</div>
         </div>
     </div>
@@ -20,7 +20,7 @@
                         <h4>Leave Request Form</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('employee.leave-requests.update', $leaveRequest->id) }}" 
+                        <form action="{{ route('leave-requests.update', $leaveRequest->id) }}" 
                               method="POST" 
                               enctype="multipart/form-data">
                             @csrf
@@ -111,7 +111,7 @@
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Update Leave Request</button>
-                                <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-link">Cancel</a>
+                                <a href="{{ route('leave-requests.index') }}" class="btn btn-link">Cancel</a>
                             </div>
                         </form>
                     </div>

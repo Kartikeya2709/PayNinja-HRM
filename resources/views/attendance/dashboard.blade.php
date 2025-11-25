@@ -209,7 +209,7 @@ $(document).ready(function() {
     });
 
     function checkInOut(type, location = null) {
-        const url = type === 'check-in' ? '{{ route("attendance.check-in.post") }}' : '{{ route("attendance.check-out.post") }}';
+        const url = type === 'check-in' ? '{{ route("check-in.post") }}' : '{{ route("check-out.post") }}';
         const token = $('meta[name="csrf-token"]').attr('content');
         
         $.ajax({

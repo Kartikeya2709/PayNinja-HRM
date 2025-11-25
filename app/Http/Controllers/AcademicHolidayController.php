@@ -34,12 +34,13 @@ class AcademicHolidayController extends Controller
 
     public function create(Request $request)
     {
-
-         if (!Auth::user()->hasRole(['admin', 'company_admin'])) {
+        $user = Auth::user();
+         if (!$user->hasRole(['admin', 'company_admin'])) {
             abort(403, 'Unauthorized action.');
         }
-        $companyId = $request->input('company_id');
-        $company = Company::findOrFail($companyId);
+        $companyId = $user->company_id;
+        $company = Company::find($companyId);
+        
         return view('company.academic-holidays.create', compact('company'));
     }
 

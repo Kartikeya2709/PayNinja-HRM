@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Create Leave Type</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route(' leave-types.index') }}">Leave Types</a></div>
+            <div class="breadcrumb-item"><a href="{{ url(' leave-types/index') }}">Leave Types</a></div>
             <div class="breadcrumb-item active"><a href="">Create</a></div>
         </div>
     </div>

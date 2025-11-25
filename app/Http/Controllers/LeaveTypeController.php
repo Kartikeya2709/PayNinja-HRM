@@ -62,7 +62,7 @@ class LeaveTypeController extends Controller
         
         LeaveType::create($validated);
         
-        return redirect()->route('company.leave-types.index')
+        return redirect()->route('leave-types.index')
             ->with('success', 'Leave type created successfully.');
     }
 
@@ -115,7 +115,7 @@ class LeaveTypeController extends Controller
         
         $leaveType->update($validated);
         
-        return redirect()->route('company.leave-types.index')
+        return redirect()->route('leave-types.index')
             ->with('success', 'Leave type updated successfully.');
     }
 
@@ -134,13 +134,13 @@ class LeaveTypeController extends Controller
         
         // Check if leave type is being used
         if ($leaveType->leaveBalances()->count() > 0 || $leaveType->leaveRequests()->count() > 0) {
-            return redirect()->route('company.leave-types.index')
+            return redirect()->route('leave-types.index')
                 ->with('error', 'Cannot delete leave type as it is being used.');
         }
         
         $leaveType->delete();
         
-        return redirect()->route('company.leave-types.index')
+        return redirect()->route('leave-types.index')
             ->with('success', 'Leave type deleted successfully.');
     }
 }

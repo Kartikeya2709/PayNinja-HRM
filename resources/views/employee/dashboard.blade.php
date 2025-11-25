@@ -90,7 +90,7 @@
                             </div>
 
                             <div class="col-lg-12">
-                                <a href="{{ route('employee.leave-requests.create') }}" class="card card-link">
+                                <a href="{{ route('leave-requests.create') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
                                         <i class="fas fa-calendar-plus fa-3x"></i>
@@ -149,7 +149,7 @@
                             <h5 class="mb-4">Leave Taken vs Remaining</h5>
                             <canvas id="leaveBalanceChart"></canvas>
                             <div class="text-center">
-                                <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-sm btn-warning mt-4">
+                                <a href="{{ route('leave-requests.index') }}" class="btn btn-sm btn-warning mt-4">
                                     View Leave History
                                 </a>
                             </div>
@@ -358,7 +358,7 @@
                                             <strong>Available Leaves:</strong>
                                             <span class="ml-2">{{ $leaveBalance ?? 0 }} Days</span>
                                         </div>
-                                        <a href="{{ route('employee.leave-requests.index') }}"
+                                        <a href="{{ route('leave-requests.index') }}"
                                             class="btn btn-sm btn-warning">
                                             View Leave History
                                         </a>

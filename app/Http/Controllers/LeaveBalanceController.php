@@ -195,7 +195,7 @@ class LeaveBalanceController extends Controller
             $message = 'Leave balance allocated successfully.';
         }
         
-        return redirect()->route('company.leave-balances.index')
+        return redirect()->route('leave-balances.index')
             ->with('success', $message);
     }
 
@@ -250,7 +250,7 @@ class LeaveBalanceController extends Controller
             }
         }
         
-        return redirect()->route('company.leave-balances.index')
+        return redirect()->route('leave-balances.index')
             ->with('success', 'Leave balances allocated successfully.');
     }
 
@@ -294,7 +294,7 @@ class LeaveBalanceController extends Controller
         
         $leaveBalance->update($validated);
         
-        return redirect()->route('company.leave-balances.index')
+        return redirect()->route('leave-balances.index')
             ->with('success', 'Leave balance updated successfully.');
     }
 }

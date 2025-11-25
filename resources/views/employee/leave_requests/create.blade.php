@@ -55,7 +55,7 @@
                         <h5>Leave Request Form</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('employee.leave-requests.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('leave-requests.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="form-group mb-4">
@@ -155,7 +155,7 @@
                                    <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                                    <i class="bi bi-send-check me-2"></i>Submit Leave Request
                                    </button>
-                                   <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
+                                   <a href="{{ route('leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
                                    <i class="bi bi-x-circle me-2"></i>Cancel
                                    </a>
                                 </div>

@@ -81,12 +81,6 @@ Route::get('/run-attendance/{date?}', function ($date = null) {
     }
 });
 
-// Route::prefix('company-admin')->name('company-admin.')->group(function () {
-//     Route::resource('announcements', AnnouncementController::class)->middleware('auth');
-// });
-
-
-
 Route::get('/', function () {
     return redirect()->route('login');
     // return view('welcome');
@@ -249,9 +243,6 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/dashboard/switch', [HomeController::class, 'switchDashboard'])->name('dashboard.switch');
 
-        //Blank Page
-        Route::get('/blank-page', [HomeController::class, 'blank'])->name('blank');
-
         // Employee Payroll Management
         Route::prefix('employee/payroll')->name('employee.payroll.')->group(function () {
             Route::get('/', [EmployeePayrollController::class, 'index'])->name('index'); // List my payslips
@@ -288,7 +279,6 @@ Route::middleware(['auth'])->group(function () {
         // Leave Requests
         Route::get('leave-requests', [LeaveRequestController::class, 'employeeIndex'])->name('leave-requests.index');
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
-        Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'employeeCalendarEvents'])->name('leave-requests.calendar-events');
         Route::get('leave-requests/create', [LeaveRequestController::class, 'create'])->name('leave-requests.create');
         Route::post('leave-requests', [LeaveRequestController::class, 'store'])->name('leave-requests.store');
         Route::get('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'show'])->name('leave-requests.show');
@@ -297,9 +287,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('leave-requests/{leaveRequest}/cancel', [LeaveRequestController::class, 'cancel'])->name('leave-requests.cancel');
         Route::get('leave-requests/export', [LeaveRequestController::class, 'employeeExport'])->name('leave-requests.export');
 
-        // Leave Balances
-        Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
-        Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
         // Shift Management
         Route::resource('shifts', '\App\Http\Controllers\Admin\ShiftController');
 
@@ -418,11 +405,8 @@ Route::middleware(['auth'])->group(function () {
 
 
         // Leave Requests
-        Route::get('leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('leave-requests.index');
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
-        Route::get('leave-requests/create', [LeaveRequestController::class, 'adminCreate'])->name('leave-requests.create');
         Route::post('leave-requests', [LeaveRequestController::class, 'adminStore'])->name('leave-requests.store');
-        Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'adminCalendarEvents'])->name('leave-requests.calendar-events');
         Route::get('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'adminShow'])->name('leave-requests.show');
         Route::post('leave-requests/{leaveRequest}/approve', [LeaveRequestController::class, 'approve'])->name('leave-requests.approve');
         Route::post('leave-requests/{leaveRequest}/reject', [LeaveRequestController::class, 'reject'])->name('leave-requests.reject');
@@ -434,7 +418,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('leave-balances/bulk-allocate', [LeaveBalanceController::class, 'bulkAllocate'])->name('leave-balances.bulk-allocate');
         Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
         Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
-
 
         // Reimbursement Management
         Route::get('/reimbursements', [ReimbursementController::class, 'index'])->name('reimbursements.index');
@@ -594,10 +577,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('assets', [AssetController::class, 'employeeAssets'])->name('assets.index');
         // Salary Routes
         Route::prefix('salary')->name('salary.')->group(function () {
-            Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');
-            Route::get('monthly/{year}/{month}', [\App\Http\Controllers\Employee\SalaryController::class, 'monthlyDetails'])
-                ->where(['year' => '[0-9]{4}', 'month' => '0[1-9]|1[0-2]'])
-                ->name('monthly.details');
+            // Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');
+            // Route::get('monthly/{year}/{month}', [\App\Http\Controllers\Employee\SalaryController::class, 'monthlyDetails'])
+            //     ->where(['year' => '[0-9]{4}', 'month' => '0[1-9]|1[0-2]'])
+            //     ->name('monthly.details');
 
             // PDF Payslip Routes
             Route::get('payslips', [\App\Http\Controllers\PayslipController::class, 'listPayslips'])->name('payslips');
@@ -613,15 +596,12 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Leave Requests
-        Route::get('leave-requests', [LeaveRequestController::class, 'employeeIndex'])->name('leave-requests.index');
-        Route::get('leave-requests/create', [LeaveRequestController::class, 'create'])->name('leave-requests.create');
         Route::post('leave-requests', [LeaveRequestController::class, 'store'])->name('leave-requests.store');
         Route::get('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'show'])->name('leave-requests.show');
         Route::get('leave-requests/edit/{leaveRequest}', [LeaveRequestController::class, 'edit'])->name('leave-requests.edit');
         Route::put('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'update'])->name('leave-requests.update');
         Route::post('leave-requests/{leaveRequest}/cancel', [LeaveRequestController::class, 'cancel'])->name('leave-requests.cancel');
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
-        Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'employeeCalendarEvents'])->name('leave-requests.calendar-events');
 
         // Leave Balances
         Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
@@ -673,11 +653,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/assets/inventory', [\App\Http\Controllers\CompanyAdminController::class, 'assetInventory'])->name('assets.inventory');
         Route::get('/assets/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employeesWithAssets'])->name('assets.employees');
         Route::get('/assets/assignments', [\App\Http\Controllers\CompanyAdminController::class, 'recentAssignments'])->name('assets.assignments');
-
-    });
-
-    // Employee Resignation Routes
-    Route::middleware(['role:user,employee'])->prefix('employee')->name('employee.')->group(function () {
 
     });
 

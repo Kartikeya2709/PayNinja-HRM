@@ -169,7 +169,7 @@ class LeaveRequestController extends Controller
                     'totalDays' => $request->total_days,
                     'reason' => $request->reason,
                     'adminRemarks' => $request->admin_remarks,
-                    'detailsUrl' => route('employee.leave-requests.show', $request->id)
+                    'detailsUrl' => route('leave-requests.show', $request->id)
                 ]
             ];
         }));
@@ -737,7 +737,7 @@ protected function isWeekend($date)
             'status' => 'pending',
         ]);
         
-        return redirect()->route('employee.leave-requests.index')
+        return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request submitted successfully.');
     }
 
@@ -851,7 +851,7 @@ protected function isWeekend($date)
         
         // Check if leave request is still pending
         if ($leaveRequest->status !== 'pending') {
-            return redirect()->route('employee.leave-requests.index')
+            return redirect()->route('leave-requests.index')
                 ->with('error', 'Only pending leave requests can be edited.');
         }
         
@@ -893,7 +893,7 @@ protected function isWeekend($date)
         
         // Check if leave request is still pending
         if ($leaveRequest->status !== 'pending') {
-            return redirect()->route('employee.leave-requests.index')
+            return redirect()->route('leave-requests.index')
                 ->with('error', 'Only pending leave requests can be updated.');
         }
         
@@ -970,7 +970,7 @@ protected function isWeekend($date)
         $validated['total_days'] = $totalDays;
         $leaveRequest->update($validated);
         
-        return redirect()->route('employee.leave-requests.index')
+        return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request updated successfully.');
     }
 
@@ -991,13 +991,13 @@ protected function isWeekend($date)
         
         // Check if leave request is still pending
         if ($leaveRequest->status !== 'pending') {
-            return redirect()->route('employee.leave-requests.index')
+            return redirect()->route('leave-requests.index')
                 ->with('error', 'Only pending leave requests can be cancelled.');
         }
         
         $leaveRequest->update(['status' => 'cancelled']);
         
-        return redirect()->route('employee.leave-requests.index')
+        return redirect()->route('leave-requests.index')
             ->with('success', 'Leave request cancelled successfully.');
     }
 

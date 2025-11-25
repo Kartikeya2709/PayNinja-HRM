@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>View Leave Request</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('employee.leave-requests.index') }}">My Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">My Leave Requests</a></div>
             <div class="breadcrumb-item active">View</div>
         </div>
     </div>
@@ -135,14 +135,14 @@
         @endif
 
         <div class="leave-actions">
-            <a href="{{ route('employee.leave-requests.index') }}" class="btn btn-secondary">
+            <a href="{{ route('leave-requests.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
             @if($leaveRequest->status === 'pending')
-                <a href="{{ route('employee.leave-requests.edit', $leaveRequest->id) }}" class="btn btn-warning">
+                <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Edit
                 </a>
-                <form action="{{ route('employee.leave-requests.cancel', $leaveRequest->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Cancel this leave request?');">
+                <form action="{{ route('leave-requests.cancel', $leaveRequest->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Cancel this leave request?');">
                     @csrf
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-times"></i> Cancel

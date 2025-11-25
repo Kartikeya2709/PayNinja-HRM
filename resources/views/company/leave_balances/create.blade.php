@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Allocate Leave Balance</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('company.leave-balances.index') }}">Leave Balances</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leave-balances.index') }}">Leave Balances</a></div>
             <div class="breadcrumb-item active"><a href="">Allocate</a></div>
         </div>
     </div>
@@ -20,7 +20,7 @@
                         <h4 class="text-center">Individual Allocation</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('company.leave-balances.store') }}" method="POST">
+                        <form action="{{ route('leave-balances.store') }}" method="POST">
                             @csrf
                         <div class="row">
                             
@@ -109,7 +109,7 @@
                                <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                                <i class="bi bi-check-circle me-2"></i>Allocate Leave Balance
                                </button>
-                               <a href="{{ route('company.leave-balances.index') }}" class="btn btn-danger px-4 rounded-pill">
+                               <a href="{{ route('leave-balances.index') }}" class="btn btn-danger px-4 rounded-pill">
                                <i class="bi bi-x-circle me-2"></i>Cancel
                                </a>
                             </div>
@@ -123,7 +123,7 @@
                         <h4 class="text-center">Bulk Allocation</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('company.leave-balances.bulk-allocate') }}" method="POST">
+                        <form action="{{ route('leave-balances.bulk-allocate') }}" method="POST">
                             @csrf
 
                             <div class="form-group mb-4">
