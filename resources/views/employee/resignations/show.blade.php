@@ -25,7 +25,7 @@
                             </a>
                         </div>
                     </div>
-  
+
     <div class="resignation-summary">
 
     <!-- Header -->
@@ -154,6 +154,14 @@
         @if($resignation->admin_remarks)
             <h5><i class="fas fa-user-shield text-danger"></i> Admin Remarks</h5>
             <p>{{ $resignation->admin_remarks }}</p>
+        @endif
+
+        @if($resignation->final_settlement_document_path)
+            <div class="mt-3 text-center">
+                <a href="{{ Storage::url($resignation->final_settlement_document_path) }}" target="_blank" class="btn btn-outline-success rounded-pill px-4 shadow-sm">
+                    <i class="fas fa-file-download me-2"></i>Download Final Settlement Document
+                </a>
+            </div>
         @endif
     </div>
 

@@ -46,7 +46,7 @@
                            <h4 class="mb-1">{{ $resignation->employee->name }}</h4>
                            <p class="mb-3">{{ $resignation->employee->designation->title ?? 'N/A' }} | {{ $resignation->employee->department->name ?? 'N/A' }}</p>
                            <div class="divider"></div>
-            
+
                              <div class="row mt-3">
                                 <div class="col-md-6 mb-2">
                                    <p class="info-label mb-1"><i class="fas fa-id-badge me-2"></i>Employee Code</p>
@@ -70,7 +70,7 @@
                     </div>
 
                 <!-- Resignation Details -->
-               
+
                     <div class="card glass-card mt-4">
                        <div class="d-flex align-items-center bg-primary py-2 px-2 text-white rounded-3 mb-4">
                          <h5 class="mb-0"><i class="fas fa-user-times me-2"></i>Resignation Details</h5>
@@ -148,7 +148,7 @@
                 </div>
 
                 <!-- Approval Information -->
-                
+
                 <div class="card mt-4 shadow-glass border-0">
                    <div class="d-flex align-items-center bg-primary py-2 px-2 text-white rounded-3">
                       <i class="fas fa-user-check me-2"></i>
@@ -209,6 +209,14 @@
                         <div class="remark-box p-3 rounded-3 shadow-sm bg-light">
                            <label class="form-label text-success"><i class="fas fa-sticky-note me-1"></i>Admin Remarks</label>
                            <p class="fw-semibold mb-0">{{ $resignation->admin_remarks }}</p>
+                        </div>
+                     @endif
+
+                     @if($resignation->final_settlement_document_path)
+                        <div class="mt-3 text-center">
+                           <a href="{{ Storage::url($resignation->final_settlement_document_path) }}" target="_blank" class="btn btn-outline-success rounded-pill px-4 shadow-sm">
+                              <i class="fas fa-file-download me-2"></i>Download Final Settlement Document
+                           </a>
                         </div>
                      @endif
                   </div>
@@ -668,6 +676,11 @@ function completeFinalSettlement(resignationId) {
                 <label for="settlement_remarks">Settlement Remarks (Optional)</label>
                 <textarea id="settlement_remarks" class="form-control" rows="3" placeholder="Enter settlement details..."></textarea>
             </div>
+            <div class="form-group">
+                <label for="final_settlement_document">Final Payment Document (PDF/Screenshot - Optional)</label>
+                <input type="file" id="final_settlement_document" class="form-control" accept=".pdf,.jpg,.jpeg,.png">
+                <small class="text-muted">Upload PDF or image file (max 5MB)</small>
+            </div>
         `,
         showCancelButton: true,
         confirmButtonText: 'Complete Settlement',
@@ -676,10 +689,13 @@ function completeFinalSettlement(resignationId) {
         preConfirm: () => {
             const amount = document.getElementById('settlement_amount').value;
             const remarks = document.getElementById('settlement_remarks').value;
+            const fileInput = document.getElementById('final_settlement_document');
+            const file = fileInput.files[0];
 
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = `/admin/resignations/${resignationId}/complete-final-settlement`;
+            form.enctype = 'multipart/form-data';
 
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
@@ -701,6 +717,13 @@ function completeFinalSettlement(resignationId) {
                 remarksInput.name = 'settlement_remarks';
                 remarksInput.value = remarks;
                 form.appendChild(remarksInput);
+            }
+
+            if (file) {
+                // Append the original file input to the form
+                fileInput.name = 'final_settlement_document';
+                fileInput.style.display = 'none';
+                form.appendChild(fileInput);
             }
 
             document.body.appendChild(form);
