@@ -361,7 +361,7 @@
                             <i class="fas fa-plus-circle"></i>
                             <span>Create Announcement</span>
                         </a> --}}
-                    </li>
+                    {{-- </li> --}}
 
                     <!-- Team Management -->
                     <li class="menu-header">Team Management</li>
