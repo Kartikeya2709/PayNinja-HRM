@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Employee;
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
 use App\Models\AttendanceRegularization;
+use App\Models\AttendanceSetting;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\View;
+use Carbon\Carbon;
 
 class AttendanceRegularizationController extends Controller
 {
@@ -71,7 +73,7 @@ class AttendanceRegularizationController extends Controller
                 ->paginate(10, ['*'], 'rejected_page');
 
             return view('employee.regularization.index', compact('pending_requests', 'approved_requests', 'rejected_requests'));
-        } 
+        }
         // Regular employees can see their own requests
         else {
             $requests = $employee->attendanceRegularizations()
@@ -90,7 +92,14 @@ class AttendanceRegularizationController extends Controller
         if (is_null(Auth::user()->employee->reporting_manager_id)) {
             return redirect()->route('regularization.requests.index')->with('error', 'Managers cannot create regularization requests.');
         }
-        return view('employee.regularization.create');
+
+        $employee = Auth::user()->employee;
+        $attendanceSettings = AttendanceSetting::where('company_id', $employee->company_id)->latest()->first();
+        $officeStart = $attendanceSettings ? Carbon::createFromFormat('H:i:s', $attendanceSettings->office_start_time) : Carbon::createFromFormat('H:i:s', '09:00:00');
+        $officeEnd = $attendanceSettings ? Carbon::createFromFormat('H:i:s', $attendanceSettings->office_end_time) : Carbon::createFromFormat('H:i:s', '18:00:00');
+        $maxCheckout = $officeEnd->copy()->addHours(2);
+
+        return view('employee.regularization.create', compact('officeStart', 'maxCheckout'));
     }
 
     /**
@@ -103,12 +112,27 @@ class AttendanceRegularizationController extends Controller
             return redirect()->route('regularization.requests.index')->with('error', 'Managers cannot create regularization requests.');
         }
 
+        // Get attendance settings for office timings
+        $attendanceSettings = AttendanceSetting::where('company_id', $employee->company_id)->latest()->first();
+        $officeStart = $attendanceSettings ? Carbon::createFromFormat('H:i:s', $attendanceSettings->office_start_time) : Carbon::createFromFormat('H:i:s', '09:00:00');
+        $officeEnd = $attendanceSettings ? Carbon::createFromFormat('H:i:s', $attendanceSettings->office_end_time) : Carbon::createFromFormat('H:i:s', '18:00:00');
+        $maxCheckout = $officeEnd->copy()->addHours(2);
+
         $validator = Validator::make($request->all(), [
             'entries' => 'required|array|max:5',
             'entries.*.date' => 'required|date|before_or_equal:today',
-            'entries.*.check_in' => 'nullable|date_format:H:i',
-            'entries.*.check_out' => 'nullable|date_format:H:i',
+            'entries.*.check_in' => 'required|date_format:H:i|after_or_equal:' . $officeStart->format('H:i').'|before_or_equal:' . $officeEnd->format('H:i'),
+            'entries.*.check_out' => 'required|date_format:H:i|after_or_equal:entries.*.check_in|before_or_equal:' . $maxCheckout->format('H:i'),
             'entries.*.reason' => 'required|string',
+        ], [
+            'entries.*.check_in.required' => 'Check-in time is required.',
+            'entries.*.check_out.required' => 'Check-out time is required.',
+            'entries.*.check_in.before_or_equal' => 'Check-in time must be on or before ' . $officeEnd->format('H:i') . '.',
+            'entries.*.check_out.after_or_equal' => 'Check-out time must be after check-in time.',
+            'entries.max' => 'You can submit a maximum of 5 entries at a time.',
+            'entries.*.date.before_or_equal' => 'Date cannot be in the future.',
+            'entries.*.check_in.after_or_equal' => 'Time must be after or equal to :date.',
+            'entries.*.check_out.before_or_equal' => 'Time must be before or equal to :date.',
         ]);
 
         if ($validator->fails()) {
@@ -173,7 +197,7 @@ class AttendanceRegularizationController extends Controller
         $regularizationRequest = AttendanceRegularization::findOrFail($id);
         $employee = Auth::user()->employee;
         $is_company_admin = Auth::user()->hasRole('company_admin');
-        
+
         // Check if user has permission to update this request
         if (!$is_company_admin && $regularizationRequest->reporting_manager_id !== $employee->id) {
             return redirect()->back()->with('error', 'You do not have permission to update this request.');

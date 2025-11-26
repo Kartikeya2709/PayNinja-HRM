@@ -16,34 +16,58 @@
                     <h5>New Attendance Regularization Request</h5>
                 </div>
 
+                <div class="alert alert-info">
+                    <strong>Office Timings:</strong> Check-in time must be on or after {{ $officeStart->format('H:i') }}, and check-out time must not exceed {{ $maxCheckout->format('H:i') }} (office end + 2 hours buffer).
+                </div>
+
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <form action="{{ route('regularization.requests.store') }}" method="POST">
                         @csrf
                         <div id="regularization-forms">
                             <div class="regularization-entry mb-4">
                                 <div class="form-group mb-4">
                                     <label>Date</label>
-                                    <input type="date" name="entries[0][date]" class="form-control" required>
+                                    <input type="date" name="entries[0][date]" class="form-control @error('entries.0.date') is-invalid @enderror" value="{{ old('entries.0.date') }}" required>
+                                    @error('entries.0.date')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group mb-4">
                                             <label>Check-in Time</label>
-                                            <input type="time" name="entries[0][check_in]" class="form-control">
+                                            <input type="time" name="entries[0][check_in]" class="form-control @error('entries.0.check_in') is-invalid @enderror" value="{{ old('entries.0.check_in') }}">
+                                            @error('entries.0.check_in')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group mb-4">
                                             <label>Check-out Time</label>
-                                            <input type="time" name="entries[0][check_out]" class="form-control">
+                                            <input type="time" name="entries[0][check_out]" class="form-control @error('entries.0.check_out') is-invalid @enderror" value="{{ old('entries.0.check_out') }}">
+                                            @error('entries.0.check_out')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group mb-4">
                                     <label>Reason</label>
-                                    <textarea name="entries[0][reason]" class="form-control" rows="2"
-                                        required></textarea>
+                                    <textarea name="entries[0][reason]" class="form-control @error('entries.0.reason') is-invalid @enderror" rows="2" required>{{ old('entries.0.reason') }}</textarea>
+                                    @error('entries.0.reason')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                 </div>
                             </div>
 
