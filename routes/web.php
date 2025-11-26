@@ -238,7 +238,7 @@ Route::middleware(['auth'])->group(function () {
         // Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
         // Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
 
-        // Asset Management Routes        
+        // Asset Management Routes
         // Asset Categories
         Route::resource('assets-categories', AssetCategoryController::class)->names([
             'index' => 'assets.categories.index',
@@ -321,7 +321,7 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
             Route::resource('/', App\Http\Controllers\Admin\BeneficiaryBadgeController::class)
                 ->parameters(['' => 'beneficiary_badge']); // Removed explicit ->names() to use Laravel's default resource naming with group prefix
-    
+
             // Apply badge to all employees
             Route::post('/{beneficiary_badge}/apply-to-all', [App\Http\Controllers\Admin\BeneficiaryBadgeController::class, 'applyToAllEmployees'])
                 ->name('apply-to-all');
@@ -420,7 +420,7 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
-             
+
 
     // Debug route for attendance data
     Route::get('/debug/attendance', function () {
@@ -594,6 +594,7 @@ Route::middleware(['auth'])->group(function () {
     });
     Route::middleware(['auth'])->group(function () {
         Route::resource('handbooks', HandbookController::class);
+        Route::get('handbooks/{handbook}/download', [HandbookController::class, 'download'])->name('handbooks.download');
         Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
     });
     Route::middleware(['auth'])->group(function () {
