@@ -19,6 +19,7 @@ use App\Models\Employee;
 use Illuminate\Support\Facades\DB; // Added for role breakdown
 use Illuminate\Support\Facades\Auth;
 use App\Models\Announcement;
+use App\Models\AttendanceSetting;
 
 class HomeController extends Controller
 {
@@ -145,12 +146,21 @@ class HomeController extends Controller
             $companyId = $user->company_id;
 
             // Get employee distribution by role
-            $companyEmployees = User::where('company_id', $companyId)
+            // $companyEmployees = User::where('company_id', $companyId)
+            //     ->select('role', DB::raw('count(*) as total'))
+            //     ->where('is_active', 1)
+            //     ->groupBy('role')
+            //     ->orderBy('total', 'desc')
+            //     ->get();
+  $companyEmployees = User::where('company_id', $companyId)
+                ->where('is_active', 1)
+                ->whereHas('employee', function($q) {
+                    $q->whereDoesntHave('activeResignation');
+                })
                 ->select('role', DB::raw('count(*) as total'))
                 ->groupBy('role')
                 ->orderBy('total', 'desc')
                 ->get();
-
 
             // Get department count
             $departmentCount = Department::where('company_id', $companyId)->count();
@@ -222,12 +232,20 @@ class HomeController extends Controller
             //Absentees data
 
             $today = Carbon::today();
-            $total_employees = Employee::select('id', 'name', 'department_id')->where('company_id', $companyId)->with('department')->get();
+$total_employees = Employee::select('id', 'name', 'department_id')->where('company_id', $companyId)->with('department')->get();
+
+                 $total_employees_only = Employee::select('id', 'name', 'department_id')
+                     ->where('company_id', $companyId)
+                     ->whereDoesntHave('user', function($query) {
+                         $query->whereIn('role', [ 'company_admin']);
+                     })
+                     ->with('department', 'currentShift.shift')
+                     ->get();
             $present_employees = Attendance::whereDate('date', $today)
                 ->pluck('employee_id')
                 ->toArray();
 
-            $absentees = $total_employees->filter(function ($employee) use ($present_employees) {
+            $absentees = $total_employees_only->filter(function ($employee) use ($present_employees) {
                 return !in_array($employee->id, $present_employees);
             })->values();
             $absentees_count = $absentees->count();
@@ -247,7 +265,6 @@ class HomeController extends Controller
             $newJoineesCount = Employee::whereMonth('joining_date', Carbon::now()->month)
                 ->whereYear('joining_date', Carbon::now()->year)
                 ->count();
-
 
 
             $companyID = auth()->user()->company_id;
@@ -289,6 +306,9 @@ class HomeController extends Controller
                 ->latest()
                 ->limit(5)
                 ->get();
+
+            // Fetch attendance settings for company timings
+            $attendanceSettings = AttendanceSetting::where('company_id', $companyId)->latest()->first();
 
             // Attendance status counts for today
             $todaysAttendance = Attendance::whereDate('date', Carbon::today())
@@ -361,13 +381,18 @@ class HomeController extends Controller
                 'recentActivities',
                 'pendingLeaves',
                 'upcomingHolidays',
-                'pending_field_visits'
+                'pending_field_visits',
+                'attendanceSettings'
             ));
         } elseif ($user->role === 'admin' && !$employeeView) {
             // Get total employees in the company
             // Get employee distribution by role
             $companyId = $user->company_id;
             $companyEmployees = User::where('company_id', $companyId)
+                ->where('is_active', 1)
+                ->whereHas('employee', function($q) {
+                    $q->whereDoesntHave('activeResignation');
+                })
                 ->select('role', DB::raw('count(*) as total'))
                 ->groupBy('role')
                 ->orderBy('total', 'desc')
@@ -431,18 +456,28 @@ class HomeController extends Controller
             //Absentees data
 
             $today = Carbon::today();
-            $total_employees = Employee::select('id', 'name', 'department_id')->where('company_id',$companyId)->with('department')->get();
+            $total_employees = Employee::select('id', 'name', 'department_id')->where('company_id', $companyId)->with('department')->get();
+            $total_employees_only = Employee::select('id', 'name', 'department_id')
+                ->where('company_id', $companyId)
+                ->whereDoesntHave('user', function($query) {
+                    $query->whereIn('role', [ 'company_admin']);
+                })
+                ->with('department', 'currentShift.shift')
+                ->get();
             $present_employees = Attendance::whereDate('date', $today)
-            ->whereHas('employee', function ($q) use ($companyId) { 
+            ->whereHas('employee', function ($q) use ($companyId) {
                     $q->where('company_id', $companyId);
                 })
                 ->pluck('employee_id')
                 ->toArray();
-            $absentees = $total_employees->filter(function ($employee) use ($present_employees) {
+            $absentees = $total_employees_only->filter(function ($employee) use ($present_employees) {
                 return !in_array($employee->id, $present_employees);
-            })->values();
+            })->values()->take(5); // Limit to 5 absentees for display
 
             $absentees_count = $absentees->count();
+
+            // Fetch attendance settings for company timings
+            $attendanceSettings = AttendanceSetting::where('company_id', $companyId)->latest()->first();
 
             //pending regularization requests
 
@@ -519,6 +554,12 @@ class HomeController extends Controller
                     ->first();
             }
 
+            $reimbursements = Reimbursement::where('company_id', $companyId)
+                ->where('status', 'pending')
+                ->orderBy('created_at', 'desc')
+                ->take(6)
+                ->get();
+
             return view('admin.dashboard', [
                 'totalEmployees' => $totalEmployees,
                 'departmentCount' => count($departmentData['names']),
@@ -539,6 +580,8 @@ class HomeController extends Controller
                 'data' => $data,
                 'colors' => $colors,
                 'upcoming_birthday' => $upcoming_birthday,
+                'reimbursements' => $reimbursements,
+                'attendanceSettings' => $attendanceSettings,
             ]);
         } elseif ($user->role === 'employee' || $employeeView) {
             // Employee dashboard
