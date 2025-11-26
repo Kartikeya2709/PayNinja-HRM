@@ -128,7 +128,7 @@ class AttendanceRegularizationController extends BaseApiController
             ]);
 
             if ($validator->fails()) {
-                return $this->sendError('Validation Error', $validator->errors()->toArray(), 422);
+                return $this->sendError($validator->errors()->first(), [], 422);
             }
 
             $batchId = Str::uuid();
