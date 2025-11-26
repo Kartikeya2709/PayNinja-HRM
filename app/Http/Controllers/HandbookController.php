@@ -76,7 +76,7 @@ class HandbookController extends Controller
              $filePath = $request->file('file')->store('handbooks', 'public');
 
         }
-       
+
         $user = Auth::user();
         $companyId = $user->employee->company_id ?? null;
 
@@ -203,6 +203,29 @@ class HandbookController extends Controller
         $handbook->delete();
 
         return redirect()->route('handbooks.index')->with('success', 'Handbook deleted successfully.');
+    }
+
+    /**
+     * Download the handbook PDF.
+     */
+    public function download(Handbook $handbook)
+    {
+        $user = Auth::user();
+        $companyId = $user->employee->company_id ?? null;
+
+        if (!$companyId || $handbook->company_id !== $companyId) {
+            abort(403, 'You do not have access to this handbook.');
+        }
+
+        if (!$user->hasRole(['admin', 'company_admin']) && $handbook->status !== 'published') {
+            abort(403, 'You do not have access to this handbook.');
+        }
+
+        if (!$handbook->file_path || !Storage::disk('public')->exists($handbook->file_path)) {
+            abort(404, 'Handbook file not found.');
+        }
+
+        return Storage::disk('public')->download($handbook->file_path, $handbook->title . '.pdf');
     }
 
     /**

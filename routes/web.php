@@ -121,7 +121,7 @@ Route::middleware(['auth'])->group(function () {
         Route::match(['get', 'post'], 'setting/slug/edit/{id}', [SlugController::class, 'edit_slug'])->name('setting.slug.edit');
         Route::get('setting/slug/destroy/{id}', [SlugController::class, 'destroy_slug'])->name('setting.slug.destroy');
 
-        // Role Management        
+        // Role Management
         Route::resource('roles', RoleController::class);
 
         // Package Management Routes
@@ -204,7 +204,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{document}/verify', [CompanyDocumentController::class, 'verify'])->name('verify');
             Route::post('/{document}/reject', [CompanyDocumentController::class, 'reject'])->name('reject');
         });
-        
+
         // Company and Employee Deactivation
         Route::post('companies/{id}/deactivate', [SuperAdminController::class, 'deactivateCompany'])->name('companies.deactivate');
         Route::post('companies/{id}/activate', [SuperAdminController::class, 'activateCompany'])->name('companies.activate');
@@ -297,7 +297,8 @@ Route::middleware(['auth'])->group(function () {
             ->name('shifts.assign');
 
 
-        // Asset Management Routes    
+        // Asset Management Routes
+        // Asset Management Routes
 
         // Asset Dashboard
         Route::get('/assets/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'assetDashboard'])->name('assets.dashboard');
@@ -509,7 +510,7 @@ Route::middleware(['auth'])->group(function () {
         ->group(function () {
             Route::resource('/', App\Http\Controllers\Admin\BeneficiaryBadgeController::class)
                 ->parameters(['' => 'beneficiary_badge']); // Removed explicit ->names() to use Laravel's default resource naming with group prefix
-    
+
             // Apply badge to all employees
             Route::post('/{beneficiary_badge}/apply-to-all', [App\Http\Controllers\Admin\BeneficiaryBadgeController::class, 'applyToAllEmployees'])
                 ->name('apply-to-all');
@@ -535,6 +536,7 @@ Route::middleware(['auth'])->group(function () {
         // Route::get('departments/{department}/employees', [TeamController::class, 'getEmployeesByDepartment'])->name('departments.employees');
         // Route::resource('teams', TeamController::class)->except(['show']);
     });
+
 
 
 

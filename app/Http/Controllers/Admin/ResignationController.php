@@ -385,9 +385,17 @@ class ResignationController extends Controller
         $validated = $request->validate([
             'settlement_amount' => 'nullable|numeric|min:0',
             'settlement_remarks' => 'nullable|string|max:1000',
+            'final_settlement_document' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:5120', // 5MB max
         ]);
 
         $updateData = ['final_settlement_completed' => true];
+
+        // Handle final settlement document upload
+        if ($request->hasFile('final_settlement_document')) {
+            $file = $request->file('final_settlement_document');
+            $fileName = 'final_settlement_' . $resignation->employee_id . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $updateData['final_settlement_document_path'] = $file->storeAs('final-settlement-documents', $fileName, 'public');
+        }
 
         $settlementInfo = 'Final Settlement: ';
         if (isset($validated['settlement_amount'])) {

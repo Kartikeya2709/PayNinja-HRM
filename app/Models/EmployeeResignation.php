@@ -33,6 +33,7 @@ class EmployeeResignation extends Model
         'handover_document_path',
         'assets_returned',
         'final_settlement_completed',
+        'final_settlement_document_path',
         'approved_by',
         'approved_at'
     ];
@@ -135,7 +136,7 @@ class EmployeeResignation extends Model
             'rejected' => 'danger',
             'withdrawn' => 'secondary',
         ];
-        
+
         return $colors[strtolower($this->status)] ?? 'primary';
     }
 
@@ -196,7 +197,7 @@ class EmployeeResignation extends Model
             'retirement' => 'Retirement',
             'contract_end' => 'Contract End',
         ];
-        
+
         return $labels[$this->resignation_type] ?? ucfirst($this->resignation_type);
     }
 
@@ -215,7 +216,7 @@ class EmployeeResignation extends Model
             'rejected' => 'Rejected',
             'withdrawn' => 'Withdrawn',
         ];
-        
+
         return $labels[$this->status] ?? ucfirst($this->status);
     }
 

@@ -38,13 +38,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse($handbooks as $handbook) 
+                                @forelse($handbooks as $handbook)
                                     <tr>
                                           <td>{{ $loop->iteration }}</td>
                                         <td>
                                             {{-- <a href="{{ route('handbooks.show', $handbook) }}"> --}}
                                                 {{ $handbook->title }}
                                             {{-- </a> --}}
+                                            @if($handbook->file_path)
+                                                <a href="{{ route('handbooks.download', $handbook) }}"
+                                                   class="btn btn-sm btn-outline-primary ms-2"
+                                                   data-bs-toggle="tooltip"
+                                                   data-bs-placement="top"
+                                                   title="Download Handbook PDF">
+                                                   <i class="fas fa-download"></i>
+                                                </a>
+                                            @endif
                                         </td>
                                         <td>{{ $handbook->version }}</td>
                                         <td>{{ $handbook->department->name ?? 'All Departments' }}</td>
@@ -99,7 +108,7 @@
                                                 </div>
 
                                             </td>
-                                          
+
                                         @endif
                                     </tr>
                                 @empty
