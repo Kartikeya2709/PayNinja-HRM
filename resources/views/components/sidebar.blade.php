@@ -79,7 +79,7 @@
     <span>Dashboard</span>
   </a>
 </li>
-              
+
                  <!-- Asset Management -->
                 @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
                     <li class="menu-header">Asset Management</li>
@@ -109,7 +109,7 @@
                         </a>
 
                     </li>
-                    
+
                     {{-- <li class="{{ Request::is('company-admin/assets/inventory') ? 'active' : '' }}">
                        <a class="nav-link" href="{{ route('company-admin.assets.inventory') }}">
                             <i class="fas fa-boxes"></i>
@@ -136,7 +136,7 @@
                             <span>Assets</span>
                         </a>
                     </li> --}}
-                       
+
 
                 <!-- End Asset Management -->
 
@@ -323,7 +323,7 @@
                 @endif
 
                 <!-- Company employee management -->
-                    
+
 
                 {{-- Company Admin Routes --}}
                 @if (Auth::user()->hasRole('company_admin'))
@@ -356,11 +356,11 @@
                             <span>Announcements</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
+                    {{-- <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
                         <a class="nav-link" href="{{route('company-admin.announcements.create')}}">
                             <i class="fas fa-plus-circle"></i>
                             <span>Create Announcement</span>
-                        </a>
+                        </a> --}}
                     </li>
 
                     <!-- Team Management -->
@@ -593,12 +593,12 @@
                                 <span>Announcements</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
+                        {{-- <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{route('company-admin.announcements.create')}}">
                                 <i class="fas fa-plus-circle"></i>
                                 <span>Create Announcement</span>
                             </a>
-                        </li>
+                        </li> --}}
                     @endif
 
                     <!-- Team Holiday Management -->
@@ -622,7 +622,7 @@
                                 <span>Module Access</span>
                             </a>
                         </li>
-                  
+
                             </a>
                         </li>
                         <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
