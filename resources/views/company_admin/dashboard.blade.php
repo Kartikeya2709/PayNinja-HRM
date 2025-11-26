@@ -123,7 +123,7 @@
                     <div class="card card-statistic-1 card-hover card-str-1">
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Total Employees</h4>
+                                <h4>Active Employees</h4>
                                 <div class="card-body">
                                     {{ array_sum($companyRoleData->toArray()) }}
                                 </div>
@@ -369,14 +369,14 @@
 
                 <div class="col-lg-4 col-md-6 px-1 mobile-space">
                     <div class="card card-glass new-old-emp">
-                        <h5 class="mb-4">Employee Movement</h5>
+                        <h5 class="mb-4">Employee Movement - {{ \Carbon\Carbon::now()->format('F Y') }}</h5>
                         <!-- New Joinees -->
                         <div class="mb-4 joinee-resign">
                             <div class="icon">
                                 <i class="bi bi-person-plus-fill fs-1"></i>
                             </div>
                             <div class="joinee">
-                                <h6>New Joinees</h6>
+                                <h6>New Joinees This Month</h6>
                                 <h2>
                                     {{ $newJoineesCount }}
                                 </h2>
@@ -434,10 +434,10 @@
                                 <tbody>
                                     @forelse ($absentees as $index => $employee)
                                         <tr>
-                                            <th scope="row">{{ $employee->id }}</th>
+                                            <th scope="row">{{ $loop->iteration }}</th>
                                             <td>{{ $employee->name }}</td>
                                             <td>{{ $employee->department->name ?? 'N/A' }}</td>
-                                            <td>10:00 AM - 06:30 PM</td>
+                                            <td>{{ $attendanceSettings ? \Carbon\Carbon::parse($attendanceSettings->office_start_time)->format('h:i A') . ' - ' . \Carbon\Carbon::parse($attendanceSettings->office_end_time)->format('h:i A') : 'N/A' }}</td>
                                         </tr>
                                     @empty
 										<tr>
@@ -527,7 +527,7 @@
                                         <tbody>
                                             @forelse ($pending_regularization_requests as $request)
                                                 <tr>
-                                                    <td>{{ $request->id }}</td>
+                                                    <td>{{ $loop->iteration }}</td>
                                                     <td>{{ $request->employee->name ?? 'N/A' }}</td>
                                                     <td>
                                                         <a href="{{ route('regularization-requests.edit', $request->id) }}"
@@ -603,6 +603,8 @@
                                     <table class="table table-hover table-bordered mb-0">
                                         <thead class="table-light">
                                             <tr>
+                                                <th>#</th>
+                                                <th>Date</th>
                                                 <th>Employee</th>
                                                 <th>Location</th>
                                                 <th>Actions</th>
@@ -611,6 +613,8 @@
                                         <tbody>
                                             @forelse ($pending_field_visits as $visit)
                                             <tr>
+                                                <th scope="row">{{ $loop->iteration }}</th>
+                                                <td>{{ \Carbon\Carbon::parse($visit->visit_date)->format('d M Y') }}</td>
                                                 <td>{{ $visit->employee->name }}</td>
                                                 <td>{{ $visit->location_name }}</td>
                                                 <td>

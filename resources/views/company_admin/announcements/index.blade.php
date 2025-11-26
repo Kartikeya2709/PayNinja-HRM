@@ -13,8 +13,11 @@
         <div class="row">
             <div class="col-lg-12 px-1 cash-dep">
                 <div class="card">
-                    <div class="card-header justify-content-center mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center mb-3">
                         <h5>Announcement List</h5>
+                        <a href="{{ route('company-admin.announcements.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus-circle"></i> Create Announcement
+                        </a>
                     </div>
                     <div class="card-body p-0">
                         <div class="table-responsive">

@@ -83,17 +83,12 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('reimbursements.show', $reimbursement->id) }}"
-                                    class="btn btn-outline-primary action-btn"
-                                    data-id="{{ $reimbursement->id }}" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="View Details" aria-label="View">
-                                    <span class="btn-content">
-                                        <i class="fas fa-eye"></i>
-                                    </span>
-                                    <span class="spinner-border spinner-border-sm d-none" role="status"
-                                        aria-hidden="true"></span>
-                                </a>
-
+                                <button class="btn btn-sm btn-success"
+                                    onclick="window.location.href='{{ route('reimbursements.show', $reimbursement->id) }}'"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    title="View Details">
+                                    View
+                                </button>
                             </td>
                         </tr>
                         @endforeach

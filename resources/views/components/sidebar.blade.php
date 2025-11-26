@@ -110,7 +110,7 @@
                         </a>
 
                     </li>
-                    
+
                     {{-- <li class="{{ Request::is('company-admin/assets/inventory') ? 'active' : '' }}">
                        <a class="nav-link" href="{{ route('company-admin.assets.inventory') }}">
                             <i class="fas fa-boxes"></i>
@@ -372,6 +372,7 @@
                 <!-- Company employee management -->
 
 
+
                 {{-- Company Admin Routes --}}
                 @if (Auth::user()->hasRole('company_admin'))
                     <!-- Holiday Management -->
@@ -403,12 +404,12 @@
                             <span>Announcements</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('announcements.create') }}">
+                    {{-- <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{route('company-admin.announcements.create')}}">
                             <i class="fas fa-plus-circle"></i>
                             <span>Create Announcement</span>
-                        </a>
-                    </li>
+                        </a> --}}
+                    {{-- </li> --}}
 
                     <!-- Team Management -->
                     <li class="menu-header">Team Management</li>
@@ -645,12 +646,12 @@
                                 <span>Announcements</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('announcements.create') }}">
+                        {{-- <li class="{{ Request::is('company-admin/announcements/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{route('company-admin.announcements.create')}}">
                                 <i class="fas fa-plus-circle"></i>
                                 <span>Create Announcement</span>
                             </a>
-                        </li>
+                        </li> --}}
                     @endif
 
                     <!-- Team Holiday Management -->
@@ -675,7 +676,7 @@
                             </a>
                         </li>
 
-                        </a>
+                            </a>
                         </li>
                         <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company-admin.settings.index') }}">

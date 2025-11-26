@@ -234,7 +234,7 @@
 
                         <div class="card-wrap">
                             <div class="card-header">
-                                <h4>Total Employees</h4>
+                                <h4>Active Employees</h4>
 
                                 <div class="card-body">
                                     {{ $totalEmployees ?? 0 }}
@@ -499,8 +499,8 @@
             </div>
         </div>
         <div class="col-lg-6 px-1 mobile-space">
-            <div class="card reg-req">
-                <h5 class="text-center">Regularization Requests</h5>
+            {{-- <div class="card reg-req">
+                <h5 class="text-center">Reimbursement Approvals</h5>
                 <div class="d-flex justify-content-center">
                     <div class="card-body card p-0">
                         <div class="table-responsive">
@@ -509,14 +509,16 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Name</th>
+                                        <th>Amount</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                       <tbody>
-                      @forelse ($pending_regularization_requests as $request)
+                      @forelse ($reimbursements as $request)
                         <tr>
-                          <td>{{ $request->id }}</td>
+                          <td>{{ $loop->iteration }}</td>
                           <td>{{ $request->employee->name ?? 'N/A' }}</td>
+                          <td>₹{{ $request->amount }}</td>
                           <td>
                             <button class="btn btn-sm btn-success">View</button>
                           </td>
@@ -530,7 +532,62 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
+            <div class=" px-1 mobile-space">
+
+                    <div class="card today-not">
+                        <h5 class="text-center">Reimbursement Approvals</h5>
+                        <div class="Reimburs-table">
+                            <table class="table table-bordered Reimbursements-table">
+                                <thead>
+                                    <tr>
+                                        <th>S No.</th>
+                                        <th>Date</th>
+                                        <th>Employee</th>
+                                        <th>Amount</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reimbursementTable">
+                                    @forelse ($reimbursements as $reimbursement)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($reimbursement->expense_date)->format('d M Y') }}
+                                            </td>
+
+                                            <td>{{ $reimbursement->employee->user->name ?? 'N/A'}}</td>
+
+                                            <td>₹{{ number_format($reimbursement->amount, 2) }}</td>
+                                            <td>
+                                                <span
+                                                    class="badge bg-{{ $reimbursement->status === 'pending' ? 'warning' : ($reimbursement->status === 'reporter_approved' ? 'info' : ($reimbursement->status === 'admin_approved' ? 'success' : 'danger')) }}">
+                                                    {{ ucfirst($reimbursement->status) }}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('reimbursements.show', $reimbursement->id) }}"
+                                                class="btn btn-outline-info btn-sm me-1 action-btn"
+                                                data-id="{{ $reimbursement->id }}" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                title="View Reimbursement" aria-label="View">
+                                                <span class="btn-content">
+                                                   <i class="fas fa-eye"></i>
+                                                </span>
+                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center">No reimbursements found.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 
@@ -580,10 +637,10 @@
                         <tbody>
                             @forelse ($absentees as $index => $employee)
                                 <tr>
-                                    <th scope="row">{{ $employee->id }}</th>
+                                    <th scope="row">{{ $loop->iteration }}</th>
                                     <td>{{ $employee->name }}</td>
                                     <td>{{ $employee->department->name ?? 'N/A' }}</td>
-                                    <td>10:00 AM - 06:30 PM</td>
+                                    <td>{{ $attendanceSettings ? \Carbon\Carbon::parse($attendanceSettings->office_start_time)->format('h:i A') . ' - ' . \Carbon\Carbon::parse($attendanceSettings->office_end_time)->format('h:i A') : 'N/A' }}</td>
                                 </tr>
 
                             @empty
@@ -597,11 +654,11 @@
         </div>
     </div>
 
-    
+
 
     </section>
     </div>
-    
+
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.35.0/dist/apexcharts.min.js"></script>
