@@ -174,4 +174,23 @@ class AssetAssignmentController extends Controller
         return redirect()->route('assets.assignments.show', $assignment->id)
             ->with('success', 'Asset returned successfully.');
     }
+
+    /**
+     * Display recent asset assignments.
+     */
+    public function recentAssignments()
+    {
+        $user = Auth::user();
+        $companyId = $user->company_id;
+
+        // Recent assignments
+        $assignments = AssetAssignment::with(['asset', 'employee'])
+            ->whereHas('asset', function ($query) use ($companyId) {
+                $query->where('company_id', $companyId);
+            })
+            ->orderBy('assigned_date', 'desc')
+            ->paginate(15);
+
+        return view('assets.assignments.recent-assignments', compact('assignments'));
+    }
 }

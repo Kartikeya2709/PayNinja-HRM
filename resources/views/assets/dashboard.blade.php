@@ -194,7 +194,7 @@
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mb-0">Asset Inventory</h5>
-                                    <a href="{{ route('assets.inventory') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                                    <a href="{{ route('assets.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -268,7 +268,7 @@
                             <div class="card">
                                 <div class="card-header d-flex justify-content-between align-items-center">
                                     <h5 class="card-title mb-0">Recent Assignments</h5>
-                                    <a href="{{ route('recent.assets.assignments') }}" class="btn btn-sm btn-outline-primary">View All</a>
+                                    <a href="{{ route('assets.assignments.recent') }}" class="btn btn-sm btn-outline-primary">View All</a>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">

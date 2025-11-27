@@ -81,63 +81,68 @@
                 </li>
 
                 <!-- Asset Management -->
-                @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
+                @if (!Auth::user()->hasRole('superadmin') || !Auth::user()->hasRole('user'))
                     <li class="menu-header">Asset Management</li>
-
-                    <li class="{{ Request::is('company-admin/assets/dashboard') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('assets.dashboard') }}">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Asset Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="{{ Request::is('assets-categories*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('assets.categories.index') }}">
-                            <i class="fas fa-tags"></i>
-                            <span>Asset Categories</span>
-                        </a>
-                    </li>
-                    <li
-                        class="{{ (Request::is('assets/*') || Request::is('assets')) && !Request::is('assets/assignments*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('assets.index') }}">
-                            <i class="fas fa-laptop"></i>
-                            <span>Assets</span>
-                        </a>
-                    </li>
-                    <li class="{{ Request::is('assets/assignments*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('assets.assignments.index') }}">
-                            <i class="fas fa-hand-holding"></i>
-                            <span>Asset Assignments</span>
-                        </a>
-
-                    </li>
-
-                    {{-- <li class="{{ Request::is('company-admin/assets/inventory') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.inventory') }}">
+                    <li class="nav-item dropdown {{ Request::is('assets*') ? 'active' : '' }}">
+                        <a href="#" class="nav-link has-dropdown">
                             <i class="fas fa-boxes"></i>
-                            <span>Asset Inventory</span>
+                            <span>Asset Management</span>
                         </a>
+                        <ul class="dropdown-menu">
+                            @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
+                                <li class="{{ Request::is('assets/dashboard') || Request::is('assets/employees') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('assets.dashboard') }}">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span>Asset Dashboard</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Request::is('assets/categories*') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('assets.categories.index') }}">
+                                        <i class="fas fa-tags"></i>
+                                        <span>Asset Categories</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Request::is('assets') || Request::is('assets/index') || Request::is('assets/create') || Request::is('assets/show/*') || Request::is('assets/*/edit') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('assets.index') }}">
+                                        <i class="fas fa-laptop"></i>
+                                        <span>Assets</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Request::is('assets/assignments*') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('assets.assignments.index') }}">
+                                        <i class="fas fa-hand-holding"></i>
+                                        <span>Asset Assignments</span>
+                                    </a>
+                                </li>
+                                {{-- <li class="{{ Request::is('company-admin/assets/inventory') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('company-admin.assets.inventory') }}">
+                                        <i class="fas fa-boxes"></i>
+                                        <span>Asset Inventory</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Request::is('company-admin/assets/employees') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('company-admin.assets.employees') }}">
+                                        <i class="fas fa-user-tag"></i>
+                                        <span>Employees with Assets</span>
+                                    </a>
+                                </li>
+                                <li class="{{ Request::is('company-admin/assets/assignments') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('company-admin.assets.assignments') }}">
+                                        <i class="fas fa-clipboard-list"></i>
+                                        <span>Asset Assignments</span>
+                                    </a>
+                                </li> --}}
+                            @elseif (Auth::user()->hasRole('employee'))
+                                <li class="{{ Request::is('assets/own') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('assets.ownAssets') }}">
+                                        <i class="fas fa-laptop"></i>
+                                        <span>My Assets</span>
+                                    </a>
+                                </li>
+                            @endif
+                        </ul>
                     </li>
-                    <li class="{{ Request::is('company-admin/assets/employees') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.employees') }}">
-                            <i class="fas fa-user-tag"></i>
-                            <span>Employees with Assets</span>
-                        </a>
-                    </li>
-                    <li class="{{ Request::is('company-admin/assets/assignments') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.assignments') }}">
-                            <i class="fas fa-clipboard-list"></i>
-                            <span>Asset Assignments</span>
-                        </a>
-                    </li> --}}
                 @endif
-
-                {{-- <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('assets.index') }}">
-                        <i class="fas fa-laptop"></i>
-                        <span>Assets</span>
-                    </a>
-                </li> --}}
-
 
                 <!-- End Asset Management -->
 
@@ -226,6 +231,7 @@
                 <!-- Employee Routes -->
                 @if (Auth::user()->hasRole('employee'))
                     @if ($hasModuleAccess('attendance', 'employee'))
+                        <li class="menu-header">Peer Recognition</li>
                         <li class="{{ Request::is('employee/colleagues') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('employee.colleagues') }}">
                                 <i class="fas fa-users"></i>
@@ -330,15 +336,6 @@
                         <a class="nav-link" href="{{ route('field-visits.create') }}">
                             <i class="fas fa-plus-circle"></i>
                             <span>Schedule Visit</span>
-                        </a>
-                    </li>
-
-                    <!-- Assets -->
-                    <li class="menu-header">Assets</li>
-                    <li class="{{ Request::is('employee/assets') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('employee.assets.index') }}">
-                            <i class="fas fa-laptop"></i>
-                            <span>My Assets</span>
                         </a>
                     </li>
 

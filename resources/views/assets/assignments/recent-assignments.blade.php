@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Recent Asset Assignments</h3>
-                    <a href="{{ route('assets.dashboard') }}" class="btn btn-secondary">
+                    <a href="{{ route('assets.dashboard') }}" class="btn btn-warning">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
                     </a>
                 </div>

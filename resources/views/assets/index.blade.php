@@ -7,9 +7,16 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Assets</h3>
-                    <a href="{{ route('assets.create') }}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add Asset
-                    </a>
+                    <div class="btn-group">
+                        @if(url()->previous() == route('assets.dashboard'))
+                        <a href="{{ route('assets.dashboard') }}" class="btn btn-warning">
+                            <i class="fas fa-arrow-left"></i> Back to Dashboard
+                        </a>
+                        @endif
+                        <a href="{{ route('assets.create') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Asset
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
                     @if(session('success'))
@@ -20,7 +27,7 @@
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Code</th>
+                                    <th>Asset Code</th>
                                     <th>Name</th>
                                     <th>Category</th>
                                     <th>Status</th>
@@ -41,7 +48,7 @@
                                             {{ ucfirst($asset->status) }}
                                         </span>
                                     </td>
-                                    
+
                                     <td>{{ $asset->currentAssignment?->assigned_date?->format('Y-m-d') ?? '-' }}</td>
 
                                     <td>
@@ -120,7 +127,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="mt-3">
                         {{ $assets->links() }}
                     </div>

@@ -33,17 +33,17 @@ class CompanyAdminController extends Controller
     {
         $user = Auth::user();
         $company = $user->employee->company;
-        
+
         // Define all possible modules and roles
         $allModules = [
-            'leave', 
-            'reimbursement', 
+            'leave',
+            'reimbursement',
             'team',
             'payroll',
             'attendance'
         ];
         $roles = ['admin', 'employee','company_admin'];
-        
+
         // Initialize modules array with default values
         $modules = [];
         foreach ($allModules as $module) {
@@ -52,12 +52,12 @@ class CompanyAdminController extends Controller
                 $modules[$module][$role] = false;
             }
         }
-        
+
         // Get current module access settings from database
         $moduleAccess = ModuleAccess::where('company_id', $company->id)
             ->get()
             ->groupBy('module_name');
-            
+
         // Merge database values with default values
         foreach ($moduleAccess as $module => $accesses) {
             foreach ($accesses as $access) {
@@ -83,9 +83,9 @@ class CompanyAdminController extends Controller
 
             // Define all possible module-role combinations
             $modules = [
-                'leave', 
-                'reimbursement', 
-                'team', 
+                'leave',
+                'reimbursement',
+                'team',
                 'department',
                 'payroll',
                 'attendance',
@@ -96,13 +96,13 @@ class CompanyAdminController extends Controller
                 'settings'
             ];
             $roles = ['admin', 'employee', 'reporter'];
-            
+
             // Process each module and role combination
             foreach ($modules as $module) {
                 foreach ($roles as $role) {
                     // Check if this module-role combination was submitted in the form
                     $hasAccess = $request->has("modules.{$module}.{$role}");
-                    
+
                     // Update or create the record
                     ModuleAccess::updateOrCreate(
                         [
@@ -201,7 +201,7 @@ class CompanyAdminController extends Controller
 
             // Load the user relationship if not already loaded
             $employee->load('user');
-            
+
             // Check if user exists
             if (!$employee->user) {
                 throw new \Exception('User record not found for this employee.');
@@ -738,15 +738,15 @@ class CompanyAdminController extends Controller
             $ctc = (float) $validated['ctc'];
             $basicSalary = (float) $validated['basic_salary'];
             $companyCurrency = $employee->company->default_currency ?? config('app.currency', 'INR');
-            
+
             // Calculate HRA (50% of basic) and DA (20% of basic)
             $hra = $basicSalary * 0.5;
             $da = $basicSalary * 0.2;
             $otherAllowances = max(0, $ctc - ($basicSalary + $hra + $da));
-            
+
             // Calculate gross salary as sum of all components
             $grossSalary = $basicSalary + $hra + $da + $otherAllowances;
-                        
+
             $salaryData = [
                 'employee_id' => $employee->id,
                 'ctc' => $ctc,
@@ -815,7 +815,7 @@ class CompanyAdminController extends Controller
                 \Log::info("Employee created with email: " . $user->email . " and password: " . $password);
             } else {
                 $user->notify(new \App\Notifications\EmployeeWelcomeNotification($password));
-            }            
+            }
 
             return redirect()->route('company-admin.employees.index')
                 ->with('success', 'Employee created successfully. Login credentials have been sent to the email address.');
@@ -977,7 +977,7 @@ class CompanyAdminController extends Controller
         }
     }
 
-     /* 
+     /*
        Employee Status Toggle (Activate/Deactivate)
      */
     public function toggleStatus( Request $request, $id)
@@ -1005,249 +1005,6 @@ class CompanyAdminController extends Controller
             'is_active' => $newStatus,
         ]);
 
-    }
-
-    /**
-     * Display asset dashboard.
-     */
-    public function assetDashboard()
-    {
-        $user = Auth::user();
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-        } else {
-            $company = $user->employee->company;
-            $companyId = $company->id;
-        }
-
-        // Total assets count
-        $totalAssets = \App\Models\Asset::where('company_id', $companyId)->count();
-
-        // Total value of all assets
-        $totalValue = \App\Models\Asset::where('company_id', $companyId)->sum('purchase_cost');
-
-        // Available assets count
-        $availableAssets = \App\Models\Asset::where('company_id', $companyId)->where('status', 'available')->count();
-
-        // Assigned assets count
-        $assignedAssets = \App\Models\Asset::where('company_id', $companyId)->where('status', 'assigned')->count();
-
-        // Asset utilization rate
-        $utilizationRate = $totalAssets > 0 ? round(($assignedAssets / $totalAssets) * 100, 1) : 0;
-
-        // Assets by condition
-        $assetsByCondition = \App\Models\Asset::where('company_id', $companyId)
-            ->get()
-            ->groupBy('condition')
-            ->map(function ($group) {
-                return $group->count();
-            })
-            ->toArray();
-
-        // Assets by category
-        $assetsByCategory = \App\Models\Asset::where('company_id', $companyId)
-            ->with('category')
-            ->get()
-            ->groupBy(function ($asset) {
-                return $asset->category->name ?? 'Uncategorized';
-            })
-            ->map(function ($group, $categoryName) {
-                return [
-                    'category' => $categoryName,
-                    'count' => $group->count()
-                ];
-            })
-            ->sortByDesc('count')
-            ->values();
-
-        // Average asset age (in months)
-        $averageAge = \App\Models\Asset::where('company_id', $companyId)
-            ->whereNotNull('purchase_date')
-            ->selectRaw('AVG(TIMESTAMPDIFF(MONTH, purchase_date, CURDATE())) as avg_age')
-            ->first()
-            ->avg_age;
-        $averageAge = $averageAge ? round($averageAge, 1) : 0;
-
-        // Overdue assignments (expected return date passed)
-        $overdueAssignments = \App\Models\AssetAssignment::whereHas('asset', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->whereNull('returned_date')
-            ->where('expected_return_date', '<', now())
-            ->count();
-
-        // Recent assignments this month
-        $assignmentsThisMonth = \App\Models\AssetAssignment::whereHas('asset', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->whereMonth('assigned_date', now()->month)
-            ->whereYear('assigned_date', now()->year)
-            ->count();
-
-        // Most assigned employees (top 5)
-        $mostAssignedEmployees = \App\Models\Employee::where('company_id', $companyId)
-            ->withCount(['assignments' => function ($query) {
-                $query->whereNull('returned_date');
-            }])
-            ->having('assignments_count', '>', 0)
-            ->orderBy('assignments_count', 'desc')
-            ->limit(5)
-            ->get();
-
-        // Department-wise asset distribution
-        $departmentAssets = \App\Models\Employee::where('company_id', $companyId)
-            ->with(['department', 'assignments' => function ($query) {
-                $query->whereNull('returned_date');
-            }])
-            ->get()
-            ->groupBy('department.name')
-            ->map(function ($employees, $deptName) {
-                $totalAssets = $employees->sum(function ($employee) {
-                    return $employee->assignments->count();
-                });
-                return [
-                    'department' => $deptName ?? 'No Department',
-                    'assets' => $totalAssets
-                ];
-            })
-            ->filter(function ($item) {
-                return $item['assets'] > 0;
-            })
-            ->sortByDesc('assets')
-            ->take(5);
-
-        // Assets inventory with details (limited to 5)
-        $assets = \App\Models\Asset::where('company_id', $companyId)
-            ->with(['category', 'currentAssignment.employee'])
-            ->orderBy('created_at', 'desc')
-            ->limit(5)
-            ->get();
-
-        // Employees with their assigned assets (limited to 5)
-        $employeesWithAssets = \App\Models\Employee::where('company_id', $companyId)
-            ->with(['assignments.asset'])
-            ->whereHas('assignments', function ($query) {
-                $query->whereNull('returned_date');
-            })
-            ->limit(5)
-            ->get();
-
-        // Recent assignments (limited to 5)
-        $recentAssignments = \App\Models\AssetAssignment::with(['asset', 'employee'])
-            ->whereHas('asset', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->orderBy('assigned_date', 'desc')
-            ->limit(5)
-            ->get();
-
-        return view('company-admin.assets.dashboard', compact(
-            'totalAssets',
-            'totalValue',
-            'availableAssets',
-            'assignedAssets',
-            'utilizationRate',
-            'assetsByCondition',
-            'assetsByCategory',
-            'averageAge',
-            'overdueAssignments',
-            'assignmentsThisMonth',
-            'mostAssignedEmployees',
-            'departmentAssets',
-            'assets',
-            'employeesWithAssets',
-            'recentAssignments'
-        ));
-    }
-
-    /**
-     * Display asset inventory.
-     */
-    public function assetInventory()
-    {
-        $user = Auth::user();
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-        } else {
-            $company = $user->employee->company;
-            $companyId = $company->id;
-        }
-
-        // Assets inventory with details
-        $assets = \App\Models\Asset::where('company_id', $companyId)
-            ->with(['category', 'currentAssignment.employee'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
-
-        return view('company-admin.assets.inventory', compact('assets'));
-    }
-
-    /**
-     * Display employees with assigned assets.
-     */
-    public function employeesWithAssets()
-    {
-        $user = Auth::user();
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-        } else {
-            $company = $user->employee->company;
-            $companyId = $company->id;
-        }
-
-        // Employees with their assigned assets
-        $employees = \App\Models\Employee::where('company_id', $companyId)
-            ->with(['assignments.asset'])
-            ->whereHas('assignments', function ($query) {
-                $query->whereNull('returned_date');
-            })
-            ->paginate(15);
-
-        return view('company-admin.assets.employees', compact('employees'));
-    }
-
-    /**
-     * Display recent asset assignments.
-     */
-    public function recentAssignments()
-    {
-        $user = Auth::user();
-
-        // Handle both admin and company_admin roles
-        if ($user->role === 'admin') {
-            $companyId = $user->company_id;
-            if (!$companyId) {
-                abort(403, 'Admin user must be assigned to a company.');
-            }
-        } else {
-            $company = $user->employee->company;
-            $companyId = $company->id;
-        }
-
-        // Recent assignments
-        $assignments = \App\Models\AssetAssignment::with(['asset', 'employee'])
-            ->whereHas('asset', function ($query) use ($companyId) {
-                $query->where('company_id', $companyId);
-            })
-            ->orderBy('assigned_date', 'desc')
-            ->paginate(15);
-
-        return view('company-admin.assets.assignments', compact('assignments'));
     }
 
 }

@@ -298,25 +298,6 @@ Route::middleware(['auth'])->group(function () {
 
 
         // Asset Management Routes
-        // Asset Management Routes
-
-        // Asset Dashboard
-        Route::get('/assets/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'assetDashboard'])->name('assets.dashboard');
-        Route::get('/assets/inventory', [\App\Http\Controllers\CompanyAdminController::class, 'assetInventory'])->name('assets.inventory');
-        Route::get('/assets/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employeesWithAssets'])->name('assets.employees');
-        Route::get('/recent/assets/assignments', [\App\Http\Controllers\CompanyAdminController::class, 'recentAssignments'])->name('recent.assets.assignments');
-
-        // Asset Categories
-        Route::resource('assets-categories', AssetCategoryController::class)->names([
-            'index' => 'assets.categories.index',
-            'create' => 'assets.categories.create',
-            'store' => 'assets.categories.store',
-            'show' => 'assets.categories.show',
-            'edit' => 'assets.categories.edit',
-            'update' => 'assets.categories.update',
-            'destroy' => 'assets.categories.destroy',
-        ]);
-
         Route::prefix('assets')->name('assets.')->group(function () {
             // Asset routes
             Route::get('/index', [AssetController::class, 'index'])->name('index');
@@ -326,6 +307,19 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');
             Route::put('/{asset}', [AssetController::class, 'update'])->name('update');
             Route::delete('/{asset}', [AssetController::class, 'destroy'])->name('destroy');
+            Route::get('/dashboard', [AssetController::class, 'dashboard'])->name('dashboard');
+            Route::get('/employees', [AssetController::class, 'employeesWithAssets'])->name('employees');
+            Route::get('/own', [AssetController::class, 'ownAssets'])->name('ownAssets');
+            
+            Route::resource('categories', AssetCategoryController::class)->names([
+                'index' => 'categories.index',
+                'create' => 'categories.create',
+                'store' => 'categories.store',
+                'show' => 'categories.show',
+                'edit' => 'categories.edit',
+                'update' => 'categories.update',
+                'destroy' => 'categories.destroy',
+            ]);
 
             // Asset Assignments, distinct from assets route by naming convention and URL structure
             Route::prefix('assignments')->name('assignments.')->group(function () {
@@ -337,6 +331,7 @@ Route::middleware(['auth'])->group(function () {
                 Route::put('/{assignment}', [AssetAssignmentController::class, 'update'])->name('update');
                 Route::delete('/{assignment}', [AssetAssignmentController::class, 'destroy'])->name('destroy');
                 Route::post('/{assignment}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
+                Route::get('/recent', [AssetAssignmentController::class, 'recentAssignments'])->name('recent');
             });
         });
 
@@ -353,6 +348,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Employee Handbook Management
         Route::resource('handbooks', HandbookController::class);
+        Route::get('handbooks/{handbook}/download', [HandbookController::class, 'download'])->name('handbooks.download');
         Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
 
         // Field Visit Management
@@ -576,7 +572,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('colleagues', [EmployeeController::class, 'listColleagues'])->name('colleagues');
 
         // Assets
-        Route::get('assets', [AssetController::class, 'employeeAssets'])->name('assets.index');
+        // Route::get('assets', [AssetController::class, 'employeeAssets'])->name('assets.index');
         // Salary Routes
         Route::prefix('salary')->name('salary.')->group(function () {
             // Route::get('details', [\App\Http\Controllers\Employee\SalaryController::class, 'details'])->name('details');
@@ -649,12 +645,6 @@ Route::middleware(['auth'])->group(function () {
 
         // Role Management
         Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);
-
-        // Asset Dashboard
-        Route::get('/assets/dashboard', [\App\Http\Controllers\CompanyAdminController::class, 'assetDashboard'])->name('assets.dashboard');
-        Route::get('/assets/inventory', [\App\Http\Controllers\CompanyAdminController::class, 'assetInventory'])->name('assets.inventory');
-        Route::get('/assets/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employeesWithAssets'])->name('assets.employees');
-        Route::get('/assets/assignments', [\App\Http\Controllers\CompanyAdminController::class, 'recentAssignments'])->name('assets.assignments');
 
     });
 
