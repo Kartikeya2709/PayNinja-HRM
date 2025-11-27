@@ -68,8 +68,12 @@
             @include('components.header')
 
             <!-- Sidebar -->
-            @include('components.sidebar')
-            {{-- @include('components.menu') --}}
+            @if(auth()->user() && auth()->user()->role == 'superadmin')
+                @include('components.sidebar')
+            @else
+                @include('components.menu')
+                {{-- @include('components.sidebar') --}}
+            @endif
 
             <!-- Main Content -->
             <div class="main-content main-contant-01">
