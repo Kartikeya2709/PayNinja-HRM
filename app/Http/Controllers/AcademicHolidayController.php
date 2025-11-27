@@ -17,39 +17,24 @@ class AcademicHolidayController extends Controller
     {
         $user = Auth::user();
         $companyId = $user->company_id;
-        $company = Company::findOrFail($companyId);
         $holidays = AcademicHoliday::where('company_id', $companyId)
             ->orderBy('from_date')
             ->get();
 
-    $isReadOnly = $user->hasRole('employee'); // can’t add/edit/delete
-
-        return view('company.academic-holidays.index', compact('holidays', 'company', 'isReadOnly'));
-
-                
-
-
-     
+        $isReadOnly = $user->hasRole('employee'); // can’t add/edit/delete
+        return view('company.academic-holidays.index', compact('holidays', 'isReadOnly'));
     }
 
     public function create(Request $request)
     {
-        $user = Auth::user();
-         if (!$user->hasRole(['admin', 'company_admin'])) {
-            abort(403, 'Unauthorized action.');
-        }
-        $companyId = $user->company_id;
-        $company = Company::find($companyId);
-        
-        return view('company.academic-holidays.create', compact('company'));
+        return view('company.academic-holidays.create');
     }
 
     public function store(Request $request)
     {
-         if (!Auth::user()->hasRole(['admin', 'company_admin'])) {
-            abort(403, 'Unauthorized action.');
-        }
-        $companyId = $request->input('company_id');
+        $user = Auth::user();
+        $companyId = $user->company_id;
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'from_date' => 'required|date',
@@ -66,17 +51,13 @@ class AcademicHolidayController extends Controller
             'created_by' => Auth::id()
         ]);
 
-        return redirect()->route('academic-holidays.index', $companyId)
-            ->with('success', 'Holiday created successfully');
+        return redirect()->route('academic-holidays.index')->with('success', 'Holiday created successfully');
     }
 
     public function edit(Request $request, $id)
     {
-            if (!Auth::user()->hasRole(['admin', 'company_admin'])) {
-                abort(403, 'Unauthorized action.');
-            }
-        $companyId = $request->input('company_id');
-        $company = Company::findOrFail($companyId);
+        $user = Auth::user();
+        $companyId = $user->company_id;
         $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
 
         // Explicitly cast from_date and to_date to Carbon instances
@@ -87,15 +68,13 @@ class AcademicHolidayController extends Controller
             $holiday->to_date = Carbon::parse($holiday->to_date);
         }
 
-        return view('company.academic-holidays.create', compact('holiday', 'company'));
+        return view('company.academic-holidays.create', compact('holiday'));
     }
 
     public function update(Request $request, $id)
     {
-            if (!Auth::user()->hasRole(['admin', 'company_admin'])) {
-                abort(403, 'Unauthorized action.');
-            }
-        $companyId = $request->input('company_id');
+        $user = Auth::user();
+        $companyId = $user->company_id;
         $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
 
         $validated = $request->validate([
@@ -107,29 +86,23 @@ class AcademicHolidayController extends Controller
 
         $holiday->update($validated);
 
-        return redirect()->route('academic-holidays.index')
-            ->with('success', 'Holiday updated successfully');
+        return redirect()->route('academic-holidays.index')->with('success', 'Holiday updated successfully');
     }
 
     public function destroy(Request $request, $id)
     {
-            if (!Auth::user()->hasRole(['admin', 'company_admin'])) {
-                abort(403, 'Unauthorized action.');
-            }
-        $companyId = $request->input('company_id');
+        $user = Auth::user();
+        $companyId = $user->company_id;
         $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
         $holiday->delete();
 
-        return redirect()->route('academic-holidays.index')
-            ->with('success', 'Holiday deleted successfully');
+        return redirect()->route('academic-holidays.index')->with('success', 'Holiday deleted successfully');
     }
 
     public function import(Request $request)
     {
-            if (!Auth::user()->hasRole(['admin', 'company_admin'])) {
-                abort(403, 'Unauthorized action.');
-            }
-        $companyId = $request->input('company_id');
+        $user = Auth::user();
+        $companyId = $user->company_id;
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv'
         ]);
@@ -179,8 +152,7 @@ class AcademicHolidayController extends Controller
             }
 
             // If everything was successful
-            return redirect()->route('academic-holidays.index', $companyId)
-                ->with('success', implode(' ', $message));
+            return redirect()->route('academic-holidays.index')->with('success', implode(' ', $message));
 
         } catch (\Exception $e) {
             return redirect()->back()

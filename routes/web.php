@@ -310,7 +310,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/dashboard', [AssetController::class, 'dashboard'])->name('dashboard');
             Route::get('/employees', [AssetController::class, 'employeesWithAssets'])->name('employees');
             Route::get('/own', [AssetController::class, 'ownAssets'])->name('ownAssets');
-            
+
             Route::resource('categories', AssetCategoryController::class)->names([
                 'index' => 'categories.index',
                 'create' => 'categories.create',
@@ -335,16 +335,17 @@ Route::middleware(['auth'])->group(function () {
             });
         });
 
-
         // Academic Holidays Management
-        Route::get('academic-holidays', [AcademicHolidayController::class, 'index'])->name('academic-holidays.index');
-        Route::get('academic-holidays/create', [AcademicHolidayController::class, 'create'])->name('academic-holidays.create');
-        Route::post('academic-holidays', [AcademicHolidayController::class, 'store'])->name('academic-holidays.store');
-        Route::get('academic-holidays/{holiday}/edit', [AcademicHolidayController::class, 'edit'])->name('academic-holidays.edit');
-        Route::put('academic-holidays/{holiday}', [AcademicHolidayController::class, 'update'])->name('academic-holidays.update');
-        Route::delete('academic-holidays/{holiday}', [AcademicHolidayController::class, 'destroy'])->name('academic-holidays.destroy');
-        Route::post('academic-holidays/import', [AcademicHolidayController::class, 'import'])->name('academic-holidays.import');
-        Route::get('academic-holidays/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('academic-holidays.template');
+        Route::prefix('academic-holidays')->name('academic-holidays.')->group(function () {
+            Route::get('/', [AcademicHolidayController::class, 'index'])->name('index');
+            Route::get('/create', [AcademicHolidayController::class, 'create'])->name('create');
+            Route::post('/', [AcademicHolidayController::class, 'store'])->name('store');
+            Route::get('/{holiday}/edit', [AcademicHolidayController::class, 'edit'])->name('edit');
+            Route::put('/{holiday}', [AcademicHolidayController::class, 'update'])->name('update');
+            Route::delete('/{holiday}', [AcademicHolidayController::class, 'destroy'])->name('destroy');
+            Route::post('/import', [AcademicHolidayController::class, 'import'])->name('import');
+            Route::get('/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('template');
+        });
 
         // Employee Handbook Management
         Route::resource('handbooks', HandbookController::class);
