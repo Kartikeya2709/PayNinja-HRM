@@ -38,6 +38,8 @@ use App\Http\Controllers\HandbookController;
 use App\Http\Controllers\Employee\ResignationController;
 use App\Http\Controllers\SuperAdmin\DemoRequestsController;
 use App\Http\Controllers\SuperAdmin\ContactMessagesController;
+use App\Http\Controllers\SuperAdmin\DatabaseController;
+use App\Http\Controllers\SuperAdmin\LogsController;
 use App\Http\Controllers\LeadController;
 // Test logging route - can be removed after testing
 use App\Http\Controllers\PackageController;
@@ -210,6 +212,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('companies/{id}/activate', [SuperAdminController::class, 'activateCompany'])->name('companies.activate');
         Route::post('companies/{companyId}/employees/{employeeId}/deactivate', [SuperAdminController::class, 'deactivateEmployee'])->name('companies.employees.deactivate');
         Route::post('companies/{companyId}/employees/{employeeId}/activate', [SuperAdminController::class, 'activateEmployee'])->name('companies.employees.activate');
+
+        // Database Management
+        Route::get('database', [DatabaseController::class, 'index'])->name('database.index');
+        Route::match(['get', 'post'], 'database/table/{table}', [DatabaseController::class, 'showTable'])->name('database.show');
+        Route::get('database/table/{table}/export', [DatabaseController::class, 'exportTable'])->name('database.export-table');
+        Route::get('database/export', [DatabaseController::class, 'exportDatabase'])->name('database.export');
+        Route::match(['get', 'post'], 'database/query', [DatabaseController::class, 'query'])->name('database.query');
+        Route::post('database/query', [DatabaseController::class, 'executeQuery'])->name('database.execute-query');
+
+        // Logs Management
+        Route::get('logs', [LogsController::class, 'index'])->name('logs.index');
+        Route::get('logs/{filename}', [LogsController::class, 'show'])->name('logs.show');
+        Route::get('logs/{filename}/download', [LogsController::class, 'download'])->name('logs.download');
     });
 
     Route::middleware(['role:company_admin,admin,employee'])->group(function () {

@@ -192,6 +192,18 @@
                             <span>Contact Messages</span>
                         </a>
                     </li>
+                    <li class="{{ Request::is('superadmin/database*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.database.index') }}">
+                            <i class="fas fa-database"></i>
+                            <span>Database Management</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('superadmin/logs*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('superadmin.logs.index') }}">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Logs Management</span>
+                        </a>
+                    </li>
 
                     <!-- Package Management -->
                     {{-- <li class="menu-header">Package Management</li>
