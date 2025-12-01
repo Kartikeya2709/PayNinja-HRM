@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-    
+
     <section class="section">
             <div class="section-header">
                 <h1>My Attendance </h1>
@@ -52,10 +52,10 @@
                                     <td>
                                         @if($attendance->check_in)
                                             {{ \Carbon\Carbon::parse($attendance->check_in)->format('h:i:s A') }}
-                                         
+
                                             @if($attendance->check_in_location)
-                                                <i class="bi bi-geo-alt-fill text-primary ms-1" 
-                                                   data-bs-toggle="tooltip" 
+                                                <i class="bi bi-geo-alt-fill text-primary ms-1"
+                                                   data-bs-toggle="tooltip"
                                                    title="{{ $attendance->check_in_location }}"></i>
                                             @endif
                                         @else
@@ -66,8 +66,8 @@
                                         @if($attendance->check_out)
                                             {{ \Carbon\Carbon::parse($attendance->check_out)->format('h:i:s A') }}
                                             @if($attendance->check_out_location)
-                                                <i class="bi bi-geo-alt-fill text-primary ms-1" 
-                                                   data-bs-toggle="tooltip" 
+                                                <i class="bi bi-geo-alt-fill text-primary ms-1"
+                                                   data-bs-toggle="tooltip"
                                                    title="{{ $attendance->check_out_location }}"></i>
                                             @endif
                                         @else
@@ -75,11 +75,11 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <span class="badge bg-{{ 
-                                            $attendance->status === 'Present' ? 'success' : 
-                                            ($attendance->status === 'Absent' ? 'danger' : 
-                                            ($attendance->status === 'Late' ? 'warning' : 
-                                            ($attendance->status === 'On Leave' ? 'info' : 'secondary'))) 
+                                        <span class="badge bg-{{
+                                            $attendance->status === 'Present' ? 'success' :
+                                            ($attendance->status === 'Absent' ? 'danger' :
+                                            ($attendance->status === 'Late' ? 'warning' :
+                                            ($attendance->status === 'On Leave' ? 'info' : 'secondary')))
                                         }}">
                                             {{ $attendance->status }}
                                         </span>
@@ -150,7 +150,7 @@
 <!-- Monthly Summary -->
 <div class="row mt-4 month-summary-row">
     <div class="col-8 px-1">
-    
+
         <div class="card">
             <div class="justify-content-center text-center">
                 <h5 class="mb-0">Monthly Summary - {{ \Carbon\Carbon::parse($month ?? now())->format('F Y') }}</h5>
@@ -158,7 +158,7 @@
             <div class="card-body">
                 <div class="row text-center mt-2 monthly-summary">
                     <!-- <div class="col-md-3 mb-3">
-                        <div class="card bg-primary text-white">                    
+                        <div class="card bg-primary text-white">
                             <div class="card-body">
                                 <h6 class="card-title">Working Days</h6>
                                 <h2>{{ $monthlySummary['total_days'] ?? 0 }}</h2>
@@ -220,8 +220,8 @@
                             </div>
                         </div>
                     </div>
-              
-                
+
+
                     <div class="col-md-4 px-1">
                         <div class="card action-icon month-sum text-white">
                             <div class="card-body d-flex align-items-center">
@@ -276,13 +276,13 @@
                                 @php
                                     $workingDays = $monthlySummary['total_working_days'] ?? 0;
                                     $daysWorked = $monthlySummary['days_worked'] ?? 0;
-                                    $attendanceRate = $workingDays > 0 ? ($daysWorked / $workingDays) * 100 : 0;
+                                    $attendanceRate = $workingDays > 0 ? min(100, ($daysWorked / $workingDays) * 100) : 0;
                                 @endphp
                                 <div class="progress" style="height: 30px;">
-                                    <div class="progress-bar bg-success" role="progressbar" 
-                                         style="width: {{ $attendanceRate }}%;" 
-                                         aria-valuenow="{{ $attendanceRate }}" 
-                                         aria-valuemin="0" 
+                                    <div class="progress-bar bg-success" role="progressbar"
+                                         style="width: {{ $attendanceRate }}%;"
+                                         aria-valuenow="{{ $attendanceRate }}"
+                                         aria-valuemin="0"
                                          aria-valuemax="100">
                                         {{ number_format($attendanceRate, 1) }}%
                                     </div>
