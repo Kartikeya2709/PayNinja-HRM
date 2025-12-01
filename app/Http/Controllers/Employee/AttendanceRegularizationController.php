@@ -19,69 +19,146 @@ class AttendanceRegularizationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $employee = Auth::user()->employee;
-        $is_company_admin = Auth::user()->hasRole('company_admin');
+        $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name', 'company_admin');
+
+        // Get filter parameters
+        $filters = [
+            'from_date' => $request->get('from_date'),
+            'to_date' => $request->get('to_date'),
+            'status' => $request->get('status'),
+            'employee_id' => $request->get('employee_id'),
+            'month' => $request->get('month'),
+            'year' => $request->get('year'),
+            'search' => $request->get('search'),
+        ];
 
         // Company admin can see all requests for their company
         if ($is_company_admin) {
-            $pending_requests = AttendanceRegularization::where('status', '=', 'pending')
-                ->whereHas('employee', function($q) use ($employee) {
-                    $q->where('company_id', $employee->company_id);
-                })
-                ->with('employee', 'approver')
-                ->latest()
-                ->paginate(10, ['*'], 'pending_page');
+            $pending_requests = $this->buildFilteredQuery($employee, 'pending', $filters, true);
+            $approved_requests = $this->buildFilteredQuery($employee, 'approved', $filters, true);
+            $rejected_requests = $this->buildFilteredQuery($employee, 'rejected', $filters, true);
 
-            $approved_requests = AttendanceRegularization::where('status', '=', 'approved')
-                ->whereHas('employee', function($q) use ($employee) {
-                    $q->where('company_id', $employee->company_id);
-                })
-                ->with('employee', 'approver')
-                ->latest()
-                ->paginate(10, ['*'], 'approved_page');
+            // Get employees for filter dropdown
+            $employees = Employee::where('company_id', $employee->company_id)
+                ->select('id', 'name', 'employee_code')
+                ->orderBy('name')
+                ->get();
 
-            $rejected_requests = AttendanceRegularization::where('status', '=', 'rejected')
-                ->whereHas('employee', function($q) use ($employee) {
-                    $q->where('company_id', $employee->company_id);
-                })
-                ->with('employee', 'approver')
-                ->latest()
-                ->paginate(10, ['*'], 'rejected_page');
-
-            return view('employee.regularization.index', compact('pending_requests', 'approved_requests', 'rejected_requests'));
+            return view('employee.regularization.index', compact(
+                'pending_requests',
+                'approved_requests',
+                'rejected_requests',
+                'employees',
+                'filters'
+            ));
         }
         // Manager can see their team's requests
         elseif (is_null($employee->reporting_manager_id)) {
-            $pending_requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
-                ->where('status', '=', 'pending')
-                ->with('employee', 'approver')
-                ->latest()
-                ->paginate(10, ['*'], 'pending_page');
+            $pending_requests = $this->buildFilteredQuery($employee, 'pending', $filters, false);
+            $approved_requests = $this->buildFilteredQuery($employee, 'approved', $filters, false);
+            $rejected_requests = $this->buildFilteredQuery($employee, 'rejected', $filters, false);
 
-            $approved_requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
-                ->where('status', '=', 'approved')
-                ->with('employee', 'approver')
-                ->latest()
-                ->paginate(10, ['*'], 'approved_page');
+            // Get team employees for filter dropdown
+            $employees = Employee::where('reporting_manager_id', $employee->id)
+                ->select('id', 'name', 'employee_code')
+                ->orderBy('name')
+                ->get();
 
-            $rejected_requests = AttendanceRegularization::where('reporting_manager_id', $employee->id)
-                ->where('status', '=', 'rejected')
-                ->with('employee', 'approver')
-                ->latest()
-                ->paginate(10, ['*'], 'rejected_page');
-
-            return view('employee.regularization.index', compact('pending_requests', 'approved_requests', 'rejected_requests'));
+            return view('employee.regularization.index', compact(
+                'pending_requests',
+                'approved_requests',
+                'rejected_requests',
+                'employees',
+                'filters'
+            ));
         }
         // Regular employees can see their own requests
         else {
-            $requests = $employee->attendanceRegularizations()
-                ->with('employee', 'approver')
-                ->latest()
-                ->paginate(10);
-            return view('employee.regularization.index', compact('requests'));
+            $requests = $this->buildFilteredQueryForEmployee($employee, $filters);
+            return view('employee.regularization.index', compact('requests', 'filters'));
         }
+    }
+
+    /**
+     * Build filtered query for company admins and managers
+     */
+    private function buildFilteredQuery($employee, $status, $filters, $isCompanyAdmin = false)
+    {
+        $query = AttendanceRegularization::where('status', $status)
+            ->with('employee', 'approver');
+
+        if ($isCompanyAdmin) {
+            $query->whereHas('employee', function($q) use ($employee) {
+                $q->where('company_id', $employee->company_id);
+            });
+        } else {
+            $query->where('reporting_manager_id', $employee->id);
+        }
+
+        // Apply filters
+        $query = $this->applyCommonFilters($query, $filters);
+
+        return $query->latest()->paginate(10, ['*'], $status . '_page');
+    }
+
+    /**
+     * Build filtered query for regular employees
+     */
+    private function buildFilteredQueryForEmployee($employee, $filters)
+    {
+        $query = $employee->attendanceRegularizations()
+            ->with('employee', 'approver');
+
+        // Apply filters
+        $query = $this->applyCommonFilters($query, $filters);
+
+        return $query->latest()->paginate(10);
+    }
+
+    /**
+     * Apply common filters to query
+     */
+    private function applyCommonFilters($query, $filters)
+    {
+        // Date range filter
+        if (!empty($filters['from_date']) && !empty($filters['to_date'])) {
+            $query->whereBetween('date', [
+                Carbon::parse($filters['from_date'])->startOfDay(),
+                Carbon::parse($filters['to_date'])->endOfDay()
+            ]);
+        }
+
+        // Month and year filter
+        if (!empty($filters['month']) && !empty($filters['year'])) {
+            $query->whereMonth('date', $filters['month'])
+                  ->whereYear('date', $filters['year']);
+        } elseif (!empty($filters['month'])) {
+            $query->whereMonth('date', $filters['month']);
+        } elseif (!empty($filters['year'])) {
+            $query->whereYear('date', $filters['year']);
+        }
+
+        // Employee filter (for managers/admins)
+        if (!empty($filters['employee_id'])) {
+            $query->where('employee_id', $filters['employee_id']);
+        }
+
+        // Search filter
+        if (!empty($filters['search'])) {
+            $searchTerm = '%' . $filters['search'] . '%';
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('reason', 'like', $searchTerm)
+                  ->orWhereHas('employee', function($q) use ($searchTerm) {
+                      $q->where('name', 'like', $searchTerm)
+                        ->orWhere('employee_code', 'like', $searchTerm);
+                  });
+            });
+        }
+
+        return $query;
     }
 
     /**
@@ -120,12 +197,13 @@ class AttendanceRegularizationController extends Controller
 
         $validator = Validator::make($request->all(), [
             'entries' => 'required|array|max:5',
-            'entries.*.date' => 'required|date|before_or_equal:today',
+            'entries.*.date' => 'required|date|before:today',
             'entries.*.check_in' => 'required|date_format:H:i|after_or_equal:' . $officeStart->format('H:i').'|before_or_equal:' . $officeEnd->format('H:i'),
             'entries.*.check_out' => 'required|date_format:H:i|after_or_equal:entries.*.check_in|before_or_equal:' . $maxCheckout->format('H:i'),
             'entries.*.reason' => 'required|string',
         ], [
             'entries.*.check_in.required' => 'Check-in time is required.',
+            'entries.*.date.before' => 'Date is required should be a day before today only.',
             'entries.*.check_out.required' => 'Check-out time is required.',
             'entries.*.check_in.before_or_equal' => 'Check-in time must be on or before ' . $officeEnd->format('H:i') . '.',
             'entries.*.check_out.after_or_equal' => 'Check-out time must be after check-in time.',
@@ -196,7 +274,7 @@ class AttendanceRegularizationController extends Controller
     {
         $regularizationRequest = AttendanceRegularization::findOrFail($id);
         $employee = Auth::user()->employee;
-        $is_company_admin = Auth::user()->hasRole('company_admin');
+        $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name', 'company_admin');
 
         // Check if user has permission to update this request
         if (!$is_company_admin && $regularizationRequest->reporting_manager_id !== $employee->id) {
@@ -253,7 +331,7 @@ class AttendanceRegularizationController extends Controller
     public function bulkUpdate(Request $request)
     {
         $employee = Auth::user()->employee;
-        $is_company_admin = Auth::user()->hasRole('company_admin');
+        $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name', 'company_admin');
 
         $validator = Validator::make($request->all(), [
             'request_ids' => 'required|array',
