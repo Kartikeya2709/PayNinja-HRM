@@ -15,7 +15,7 @@ use App\Http\Controllers\API\EmployeeEndPoints\TeamController;
 use App\Http\Controllers\API\EmployeeEndPoints\FieldVisitController;
 use App\Http\Controllers\API\EmployeeEndPoints\ResignationController;
 use App\Http\Controllers\API\ContactMessageController;
-use App\Http\Controllers\API\DemoRequestController; 
+use App\Http\Controllers\API\DemoRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,11 +47,11 @@ Route::prefix('v1')->group(function () {
 
         // Attendance Management
         Route::prefix('attendance')->group(function () {
-            Route::get('/history', [AttendanceController::class, 'getAttendanceHistory']);
-            Route::get('/check-in-out', [AttendanceController::class, 'getAttendanceSettingsAndToday']);
-            Route::post('/check-in', [AttendanceController::class, 'checkIn']);
-            Route::post('/validate-location', [AttendanceController::class, 'validateLocation']);
-            Route::post('/check-out', [AttendanceController::class, 'checkOut']);
+            Route::get('/history', [AttendanceController::class, 'getAttendanceHistory'])->middleware('check.attendance.access');
+            Route::get('/check-in-out', [AttendanceController::class, 'getAttendanceSettingsAndToday'])->middleware('check.attendance.access');
+            Route::post('/check-in', [AttendanceController::class, 'checkIn'])->middleware('check.attendance.access');
+            Route::post('/validate-location', [AttendanceController::class, 'validateLocation'])->middleware('check.attendance.access');
+            Route::post('/check-out', [AttendanceController::class, 'checkOut'])->middleware('check.attendance.access');
 
             // Regularization
             Route::get('/regularization', [AttendanceRegularizationController::class, 'getRegularizationRequests']);
@@ -65,9 +65,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/requests', [LeaveController::class, 'getLeaveRequests']);
             Route::post('/apply', [LeaveController::class, 'applyLeave']);
             Route::post('/{id}/cancel', [LeaveController::class, 'cancelLeave']);
-        }); 
-  
-        // Announcements 
+        });
+
+        // Announcements
         Route::prefix('announcements')->group(function () {
             Route::get('/', [AnnouncementController::class, 'getAnnouncements']);
             Route::get('/{id}', [AnnouncementController::class, 'getAnnouncement']);

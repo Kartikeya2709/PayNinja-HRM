@@ -118,10 +118,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/export-pdf', [EmployeeAttendanceController::class, 'exportAttendancePdf'])->name('exportPdf');
 
         // API endpoints for check-in/out
-        Route::post('/check-in', [EmployeeAttendanceController::class, 'checkIn'])->name('check-in.post');
-        Route::post('/check-out', [EmployeeAttendanceController::class, 'checkOut'])->name('check-out.post');
-        Route::get('/summary', [EmployeeAttendanceController::class, 'myAttendanceSummary'])->name('summary');
-        Route::get('/check-location', [EmployeeAttendanceController::class, 'checkLocation'])->name('check-location');
+        Route::post('/check-in', [EmployeeAttendanceController::class, 'checkIn'])->name('check-in.post')->middleware('check.attendance.access');
+        Route::post('/check-out', [EmployeeAttendanceController::class, 'checkOut'])->name('check-out.post')->middleware('check.attendance.access');
+        Route::get('/summary', [EmployeeAttendanceController::class, 'myAttendanceSummary'])->name('summary')->middleware('check.attendance.access');
+        Route::get('/check-location', [EmployeeAttendanceController::class, 'checkLocation'])->name('check-location')->middleware('check.attendance.access');
 
         // Get geolocation settings
         Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])

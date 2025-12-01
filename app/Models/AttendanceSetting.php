@@ -23,6 +23,7 @@ class AttendanceSetting extends Model
         'office_latitude',
         'office_longitude',
         'geofence_radius',
+        'checkin_methods',
         'created_by',
     ];
 
@@ -40,20 +41,21 @@ class AttendanceSetting extends Model
         'office_latitude' => 'float',
         'office_longitude' => 'float',
         'geofence_radius' => 'integer',
+        'checkin_methods' => 'string',
     ];
-    
+
     // Default values for the model
     protected $attributes = [
         'office_start_time' => '09:00:00',
         'office_end_time' => '18:00:00',
         'work_hours' => 8,
         'grace_period' => '00:15:00',
-    
-     'enable_geolocation' => false,
+        'enable_geolocation' => false,
         'geofence_radius' => 100,
+        'checkin_methods' => 'both',
     ];
 
-    
+
     // Relationship for departments exempted from geolocation
     public function exemptedDepartments()
     {
@@ -84,7 +86,7 @@ class AttendanceSetting extends Model
 
         return false;
     }
-       
+
     public function company()
     {
         return $this->belongsTo(Company::class);
