@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
             'ensure.company' => \App\Http\Middleware\EnsureCompanyAccess::class,
+            'check.attendance.access' => \App\Http\Middleware\CheckAttendanceAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -48,13 +49,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         // Master attendance scheduler - runs all attendance commands in order
         // $schedule->command('attendance:run-all')
-        //     ->dailyAt('19:00')  
+        //     ->dailyAt('19:00')
         //     // ->everyMinute()
         //     ->timezone('Asia/Kolkata')
         //     ->withoutOverlapping()
         //     ->appendOutputTo(storage_path('logs/attendance.log'))
         //     ->description('Run all attendance marking commands in order');
-    
+
 
 
         // Testing Purpose only
@@ -67,7 +68,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //     // ->withoutOverlapping()
         //     // // ->appendOutputTo(storage_path('logs/attendance.log'))
         //     ->description('Run all attendance marking commands in order');
-    
+
         $schedule->call(function () {
             // Log internally (Laravel log)
             \Log::info('✅ Attendance cron triggered at: ' . now()->toDateTimeString());
@@ -110,7 +111,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //     ->timezone('Asia/Kolkata')
         //     ->withoutOverlapping()
         //     ->appendOutputTo(storage_path('logs/attendance.log'));
-    
+
 
 
         // $schedule->command('attendance:mark-leaves')
@@ -119,13 +120,13 @@ return Application::configure(basePath: dirname(__DIR__))
         //     ->timezone('Asia/Kolkata')
         //     ->withoutOverlapping()
         //     ->appendOutputTo(storage_path('logs/schedule.log'));
-    
+
         // $schedule->command('attendance:mark-absent')
         //     ->dailyAt('00:05')  // Run at 12:05 AM
         //     ->timezone('Asia/Kolkata')
         //     ->withoutOverlapping()
         //     ->appendOutputTo(storage_path('logs/schedule.log'));
-    
+
         // // Mark weekends as weekoff - run daily at 12:10 AM
         // $schedule->command('attendance:mark-weekend --date=tomorrow')
         //     ->dailyAt('00:10')

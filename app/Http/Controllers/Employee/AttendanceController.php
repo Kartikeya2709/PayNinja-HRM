@@ -37,7 +37,7 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $employee = $user->employee;
-        
+
         if (!$employee) {
             return redirect()->route('home')->with('error', 'Employee record not found.');
         }
@@ -105,7 +105,7 @@ class AttendanceController extends Controller
             'isExemptFromGeolocation' => $isExemptFromGeolocation,
         ]);
     }
-    
+
     /**
      * Get geolocation settings for the attendance system
      *
@@ -115,14 +115,14 @@ class AttendanceController extends Controller
     {
         try {
             $settings = $this->attendanceService->getAttendanceSettings();
-            
+
             if (!$settings) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Attendance settings not found.'
                 ], 404);
             }
-            
+
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -133,7 +133,7 @@ class AttendanceController extends Controller
                     'track_location' => (bool) $settings->track_location
                 ]
             ]);
-            
+
         } catch (\Exception $e) {
             \Log::error('Failed to get geolocation settings: ' . $e->getMessage());
             return response()->json([
@@ -170,7 +170,7 @@ class AttendanceController extends Controller
 
         $user = Auth::user();
         $employee = $user->employee;
-        
+
         if (!$employee) {
             return response()->json([
                 'success' => false,
@@ -208,23 +208,38 @@ class AttendanceController extends Controller
         try {
             $user = Auth::user();
             $employee = $user->employee;
-            
+
             if (!$employee) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Employee record not found.'
                 ], 404);
             }
-            
+
+            // Get attendance settings
+            $settings = $this->attendanceService->getAttendanceSettings();
+
+            if (!$settings) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Attendance settings not configured'
+                ], 500);
+            }
+
+            // Check if web access is allowed
+            if ($settings->checkin_methods === 'app') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Check-in/out is only allowed through mobile app'
+                ], 403);
+            }
+
             // Get geolocation data
             $latitude = $request->input('latitude');
             $longitude = $request->input('longitude');
             $location = $request->input('location');
             $remarks = $request->input('remarks');
-            
-            // Get attendance settings
-            $settings = $this->attendanceService->getAttendanceSettings();
-            
+
             // If location is provided as a string ("lat,lng"), parse it
             if (!$latitude && !$longitude && $location && strpos($location, ',') !== false) {
                 list($latitude, $longitude) = explode(',', $location, 2);
@@ -238,7 +253,7 @@ class AttendanceController extends Controller
                     'message' => 'Location is required for check-in. Please enable location services.'
                 ], 400);
             }
-            
+
             // If geolocation is provided, validate it
             if ($settings->enable_geolocation && $latitude && $longitude) {
                 // Check if employee is exempt from geolocation validation
@@ -260,7 +275,7 @@ class AttendanceController extends Controller
                         (float)$longitude,
                         $employee->id
                     );
-                    
+
                     if (!$locationCheck['success']) {
                         return response()->json([
                             'success' => false,
@@ -268,7 +283,7 @@ class AttendanceController extends Controller
                             'error_type' => 'location_validation_failed'
                         ], 400);
                     }
-                    
+
                     // Use reverse geocoded address if no location provided
                     if (empty($location) && !empty($locationCheck['address'])) {
                         $location = $locationCheck['address'];
@@ -280,16 +295,16 @@ class AttendanceController extends Controller
                     ]);
                 }
             }
-            
+
             // Call the service to handle check-in
             $result = $this->attendanceService->checkIn(
-                $employee, 
-                $location, 
-                $latitude, 
+                $employee,
+                $location,
+                $latitude,
                 $longitude,
                 $remarks
             );
-            
+
             if ($result['success']) {
                 return response()->json([
                     'success' => true,
@@ -297,18 +312,18 @@ class AttendanceController extends Controller
                     'attendance' => $result['attendance']
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
                 'error_type' => $result['error_type'] ?? 'check_in_failed'
             ], 400);
-            
+
         } catch (\Exception $e) {
             \Log::error('Check-in error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while processing your check-in. Please try again.',
@@ -328,30 +343,30 @@ class AttendanceController extends Controller
         try {
             $user = Auth::user();
             $employee = $user->employee;
-            
+
             if (!$employee) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Employee record not found.'
                 ], 404);
             }
-            
+
             // Get geolocation data
             $latitude = $request->input('latitude');
             $longitude = $request->input('longitude');
             $location = $request->input('location');
             $remarks = $request->input('remarks');
-            
+
             // Get attendance settings
             $settings = $this->attendanceService->getAttendanceSettings();
-            
+
             // If location is provided as a string ("lat,lng"), parse it
             if (!$latitude && !$longitude && $location && strpos($location, ',') !== false) {
                 list($latitude, $longitude) = explode(',', $location, 2);
                 $latitude = trim($latitude);
                 $longitude = trim($longitude);
             }
-            
+
             // If geolocation is required but not provided
             if ($settings->enable_geolocation && (!$latitude || !$longitude)) {
                 return response()->json([
@@ -359,7 +374,7 @@ class AttendanceController extends Controller
                     'message' => 'Location is required for check-out. Please enable location services.'
                 ], 400);
             }
-            
+
             // If geolocation is provided, validate it
             if ($settings->enable_geolocation && $latitude && $longitude) {
                 // Check if employee is exempt from geolocation validation
@@ -381,7 +396,7 @@ class AttendanceController extends Controller
                         (float)$longitude,
                         $employee->id
                     );
-                    
+
                     if (!$locationCheck['success']) {
                         return response()->json([
                             'success' => false,
@@ -389,7 +404,7 @@ class AttendanceController extends Controller
                             'error_type' => 'location_validation_failed'
                         ], 400);
                     }
-                    
+
                     // Use reverse geocoded address if no location provided
                     if (empty($location) && !empty($locationCheck['address'])) {
                         $location = $locationCheck['address'];
@@ -401,16 +416,16 @@ class AttendanceController extends Controller
                     ]);
                 }
             }
-            
+
             // Call the service to handle check-out
             $result = $this->attendanceService->checkOut(
-                $employee, 
-                $location, 
-                $latitude, 
+                $employee,
+                $location,
+                $latitude,
                 $longitude,
                 $remarks
             );
-            
+
             if ($result['success']) {
                 return response()->json([
                     'success' => true,
@@ -418,18 +433,18 @@ class AttendanceController extends Controller
                     'attendance' => $result['attendance']
                 ]);
             }
-            
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
                 'error_type' => $result['error_type'] ?? 'check_out_failed'
             ], 400);
-            
+
         } catch (\Exception $e) {
             \Log::error('Check-out error: ' . $e->getMessage(), [
                 'trace' => $e->getTraceAsString()
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while processing your check-out. Please try again.',
@@ -453,7 +468,7 @@ class AttendanceController extends Controller
                 'attendance' => $result['attendance']
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
             'message' => $result['message']
@@ -470,27 +485,27 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $employee = $user->employee;
-        
+
         if (!$employee) {
             return redirect()->route('home')->with('error', 'Employee record not found.');
         }
 
         $month = $request->input('month', now()->format('Y-m'));
-        
+
         $attendances = $employee->attendances()
             ->whereYear('date', '=', date('Y', strtotime($month)))
             ->whereMonth('date', '=', date('m', strtotime($month)))
             ->orderBy('date', 'desc')
             ->paginate(15);
-            
+
         // Get monthly summary for the chart
         $monthlySummary = $this->attendanceService->getMonthlySummary($employee->id, $month);
-        
+
         // Get all dates in the month for the chart
         $startDate = Carbon::parse($month)->startOfMonth();
         $endDate = Carbon::parse($month)->endOfMonth();
         $dates = collect();
-        
+
         while ($startDate->lte($endDate)) {
             $dates->push($startDate->copy());
             $startDate->addDay();
@@ -522,7 +537,7 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $employee = $user->employee;
-        
+
         if (!$employee) {
             return response()->json([
                 'success' => false,
@@ -531,7 +546,7 @@ class AttendanceController extends Controller
         }
 
         $currentMonth = now()->format('Y-m');
-        
+
         $summary = $this->attendanceService->getMonthlySummary($employee->id, $currentMonth);
 
         return response()->json([
@@ -550,13 +565,13 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $employee = $user->employee;
-        
+
         if (!$employee) {
             return redirect()->route('home')->with('error', 'Employee record not found.');
         }
 
         $month = $request->input('month', now()->format('Y-m'));
-        
+
         $attendances = $employee->attendances()
             ->whereYear('date', '=', date('Y', strtotime($month)))
             ->whereMonth('date', '=', date('m', strtotime($month)))
@@ -564,7 +579,7 @@ class AttendanceController extends Controller
             ->get();
 
         $fileName = 'attendance_' . str_replace('-', '_', $month) . '.xlsx';
-        
+
         return Excel::download(new AttendanceExport($attendances, $month), $fileName);
     }
 
@@ -578,21 +593,21 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
         $employee = $user->employee;
-        
+
         if (!$employee) {
             return redirect()->route('home')->with('error', 'Employee record not found.');
         }
 
         $month = $request->input('month', now()->format('Y-m'));
-        
+
         $attendances = $employee->attendances()
             ->whereYear('date', '=', date('Y', strtotime($month)))
             ->whereMonth('date', '=', date('m', strtotime($month)))
             ->orderBy('date')
             ->get();
-            
+
         $monthlySummary = $this->attendanceService->getMonthlySummary($employee->id, $month);
-    
+
     // Get holiday count for the month
     $holidayCount = $attendances->where('status', 'Holiday')->count();
     $monthlySummary['holiday'] = $holidayCount;
@@ -604,9 +619,9 @@ class AttendanceController extends Controller
         'monthlySummary' => $monthlySummary,
         'holidayCount' => $holidayCount
     ]);
-        
+
         $fileName = 'attendance_' . str_replace('-', '_', $month) . '.pdf';
-        
+
         return $pdf->download($fileName);
     }
 }

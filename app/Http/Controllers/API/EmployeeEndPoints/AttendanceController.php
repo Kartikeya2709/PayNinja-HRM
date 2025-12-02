@@ -204,6 +204,7 @@ class AttendanceController extends BaseApiController
                         'office_latitude' => $settings->office_latitude,
                         'office_longitude' => $settings->office_longitude,
                         'geofence_radius' => $settings->geofence_radius,
+                        'checkin_methods' => $settings->checkin_methods,
                         'weekend_days' => $settings->weekend_days,
                         'allow_multiple_check_in' => $settings->allow_multiple_check_in,
                         'track_location' => $settings->track_location
@@ -308,8 +309,8 @@ class AttendanceController extends BaseApiController
 
             // Validate location using AttendanceService
             $result = $this->attendanceService->validateLocation(
-                $latitude, 
-                $longitude, 
+                $latitude,
+                $longitude,
                 $employee->id
             );
 

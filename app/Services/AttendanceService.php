@@ -25,13 +25,13 @@ class AttendanceService
     {
         $this->companyId = $companyId;
     }
-    
+
     /**
      * Get office timings from settings
      */
     /**
      * Get attendance settings with geolocation info
-     * 
+     *
      * @param int $companyId The company ID to get settings for
      * @return object|null
      */
@@ -60,7 +60,7 @@ class AttendanceService
         if (!$settings) {
             return null;
         }
-        
+
         // Format times to ensure they're in H:i:s format
         $formatTime = function($time) {
             if (empty($time)) return '00:00:00';
@@ -70,7 +70,7 @@ class AttendanceService
             }
             return $time;
         };
-        
+
         return (object) [
             'office_start_time' => $formatTime($settings->office_start_time),
             'office_end_time' => $formatTime($settings->office_end_time),
@@ -81,17 +81,18 @@ class AttendanceService
             'office_latitude' => $settings->office_latitude ? (float) $settings->office_latitude : null,
             'office_longitude' => $settings->office_longitude ? (float) $settings->office_longitude : null,
             'geofence_radius' => (int) $settings->geofence_radius,
-            'weekend_days' => is_string($settings->weekend_days) 
-                ? json_decode($settings->weekend_days, true) ?? [] 
+            'checkin_methods' => $settings->checkin_methods,
+            'weekend_days' => is_string($settings->weekend_days)
+                ? json_decode($settings->weekend_days, true) ?? []
                 : (is_array($settings->weekend_days) ? $settings->weekend_days : []),
             'allow_multiple_check_in' => (bool) $settings->allow_multiple_check_in,
             'track_location' => (bool) $settings->track_location
         ];
     }
-    
+
     /**
      * Check if location is within allowed radius
-     * 
+     *
      * @param float $userLat User's latitude
      * @param float $userLng User's longitude
      * @param float $officeLat Office latitude
@@ -108,37 +109,37 @@ class AttendanceService
                 'message' => 'Invalid coordinates provided.'
             ];
         }
-        
+
         $earthRadius = 6371000; // Earth's radius in meters
-        
+
         // Convert degrees to radians
         $lat1 = deg2rad($userLat);
         $lon1 = deg2rad($userLng);
         $lat2 = deg2rad($officeLat);
         $lon2 = deg2rad($officeLng);
-        
+
         // Haversine formula
         $dlat = $lat2 - $lat1;
         $dlon = $lon2 - $lon1;
-        
+
         $a = sin($dlat / 2) * sin($dlat / 2) +
              cos($lat1) * cos($lat2) *
              sin($dlon / 2) * sin($dlon / 2);
-             
+
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
         $distance = $earthRadius * $c;
-        
+
         $isWithin = $distance <= $radiusMeters;
-        
+
         return [
             'success' => $isWithin,
             'distance' => round($distance, 2),
-            'message' => $isWithin 
+            'message' => $isWithin
                 ? 'You are within the allowed area.'
                 : 'You are ' . round($distance - $radiusMeters, 2) . ' meters outside the allowed area.'
         ];
     }
-    
+
     /**
      * Get office timings (for backward compatibility)
      */
@@ -163,7 +164,7 @@ class AttendanceService
     public function validateLocation($latitude, $longitude, $employeeId = null)
     {
         $settings = $this->getAttendanceSettings();
-        
+
         // Determine exemption using the Eloquent model, not the stdClass returned by getAttendanceSettings
         $isExempt = false;
         if ($employeeId) {
@@ -189,7 +190,7 @@ class AttendanceService
                 'message' => 'employee is exempted'
             ];
         }
-        
+
         // Check if office coordinates are set
         if (!$settings->office_latitude || !$settings->office_longitude) {
             return [
@@ -198,7 +199,7 @@ class AttendanceService
                 'message' => 'Office location is not configured. Please contact your administrator.'
             ];
         }
-        
+
         // Check if within allowed radius
         $result = $this->isWithinAllowedRadius(
             $latitude,
@@ -207,7 +208,7 @@ class AttendanceService
             $settings->office_longitude,
             $settings->geofence_radius
         );
-        
+
         // Try to get address if within allowed area
         $address = null;
         if ($result['success']) {
@@ -217,7 +218,7 @@ class AttendanceService
                 \Log::warning('Failed to get address from coordinates: ' . $e->getMessage());
             }
         }
-        
+
         return [
             'success' => $result['success'],
             'within_allowed_area' => $result['success'],
@@ -226,10 +227,10 @@ class AttendanceService
             'address' => $address
         ];
     }
-    
+
     /**
      * Get human-readable address from coordinates using reverse geocoding
-     * 
+     *
      * @param float $latitude
      * @param float $longitude
      * @return string|null
@@ -253,9 +254,9 @@ class AttendanceService
                 'api_key' => $apiKey,
                 'language' => 'en'
             ]);
-            
+
             $fullUrl = $url . '?' . $params;
-            
+
             // Initialize cURL for better error handling
             $ch = curl_init();
             curl_setopt_array($ch, [
@@ -269,36 +270,36 @@ class AttendanceService
                     'User-Agent: PayNinja-HRM/1.0'
                 ]
             ]);
-            
+
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             $error = curl_error($ch);
             curl_close($ch);
-            
+
             if ($error) {
                 \Log::error('OLA Maps cURL error: ' . $error);
                 return null;
             }
-            
+
             if ($httpCode !== 200) {
                 \Log::warning('OLA Maps API returned HTTP code: ' . $httpCode);
                 return null;
             }
-            
+
             $data = json_decode($response, true);
-            
+
             // Check for successful response
             if ($data && $data['status'] === 'ok' && !empty($data['results'][0]['formatted_address'])) {
                 return $data['results'][0]['formatted_address'];
             }
-            
+
             // Log unexpected response format
             \Log::warning('OLA Maps API response format unexpected', [
                 'response' => $data,
                 'latitude' => $latitude,
                 'longitude' => $longitude
             ]);
-            
+
         } catch (\Exception $e) {
             \Log::error('OLA Maps reverse geocoding failed: ' . $e->getMessage(), [
                 'latitude' => $latitude,
@@ -306,10 +307,10 @@ class AttendanceService
                 'trace' => $e->getTraceAsString()
             ]);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Record employee check-in with optional geolocation
      *
@@ -327,7 +328,7 @@ class AttendanceService
         $now = now($timezone);
         $today = $now->toDateString();
         $currentTime = $now->format('H:i:s');
-        
+
         \Log::info('Starting check-in process', [
             'employee_id' => $employee->id,
             'time' => $now->toDateTimeString(),
@@ -349,7 +350,7 @@ class AttendanceService
         $existingAttendance = Attendance::where('employee_id', $employee->id)
             ->whereDate('date', $today)
             ->first();
-            
+
         if ($existingAttendance) {
             return [
                 'success' => false,
@@ -361,7 +362,7 @@ class AttendanceService
 
         // Get attendance settings
         $settings = $this->getAttendanceSettings();
-        
+
         // Check geolocation if enabled
         if ($settings->enable_geolocation) {
             // If employee is exempt, we still require coordinates but skip radius enforcement
@@ -382,16 +383,16 @@ class AttendanceService
                     'message' => 'Location is required for check-in'
                 ];
             }
-            
+
             if (!$isExempt) {
                 $locationCheck = $this->isWithinAllowedRadius(
-                    $userLat, 
-                    $userLng, 
-                    $settings->office_latitude, 
-                    $settings->office_longitude, 
+                    $userLat,
+                    $userLng,
+                    $settings->office_latitude,
+                    $settings->office_longitude,
                     $settings->geofence_radius
                 );
-                
+
                 if (!$locationCheck['success']) {
                     return [
                         'success' => false,
@@ -399,24 +400,24 @@ class AttendanceService
                     ];
                 }
             }
-            
+
             // Store the exact location with coordinates
             $location = $location ?: "$userLat,$userLng";
         }
-        
+
         // Parse office timings with timezone
         $officeStart = Carbon::parse($today . ' ' . $settings->office_start_time, $timezone);
         $officeEnd = Carbon::parse($today . ' ' . $settings->office_end_time, $timezone);
-        
+
         \Log::debug('Office timings', [
             'office_start' => $officeStart->toDateTimeString(),
             'office_end' => $officeEnd->toDateTimeString(),
             'grace_period' => $settings->grace_period
         ]);
-        
+
         // Define earliest check-in time (30 minutes before office start)
         $earliestCheckIn = (clone $officeStart)->subMinutes(30);
-        
+
         // Check if current time is before earliest allowed check-in
         if ($now->lt($earliestCheckIn)) {
             return [
@@ -425,7 +426,7 @@ class AttendanceService
                 'error_type' => 'too_early'
             ];
         }
-        
+
         // Check if current time is after office end time
         if ($now->gt($officeEnd)) {
             return [
@@ -434,11 +435,11 @@ class AttendanceService
                 'error_type' => 'after_hours'
             ];
         }
-        
+
         // Parse grace period (format: i:s, e.g., 15:00 for 15 minutes)
         $graceMinutes = $this->parseGracePeriodToMinutes($settings->grace_period);
         $graceEnd = (clone $officeStart)->addMinutes($graceMinutes);
-        
+
         // Debug log all timing information
         \Log::debug('Timing details', [
             'office_start' => $officeStart->toDateTimeString(),
@@ -453,62 +454,62 @@ class AttendanceService
             'office_end_time' => $officeEnd->format('H:i:s')
         ]);
 
-        
+
         // Check if it's a holiday or academic holiday
         $isHoliday = $this->isHoliday($today);
         $isAcademicHoliday = $this->isAcademicHoliday($today, $employee->company_id);
-        
+
         if ($isAcademicHoliday) {
             $holidayName = $this->getHolidayName($today, $employee->company_id);
-            
+
             return [
                 'success' => false,
                 'message' => "Check-ins are not allowed on Holiday : $holidayName",
                 'error_type' => 'holiday_checkin'
             ];
         }
-        
+
         // Check if it's a weekend
         $todayDay = strtolower($now->format('l'));
-        $weekendDays = is_array($settings->weekend_days) 
+        $weekendDays = is_array($settings->weekend_days)
             ? array_map('strtolower', $settings->weekend_days)
             : [];
-            
+
         // if (in_array($todayDay, $weekendDays)) {
-            
+
         //     return [
         //         'success' => false,
         //         'message' => 'Check-ins are not allowed on weekends.',
         //         'error_type' => 'weekend_checkin'
         //     ];
         // }
-        
+
         // Initialize status and remarks
         $status = 'Present';
         $checkInStatus = 'On Time';
         $remarks = $remarks ?: '';
-        
+
         // Grace period already calculated above
-        
+
         // Check if check-in is before office start time (within 30 minutes)
         if ($now->lt($officeStart) && $now->gte($earliestCheckIn)) {
             $checkInStatus = 'Early';
             $status = 'Present';
             $earlyMinutes = $officeStart->diffInMinutes($now);
             $remarks = "Checked in {$earlyMinutes} minutes early. " . $remarks;
-            
+
             \Log::info('Early check-in detected', [
                 'minutes_early' => $earlyMinutes,
                 'check_in_time' => $now->toTimeString(),
                 'office_start' => $officeStart->toTimeString()
             ]);
-        } 
+        }
         // Check if check-in is at or after office start but before grace period ends
         elseif ($now->gte($officeStart) && $now->lte($graceEnd)) {
             $checkInStatus = 'On Time';
             $status = 'Present';
             $remarks = 'Checked in on time. ' . $remarks;
-            
+
             \Log::info('On-time check-in', [
                 'check_in_time' => $now->toTimeString(),
                 'office_start' => $officeStart->toTimeString(),
@@ -521,7 +522,7 @@ class AttendanceService
             $status = 'Late';
             $lateMinutes = $now->diffInMinutes($graceEnd);
             $remarks = "Late by {$lateMinutes} minutes. " . $remarks;
-            
+
             \Log::warning('Late check-in detected', [
                 'minutes_late' => $lateMinutes,
                 'check_in_time' => $now->toTimeString(),
@@ -544,33 +545,33 @@ class AttendanceService
             'created_at' => $now,
             'updated_at' => $now
         ];
-        
+
         // Add geolocation data if available
         if ($userLat && $userLng) {
             $checkInData['check_in_latitude'] = $userLat;
             $checkInData['check_in_longitude'] = $userLng;
         }
-        
+
         try {
             $attendance = Attendance::create($checkInData);
-            
+
             // Log the check-in
             $this->logAttendanceAction($employee, 'Check In', $location);
-            
+
             \Log::info('Check-in successful', [
                 'attendance_id' => $attendance->id,
                 'status' => $status,
                 'check_in_status' => $checkInStatus,
                 'check_in_time' => $attendance->check_in
             ]);
-            
+
             return [
                 'success' => true,
                 'message' => 'Checked in successfully!',
                 'attendance' => $attendance,
                 'check_in_status' => $checkInStatus
             ];
-            
+
         } catch (\Exception $e) {
             \Log::error('Check-in failed', [
                 'employee_id' => $employee->id,
@@ -578,7 +579,7 @@ class AttendanceService
                 'trace' => $e->getTraceAsString(),
                 'check_in_data' => $checkInData ?? null
             ]);
-            
+
             return [
                 'success' => false,
                 'message' => 'Failed to save check-in. Please try again.',
@@ -603,13 +604,13 @@ class AttendanceService
     {
         $today = now()->format('Y-m-d');
         $now = now();
-        
+
         try {
             // Check if already checked out today
             $attendance = Attendance::where('employee_id', $employee->id)
                 ->whereDate('date', $today)
                 ->first();
-                
+
             if (!$attendance) {
                 return [
                     'success' => false,
@@ -617,7 +618,7 @@ class AttendanceService
                     'error_type' => 'no_check_in'
                 ];
             }
-            
+
             // Check if already checked out
             if ($attendance->check_out) {
                 return [
@@ -627,10 +628,10 @@ class AttendanceService
                     'attendance' => $attendance
                 ];
             }
-            
+
             // Get attendance settings
             $settings = $this->getAttendanceSettings();
-            
+
             // Check geolocation if enabled
             if ($settings->enable_geolocation) {
                 // If employee is exempt, still require coordinates but skip radius enforcement
@@ -651,16 +652,16 @@ class AttendanceService
                         'message' => 'Location is required for check-out'
                     ];
                 }
-                
+
                 if (!$isExempt) {
                     $locationCheck = $this->isWithinAllowedRadius(
-                        $userLat, 
-                        $userLng, 
-                        $settings->office_latitude, 
-                        $settings->office_longitude, 
+                        $userLat,
+                        $userLng,
+                        $settings->office_latitude,
+                        $settings->office_longitude,
                         $settings->geofence_radius
                     );
-                    
+
                     if (!$locationCheck['success']) {
                         return [
                             'success' => false,
@@ -668,31 +669,31 @@ class AttendanceService
                         ];
                     }
                 }
-                
+
                 // Store the exact location with coordinates
                 $location = $location ?: "$userLat,$userLng";
             }
-            
+
             // Prepare check-out data
             $checkOutData = [
                 'check_out' => $now->format('H:i:s'),
                 'check_out_location' => $location,
                 'status' => $this->determineCheckOutStatus($attendance, $now)
             ];
-            
+
             // Add remarks if provided
             if ($remarks) {
-                $checkOutData['remarks'] = $attendance->remarks 
-                    ? $attendance->remarks . ' ' . $remarks 
+                $checkOutData['remarks'] = $attendance->remarks
+                    ? $attendance->remarks . ' ' . $remarks
                     : $remarks;
             }
-            
+
             // Add geolocation data if available
             if ($userLat && $userLng) {
                 $checkOutData['check_out_latitude'] = $userLat;
                 $checkOutData['check_out_longitude'] = $userLng;
             }
-            
+
             $attendance->update($checkOutData);
 
             // Log the check-out
@@ -705,7 +706,7 @@ class AttendanceService
             ];
         } catch (\Exception $e) {
             \Log::error('Check-out failed: ' . $e->getMessage());
-            
+
             return [
                 'success' => false,
                 'message' => 'Check-out failed: ' . $e->getMessage()
@@ -722,18 +723,18 @@ class AttendanceService
         $officeTimings = $this->getOfficeTimings();
         $checkOut = Carbon::parse($checkOutTime);
         $checkIn = Carbon::parse($attendance->check_in);
-        
+
         // Calculate expected check-out time based on check-in + work hours
         $expectedCheckOut = (clone $checkIn)->addHours($officeTimings->work_hours);
-        
+
         // If checking out before completing work hours, mark as Half Day
         if ($checkOut->lt($expectedCheckOut)) {
             return 'Half Day';
         }
-        
+
         // Original grace period logic remains for backward compatibility
         $officeEnd = Carbon::parse($checkOut->toDateString() . ' ' . $officeTimings->office_end_time);
-        
+
         // Parse grace period (H:i:s) into a DateInterval
         $graceParts = explode(':', $officeTimings->grace_period);
         $graceInterval = new \DateInterval(sprintf(
@@ -742,21 +743,21 @@ class AttendanceService
             $graceParts[1],
             $graceParts[2] ?? 0
         ));
-        
+
         // Calculate grace end time
         $graceEnd = (clone $officeEnd)->add($graceInterval);
-        
+
         // If checking out before grace period ends, it's on time
         if ($checkOut->lt($graceEnd)) {
             return $attendance->status; // Keep the original status (Present/Late)
         }
-        
+
         // If checking out after grace period, check if it's a half day based on hours worked
         $hoursWorked = $checkOut->diffInHours($checkIn);
         if ($hoursWorked < ($officeTimings->work_hours / 2)) {
             return 'Half Day';
         }
-        
+
         return $attendance->status;
     }
 
@@ -776,7 +777,7 @@ class AttendanceService
 
     /**
      * Get monthly attendance summary for an employee
-     * 
+     *
      * @param int $employeeId
      * @param string|null $month Format: Y-m
      * @return array
@@ -823,19 +824,19 @@ class AttendanceService
         $weekOffDays = 0;
         $currentDate = $startDate->copy();
         $dayDetails = [];
-        
+
         // First pass: Calculate working days and week-offs based on calendar
         while ($currentDate->lte($endDate)) {
             $dayOfWeek = strtolower($currentDate->format('l'));
             $dateStr = $currentDate->toDateString();
             $isWeekend = false;
             $dayType = 'working_day';
-            
+
             // Check if it's a regular weekend day
             if (in_array(ucfirst($dayOfWeek), $weekendDays)) {
                 $isWeekend = true;
             }
-            
+
             // Check special patterns (saturday_1_3, saturday_2_4, etc.)
             foreach ($weekendDays as $pattern) {
                 if (strpos($pattern, '_') !== false) {
@@ -850,10 +851,10 @@ class AttendanceService
                     }
                 }
             }
-            
+
             // Check if there's an attendance record for this date
             $attendance = $attendances->firstWhere('date', $dateStr);
-            
+
             if ($isWeekend) {
                 $dayType = 'week_off';
                 // Only count as week-off if it's explicitly marked as 'Week-Off' in the database
@@ -865,13 +866,13 @@ class AttendanceService
             } else {
                 $workingDays++;
             }
-            
+
             $dayDetails[] = [
                 'date' => $currentDate->toDateString(),
                 'day_of_week' => ucfirst($dayOfWeek),
                 'type' => $dayType
             ];
-            
+
             $currentDate->addDay();
         }
 
@@ -915,7 +916,7 @@ class AttendanceService
 
     /**
      * Mark absent employees for a given date
-     * 
+     *
      * @param string|null $date Date to mark absences for (Y-m-d)
      * @return int Number of employees marked as absent
      */
@@ -928,21 +929,21 @@ class AttendanceService
 
         // Get all unique company IDs that have employees
         $companyIds = Employee::distinct()->pluck('company_id');
-        
+
         // If no companies found, return early
         if ($companyIds->isEmpty()) {
             \Log::info('No companies found with employees, skipping auto-absence marking');
             return 0;
         }
-        
+
         $markedAbsent = 0;
         $absentNames = [];
-        
+
         // Process each company separately
         foreach ($companyIds as $companyId) {
             // Get settings for this company
             $settings = $this->getAttendanceSettings($companyId);
-            
+
             // Skip if no settings found for company or auto_absent_time not set
             if (!$settings || empty($settings->auto_absent_time)) {
                 \Log::info('Skipping auto-absence - no settings for company', [
@@ -950,10 +951,10 @@ class AttendanceService
                 ]);
                 continue;
             }
-            
+
             // Parse the auto absent time for this company
             $autoAbsentDateTime = Carbon::parse($dateString . ' ' . $settings->auto_absent_time);
-            
+
             // If current time is before auto absent time, don't mark anyone as absent yet
             if ($now->lt($autoAbsentDateTime)) {
                 \Log::info('Current time is before auto absent time, skipping auto-absence marking for company', [
@@ -963,25 +964,25 @@ class AttendanceService
                 ]);
                 continue;
             }
-            
+
             // Don't mark absences on weekends or holidays for this company
             if ($this->isWeekend($date)) {
                 continue;
             }
-            
+
             if ($this->isHoliday($date)) {
                 continue;
             }
-            
+
             // Get employees who didn't check in for this company
             $employees = Employee::where('company_id', $companyId)
                 ->whereDoesntHave('attendances', function($query) use ($dateString) {
                     $query->where('date', $dateString);
                 })
                 ->get();
-                
+
             $companyMarkedAbsent = 0;
-                
+
             foreach ($employees as $employee) {
                 // Skip resigned employees
                 if ($this->isEmployeeResigned($employee, $dateString)) {
@@ -1001,7 +1002,7 @@ class AttendanceService
                             ->whereDate('start_date', '<=', $dateString)
                             ->whereDate('end_date', '>=', $dateString)
                             ->first();
-                            
+
                         if ($leaveRequest) {
                             Attendance::create([
                                 'employee_id' => $employee->id,
@@ -1016,7 +1017,7 @@ class AttendanceService
                                 'created_at' => $now,
                                 'updated_at' => $now
                             ]);
-                            
+
                             \Log::info('Marked employee as on leave', [
                                 'employee_id' => $employee->id,
                                 'date' => $dateString,
@@ -1059,7 +1060,7 @@ class AttendanceService
                         'date' => $dateString,
                         'auto_absent_time' => $settings->auto_absent_time
                     ]);
-                    
+
                 } catch (\Exception $e) {
                     \Log::error('Failed to mark employee as absent', [
                         'employee_id' => $employee->id,
@@ -1070,7 +1071,7 @@ class AttendanceService
                     ]);
                 }
             }
-            
+
             // Log summary for this company
             \Log::info('Finished processing auto-absence for company', [
                 'company_id' => $companyId,
@@ -1079,7 +1080,7 @@ class AttendanceService
                 'marked_absent' => $companyMarkedAbsent
             ]);
         }
-        
+
         return [
             'count' => $markedAbsent,
             'names' => $absentNames,
@@ -1122,7 +1123,7 @@ class AttendanceService
             if (in_array('saturday_1_3', $weekendDays) && in_array($saturdayOfMonth, [1, 3])) {
                 return true;
             }
-            
+
             // 2nd and 4th Saturday off
             if (in_array('saturday_2_4', $weekendDays) && in_array($saturdayOfMonth, [2, 4])) {
                 return true;
@@ -1142,7 +1143,7 @@ class AttendanceService
      */
     /**
      * Parse grace period string (H:i:s) to minutes
-     * 
+     *
      * @param string $gracePeriod
      * @return int
      */
@@ -1152,15 +1153,15 @@ class AttendanceService
         if (is_numeric($gracePeriod)) {
             return (int)$gracePeriod;
         }
-        
+
         // Handle i:s format (e.g., 15:00 for 15 minutes)
         $parts = array_map('intval', explode(':', $gracePeriod));
-        
+
         // If format is i:s (2 parts)
         if (count($parts) === 2) {
             return $parts[0]; // Return just the minutes part
         }
-        
+
         // If it's a single number, assume it's minutes
         return (int)$gracePeriod;
     }
@@ -1203,7 +1204,7 @@ class AttendanceService
     {
         $date = is_string($date) ? Carbon::parse($date) : $date;
         $dateString = $date->toDateString();
-        
+
         // Check if there's an approved leave request that covers this date
         return $employee->leaveRequests()
             ->where('status', 'approved')
@@ -1212,12 +1213,12 @@ class AttendanceService
                       ->whereDate('end_date', '>=', $dateString);
             })
             ->exists();
-         
+
     }
 
     /**
      * Get holiday name for a specific date and company
-     * 
+     *
      * @param string|\Carbon\Carbon $date
      * @param int $companyId
      * @return string
@@ -1226,24 +1227,24 @@ class AttendanceService
     {
         $date = is_string($date) ? Carbon::parse($date) : $date;
         $dateString = $date->toDateString();
-        
+
         $holiday = \App\Models\Holiday::where('company_id', $companyId)
             ->whereDate('date', $dateString)
             ->first();
-        
+
         if ($holiday) {
             return $holiday->name;
         }
-        
+
         $academicHoliday = \App\Models\AcademicHoliday::where('company_id', $companyId)
             ->whereDate('from_date', '<=', $dateString)
             ->whereDate('to_date', '>=', $dateString)
             ->first();
-        
+
         return $academicHoliday ? $academicHoliday->name : 'Holiday';
-         
+
     }
-    
+
     /**
      * Check if a date is an academic holiday
      *
@@ -1255,7 +1256,7 @@ class AttendanceService
     {
         $date = is_string($date) ? Carbon::parse($date) : $date;
         $dateString = $date->toDateString();
-        
+
         return \App\Models\AcademicHoliday::where('company_id', $companyId)
             ->whereDate('from_date', '<=', $dateString)
             ->whereDate('to_date', '>=', $dateString)

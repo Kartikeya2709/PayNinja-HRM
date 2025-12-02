@@ -114,7 +114,7 @@ class AttendanceRegularizationController extends BaseApiController
 
             // log::info('Office Start: ' . $officeStart->format('H:i') . ', Office End: ' . $officeEnd->format('H:i') . ', Max Checkout: ' . $maxCheckout->format('H:i'));
             $validator = Validator::make($request->all(), [
-                'date' => 'required|date|before_or_equal:today',
+                'date' => 'required|date|before:today',
                 'check_in' => 'required|after_or_equal:' . $officeStart->format('H:i') . '|before_or_equal:' . $officeEnd->format('H:i'),
                 'check_out' => 'required|after_or_equal:check_in|before_or_equal:' . $maxCheckout->format('H:i'),
                 'reason' => 'required|string'

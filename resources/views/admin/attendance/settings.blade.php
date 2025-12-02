@@ -37,7 +37,7 @@
                 <div class="card-body">
                     <form action="{{ route('admin-attendance.settings.update') }}" method="POST" id="attendance-settings-form" enctype="multipart/form-data">
                         @csrf
-                        
+
                         <div class="row mb-4">
                             <div class="col-md-12">
                                 <div class="form-group mb-0">
@@ -75,7 +75,7 @@
         $officeStart = '09:00';
     }
 @endphp
-                                            <input type="time" class="form-control" id="office_start_time" 
+                                            <input type="time" class="form-control" id="office_start_time"
                                                    name="office_start_time" step="300"
                                                    value="{{ $officeStart }}" required>
                                         </div>
@@ -97,7 +97,7 @@
         $officeEnd = '18:00';
     }
 @endphp
-                                            <input type="time" class="form-control" id="office_end_time" 
+                                            <input type="time" class="form-control" id="office_end_time"
                                                    name="office_end_time" step="300"
                                                    value="{{ $officeEnd }}" required>
                                         </div>
@@ -108,7 +108,7 @@
                                         <div class="form-group">
                                             <label for="work_hours" class="form-label fw-medium">Minimum Work Hours (per day)</label>
                                             <div class="input-group mb-2">
-                                                <input type="number" class="form-control" id="work_hours" 
+                                                <input type="number" class="form-control" id="work_hours"
                                                        name="work_hours" min="1" max="24" step="0.5"
                                                        value="{{ old('work_hours', $settings ? $settings->work_hours : 8) }}" required>
                                                 <span class="input-group-text">hours</span>
@@ -133,7 +133,7 @@
                                                     $gracePeriod = '00:15';
                                                 }
                                             @endphp
-                                            <input type="time" class="form-control mb-2" id="grace_period" 
+                                            <input type="time" class="form-control mb-2" id="grace_period"
                                                    name="grace_period" step="300"
                                                    value="{{ $gracePeriod }}" required>
                                             <small class="text-muted">Allowed late arrival time (e.g., 00:15)</small>
@@ -158,7 +158,7 @@
         $autoAbsentTime = '18:00';
     }
 @endphp
-                                            <input type="time" class="form-control mb-2" id="auto_absent_time" 
+                                            <input type="time" class="form-control mb-2" id="auto_absent_time"
                                                    name="auto_absent_time" step="300"
                                                    value="{{ $autoAbsentTime }}" required>
                                             <small class="form-text text-muted">Time after which employees will be marked as absent if not checked in (e.g., 11:00)</small>
@@ -178,8 +178,8 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-check form-switch mb-3">
-                                            <input class="form-check-input" type="checkbox" id="allow_multiple_check_in" 
-                                                   name="allow_multiple_check_in" value="1" 
+                                            <input class="form-check-input" type="checkbox" id="allow_multiple_check_in"
+                                                   name="allow_multiple_check_in" value="1"
                                                    {{ old('allow_multiple_check_in', $settings->allow_multiple_check_in ?? false) ? 'checked' : '' }}>
                                             <label class="form-check-label fw-medium" for="allow_multiple_check_in">
                                                 Allow Multiple Check-ins
@@ -191,7 +191,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-check form-switch mb-3">
-                                            <input class="form-check-input" type="checkbox" id="track_location" 
+                                            <input class="form-check-input" type="checkbox" id="track_location"
                                                    name="track_location" value="1"
                                                    {{ isset($settings) && $settings->track_location ? 'checked' : '' }}>
                                             <label class="form-check-label fw-medium" for="track_location">
@@ -212,7 +212,7 @@
                             <div class="card-header bg-light d-flex justify-content-between align-items-center  atdnc-stng">
                                 <h6 class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Geolocation Settings</h6>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="enable_geolocation" 
+                                    <input class="form-check-input" type="checkbox" id="enable_geolocation"
                                            name="enable_geolocation" value="1"
                                            {{ isset($settings) && $settings->enable_geolocation ? 'checked' : '' }}>
                                     <label class="form-check-label fw-medium" for="enable_geolocation">
@@ -230,7 +230,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group mb-3">
                                                 <label for="office_latitude" class="form-label">Office Latitude</label>
-                                                <input type="number" step="0.000001" class="form-control" id="office_latitude" 
+                                                <input type="number" step="0.000001" class="form-control" id="office_latitude"
                                                        name="office_latitude" value="{{ $settings->office_latitude ?? '' }}"
                                                        {{ isset($settings) && $settings->enable_geolocation ? 'required' : '' }}>
                                                 <small class="text-muted">e.g., 28.6139</small>
@@ -239,7 +239,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group mb-3">
                                                 <label for="office_longitude" class="form-label">Office Longitude</label>
-                                                <input type="number" step="0.000001" class="form-control" id="office_longitude" 
+                                                <input type="number" step="0.000001" class="form-control" id="office_longitude"
                                                        name="office_longitude" value="{{ $settings->office_longitude ?? '' }}"
                                                        {{ isset($settings) && $settings->enable_geolocation ? 'required' : '' }}>
                                                 <small class="text-muted">e.g., 77.2090</small>
@@ -250,8 +250,8 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <label for="geofence_radius" class="form-label">Allowed Radius (meters)</label>
-                                                <input type="range" class="form-range" id="geofence_radius" 
-                                                       name="geofence_radius" min="20" max="1000" step="10" 
+                                                <input type="range" class="form-range" id="geofence_radius"
+                                                       name="geofence_radius" min="20" max="1000" step="10"
                                                        value="{{ $settings->geofence_radius ?? 100 }}"
                                                        {{ isset($settings) && $settings->enable_geolocation ? 'required' : '' }}>
                                                 <div class="d-flex justify-content-between">
@@ -267,7 +267,7 @@
                                             </button>
                                         </div>
                                     </div>
-                                   
+
                                     <!-- Map Container -->
                                     <div class="mb-3">
                                         <div id="map" style="height: 300px; width: 100%; border: 1px solid #dee2e6; border-radius: 4px;"></div>
@@ -289,7 +289,7 @@
                                                 <label class="form-label">Exempt Departments</label>
                                                 <select class="form-control select2" name="exempted_departments[]" multiple id="exempted_departments">
                                                     @foreach($departments as $department)
-                                                        <option value="{{ $department->id }}" 
+                                                        <option value="{{ $department->id }}"
                                                             {{ isset($settings) && $settings->exemptedDepartments->contains($department->id) ? 'selected' : '' }}>
                                                             {{ $department->name }}
                                                         </option>
@@ -345,10 +345,10 @@
                                     @foreach(['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as $day)
                                         <div class="col-md-3 col-6 mb-2">
                                             <div class="form-check">
-                                                <input class="form-check-input weekend-day" 
-                                                       type="checkbox" 
-                                                       name="weekend_days[]" 
-                                                       value="{{ $day }}" 
+                                                <input class="form-check-input weekend-day"
+                                                       type="checkbox"
+                                                       name="weekend_days[]"
+                                                       value="{{ $day }}"
                                                        id="weekend_{{ strtolower($day) }}"
                                                        {{ in_array($day, $weekendDays) ? 'checked' : '' }}>
                                                 <label class="form-check-label" for="weekend_{{ strtolower($day) }}">
@@ -383,6 +383,57 @@
                             </div>
                         </div>
                         <!-- End Weekend Settings Section -->
+
+                        <!-- Check-in Methods Section -->
+                        <div class="card mb-4 px-0 py-0">
+                            <div class="card-header bg-light atdnc-stng">
+                                <h6 class="mb-0"><i class="fas fa-mobile-alt me-2"></i>Check-in/Out Methods</h6>
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted mb-3">Select which platforms employees can use for check-in/out:</p>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="form-label fw-medium">Allowed Check-in Methods</label>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                               name="checkin_methods" value="app" id="checkin_app"
+                                                               {{ old('checkin_methods', $settings->checkin_methods ?? 'both') == 'app' ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="checkin_app">
+                                                            <i class="fas fa-mobile-alt me-2"></i> App Only
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                               name="checkin_methods" value="web" id="checkin_web"
+                                                               {{ old('checkin_methods', $settings->checkin_methods ?? 'both') == 'web' ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="checkin_web">
+                                                            <i class="fas fa-desktop me-2"></i> Web Only
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio"
+                                                               name="checkin_methods" value="both" id="checkin_both"
+                                                               {{ old('checkin_methods', $settings->checkin_methods ?? 'both') == 'both' ? 'checked' : '' }}>
+                                                        <label class="form-check-label" for="checkin_both">
+                                                            <i class="fas fa-arrows-alt me-2"></i> Both App & Web
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <small class="text-muted">This setting controls which platforms employees can use to check in and out</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Check-in Methods Section -->
 
                         <!-- Form Actions -->
                         <div class="d-flex justify-content-end mt-4">
@@ -421,7 +472,7 @@
 
 <script>
     let myMap, marker, circle;
-    
+
     const getLocationBtn = document.getElementById('get-location');
     const latitudeInput = document.getElementById('office_latitude');
     const longitudeInput = document.getElementById('office_longitude');
@@ -437,7 +488,7 @@
 
     function setLocation(defaultLocation) {
         console.log('Setting location:', defaultLocation);
-        
+
         myMap = olaMaps.init({
             style: "https://api.olamaps.io/tiles/vector/v1/styles/default-light-standard/style.json",
             container: 'map',
@@ -456,7 +507,7 @@
             marker.on('drag', () => {
                 const lngLat = marker.getLngLat();
                 console.log('Marker dragged to:', lngLat);
-                
+
                 // Update the input fields with the new coordinates
                 latitudeInput.value = lngLat.lat.toFixed(6);
                 longitudeInput.value = lngLat.lng.toFixed(6);
@@ -470,7 +521,7 @@
             marker.on('dragend', () => {
                 const lngLat = marker.getLngLat();
                 console.log('Marker drag ended at:', lngLat);
-                
+
                 // Update the input fields with the final coordinates
                 latitudeInput.value = lngLat.lat.toFixed(6);
                 longitudeInput.value = lngLat.lng.toFixed(6);
@@ -481,10 +532,10 @@
             });
         });
     }
-    
+
     // Initialize map with default location
     setLocation(defaultLocation);
-    
+
     // Handle get location button click
     if (getLocationBtn) {
         getLocationBtn.addEventListener('click', function() {
@@ -495,7 +546,7 @@
 
             const button = this;
             const originalText = button.innerHTML;
-            
+
             button.disabled = true;
             button.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Getting location...';
 
@@ -504,20 +555,20 @@
                     // Success callback
                     const lat = position.coords.latitude;
                     const lng = position.coords.longitude;
-                    
+
                     console.log('Got current location:', { lat, lng });
-                    
+
                     // Update input fields
                     latitudeInput.value = lat.toFixed(6);
                     longitudeInput.value = lng.toFixed(6);
-                    
+
                     // Update map
                     const newPosition = [lng, lat]; // Ola Maps uses [longitude, latitude]
                     if (marker && myMap) {
                         marker.setLngLat(newPosition);
                         myMap.setCenter(newPosition);
                     }
-                    
+
                     button.disabled = false;
                     button.innerHTML = originalText;
                 },
@@ -703,13 +754,13 @@
         function filterEmployeesByDepartments() {
             const selectedDepartments = $('#exempted_departments').val() || [];
             const employeeSelect = $('#exempted_employees');
-            
+
             console.log('Filtering employees for departments:', selectedDepartments);
-            
+
             // Get currently selected employees to preserve them
             const currentlySelected = employeeSelect.val() || [];
             console.log('Currently selected employees:', currentlySelected);
-            
+
             if (selectedDepartments.length === 0) {
                 // If no departments selected, enable all employees
                 console.log('No departments selected, enabling all employees');
@@ -717,7 +768,7 @@
             } else {
                 // Disable all employees first
                 employeeSelect.find('option').prop('disabled', true);
-                
+
                 // Enable only employees from selected departments
                 let enabledCount = 0;
                 employeeSelect.find('option').each(function() {
@@ -729,14 +780,14 @@
                 });
                 console.log('Enabled', enabledCount, 'employees from selected departments');
             }
-            
+
             // Remove any selected employees that are now disabled
             const validSelections = currentlySelected.filter(function(value) {
                 return !employeeSelect.find('option[value="' + value + '"]').prop('disabled');
             });
-            
+
             console.log('Valid selections after filtering:', validSelections);
-            
+
             // Update selections
             employeeSelect.val(validSelections).trigger('change');
         }
@@ -749,7 +800,7 @@
             console.log('Department selection changed:', $(this).val());
             filterEmployeesByDepartments();
         });
-        
+
         // Also listen for select2 events
         $('#exempted_departments').on('select2:select select2:unselect', function() {
             console.log('Department select2 event triggered:', $(this).val());

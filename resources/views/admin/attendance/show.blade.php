@@ -13,7 +13,7 @@
         </div>
     <div class="row attendance-setting">
         <div class="col-12">
-           
+
                 <div class="card-header">
                 <div class="d-flex justify-content-between align-items-center px-2 py-2">
                     <h5 class="card-title mb-0">Attendance Settings</h5>
@@ -99,18 +99,18 @@
                                                     <span class="badge bg-secondary">Disabled</span>
                                                 @endif
                                             </dd>
-                                            
+
                                             @if($settings->enable_geolocation && $settings->office_latitude && $settings->office_longitude)
                                                 <dt class="col-sm-5">Office Location:</dt>
                                                 <dd class="col-sm-7">
                                                     {{ $settings->office_latitude }}, {{ $settings->office_longitude }}
                                                 </dd>
-                                                
+
                                                 <dt class="col-sm-5">Geofence Radius:</dt>
                                                 <dd class="col-sm-7">
                                                     {{ $settings->geofence_radius }} meters
                                                 </dd>
-                                                
+
                                                 <div class="mt-3">
                                                     <div id="map" style="height: 200px; width: 100%;"></div>
                                                 </div>
@@ -126,7 +126,7 @@
                                     <div class="card-header bg-light">
                                         <h6 class="mb-0">Weekend Days</h6>
                                     </div>
-                                    
+
                                     <div class="card-body">
                                         <dl class="row mb-0">
                                             <dt class="col-sm-5">Weekend Days:</dt>
@@ -149,12 +149,44 @@
                                                 @else
                                                     <span class="text-muted">No weekend days in this period</span>
                                                 @endif
-                                            </dd>   
+                                            </dd>
                                         </dl>
                                     </div>
                                 </div>
                             </div>
 
+                            <!-- Check-in Methods -->
+                            <div class="col-md-12 mt-4">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Check-in Methods</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <dl class="row mb-0">
+                                            <dt class="col-sm-5">Allowed Check-in Methods:</dt>
+                                            <dd class="col-sm-7">
+                                                @php
+                                                    $checkinMethods = $settings->checkin_methods ?? 'both';
+                                                    $methodLabels = [
+                                                        'app' => 'App Only',
+                                                        'web' => 'Web Only',
+                                                        'both' => 'Both App & Web'
+                                                    ];
+                                                    $methodIcons = [
+                                                        'app' => 'fas fa-mobile-alt',
+                                                        'web' => 'fas fa-desktop',
+                                                        'both' => 'fas fa-arrows-alt'
+                                                    ];
+                                                @endphp
+                                                <span class="badge badge-primary">
+                                                    <i class="{{ $methodIcons[$checkinMethods] ?? 'fas fa-question' }} me-1"></i>
+                                                    {{ $methodLabels[$checkinMethods] ?? 'Unknown' }}
+                                                </span>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
 
                              <!-- Exempted Departments -->
                              <div class="col-md-12 mt-4">
@@ -187,7 +219,7 @@
                                      <div class="card-header bg-light">
                                          <h6 class="mb-0">Exempted Employees</h6>
                                      </div>
-                             
+
                                      <div class="card-body">
                                          <dl class="row mb-0">
                                              <dt class="col-sm-5">Exempted Employees:</dt>
@@ -207,6 +239,9 @@
                                  </div>
                              </div>
 
+
+
+
                             <!-- Additional Settings -->
                             {{-- <div class="col-12 mt-4">
                                 <div class="card">
@@ -217,14 +252,14 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-check form-switch mb-3">
-                                                    <input class="form-check-input" type="checkbox" disabled 
+                                                    <input class="form-check-input" type="checkbox" disabled
                                                            {{ $settings->allow_multiple_check_in ? 'checked' : '' }}>
                                                     <label class="form-check-label">
                                                         Allow Multiple Check-ins
                                                     </label>
                                                 </div>
                                             </div>
-                                            
+
                                             <div class="col-md-4">
                                                 <div class="form-check form-switch mb-3">
                                                     <input class="form-check-input" type="checkbox" disabled
@@ -241,7 +276,7 @@
                         </div> --}}
                     @else
                         <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i> No attendance settings found. 
+                            <i class="fas fa-info-circle me-2"></i> No attendance settings found.
                             <a href="{{ route('admin.attendance.settings') }}" class="alert-link">
                                 Click here to configure settings
                             </a>
@@ -283,7 +318,7 @@
                     .addMarker({ offset: [0, -15], anchor: 'bottom', color: 'blue' })
                     .setLngLat(officeLocation)
                     .addTo(myMap);
-                
+
                 // Add geofence circle
                 olaMaps.addCircle({
                     center: officeLocation,

@@ -20,13 +20,13 @@ class AttendanceSettingController extends Controller
     public function index()
     {
         $companyId = Auth::user()->company_id;
-        
+
         // Only fetch settings for the current user's company
         $settings = AttendanceSetting::where('company_id', $companyId)
             ->latest('updated_at')
             ->withoutGlobalScopes()
             ->first();
-            
+
         // Set default values if settings don't exist
         if (!$settings) {
             $settings = new AttendanceSetting([
@@ -37,6 +37,7 @@ class AttendanceSettingController extends Controller
                 'office_latitude' => '28.629402',
                 'office_longitude' => '77.165363',
                 'geofence_radius' => 100,
+                'checkin_methods' => 'both',
                 'company_id' => $companyId,
                 'weekend_days' => json_encode(['Saturday', 'Sunday', 'saturday_1_3', 'saturday_2_4', 'saturday_1_3_5']),
                 'created_by' => Auth::id()
@@ -46,18 +47,18 @@ class AttendanceSettingController extends Controller
 
         // Only fetch the current company, not all companies
         $company = Company::findOrFail($companyId);
-        
+
         // Get all departments and employees for the company
         $departments = Department::where('company_id', $companyId)->get();
         $employees = Employee::where('company_id', $companyId)
             ->with('department') // Eager load department relationship
             ->get();
-        
+
         // Load existing exemptions if settings exist
         if ($settings) {
             $settings->load(['exemptedDepartments', 'exemptedEmployees']);
         }
-        
+
         return view('admin.attendance.settings', [
             'settings' => $settings,
             'company' => $company,
@@ -89,7 +90,7 @@ class AttendanceSettingController extends Controller
     public function show()
     {
         $companyId = Auth::user()->company_id;
-        
+
         // Only fetch settings for the current user's company
         $settings = AttendanceSetting::where('company_id', $companyId)
             ->with(['exemptedDepartments', 'exemptedEmployees'])
@@ -101,10 +102,10 @@ class AttendanceSettingController extends Controller
             return redirect()->route('admin-attendance.settings')
                 ->with('info', 'No attendance settings found. Please configure them first.');
         }
-        
+
         // Get the current company
         $company = Company::findOrFail($companyId);
-        
+
         return view('admin.attendance.show', [
             'settings' => $settings,
             'company' => $company
@@ -127,17 +128,17 @@ class AttendanceSettingController extends Controller
      */
     public function update(Request $request, $id = null)
     {
-        
+
         try {
             // Check if this is an AJAX request
             $isAjax = $request->ajax() || $request->wantsJson();
-            
+
             // Get the authenticated user's company ID
             $userCompanyId = Auth::user()->company_id;
-            
+
             // Prepare the data for validation
             $data = $request->all();
-            
+
             // Ensure the user can only update settings for their own company
             if (isset($data['company_id']) && $data['company_id'] != $userCompanyId) {
                 if ($isAjax) {
@@ -148,18 +149,18 @@ class AttendanceSettingController extends Controller
                 }
                 return redirect()->back()->with('error', 'Unauthorized: You can only update settings for your own company.');
             }
-            
+
             // Set the company_id to the user's company to prevent tampering
             $data['company_id'] = $userCompanyId;
             \Log::debug('Processed request data:', $data);
-            
+
             // Convert weekend_days from JSON string to array if needed
             if (isset($data['weekend_days'])) {
                 if (is_string($data['weekend_days'])) {
                     // Remove any escaping from the JSON string
                     $weekendDaysString = stripslashes($data['weekend_days']);
                     \Log::debug('weekend_days is a string, attempting to decode:', ['input' => $data['weekend_days'], 'stripped' => $weekendDaysString]);
-                    
+
                     $decoded = json_decode($weekendDaysString, true);
                     if (json_last_error() === JSON_ERROR_NONE) {
                         $data['weekend_days'] = $decoded;
@@ -177,10 +178,10 @@ class AttendanceSettingController extends Controller
             } else {
                 $data['weekend_days'] = [];
             }
-            
+
             // Log data before validation
             \Log::debug('Data before validation:', $data);
-            
+
             // Validate the request data
             $validator = \Validator::make($data, [
                 'company_id' => 'required|exists:companies,id',
@@ -195,6 +196,7 @@ class AttendanceSettingController extends Controller
                 'office_latitude' => 'nullable|required_if:enable_geolocation,1|numeric|between:-90,90',
                 'office_longitude' => 'nullable|required_if:enable_geolocation,1|numeric|between:-180,180',
                 'geofence_radius' => 'nullable|required_if:enable_geolocation,1|numeric|min:20|max:1000',
+                'checkin_methods' => 'required|in:app,web,both',
                 'weekend_days' => 'sometimes|array',
                 // Exemption fields
                 'exempted_departments' => 'sometimes|array',
@@ -216,13 +218,14 @@ class AttendanceSettingController extends Controller
                 'enable_geolocation',
                 'office_latitude',
                 'office_longitude',
-                'geofence_radius'
+                'geofence_radius',
+                'checkin_methods'
             ]);
-            
+
             $validated['allow_multiple_check_in'] = $request->boolean('allow_multiple_check_in');
             $validated['track_location'] = $request->boolean('track_location');
             $validated['enable_geolocation'] = $request->boolean('enable_geolocation');
-            
+
             // Handle geolocation settings
             if ($validated['enable_geolocation']) {
                 $validated['geofence_radius'] = min(max($request->input('geofence_radius', 100), 50), 1000);
@@ -233,17 +236,17 @@ class AttendanceSettingController extends Controller
                 $validated['office_longitude'] = null;
                 $validated['geofence_radius'] = 100;
             }
-            
+
             // Process weekend days - at this point it should already be an array from validation
             $validWeekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            
+
             // Ensure auto_absent_time is properly formatted
             if (!empty($validated['auto_absent_time']) && strpos($validated['auto_absent_time'], ':') !== false) {
                 $validated['auto_absent_time'] = \Carbon\Carbon::createFromFormat('H:i', $validated['auto_absent_time'])->format('H:i:s');
             }
-            
+
             \Log::debug('Processing weekend_days. Raw value:', ['value' => $validated['weekend_days'] ?? null]);
-            
+
             $validated['weekend_days'] = array_values(array_unique(
                 array_filter((array)($validated['weekend_days'] ?? []), function($day) use ($validWeekDays) {
                     $day = trim($day);
@@ -254,13 +257,13 @@ class AttendanceSettingController extends Controller
                     return $isValid;
                 })
             ));
-            
+
             \Log::debug('Processed weekend_days:', $validated['weekend_days']);
-            
+
             // Encode the array to JSON for storage
             $validated['weekend_days'] = json_encode($validated['weekend_days']);
             \Log::debug('Encoded weekend_days for storage:', ['encoded' => $validated['weekend_days']]);
-            
+
             // Set created_by if it's a new record
             if (empty($id)) {
                 $validated['created_by'] = Auth::id();
@@ -278,9 +281,9 @@ class AttendanceSettingController extends Controller
                 }
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
             $validated = $validator->validated();
-            
+
             // Process weekend days
             $validWeekDays = [
                 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
@@ -291,13 +294,13 @@ class AttendanceSettingController extends Controller
                     $day = trim($day);
                     return in_array($day, $validWeekDays);
                 })
-            ));     
+            ));
             // Encode the array to JSON for storage
             $validated['weekend_days'] = json_encode($validated['weekend_days']);
-            
+
             // Ensure we're only updating settings for the user's company
             $settings = null;
-            
+
             // Persist settings and sync exemptions in a transaction
             \DB::beginTransaction();
             try {
@@ -306,7 +309,7 @@ class AttendanceSettingController extends Controller
                     $settings = AttendanceSetting::where('id', $id)
                         ->where('company_id', $userCompanyId)
                         ->first();
-                        
+
                     if (!$settings) {
                         if ($isAjax) {
                             return response()->json([
@@ -316,7 +319,7 @@ class AttendanceSettingController extends Controller
                         }
                         return redirect()->back()->with('error', 'Settings not found or you do not have permission to update them.');
                     }
-                    
+
                     // Update existing settings
                     $settings->update($validated);
                     $settings->updated_by = Auth::id();
@@ -361,7 +364,7 @@ class AttendanceSettingController extends Controller
 
             return redirect()->route('admin-attendance.settings')
                 ->with('success', 'Office timings updated successfully');
-                
+
         } catch (\Illuminate\Validation\ValidationException $e) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -371,7 +374,7 @@ class AttendanceSettingController extends Controller
                 ], 422);
             }
             return redirect()->back()->withErrors($e->errors())->withInput();
-            
+
         } catch (\Exception $e) {
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
