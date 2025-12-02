@@ -27,7 +27,7 @@
                             <td><input type="checkbox" name="request_ids[]" value="{{ $request->id }}"></td>
                         @endif
                         <td>{{ $key + 1 }}</td>
-                        <td>{{ $request->employee->name }}</td>
+                        <td>{{ $request->employee->name ?? 'N/A' }}</td>
                         <td>{{ $request->date }}</td>
                         <td>{{ $request->check_in }}</td>
                         <td>{{ $request->check_out }}</td>
