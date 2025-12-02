@@ -48,7 +48,19 @@ class RoleController extends Controller
      */
     public function create()
     {
-        $slugs = Slug::with('children')->root()->orderBy('sort_order')->get();
+        // Fetch all slugs including those with is_visible=false
+        // Use withoutGlobalScopes to ensure no automatic filtering and explicitly include all children
+        $slugs = Slug::query()
+            ->withoutGlobalScopes()
+            ->root()
+            ->orderBy('sort_order')
+            ->get()
+            ->map(function ($slug) {
+                // Ensure all children are loaded regardless of visibility
+                $slug->setRelation('children', $slug->children()->withoutGlobalScopes()->orderBy('sort_order')->get());
+                return $slug;
+            });
+
         return view('superadmin.roles.create', compact('slugs'));
     }
 
@@ -107,7 +119,20 @@ class RoleController extends Controller
     public function edit(string $id)
     {
         $role = Role::findOrFail($id);
-        $slugs = Slug::with('children')->root()->orderBy('sort_order')->get();
+
+        // Fetch all slugs including those with is_visible=false
+        // Use withoutGlobalScopes to ensure no automatic filtering and explicitly include all children
+        $slugs = Slug::query()
+            ->withoutGlobalScopes()
+            ->root()
+            ->orderBy('sort_order')
+            ->get()
+            ->map(function ($slug) {
+                // Ensure all children are loaded regardless of visibility
+                $slug->setRelation('children', $slug->children()->withoutGlobalScopes()->orderBy('sort_order')->get());
+                return $slug;
+            });
+
         return view('superadmin.roles.edit', compact('role', 'slugs'));
     }
 

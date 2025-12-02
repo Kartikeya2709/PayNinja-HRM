@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Slug;
 
 class User extends Authenticatable
 {
@@ -33,7 +35,7 @@ class User extends Authenticatable
             $query->where('users.is_active', true);
         });
     }
-    
+
     /**
      * Get the user's role name.
      */
@@ -62,7 +64,7 @@ class User extends Authenticatable
         //         return $roleModel->name === $role;
         //     }
         // }
-        
+
         // Fallback to the old role string
         if (is_array($role)) {
             return in_array($this->role, $role);
@@ -143,7 +145,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Company::class);
     }
-    
+
     /**
      * Get the company through employee relationship
      */
@@ -177,6 +179,30 @@ class User extends Authenticatable
     public function getRoleModelAttribute()
     {
         return $this->roleModel;
+    }
+
+    public static function hasAccess($key, $slug = false) {
+        \Log::info("Checking access for key: " . $key . " with slug mode: " . ($slug ? 'true' : 'false'));
+        $logedIn_user       = Auth::user();
+        $role               = Role::find($logedIn_user->role_id);
+        $role_permissions   = $role->permissions ?? null;
+        if(!$role && !$role_permissions) {
+            abort('403', "You do have not permission to access the page.");
+        }
+        $accessList = array_keys(json_decode($role_permissions, true));
+        if($slug) {
+            if(in_array($key, $accessList)) {
+                return true;
+            }
+        } else {
+            $access_request = Slug::where('name', $key)->first();
+            if($access_request) {
+                if(in_array($access_request->slug, $accessList)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

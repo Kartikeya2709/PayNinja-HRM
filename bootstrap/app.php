@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
             'ensure.company' => \App\Http\Middleware\EnsureCompanyAccess::class,
             'check.attendance.access' => \App\Http\Middleware\CheckAttendanceAccess::class,
+            'checkAccess' => \App\Http\Middleware\checkAccess::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

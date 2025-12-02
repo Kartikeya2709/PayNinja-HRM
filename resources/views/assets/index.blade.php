@@ -13,9 +13,11 @@
                             <i class="fas fa-arrow-left"></i> Back to Dashboard
                         </a>
                         @endif
-                        <a href="{{ route('assets.create') }}" class="btn btn-primary">
-                            <i class="fas fa-plus"></i> Add Asset
-                        </a>
+                        @if(\App\Models\User::hasAccess('Asset Create'))
+                            <a href="{{ route('assets.create') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add Asset
+                            </a>
+                        @endif
                     </div>
                 </div>
                 <div class="card-body">

@@ -417,8 +417,8 @@ Route::middleware(['auth'])->group(function () {
         // Asset Management Routes
         Route::prefix('assets')->name('assets.')->group(function () {
             // Asset routes
-            Route::get('/index', [AssetController::class, 'index'])->name('index');
-            Route::get('/create', [AssetController::class, 'create'])->name('create');
+            Route::get('/index', [AssetController::class, 'index'])->name('index')->middleware('checkAccess');
+            Route::get('/create', [AssetController::class, 'create'])->name('create')->middleware('checkAccess');
             Route::post('/store', [AssetController::class, 'store'])->name('store');
             Route::get('/show/{asset}', [AssetController::class, 'show'])->name('show');
             Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');

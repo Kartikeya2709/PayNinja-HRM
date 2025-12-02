@@ -61,7 +61,7 @@
                                 <div class="form-group">
                                     <label for="purchase_date">Purchase Date</label>
                                     <input type="date" class="form-control @error('purchase_date') is-invalid @enderror"
-                                           id="purchase_date" name="purchase_date" value="{{ old('purchase_date', ($asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '') ?? '') }}">
+                                           id="purchase_date" name="purchase_date" value="{{ old('purchase_date', (isset($asset) && $assets && $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '') ?? '') }}">
                                 </div>
                             </div>
                         </div>
