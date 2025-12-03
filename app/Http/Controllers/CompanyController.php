@@ -16,13 +16,13 @@ class CompanyController extends Controller
     {
         // Display all employees of a company
         $company = Company::findOrFail($companyId);
-        
+
         // Get employees from the employees table instead of users
         $employees = Employee::with(['department', 'user'])
             ->where('company_id', $companyId)
             ->get();
-            
-        return view('company.employees.index', compact('company', 'employees'));
+
+        // return view('company.employees.index', compact('company', 'employees'));
     }
 
     public function create($companyId)
@@ -31,8 +31,8 @@ class CompanyController extends Controller
         $company = Company::findOrFail($companyId);
         $departments = Department::where('company_id', $companyId)->get(); // Get departments for the company
         $designations = Designation::where('company_id', $companyId)->get(); // Get designations for the company
-        
-        return view('company.employees.create', compact('company', 'departments', 'designations'));
+
+        // return view('company.employees.create', compact('company', 'departments', 'designations'));
     }
 
     public function store(Request $request, $companyId)
@@ -40,7 +40,7 @@ class CompanyController extends Controller
         // dd($request->all());
         // Find the company or throw a 404 if not found
         $company = Company::findOrFail($companyId);
-    
+
         // Validate all data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -56,19 +56,19 @@ class CompanyController extends Controller
             'employment_type' => 'required|in:permanent,contract,intern',
             'address' => 'nullable|string|max:500',
         ]);
-    
+
         $validated['password'] = bcrypt($validated['password']);
         $validated['role'] = 'employee';
         $validated['company_id'] = $company->id;
-    
+
         // Ensure `company_id` is fillable in User model
         if (!in_array('company_id', (new User())->getFillable())) {
             throw new \Exception("company_id is not fillable in the User model.");
         }
-    
+
         // Create the new employee (User)
         $user = User::create($validated);
-    
+
         // Create associated employee details
         EmployeeDetail::create([
             'user_id' => $user->id,
@@ -98,13 +98,13 @@ class CompanyController extends Controller
             'created_by' => auth()->id(),
             // 'updated_by' => auth()->id()
         ]);
-    
-        // Redirect to the employee list with a success message
-        return redirect()->route('employees.index', $companyId)->with('success', 'Employee Created Successfully');
-    }
-    
 
-    
+        // Redirect to the employee list with a success message
+        return redirect()->back()->with('success', 'Employee Created Successfully');
+    }
+
+
+
 
     public function edit($companyId, $employeeId)
     {
@@ -112,7 +112,7 @@ class CompanyController extends Controller
         $company = Company::findOrFail($companyId);
         $employee = User::findOrFail($employeeId);
         $departments = Department::where('company_id', $companyId)->get(); // Get departments for the company
-        return view('company.employees.edit', compact('company', 'employee', 'departments'));
+        // return view('company.employees.edit', compact('company', 'employee', 'departments'));
     }
 
     public function update(Request $request, $companyId, $employeeId)
@@ -155,7 +155,7 @@ class CompanyController extends Controller
         }
 
         // Redirect to the employee list with success message
-        return redirect()->route('employees.index', $companyId)->with('success', 'Employee Updated Successfully');
+        return redirect()->back()->with('success', 'Employee Updated Successfully');
     }
 
     public function destroy($companyId, $employeeId)
@@ -170,6 +170,6 @@ class CompanyController extends Controller
             $employeeDetail->delete();
         }
 
-        return redirect()->route('employees.index', $companyId)->with('success', 'Employee Deleted Successfully');
+        return redirect()->back()->with('success', 'Employee Deleted Successfully');
     }
 }

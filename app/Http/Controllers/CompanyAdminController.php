@@ -1007,5 +1007,24 @@ class CompanyAdminController extends Controller
 
     }
 
+    /**
+     * AJAX endpoint to get the next employee code for a company and employment type
+     */
+    public function getNextEmployeeCode(Request $request)
+    {
+        $companyId = auth()->user()->company_id;
+        $employmentTypeId = $request->input('employment_type_id');
+        if (!$employmentTypeId) {
+            return response()->json(['code' => null, 'error' => 'Missing employment type parameter.'], 400);
+        }
+        $company = Company::find($companyId);
+        if (!$company) {
+            return response()->json(['code' => null, 'error' => 'Company not found.'], 404);
+        }
+
+        $code = $this->generateEmployeeCode($company, $employmentTypeId);
+        return response()->json(['code' => $code]);
+    }
+
 }
 

@@ -71,8 +71,8 @@
             @if(auth()->user() && auth()->user()->role == 'superadmin')
                 @include('components.sidebar')
             @else
-                @include('components.menu')
-                {{-- @include('components.sidebar') --}}
+                {{-- @include('components.menu') --}}
+                @include('components.sidebar')
             @endif
 
             <!-- Main Content -->

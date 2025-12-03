@@ -213,7 +213,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('companies', SuperAdminController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy', 'show']);
         Route::resource('assign-company-admin', \App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class)->except(['show']);
         Route::get('assigned-company-admins', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'index'])->name('assigned-company-admins.index');
-        Route::get('companies/{companyId}/admins', [EmployeeController::class, 'admins'])->name('admins.index');
 
         // Demo Requests and Contact Messages Views
         Route::get('demo-requests', [DemoRequestsController::class, 'index'])->name('demo-requests.index');
@@ -478,17 +477,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
         Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
 
-        // Admin Management for Company
-        Route::get('admins', [EmployeeController::class, 'admins'])->name('admins.index');
-        Route::put('employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
-        Route::delete('employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-
-        // Employee Management
-        Route::get('employees', [EmployeeController::class, 'index'])->name('employees.index');
-        Route::get('employees/create', [EmployeeController::class, 'create'])->name('employees.create');
-        Route::post('employees', [EmployeeController::class, 'store'])->name('employees.store');
-        Route::get('employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
-
         // Designation Management
         Route::resource('designations', DesignationManagementController::class)->except(['show'])->names([
             'index' => 'designations.index',
@@ -517,7 +505,6 @@ Route::middleware(['auth'])->group(function () {
             'update' => 'departments.update',
             'destroy' => 'departments.destroy',
         ]);
-
 
         // Leave Requests
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
@@ -759,7 +746,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
 
         // Employee code generation for company-admin (AJAX)
-        Route::get('/employees/next-code', [\App\Http\Controllers\EmployeeController::class, 'getNextEmployeeCode'])->name('employees.next-code');
+        Route::get('/employees/next-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('employees.next-code');
 
         // Role Management
         Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);
