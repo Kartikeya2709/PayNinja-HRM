@@ -109,7 +109,7 @@ class ResignationController extends Controller
         }
 
         $user = Auth::user();
-        $isHR = in_array($user->role, ['admin', 'company_admin']);
+        $isHR = in_array($user->role, ['admin']);
 
         $validated = $request->validate([
             'remarks' => 'nullable|string|max:1000',
@@ -172,7 +172,7 @@ class ResignationController extends Controller
         ]);
 
         $user = Auth::user();
-        $isHR = in_array($user->role, ['admin', 'company_admin']);
+        $isHR = in_array($user->role, ['admin']);
 
         $updateData = [
             'status' => 'rejected',
@@ -420,7 +420,7 @@ class ResignationController extends Controller
      */
     private function determineNextApprovalStatus(EmployeeResignation $resignation, $user)
     {
-        $isHR = in_array($user->role, ['admin', 'company_admin']);
+        $isHR = in_array($user->role, ['admin']);
 
         switch ($resignation->status) {
             case 'pending':

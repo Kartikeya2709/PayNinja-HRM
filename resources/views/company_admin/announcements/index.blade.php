@@ -15,7 +15,7 @@
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center mb-3">
                         <h5>Announcement List</h5>
-                        <a href="{{ route('company-admin.announcements.create') }}" class="btn btn-primary">
+                        <a href="{{ route('announcements.create') }}" class="btn btn-primary">
                             <i class="fas fa-plus-circle"></i> Create Announcement
                         </a>
                     </div>

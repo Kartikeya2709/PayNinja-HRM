@@ -9,7 +9,7 @@
             <h1>Role Details</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('company-admin.roles.index') }}">Role Management</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('company.roles.index') }}">Role Management</a></div>
                 <div class="breadcrumb-item">Details</div>
             </div>
         </div>
@@ -22,10 +22,10 @@
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <h4>{{ $role->name }}</h4>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('company-admin.roles.edit', $role->id) }}" class="btn btn-primary">
+                                    <a href="{{ route('company.roles.edit', $role->id) }}" class="btn btn-primary">
                                         <i class="fas fa-edit"></i> Edit Role
                                     </a>
-                                    <a href="{{ route('company-admin.roles.index') }}" class="btn btn-secondary">
+                                    <a href="{{ route('company.roles.index') }}" class="btn btn-secondary">
                                         <i class="fas fa-arrow-left"></i> Back to List
                                     </a>
                                 </div>

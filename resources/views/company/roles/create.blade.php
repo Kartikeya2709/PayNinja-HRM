@@ -9,7 +9,7 @@
             <h1>Create Role</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('company-admin.roles.index') }}">Role Management</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('company.roles.index') }}">Role Management</a></div>
                 <div class="breadcrumb-item">Create</div>
             </div>
         </div>
@@ -30,7 +30,7 @@
                     <h4>Role Information</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('company-admin.roles.store') }}" method="POST">
+                    <form action="{{ route('company.roles.store') }}" method="POST">
                         @csrf
 
                         <div class="row mb-3">
@@ -67,7 +67,7 @@
                                         @php
                                             $selectedSlugs = old('permissions', []);
                                         @endphp
-                                        @include('company-admin.roles.partials.permissions-tree', [
+                                        @include('company.roles.partials.permissions-tree', [
                                             'slugs' => $slugs,
                                             'selectedSlugs' => $selectedSlugs,
                                             'level' => 0
@@ -85,7 +85,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Create Role
                             </button>
-                            <a href="{{ route('company-admin.roles.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('company.roles.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
                         </div>

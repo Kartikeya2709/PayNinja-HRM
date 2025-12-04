@@ -33,11 +33,11 @@
                 <td>{{ $role->created_at->format('M d, Y') }}</td>
                 <td class="text-center">
                     <div class="btn-group btn-group-sm" role="group">
-                        <a href="{{ route('company-admin.roles.show', $role->id) }}" 
+                        <a href="{{ route('company.roles.show', $role->id) }}" 
                            class="btn btn-sm btn-outline-info" title="View">
                             <i class="fas fa-eye"></i>
                         </a>
-                        <a href="{{ route('company-admin.roles.edit', $role->id) }}" 
+                        <a href="{{ route('company.roles.edit', $role->id) }}" 
                            class="btn btn-sm btn-outline-primary" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>

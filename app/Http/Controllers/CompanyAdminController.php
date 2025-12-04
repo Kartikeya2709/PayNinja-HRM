@@ -848,7 +848,7 @@ class CompanyAdminController extends Controller
             }
         }
 
-        return view('company-admin.settings.index', compact('company', 'employmentTypes', 'prefixData'));
+        return view('company.settings.index', compact('company', 'employmentTypes', 'prefixData'));
     }
 
     /**

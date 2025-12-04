@@ -61,7 +61,7 @@
                             {{-- 🔹 Company Info Tab --}}
                             <div class="tab-pane fade show active" id="company-info" role="tabpanel"
                                 aria-labelledby="company-info-tab">
-                                {{-- <form action="{{ route('company-admin.settings.update') }}" method="POST">
+                                {{-- <form action="{{ route('company.settings.update') }}" method="POST">
                                     @csrf
                                     @method('PUT') --}}
 
@@ -140,7 +140,7 @@
                             <div class="tab-pane fade" id="emp-id-prefix" role="tabpanel" aria-labelledby="emp-id-prefix-tab">
                                 <h5>Employee ID Prefix Settings</h5>
                                 <form id="empIdPrefixForm" method="POST"
-                                    action="{{ route('company-admin.settings.save-employee-id-prefix') }}">
+                                    action="{{ route('company.settings.save-employee-id-prefix') }}">
                                     @csrf
                                     @method('POST')
                                     <div class="row mb-4">

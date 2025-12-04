@@ -21,7 +21,7 @@
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <h4>Roles List</h4>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('company-admin.roles.create') }}" class="btn btn-primary">
+                                    <a href="{{ route('company.roles.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Create New Role
                                     </a>
                                 </div>
@@ -70,7 +70,7 @@
                             </div>
 
                             <div id="roles-table-container">
-                                @include('company-admin.roles._table', ['roles' => $roles])
+                                @include('company.roles._table', ['roles' => $roles])
                             </div>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="{{ route('company-admin.roles.destroy', $role->id) }}" method="POST" class="d-inline">
+                <form action="{{ route('company.roles.destroy', $role->id) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Delete</button>
@@ -126,7 +126,7 @@ $(document).ready(function() {
         
         // Make AJAX request
         $.ajax({
-            url: '{{ route("company-admin.roles.index") }}',
+            url: '{{ route("company.roles.index") }}',
             method: 'GET',
             data: {
                 search: searchTerm,

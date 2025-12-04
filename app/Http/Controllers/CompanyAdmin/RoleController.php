@@ -36,12 +36,12 @@ class RoleController extends Controller
         // Handle AJAX requests for real-time filtering
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('company-admin.roles._table', compact('roles'))->render(),
+                'html' => view('company.roles._table', compact('roles'))->render(),
                 'pagination' => $roles->links('pagination::bootstrap-5')->render()
             ]);
         }
 
-        return view('company-admin.roles.index', compact('roles'));
+        return view('company.roles.index', compact('roles'));
     }
 
     /**
@@ -97,7 +97,7 @@ class RoleController extends Controller
             $slugs = collect();
         }
 
-        return view('company-admin.roles.create', compact('slugs', 'companyId'));
+        return view('company.roles.create', compact('slugs', 'companyId'));
     }
 
     /**
@@ -159,7 +159,7 @@ class RoleController extends Controller
                 'level' => 'company',
             ]);
 
-            return redirect()->route('company-admin.roles.index')->with('success', 'Role created successfully.');
+            return redirect()->route('company.roles.index')->with('success', 'Role created successfully.');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -176,7 +176,7 @@ class RoleController extends Controller
         $companyId = $user->company_id;
 
         $role = Role::where('company_id', $companyId)->findOrFail($id);
-        return view('company-admin.roles.show', compact('role'));
+        return view('company.roles.show', compact('role'));
     }
 
     /**
@@ -233,7 +233,7 @@ class RoleController extends Controller
             $slugs = collect();
         }
         
-        return view('company-admin.roles.edit', compact('role', 'slugs', 'companyId'));
+        return view('company.roles.edit', compact('role', 'slugs', 'companyId'));
     }
 
     /**
@@ -297,7 +297,7 @@ class RoleController extends Controller
                 'is_active' => $request->boolean('is_active'),
             ]);
 
-            return redirect()->route('company-admin.roles.index')->with('success', 'Role updated successfully.');
+            return redirect()->route('company.roles.index')->with('success', 'Role updated successfully.');
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -324,7 +324,7 @@ class RoleController extends Controller
 
             $role->delete(); // Soft delete
 
-            return redirect()->route('company-admin.roles.index')->with('success', 'Role deleted successfully.');
+            return redirect()->route('company.roles.index')->with('success', 'Role deleted successfully.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred while deleting the role: ' . $e->getMessage());
         }

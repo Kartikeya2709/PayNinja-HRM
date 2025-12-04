@@ -428,14 +428,14 @@
                             <span>Module Access</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('company-admin/roles*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('company-admin.roles.index') }}">
+                    <li class="{{ Request::is('company/roles*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company.roles.index') }}">
                             <i class="fas fa-user-tag"></i>
                             <span>Role Management</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('company-admin.settings.index') }}">
+                    <li class="{{ Request::is('company/settings*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('company.settings.index') }}">
                             <i class="fas fa-cog"></i>
                             <span>Company Settings</span>
                         </a>
@@ -687,8 +687,8 @@
 
                             </a>
                         </li>
-                        <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('company-admin.settings.index') }}">
+                        <li class="{{ Request::is('company/settings*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('company.settings.index') }}">
                                 <i class="fas fa-cog"></i>
                                 <span>Company Settings</span>
                             </a>

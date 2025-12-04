@@ -102,14 +102,6 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
     Route::get('/blank-page', [App\Http\Controllers\HomeController::class, 'blank'])->name('blank');
 
-    // Hakakses routes
-    Route::middleware(['role:superadmin'])->group(function () {
-        Route::get('/hakakses', [App\Http\Controllers\HakaksesController::class, 'index'])->name('hakakses.index');
-        Route::get('/hakakses/{user}/edit', [App\Http\Controllers\HakaksesController::class, 'edit'])->name('hakakses.edit');
-        Route::put('/hakakses/{user}', [App\Http\Controllers\HakaksesController::class, 'update'])->name('hakakses.update');
-        Route::delete('/hakakses/{user}', [App\Http\Controllers\HakaksesController::class, 'destroy'])->name('hakakses.delete');
-    });
-
     // Attendance Management
     // Attendance Regularization
     Route::prefix('regularization')->name('regularization.')->group(function () {
@@ -195,13 +187,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
         Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
     });
-
-    Route::get('/gallery-example', [App\Http\Controllers\ExampleController::class, 'gallery'])->name('gallery.example');
-    Route::get('/todo-example', [App\Http\Controllers\ExampleController::class, 'todo'])->name('todo.example');
-    Route::get('/contact-example', [App\Http\Controllers\ExampleController::class, 'contact'])->name('contact.example');
-    Route::get('/faq-example', [App\Http\Controllers\ExampleController::class, 'faq'])->name('faq.example');
-    Route::get('/news-example', [App\Http\Controllers\ExampleController::class, 'news'])->name('news.example');
-    Route::get('/about-example', [App\Http\Controllers\ExampleController::class, 'about'])->name('about.example');
 
     // SuperAdmin Routes (Can manage Companies)
     Route::middleware(['superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
@@ -501,7 +486,7 @@ Route::middleware(['auth'])->group(function () {
             'index' => 'departments.index',
             'create' => 'departments.create',
             'store' => 'departments.store',
-            'edit' => 'departments.edit',
+            'edit' => 'departments.edit',   
             'update' => 'departments.update',
             'destroy' => 'departments.destroy',
         ]);
@@ -548,6 +533,40 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('update-role');
             Route::post('/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('toggleStatus');
             Route::get('/next-employee-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('next-code');
+        });
+
+        // Admin Resignation Routes
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::resource('resignations', App\Http\Controllers\Admin\ResignationController::class)
+                ->only(['index', 'show']);
+            Route::post('resignations/{resignation}/approve', [App\Http\Controllers\Admin\ResignationController::class, 'approve'])
+                ->name('resignations.approve');
+            Route::post('resignations/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])
+                ->name('resignations.reject');
+
+            // Exit process management
+            Route::post('resignations/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])
+                ->name('resignations.complete-exit-interview');
+            Route::post('resignations/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])
+                ->name('resignations.complete-handover');
+            Route::get('resignations/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])
+                ->name('resignations.assigned-assets');
+            Route::post('resignations/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])
+                ->name('resignations.mark-assets-returned');
+            Route::post('resignations/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
+                ->name('resignations.complete-final-settlement');
+        });
+
+        Route::prefix('company')->name('company.')->group(function () {
+            // Company Settings
+            Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
+            Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
+
+            // Employee ID Prefix Settings Save
+            Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
+
+            // Role Management
+            Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);
         });
 
     });
@@ -752,40 +771,18 @@ Route::middleware(['auth'])->group(function () {
         // Route::post('/employees/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('employees.toggleStatus');
 
         // Company Settings
-        Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
-        Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
+        // Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
+        // Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
 
-        // Employee ID Prefix Settings Save
-        Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
+        // // Employee ID Prefix Settings Save
+        // Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
 
         // Employee code generation for company-admin (AJAX)
         // Route::get('/employees/next-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('employees.next-code');
 
         // Role Management
-        Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);
+        // Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);
 
-    });
-
-    // Admin Resignation Routes
-    Route::middleware(['role:admin,company_admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::resource('resignations', App\Http\Controllers\Admin\ResignationController::class)
-            ->only(['index', 'show']);
-        Route::post('resignations/{resignation}/approve', [App\Http\Controllers\Admin\ResignationController::class, 'approve'])
-            ->name('resignations.approve');
-        Route::post('resignations/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])
-            ->name('resignations.reject');
-
-        // Exit process management
-        Route::post('resignations/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])
-            ->name('resignations.complete-exit-interview');
-        Route::post('resignations/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])
-            ->name('resignations.complete-handover');
-        Route::get('resignations/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])
-            ->name('resignations.assigned-assets');
-        Route::post('resignations/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])
-            ->name('resignations.mark-assets-returned');
-        Route::post('resignations/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
-            ->name('resignations.complete-final-settlement');
     });
 
 
