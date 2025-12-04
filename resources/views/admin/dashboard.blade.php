@@ -315,7 +315,7 @@
 
                         <!-- Employee Management -->
                         <div class="col-xl-12">
-                            <a href="{{ route('company-admin.employees.index', ['companyId' => auth()->user()->company_id]) }}"
+                            <a href="{{ route('employees.management.index', ['companyId' => auth()->user()->company_id]) }}"
                                 class="action-card">
                                 <div class="card-body p-3">
                                     <div class="action-icon">

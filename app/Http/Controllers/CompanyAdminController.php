@@ -20,12 +20,6 @@ use App\Models\EmploymentType;
 
 class CompanyAdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
-        $this->middleware('role:admin,company_admin');
-    }
-
     /**
      * Display module access management page.
      */
@@ -171,12 +165,12 @@ class CompanyAdminController extends Controller
         // Return JSON for AJAX requests
         if ($request->ajax()) {
             return response()->json([
-                'html' => view('company-admin.employees._table', compact('employees'))->render(),
+                'html' => view('company.employees.management._table', compact('employees'))->render(),
                 'pagination' => $employees->links('pagination::bootstrap-5')->render()
             ]);
         }
 
-        return view('company-admin.employees.index', compact('employees', 'roles', 'departments', 'designations'));
+        return view('company.employees.management.index', compact('employees', 'roles', 'departments', 'designations'));
     }
 
     /**
@@ -239,7 +233,7 @@ class CompanyAdminController extends Controller
         $employmentTypes = \App\Models\EmploymentType::forCompany($company->id)->active()->get();
         $roles = \App\Models\Role::where('company_id', $company->id)->where('is_active', true)->get();
 
-        return view('company-admin.employees.create', compact('company', 'departments', 'designations', 'managers', 'employmentTypes', 'roles'));
+        return view('company.employees.management.create', compact('company', 'departments', 'designations', 'managers', 'employmentTypes', 'roles'));
     }
 
     /**
@@ -263,32 +257,12 @@ class CompanyAdminController extends Controller
         // Fetch employee documents
         $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
 
-        return view('company-admin.employees.view', compact('employee', 'departments', 'designations', 'managers', 'documents'));
+        return view('company.employees.management.view', compact('employee', 'departments', 'designations', 'managers', 'documents'));
     }
 
     /**
      * Show the form for editing an employee.
      */
-    // public function editEmployee($id)
-    // {
-    //     $user = Auth::user();
-    //     $company = $user->employee->company;
-
-    //     $employee = \App\Models\Employee::with(['currentSalary'])
-    //         ->where('company_id', $company->id)
-    //         ->findOrFail($id);
-
-    //     $departments = \App\Models\Department::where('company_id', $company->id)->get();
-    //     $designations = \App\Models\Designation::where('company_id', $company->id)->get();
-    //     $managers = \App\Models\Employee::where('company_id', $company->id)->get();
-    //     // Fetch employee documents
-    //     $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
-
-    //     return view('company-admin.employees.edit', compact('employee', 'departments', 'designations', 'managers', 'company', 'documents'));
-    // }
-
-
-
     public function editEmployee($id)
     {
         $user = Auth::user();
@@ -318,7 +292,7 @@ class CompanyAdminController extends Controller
         $employmentTypes = \App\Models\EmploymentType::forCompany($company->id)->active()->get();
         $roles = \App\Models\Role::where('company_id', $company->id)->where('is_active', true)->get();
 
-        return view('company-admin.employees.edit', compact(
+        return view('company.employees.management.edit', compact(
             'employee', 'departments', 'designations', 'managers', 'company', 'documents', 'employmentTypes', 'roles'
         ));
     }
@@ -480,7 +454,7 @@ class CompanyAdminController extends Controller
 
             \DB::commit();
 
-            return redirect()->route('company-admin.employees.index')->with('success', 'Employee updated successfully.');
+            return redirect()->route('employees.management.index')->with('success', 'Employee updated successfully.');
         } catch (\Exception $e) {
             \DB::rollBack();
             \Log::error('Error updating employee: ' . $e->getMessage());
@@ -817,7 +791,7 @@ class CompanyAdminController extends Controller
                 $user->notify(new \App\Notifications\EmployeeWelcomeNotification($password));
             }
 
-            return redirect()->route('company-admin.employees.index')
+            return redirect()->route('employees.management.index')
                 ->with('success', 'Employee created successfully. Login credentials have been sent to the email address.');
 
         } catch (\Exception $e) {
@@ -1004,7 +978,6 @@ class CompanyAdminController extends Controller
             'message' => $newStatus ? 'Employee Activated' : 'Employee Deactivated',
             'is_active' => $newStatus,
         ]);
-
     }
 
     /**

@@ -6,6 +6,7 @@
             <h1>Employee Details</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ url('/home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="{{ url('/employees-management') }}">Employees</a></div>
                 <div class="breadcrumb-item"><a href="#">Employee Details</a></div>
             </div>
         </div>
@@ -155,8 +156,8 @@
                                     <label class="form-label">IFSC Code</label>
                                     <input type="text" class="form-control text-uppercase" value="{{ $employee->currentSalary->ifsc_code ?? '' }}" readonly>
                                 </div>
-                           
-                           
+
+
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label">PAN Card Number</label>
                                     <input type="text" class="form-control text-uppercase" value="{{ $employee->currentSalary->pan_number ?? '' }}" readonly>
@@ -225,13 +226,13 @@
                                     <label class="form-label">Blood Group</label>
                                     <input type="text" class="form-control" value="{{ $employee->blood_group }}" readonly>
                                 </div>
-                            
+
                             <div class="mb-6">
                                 <label class="form-label">Nominee Details (For PF/ESIC)</label>
                                 <textarea class="form-control" rows="2" readonly>{{ $employee->nominee_details }}</textarea>
                             </div>
                             <div class="d-flex justify-content-center mt-4">
-                                <a href="{{ route('company-admin.employees.index') }}" class="btn btn-secondary">
+                                <a href="{{ route('employees.management.index') }}" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left me-1"></i> Back to List
                                 </a>
                             </div>

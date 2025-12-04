@@ -537,6 +537,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])
             ->name('resignations.withdraw');
 
+        //Employee Management Routes
+        Route::prefix('employees-management')->name('employees.management.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\CompanyAdminController::class, 'employees'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\CompanyAdminController::class, 'createEmployee'])->name('create');
+            Route::post('/', [\App\Http\Controllers\CompanyAdminController::class, 'storeEmployee'])->name('store');
+            Route::get('/{id}/view', [\App\Http\Controllers\CompanyAdminController::class, 'viewEmployee'])->name('view');
+            Route::get('/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('edit');
+            Route::put('/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('update');
+            Route::put('/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('update-role');
+            Route::post('/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('toggleStatus');
+            Route::get('/next-employee-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('next-code');
+        });
+
     });
 
     // // Admin Regularization Management
@@ -729,14 +742,14 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/module-access', [\App\Http\Controllers\CompanyAdminController::class, 'updateModuleAccess'])->name('module-access.update');
 
         // Employee Management
-        Route::get('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employees'])->name('employees.index');
-        Route::get('/employees/create', [\App\Http\Controllers\CompanyAdminController::class, 'createEmployee'])->name('employees.create');
-        Route::post('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'storeEmployee'])->name('employees.store');
-        Route::get('/employees/{id}/view', [\App\Http\Controllers\CompanyAdminController::class, 'viewEmployee'])->name('employees.view');
-        Route::get('/employees/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('employees.edit');
-        Route::put('/employees/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('employees.update');
-        Route::put('/employees/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('employees.update-role');
-        Route::post('/employees/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('employees.toggleStatus');
+        // Route::get('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employees'])->name('employees.index');
+        // Route::get('/employees/create', [\App\Http\Controllers\CompanyAdminController::class, 'createEmployee'])->name('employees.create');
+        // Route::post('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'storeEmployee'])->name('employees.store');
+        // Route::get('/employees/{id}/view', [\App\Http\Controllers\CompanyAdminController::class, 'viewEmployee'])->name('employees.view');
+        // Route::get('/employees/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('employees.edit');
+        // Route::put('/employees/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('employees.update');
+        // Route::put('/employees/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('employees.update-role');
+        // Route::post('/employees/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('employees.toggleStatus');
 
         // Company Settings
         Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
@@ -746,7 +759,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
 
         // Employee code generation for company-admin (AJAX)
-        Route::get('/employees/next-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('employees.next-code');
+        // Route::get('/employees/next-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('employees.next-code');
 
         // Role Management
         Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);

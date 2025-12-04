@@ -395,8 +395,8 @@
 
                     <!-- Employee Management -->
                     <li class="menu-header">Employee Management</li>
-                    <li class="{{ Request::is('company-admin/employees*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('company-admin.employees.index') }}">
+                    <li class="{{ Request::is('employees-management*') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('employees.management.index') }}">
                             <i class="fas fa-users"></i>
                             <span>Employee Management</span>
                         </a>
@@ -636,8 +636,8 @@
 
                         <!-- Employee Management -->
                         <li class="menu-header">Employee Management</li>
-                        <li class="{{ Request::is('company-admin/employees*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('company-admin.employees.index') }}">
+                        <li class="{{ Request::is('employees-management*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('employees.management.index') }}">
                                 <i class="fas fa-users"></i>
                                 <span>Employee Management</span>
                             </a>

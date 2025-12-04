@@ -17,7 +17,7 @@
              class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Employee Management</h5>
-                    <a href="{{ route('company-admin.employees.create') }}" class="btn btn-primary d-flex align-items-center justify-content-center">
+                    <a href="{{ route('employees.management.create') }}" class="btn btn-primary d-flex align-items-center justify-content-center">
 
                         <i class="fas fa-plus me-1"></i> Create Employee
                     </a>
@@ -25,7 +25,7 @@
 
                 <!-- Filters and Search -->
                 <div class="card-body mb-4">
-                    <form id="filterForm" method="GET" action="{{ route('company-admin.employees.index') }}">
+                    <form id="filterForm" method="GET" action="{{ route('employees.management.index') }}">
                         <div class="row g-3">
                             <div class="col-lg-3 col-md-4">
                                 <label for="department_id" class="form-label">Department</label>
@@ -92,7 +92,7 @@
                                 </tr>
                             </thead>
                             <tbody id="employeesTableBody">
-                                @include('company-admin.employees._table')
+                                @include('company.employees.management._table')
                             </tbody>
                         </table>
                     </div>
@@ -220,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        const url = '{{ route("company-admin.employees.index") }}' + (params.toString() ? '?' + params.toString() : '');
+        const url = '{{ route("employees.management.index") }}' + (params.toString() ? '?' + params.toString() : '');
 
         fetch(url, {
             method: 'GET',
@@ -278,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
         designationSelect.value = '';
 
         // Update URL without query parameters
-        window.history.replaceState({}, '', '{{ route("company-admin.employees.index") }}');
+        window.history.replaceState({}, '', '{{ route("employees.management.index") }}');
 
         performFiltering();
     });
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const isActive = employeeActiveInput.checked ? 1 : 0;
         const remark = employeeRemarkInput.value.trim();
 
-        fetch(`/company-admin/employees/${id}/toggle-status`, {
+        fetch(`/employees-management/${id}/toggle-status`, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
