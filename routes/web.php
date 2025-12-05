@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Admin\PayrollController as AdminPayrollController;
 use App\Http\Controllers\Employee\PayrollController as EmployeePayrollController;
-use App\Http\Controllers\Admin\AttendanceAdjustmentController;
+
 use App\Http\Controllers\Admin\BeneficiaryBadgeController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\EmployeePayrollConfigController;
@@ -102,71 +102,11 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
     Route::get('/blank-page', [App\Http\Controllers\HomeController::class, 'blank'])->name('blank');
 
-    // Attendance Management
-    // Attendance Regularization
-    Route::prefix('regularization')->name('regularization.')->group(function () {
-        Route::resource('requests', App\Http\Controllers\Employee\AttendanceRegularizationController::class);
-        Route::put('requests/{id}/approve', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
-        Route::post('requests/bulk-update', [App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
-    });
-
-    Route::prefix('attendance')->name('attendance.')->group(function () {
-        Route::get('/', [EmployeeAttendanceController::class, 'dashboard'])->name('dashboard');
-        Route::get('/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in');
-        Route::get('/my-attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('my-attendance');
-
-        // Export routes
-        Route::get('/export', [EmployeeAttendanceController::class, 'exportAttendance'])->name('export');
-        Route::get('/export-pdf', [EmployeeAttendanceController::class, 'exportAttendancePdf'])->name('exportPdf');
-
-        // API endpoints for check-in/out
-        Route::post('/check-in', [EmployeeAttendanceController::class, 'checkIn'])->name('check-in.post')->middleware('check.attendance.access');
-        Route::post('/check-out', [EmployeeAttendanceController::class, 'checkOut'])->name('check-out.post')->middleware('check.attendance.access');
-        Route::get('/summary', [EmployeeAttendanceController::class, 'myAttendanceSummary'])->name('summary')->middleware('check.attendance.access');
-        Route::get('/check-location', [EmployeeAttendanceController::class, 'checkLocation'])->name('check-location')->middleware('check.attendance.access');
-
-        // Get geolocation settings
-        Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])
-            ->name('geolocation-settings');
-    });
-
     // Employee Payroll Management
     Route::prefix('employee/payroll')->name('employee.payroll.')->group(function () {
         Route::get('/', [EmployeePayrollController::class, 'index'])->name('index'); // List my payslips
         Route::get('/{payroll}', [EmployeePayrollController::class, 'show'])->name('show'); // View a specific payslip
         Route::get('/{payroll}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('download'); // Download payslip PDF
-    });
-
-    // Admin Attendance Management
-    Route::middleware(['role:admin,company_admin'])->prefix('admin/attendance')->name('admin.attendance.')->group(function () {
-
-        Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
-        Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
-        Route::post('/', [AdminAttendanceController::class, 'store'])->name('store');
-        Route::get('/{id}/edit', [AdminAttendanceController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [AdminAttendanceController::class, 'update'])->name('update');
-        Route::delete('/{id}', [AdminAttendanceController::class, 'destroy'])->name('destroy');
-        Route::post('/import', [AdminAttendanceController::class, 'import'])->name('import');
-        Route::get('/import-results', [AdminAttendanceController::class, 'importResults'])->name('import-results');
-        Route::get('/export', [AdminAttendanceController::class, 'export'])->name('export');
-        Route::get('/template', [AdminAttendanceController::class, 'template'])->name('template');
-
-        // Attendance Settings
-        Route::get('/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'index'])
-            ->name('settings');
-        Route::get('/settings/view', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'show'])
-            ->name('settings.view');
-        Route::match(['post', 'put'], '/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])
-            ->name('settings.update');
-        Route::get('/api/office-timings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'getOfficeTimings'])
-            ->name('api.office-timings');
-    });
-
-    // Admin Regularization Management
-    Route::middleware(['role:admin,company_admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
-        Route::resource('requests', \App\Http\Controllers\Employee\AttendanceRegularizationController::class);
-        Route::put('requests/{id}/approve', [\App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
-        Route::post('requests/bulk-update', [\App\Http\Controllers\Employee\AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
     });
 
     // Employee Leave Management
@@ -318,29 +258,51 @@ Route::middleware(['auth'])->group(function () {
         //Announcements Routes
         Route::resource('announcements', AnnouncementController::class);
 
-        //Regularization Routes
-        Route::resource('regularization-requests', AttendanceRegularizationController::class);
-        Route::put('regularization-requests/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('regularization-requests.approve');
-        Route::post('regularization-requests/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');
+        Route::prefix('attendance-management')->group(function () {
+            //Regularization Routes
+            Route::resource('regularization-requests', AttendanceRegularizationController::class);
+            Route::prefix('regularization-requests')->group(function () {
+                Route::put('/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('regularization-requests.approve');
+                Route::post('/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');                
+            });
 
-        //Attendance Routes
-        Route::get('/attendance/dashboard', [EmployeeAttendanceController::class, 'dashboard'])->name('attendance.dashboard');
-        Route::get('/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in-out');
-        Route::get('/my-attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('my-attendance');
+            // Admin Attendance Management
+            Route::prefix('attendance')->name('admin-attendance.')->group(function () {
+                Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
+                Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
+                Route::post('/', [AdminAttendanceController::class, 'store'])->name('store');
+                Route::get('/{id}/edit', [AdminAttendanceController::class, 'edit'])->name('edit');
+                Route::put('/{id}', [AdminAttendanceController::class, 'update'])->name('update');
+                Route::delete('/{id}', [AdminAttendanceController::class, 'destroy'])->name('destroy');
+                Route::post('/import', [AdminAttendanceController::class, 'import'])->name('import');
+                Route::get('/import-results', [AdminAttendanceController::class, 'importResults'])->name('import-results');
+                Route::get('/export', [AdminAttendanceController::class, 'export'])->name('export');
+                Route::get('/template', [AdminAttendanceController::class, 'template'])->name('template');
 
-        // Export routes
-        Route::get('/export', [EmployeeAttendanceController::class, 'exportAttendance'])->name('export');
-        Route::get('/export-pdf', [EmployeeAttendanceController::class, 'exportAttendancePdf'])->name('exportPdf');
+                // Attendance Settings
+                Route::get('/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'index'])->name('settings');
+                Route::get('/settings/view', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'show'])->name('settings.view');
+                Route::match(['post', 'put'], '/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])->name('settings.update');
+                Route::get('/api/office-timings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'getOfficeTimings'])->name('api.office-timings');
+            });
 
-        // API endpoints for check-in/out
-        Route::post('/check-in', [EmployeeAttendanceController::class, 'checkIn'])->name('check-in.post');
-        Route::post('/check-out', [EmployeeAttendanceController::class, 'checkOut'])->name('check-out.post');
-        Route::get('/summary', [EmployeeAttendanceController::class, 'myAttendanceSummary'])->name('summary');
-        Route::get('/check-location', [EmployeeAttendanceController::class, 'checkLocation'])->name('check-location');
+            //Attendance Routes
+            Route::get('/attendance/dashboard', [EmployeeAttendanceController::class, 'dashboard'])->name('attendance.dashboard');
+            Route::get('/attendance/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in-out');
+            Route::get('/attendance/my-attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('my-attendance');
 
-        // Get geolocation settings
-        Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])
-            ->name('geolocation-settings');
+            // Export routes
+            Route::get('/attendance/my-attendance/export', [EmployeeAttendanceController::class, 'exportAttendance'])->name('my-attendance.export');
+            Route::get('/attendance/my-attendance/export-pdf', [EmployeeAttendanceController::class, 'exportAttendancePdf'])->name('my-attendance.exportPdf');
+
+            // API endpoints for check-in/out
+            Route::post('/attendance/check-in', [EmployeeAttendanceController::class, 'checkIn'])->name('check-in.post')->middleware('check.attendance.access');
+            Route::post('/attendance/check-out', [EmployeeAttendanceController::class, 'checkOut'])->name('check-out.post')->middleware('check.attendance.access');
+            Route::get('/attendance/check-location', [EmployeeAttendanceController::class, 'checkLocation'])->name('check-location')->middleware('check.attendance.access');
+
+            // Get geolocation settings
+            Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])->name('geolocation-settings');
+        });
 
         Route::post('/dashboard/switch', [HomeController::class, 'switchDashboard'])->name('dashboard.switch');
 
@@ -350,29 +312,6 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{payroll}', [EmployeePayrollController::class, 'show'])->name('show'); // View a specific payslip
             Route::get('/{payroll}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('download'); // Download payslip PDF
         });
-
-        // Admin Attendance Management
-        Route::get('/admin/attendance', [AdminAttendanceController::class, 'index'])->name('admin-attendance.index');
-        Route::get('/admin-attendance/summary', [AdminAttendanceController::class, 'summary'])->name('admin-attendance.summary');
-        Route::post('/admin-attendance', [AdminAttendanceController::class, 'store'])->name('admin-attendance.store');
-        Route::get('admin-attendance/{id}/edit', [AdminAttendanceController::class, 'edit'])->name('admin-attendance.edit');
-        Route::put('admin-attendance/{id}', [AdminAttendanceController::class, 'update'])->name('admin-attendance.update');
-        Route::delete('admin-attendance/{id}', [AdminAttendanceController::class, 'destroy'])->name('admin-attendance.destroy');
-        Route::post('admin-attendance/import', [AdminAttendanceController::class, 'import'])->name('admin-attendance.import');
-        Route::get('admin-attendance/import-results', [AdminAttendanceController::class, 'importResults'])->name('admin-attendance.import-results');
-        Route::get('admin-attendance/export', [AdminAttendanceController::class, 'export'])->name('admin-attendance.export');
-        Route::get('admin-attendance/template', [AdminAttendanceController::class, 'template'])->name('admin-attendance.template');
-
-        // Attendance Settings
-        Route::get('admin-attendance/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'index'])
-            ->name('admin-attendance.settings');
-        Route::get('admin-attendance/settings/view', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'show'])
-            ->name('admin-attendance.settings.view');
-        Route::match(['post', 'put'], '/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])
-            ->name('admin-attendance.settings.update');
-        Route::get('/api/office-timings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'getOfficeTimings'])
-            ->name('api.office-timings');
-
 
         // Leave Management
         Route::resource('leave-types', LeaveTypeController::class);

@@ -217,7 +217,7 @@
 
 
 
-                            <form method="GET" action="{{ route('regularization.requests.index') }}" id="filterForm">
+                            <form method="GET" action="{{ route('regularization-requests.index') }}" id="filterForm">
                                 <div class="row g-3">
                                     {{-- Search Filter --}}
                                     <div class="col-md-3">
@@ -285,7 +285,7 @@
                                             <button type="submit" class="btn btn-primary">
                                                 <i class="fas fa-filter"></i> Apply Filters
                                             </button>
-                                            <a href="{{ route('regularization.requests.index') }}" class="btn btn-secondary">
+                                            <a href="{{ route('regularization-requests.index') }}" class="btn btn-secondary">
                                                 <i class="fas fa-times"></i> Clear Filters
                                             </a>
                                             {{-- <button type="button" class="btn btn-outline-info" id="exportBtn">
@@ -475,7 +475,7 @@
                         if (value) params.append(key, value);
                     }
 
-                    const url = '{{ route("regularization.requests.index") }}?' + params.toString() + '&export=csv';
+                    const url = '{{ route("regularization-requests.index") }}?' + params.toString() + '&export=csv';
                     window.open(url, '_blank');
                 });
             }

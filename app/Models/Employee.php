@@ -9,7 +9,6 @@ use Carbon\Carbon;
 use App\Models\LeaveRequest;
 use App\Models\EmployeeSalary;
 use App\Models\PayrollRecord;
-use App\Models\EmployeeAttendanceAdjustment;
 use App\Models\AssetAssignment;
 
 class Employee extends Model
@@ -210,15 +209,7 @@ class Employee extends Model
         return $this->hasMany(PayrollRecord::class);
     }
 
-    public function attendanceAdjustments()
-    {
-        return $this->hasMany(EmployeeAttendanceAdjustment::class);
-    }
 
-    public function halfDays()
-    {
-        return $this->hasMany(EmployeeAttendanceAdjustment::class)->where('type', 'half_day');
-    }
 
     public function reimbursements()
     {

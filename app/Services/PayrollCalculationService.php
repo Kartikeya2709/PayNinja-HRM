@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Employee;
-use App\Models\EmployeeAttendanceAdjustment;
 use App\Models\PayrollSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;

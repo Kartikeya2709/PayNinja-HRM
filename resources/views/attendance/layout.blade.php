@@ -24,7 +24,7 @@
                     </li>
                     @can('view attendance')
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('admin.attendance.*') ? 'active' : '' }}" href="{{ route('admin.attendance.index') }}">
+                        <a class="nav-link {{ request()->routeIs('admin-attendance.*') ? 'active' : '' }}" href="{{ route('admin-attendance.index') }}">
                             <i class="bi bi-people me-2"></i> Manage Attendance
                         </a>
                     </li>

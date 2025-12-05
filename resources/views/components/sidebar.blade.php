@@ -255,8 +255,8 @@
                     <!-- Attendance Management -->
                     @if ($hasModuleAccess('attendance', 'employee'))
                         <li class="menu-header">Attendance Management</li>
-                        <li class="menu-item {{ Request::is('attendance') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('home') }}">
+                        <li class="menu-item {{ Request::is('/attendance-management/dashboard') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('attendance.dashboard') }}">
                                 <i class="fas fa-calendar-check"></i>
                                 <span>Attendance Dashboard</span>
                             </a>
@@ -267,13 +267,13 @@
                                 <span>Check In/Out</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('attendance/my-attendance') ? 'active' : '' }}">
+                        <li class="{{ Request::is('/attendance-management/my-attendance') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('my-attendance') }}">
                                 <i class="fas fa-calendar-check"></i>
                                 <span>My Attendance</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('regularization/requests*') ? 'active' : '' }}">
+                        <li class="{{ Request::is('/attendance-management/regularization-requests*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('regularization-requests.index') }}">
                                 <i class="fas fa-user-clock"></i>
                                 <span>Regularization Requests</span>
@@ -467,19 +467,19 @@
 
                     <!-- Attendance Management -->
                     <li class="menu-header">Attendance Management</li>
-                    <li class="{{ Request::is('regularization/requests*') ? 'active' : '' }}">
+                    <li class="{{ Request::is('/attendance-management/regularization-requests*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('regularization-requests.index') }}">
                             <i class="fas fa-user-clock"></i>
                             <span>Regularization Requests</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('admin/attendance') ? 'active' : '' }}">
+                    <li class="{{ Request::is('/attendance-management/attendance') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin-attendance.index') }}">
                             <i class="fas fa-user-clock"></i>
                             <span>Manage Attendance</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('admin/attendance/summary') ? 'active' : '' }}">
+                    <li class="{{ Request::is('/attendance-management/attendance/summary') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin-attendance.summary') }}">
                             <i class="fas fa-chart-pie"></i>
                             <span>Attendance Summary</span>
@@ -493,7 +493,7 @@
                         <a class="nav-link" href="{{ route('my-attendance') }}"><i class="fas fa-calendar-check"></i>
                             <span>My Attendance</span></a>
                     </li>
-                    <li class="{{ Request::is('admin-attendance/settings*') ? 'active' : '' }}">
+                    <li class="{{ Request::is('/attendance-management/attendance/settings*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin-attendance.settings') }}"><i class="fas fa-cog"></i>
                             <span>Attendance Settings</span></a>
                     </li>
@@ -722,19 +722,19 @@
                     <!-- Attendance Management -->
                     @if ($hasModuleAccess('attendance', 'admin'))
                         <li class="menu-header">Attendance Management</li>
-                        <li class="{{ Request::is('regularization/requests*') ? 'active' : '' }}">
+                        <li class="{{ Request::is('/attendance-management/regularization-requests*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('regularization-requests.index') }}">
                                 <i class="fas fa-user-clock"></i>
                                 <span>Regularization Requests</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('admin-attendance') ? 'active' : '' }}">
+                        <li class="{{ Request::is('/attendance-management/attendance') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('admin-attendance.index') }}">
                                 <i class="fas fa-user-clock"></i>
                                 <span>Manage Attendance</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('admin-attendance/summary') ? 'active' : '' }}">
+                        <li class="{{ Request::is('attendance-management/attendance/summary') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('admin-attendance.summary') }}">
                                 <i class="fas fa-chart-pie"></i>
                                 <span>Attendance Summary</span>
@@ -748,7 +748,7 @@
                             <a class="nav-link" href="{{ route('my-attendance') }}"><i class="fas fa-calendar-check"></i>
                                 <span>My Attendance</span></a>
                         </li>
-                        <li class="{{ Request::is('admin-attendance/settings*') ? 'active' : '' }}">
+                        <li class="{{ Request::is('/attendance-management/attendance/settings*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('admin-attendance.settings') }}"><i class="fas fa-cog"></i>
                                 <span>Attendance Settings</span></a>
                         </li>
