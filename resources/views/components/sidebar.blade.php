@@ -715,6 +715,14 @@
                             <a class="nav-link" href="{{ route('company.leave-types.index') }}"><i class="fas fa-calendar-alt"></i>
                                 <span>Leave Types</span></a>
                         </li>
+                        <li class="{{ Request::is('company/leave-policies*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('company.leave-policies.index') }}"><i class="fas fa-file-contract"></i>
+                                <span>Leave Policies</span></a>
+                        </li>
+                        <li class="{{ Request::is('company/leave-settings*') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('company.company.leave-settings.index') }}"><i class="fas fa-cog"></i>
+                                <span>Leave Settings</span></a>
+                        </li>
                         <li class="{{ Request::is('company/leave-balances*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.leave-balances.index') }}"><i
                                     class="fas fa-balance-scale"></i> <span>Leave Balances</span></a>

@@ -22,11 +22,11 @@
 
                             <div class="form-group mb-4">
                                 <label for="name">Name <span class="text-danger">*</span></label>
-                                <input type="text" 
-                                       name="name" 
-                                       id="name" 
-                                       class="form-control @error('name') is-invalid @enderror" 
-                                       value="{{ old('name') }}" 
+                                <input type="text"
+                                       name="name"
+                                       id="name"
+                                       class="form-control @error('name') is-invalid @enderror"
+                                       value="{{ old('name') }}"
                                        required>
                                 @error('name')
                                     <div class="invalid-feedback">
@@ -37,9 +37,9 @@
 
                             <div class="form-group mb-4">
                                 <label for="description">Description</label>
-                                <textarea name="description" 
-                                          id="description" 
-                                          class="form-control @error('description') is-invalid @enderror" 
+                                <textarea name="description"
+                                          id="description"
+                                          class="form-control @error('description') is-invalid @enderror"
                                           rows="3">{{ old('description') }}</textarea>
                                 @error('description')
                                     <div class="invalid-feedback">
@@ -50,12 +50,12 @@
 
                             <div class="form-group mb-4">
                                 <label for="default_days">Default Days <span class="text-danger">*</span></label>
-                                <input type="number" 
-                                       name="default_days" 
-                                       id="default_days" 
-                                       class="form-control @error('default_days') is-invalid @enderror" 
-                                       value="{{ old('default_days', 0) }}" 
-                                       min="0" 
+                                <input type="number"
+                                       name="default_days"
+                                       id="default_days"
+                                       class="form-control @error('default_days') is-invalid @enderror"
+                                       value="{{ old('default_days', 0) }}"
+                                       min="0"
                                        required>
                                 @error('default_days')
                                     <div class="invalid-feedback">
@@ -65,12 +65,29 @@
                             </div>
 
                             <div class="form-group mb-4">
+                                <label for="leave_value_per_cycle">Leave Value Per Cycle</label>
+                                <input type="number"
+                                       name="leave_value_per_cycle"
+                                       id="leave_value_per_cycle"
+                                       class="form-control @error('leave_value_per_cycle') is-invalid @enderror"
+                                       value="{{ old('leave_value_per_cycle', 0) }}"
+                                       min="0"
+                                       step="0.01">
+                                <small class="form-text text-muted">Leave value to be used for each disbursement cycle. If not set, default_days will be used.</small>
+                                @error('leave_value_per_cycle')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+
+                            <div class="form-group mb-4">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" 
-                                           name="requires_attachment" 
-                                           class="custom-control-input" 
-                                           id="requires_attachment" 
-                                           value="1" 
+                                    <input type="checkbox"
+                                           name="requires_attachment"
+                                           class="custom-control-input"
+                                           id="requires_attachment"
+                                           value="1"
                                            {{ old('requires_attachment') ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="requires_attachment">
                                         Requires Attachment
@@ -80,11 +97,11 @@
 
                             <div class="form-group mb-4">
                                 <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" 
-                                           name="is_active" 
-                                           class="custom-control-input" 
-                                           id="is_active" 
-                                           value="1" 
+                                    <input type="checkbox"
+                                           name="is_active"
+                                           class="custom-control-input"
+                                           id="is_active"
+                                           value="1"
                                            {{ old('is_active', true) ? 'checked' : '' }}>
                                     <label class="custom-control-label" for="is_active">
                                         Active

@@ -22,12 +22,12 @@ class LeaveBalanceController extends Controller
     {
         $companyId = Auth::user()->company_id;
         $currentYear = Carbon::now()->year;
-        
+
         // Get active departments for filtering
         $departments = Department::where('company_id', $companyId)
             ->orderBy('name')
             ->get();
-            
+
         // Get active leave types for filtering
         $leaveTypes = LeaveType::where('company_id', $companyId)
             ->where('is_active', true)
@@ -64,9 +64,9 @@ class LeaveBalanceController extends Controller
 
         if ($request->filled('balanceStatus')) {
             if ($request->balanceStatus === 'available') {
-                $query->whereRaw('(leave_balances.total_days - leave_balances.used_days) > 0');
+                $query->whereRaw('leave_balances.remaining_days > 0');
             } elseif ($request->balanceStatus === 'exhausted') {
-                $query->whereRaw('(leave_balances.total_days - leave_balances.used_days) <= 0');
+                $query->whereRaw('leave_balances.remaining_days <= 0');
             }
         }
 
@@ -85,7 +85,7 @@ class LeaveBalanceController extends Controller
         if ($request->filled('export')) {
             $data = $query->get();
             $fileName = 'leave_balances_' . date('Y-m-d') . '.' . $request->export;
-            
+
             $headers = [
                 'Employee Name',
                 'Department',
@@ -95,19 +95,25 @@ class LeaveBalanceController extends Controller
                 'Remaining Days',
                 'Year'
             ];
-            
+
             $rows = $data->map(function($item) {
+                // Get the actual leave balance to access remaining_days properly
+                $leaveBalance = LeaveBalance::where('employee_id', $item->id)
+                    ->where('leave_type_id', $item->leave_type_id)
+                    ->where('year', $item->year)
+                    ->first();
+
                 return [
                     $item->name,
                     $item->department_name ?? '-',
                     $item->leave_type_name,
                     $item->total_days,
                     $item->used_days,
-                    $item->total_days - $item->used_days,
+                    $leaveBalance->remaining_days ?? ($item->total_days - $item->used_days),
                     $item->year
                 ];
             });
-            
+
             if ($request->export === 'excel') {
                 return response()->streamDownload(function() use ($headers, $rows) {
                     $output = fopen('php://output', 'w');
@@ -132,7 +138,7 @@ class LeaveBalanceController extends Controller
         $employees = $query->orderBy('employees.name')
                           ->paginate(25)
                           ->appends($request->except('page'));
-        
+
         return view('company.leave_balances.index', compact('employees', 'departments', 'leaveTypes', 'currentYear'));
     }
 
@@ -147,7 +153,7 @@ class LeaveBalanceController extends Controller
         $employees = Employee::where('company_id', $companyId)->get();
         $leaveTypes = LeaveType::where('company_id', $companyId)->where('is_active', true)->get();
         $currentYear = Carbon::now()->year;
-        
+
         return view('company.leave_balances.create', compact('employees', 'leaveTypes', 'currentYear'));
     }
 
@@ -165,36 +171,49 @@ class LeaveBalanceController extends Controller
             'total_days' => 'required|integer|min:0',
             'year' => 'required|integer|min:' . Carbon::now()->year,
         ]);
-        
+
         // Check if employee belongs to the company
         $employee = Employee::findOrFail($validated['employee_id']);
         if ($employee->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         // Check if leave type belongs to the company
         $leaveType = LeaveType::findOrFail($validated['leave_type_id']);
         if ($leaveType->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         // Check if balance already exists for this employee, leave type, and year
         $existingBalance = LeaveBalance::where('employee_id', $validated['employee_id'])
             ->where('leave_type_id', $validated['leave_type_id'])
             ->where('year', $validated['year'])
             ->first();
-            
+
         if ($existingBalance) {
+            // Calculate the difference in total days
+            $totalDaysDiff = $validated['total_days'] ;
+
+            // Update remaining_days by the same difference to maintain consistency
+            $newRemaining = $existingBalance->remaining_days + $totalDaysDiff;
+            // Ensure remaining_days doesn't exceed the new total_days
+            if ($newRemaining > $validated['total_days']) {
+                $newRemaining = $validated['total_days'];
+            }
+
             $existingBalance->update([
+                'remaining_days' => $newRemaining,
                 'total_days' => $validated['total_days'],
             ]);
-            
+
             $message = 'Leave balance updated successfully.';
         } else {
+            // For new balances, set remaining_days equal to total_days
+            $validated['remaining_days'] = $validated['total_days'];
             LeaveBalance::create($validated);
             $message = 'Leave balance allocated successfully.';
         }
-        
+
         return redirect()->route('company.leave-balances.index')
             ->with('success', $message);
     }
@@ -214,42 +233,46 @@ class LeaveBalanceController extends Controller
             'total_days' => 'required|integer|min:0',
             'year' => 'required|integer|min:' . Carbon::now()->year,
         ]);
-        
+
         $companyId = Auth::user()->company_id;
-        
+
         // Check if leave type belongs to the company
         $leaveType = LeaveType::findOrFail($validated['leave_type_id']);
         if ($leaveType->company_id !== $companyId) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         // Get all employees that belong to the company
         $validEmployeeIds = Employee::whereIn('id', $validated['employee_ids'])
             ->where('company_id', $companyId)
             ->pluck('id')
             ->toArray();
-            
+
         foreach ($validEmployeeIds as $employeeId) {
             // Check if balance already exists for this employee, leave type, and year
             $existingBalance = LeaveBalance::where('employee_id', $employeeId)
                 ->where('leave_type_id', $validated['leave_type_id'])
                 ->where('year', $validated['year'])
                 ->first();
-                
+
             if ($existingBalance) {
+                // For bulk allocation, we typically set remaining_days equal to total_days
+                // This assumes we're setting a fresh allocation
                 $existingBalance->update([
                     'total_days' => $validated['total_days'],
+                    'remaining_days' => $validated['total_days'],
                 ]);
             } else {
                 LeaveBalance::create([
                     'employee_id' => $employeeId,
                     'leave_type_id' => $validated['leave_type_id'],
                     'total_days' => $validated['total_days'],
+                    'remaining_days' => $validated['total_days'], // Set remaining_days equal to total_days
                     'year' => $validated['year'],
                 ]);
             }
         }
-        
+
         return redirect()->route('company.leave-balances.index')
             ->with('success', 'Leave balances allocated successfully.');
     }
@@ -266,11 +289,11 @@ class LeaveBalanceController extends Controller
         if ($leaveBalance->employee->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $leaveTypes = LeaveType::where('company_id', Auth::user()->company_id)
             ->where('is_active', true)
             ->get();
-            
+
         return view('company.leave_balances.edit', compact('leaveBalance', 'leaveTypes'));
     }
 
@@ -287,13 +310,13 @@ class LeaveBalanceController extends Controller
         if ($leaveBalance->employee->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $validated = $request->validate([
             'total_days' => 'required|integer|min:' . $leaveBalance->used_days,
         ]);
-        
+
         $leaveBalance->update($validated);
-        
+
         return redirect()->route('company.leave-balances.index')
             ->with('success', 'Leave balance updated successfully.');
     }

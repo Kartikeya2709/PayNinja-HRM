@@ -16,12 +16,28 @@ class LeaveType extends Model
         'default_days',
         'requires_attachment',
         'is_active',
-        'company_id'
+        'company_id',
+        'monthly_limit',
+        'yearly_limit',
+        'disbursement_cycle',
+        'disbursement_time',
+        'enable_carry_forward',
+        'max_carry_forward_days',
+        'allow_carry_forward_to_next_year',
+        'yearly_carry_forward_limit',
+        'allow_half_day_leave',
+        'allow_negative_balance',
+        'half_day_deduction_priority',
+        'leave_value_per_cycle'
     ];
 
     protected $casts = [
         'requires_attachment' => 'boolean',
         'is_active' => 'boolean',
+        'enable_carry_forward' => 'boolean',
+        'allow_carry_forward_to_next_year' => 'boolean',
+        'allow_half_day_leave' => 'boolean',
+        'allow_negative_balance' => 'boolean',
     ];
 
     /**
@@ -46,5 +62,26 @@ class LeaveType extends Model
     public function leaveRequests()
     {
         return $this->hasMany(LeaveRequest::class);
+    }
+
+    /**
+     * Get the leave type policies for this leave type.
+     */
+    public function leaveTypePolicies()
+    {
+        return $this->hasMany(LeaveTypePolicy::class);
+    }
+
+    /**
+     * Get the company leave policies that contain this leave type.
+     */
+    public function companyleavePolicies()
+    {
+        return $this->belongsToMany(
+            CompanyLeavePolicy::class,
+            'leave_type_policies',
+            'leave_type_id',
+            'company_leave_policy_id'
+        )->withPivot('allocated_days', 'min_days', 'is_active');
     }
 }

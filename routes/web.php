@@ -14,12 +14,14 @@ use App\Http\Controllers\DesignationManagementController;
 use App\Http\Controllers\DepartmentManagementController;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\LeaveTypeController;
+use App\Http\Controllers\CompanyLeavePolicyController;
 use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\LeaveBalanceController;
 use App\Http\Controllers\ReimbursementController;
 use App\Http\Controllers\Employee\AttendanceController as EmployeeAttendanceController;
 use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
 use App\Http\Controllers\AcademicHolidayController;
+use App\Http\Controllers\FinancialYearController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Admin\PayrollController as AdminPayrollController;
@@ -415,6 +417,13 @@ Route::middleware(['auth'])->group(function () {
         // Leave Management
         Route::resource('leave-types', LeaveTypeController::class);
 
+        // Leave Policies
+        Route::resource('leave-policies', CompanyLeavePolicyController::class);
+        Route::get('leave-policies/{leavePolicy}/manage-leave-types', [CompanyLeavePolicyController::class, 'manageLeaveTypes'])->name('leave-policies.manage-leave-types');
+        Route::post('leave-policies/{leavePolicy}/add-leave-type', [CompanyLeavePolicyController::class, 'addLeaveType'])->name('leave-policies.add-leave-type');
+        Route::put('leave-type-policies/{leaveTypePolicy}', [CompanyLeavePolicyController::class, 'updateLeaveType'])->name('leave-type-policies.update');
+        Route::delete('leave-type-policies/{leaveTypePolicy}', [CompanyLeavePolicyController::class, 'removeLeaveType'])->name('leave-type-policies.destroy');
+
         // Leave Requests
         Route::get('leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('leave-requests.index');
         Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
@@ -429,6 +438,10 @@ Route::middleware(['auth'])->group(function () {
 
         // Leave Balances
         Route::resource('leave-balances', LeaveBalanceController::class)->except(['show', 'destroy']);
+        // Leave Settings
+        Route::get('leave-settings', [\App\Http\Controllers\LeaveSettingController::class, 'index'])->name('company.leave-settings.index');
+        Route::get('leave-settings/{leaveType}/edit', [\App\Http\Controllers\LeaveSettingController::class, 'edit'])->name('company.leave-settings.edit');
+        Route::put('leave-settings/{leaveType}', [\App\Http\Controllers\LeaveSettingController::class, 'update'])->name('company.leave-settings.update');
         Route::post('leave-balances/bulk-allocate', [LeaveBalanceController::class, 'bulkAllocate'])->name('leave-balances.bulk-allocate');
         Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
         Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
@@ -552,6 +565,23 @@ Route::middleware(['auth'])->group(function () {
         // Company Settings
         Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
         Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
+
+        // Financial Year Info
+        Route::get('/financial-year', [\App\Http\Controllers\CompanyAdminController::class, 'financialYearInfo'])->name('financial-year.info');
+
+        // Financial Year Management
+        Route::prefix('financial-years')->name('financial-years.')->group(function () {
+            Route::get('/', [FinancialYearController::class, 'index'])->name('index');
+            Route::get('/create', [FinancialYearController::class, 'create'])->name('create');
+            Route::post('/', [FinancialYearController::class, 'store'])->name('store');
+            Route::get('/{financialYear}', [FinancialYearController::class, 'show'])->name('show');
+            Route::get('/{financialYear}/edit', [FinancialYearController::class, 'edit'])->name('edit');
+            Route::put('/{financialYear}', [FinancialYearController::class, 'update'])->name('update');
+            Route::delete('/{financialYear}', [FinancialYearController::class, 'destroy'])->name('destroy');
+            Route::post('/{financialYear}/activate', [FinancialYearController::class, 'activate'])->name('activate');
+            Route::post('/{financialYear}/lock', [FinancialYearController::class, 'lock'])->name('lock');
+            Route::post('/{financialYear}/unlock', [FinancialYearController::class, 'unlock'])->name('unlock');
+        });
 
         // Employee ID Prefix Settings Save
         Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
