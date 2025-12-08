@@ -727,4 +727,78 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-}); // End of auth middleware group
+});
+
+/**
+ * =============================================
+ * PAYROLL MANAGEMENT ROUTES - CONSOLIDATED SECTION
+ * =============================================
+ */
+ 
+// Employee Payroll Routes
+Route::middleware(['auth', 'role:user,employee'])->prefix('employee')->name('employee.')->group(function () {
+    Route::prefix('payroll')->name('payroll.')->group(function () {
+        Route::get('/', [EmployeePayrollController::class, 'index'])->name('index')->middleware('checkAccess');
+        Route::get('/{payroll}', [EmployeePayrollController::class, 'show'])->name('show')->middleware('checkAccess');
+        Route::get('/{payroll}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('download')->middleware('checkAccess');
+    });
+});
+ 
+// Admin Payroll Management Routes
+Route::middleware(['auth', 'role:admin,company_admin'])->group(function () {
+ 
+    // Main Admin Payroll Routes
+    Route::prefix('admin/payroll')
+        ->name('admin.payroll.')
+        ->middleware('checkAccess') // ⬅️ Apply checkAccess here ONCE
+        ->group(function () {
+ 
+        Route::get('/', [AdminPayrollController::class, 'index'])->name('index');
+        Route::get('/index', [AdminPayrollController::class, 'index'])->name('index.alt');
+        Route::post('/', [AdminPayrollController::class, 'store'])->name('store');
+        Route::get('/create', [AdminPayrollController::class, 'create'])->name('create');
+        Route::get('/{payroll}', [AdminPayrollController::class, 'show'])->name('show');
+        Route::get('/{payroll}/edit', [AdminPayrollController::class, 'edit'])->name('edit');
+        Route::put('/{payroll}', [AdminPayrollController::class, 'update'])->name('update');
+        Route::patch('/{payroll}/process', [AdminPayrollController::class, 'processPayroll'])->name('process');
+        Route::patch('/{payroll}/mark-as-paid', [AdminPayrollController::class, 'markAsPaid'])->name('mark-as-paid');
+        Route::patch('/{payroll}/mark-as-paid', [AdminPayrollController::class, 'markAsPaid'])->name('markAsPaid'); // Mark as paid (alternative name)
+        Route::patch('/{payroll}/cancel', [AdminPayrollController::class, 'cancel'])->name('cancel');
+        Route::delete('/{payroll}', [AdminPayrollController::class, 'destroy'])->name('destroy');
+        Route::post('/bulk-approve', [AdminPayrollController::class, 'bulkApprove'])->name('bulkApprove')->middleware('checkAccess'); // Bulk approve payrolls (alternative name)
+ 
+        // Payroll Settings
+        Route::get('/settings', [App\Http\Controllers\Admin\PayrollSettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('/settings', [App\Http\Controllers\Admin\PayrollSettingsController::class, 'update'])->name('settings.update');
+ 
+        // Employee Payroll Configurations
+        Route::prefix('employee-configurations')->group(function () {
+            Route::get('/', [EmployeePayrollConfigController::class, 'index'])->name('employee-configurations.index');
+            Route::get('/{employee}/edit', [EmployeePayrollConfigController::class, 'edit'])->name('employee-configurations.edit');
+            Route::put('/{employee}', [EmployeePayrollConfigController::class, 'update'])->name('employee-configurations.update');
+            Route::put('/{employee}/set-current/{employeeSalary?}', [EmployeePayrollConfigController::class, 'setCurrent'])->name('employee-configurations.set-current');
+            Route::post('/{employee}/create-salary', [EmployeePayrollConfigController::class, 'createSalary'])->name('employee-configurations.create-salary');
+        });
+ 
+        // Beneficiary Badges (Allowances/Deductions)
+        Route::prefix('beneficiary-badges')->group(function () {
+            Route::get('/', [BeneficiaryBadgeController::class, 'index'])->name('beneficiary-badges.index');
+            Route::post('/', [BeneficiaryBadgeController::class, 'store'])->name('beneficiary-badges.store');
+            Route::get('/create', [BeneficiaryBadgeController::class, 'create'])->name('beneficiary-badges.create');
+            Route::get('/{beneficiary_badge}', [BeneficiaryBadgeController::class, 'show'])->name('beneficiary-badges.show');
+            Route::get('/{beneficiary_badge}/edit', [BeneficiaryBadgeController::class, 'edit'])->name('beneficiary-badges.edit');
+            Route::put('/{beneficiary_badge}', [BeneficiaryBadgeController::class, 'update'])->name('beneficiary-badges.update');
+            Route::delete('/{beneficiary_badge}', [BeneficiaryBadgeController::class, 'destroy'])->name('beneficiary-badges.destroy');
+            Route::post('/{beneficiary_badge}/apply-to-all', [BeneficiaryBadgeController::class, 'applyToAllEmployees'])->name('beneficiary-badges.apply-to-all');
+            Route::post('/{beneficiary_badge}/api/apply-to-all', [BeneficiaryBadgeController::class, 'apiApplyToAllEmployees'])->name('beneficiary-badges.api.apply-to-all');
+        });
+    });
+ 
+ 
+ 
+    // Company Admin Payslip Routes
+    Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
+        Route::get('/payslips', [\App\Http\Controllers\PayslipController::class, 'getAllPayslips'])->name('payslips.index')->middleware('checkAccess');
+        Route::get('/payslips/export', [\App\Http\Controllers\PayslipController::class, 'exportPayslips'])->name('payslips.export')->middleware('checkAccess');
+    });
+});
