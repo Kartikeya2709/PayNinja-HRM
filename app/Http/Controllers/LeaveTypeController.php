@@ -19,7 +19,7 @@ class LeaveTypeController extends Controller
     {
         $companyId = Auth::user()->company_id;
         $leaveTypes = LeaveType::where('company_id', $companyId)->get();
-        
+
         return view('company.leave_types.index', compact('leaveTypes'));
     }
 
@@ -42,7 +42,7 @@ class LeaveTypeController extends Controller
     public function store(Request $request)
     {
         $companyId = Auth::user()->company_id;
-        
+
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -57,12 +57,12 @@ class LeaveTypeController extends Controller
             'requires_attachment' => 'boolean',
             'is_active' => 'boolean',
         ]);
-        
+
         $validated['company_id'] = $companyId;
-        
+
         LeaveType::create($validated);
-        
-        return redirect()->route('leave-types.index')
+
+        return redirect()->route('leaves.leave-types.index')
             ->with('success', 'Leave type created successfully.');
     }
 
@@ -78,7 +78,7 @@ class LeaveTypeController extends Controller
         if ($leaveType->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         return view('company.leave_types.edit', compact('leaveType'));
     }
 
@@ -95,9 +95,9 @@ class LeaveTypeController extends Controller
         if ($leaveType->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $companyId = Auth::user()->company_id;
-        
+
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -112,10 +112,10 @@ class LeaveTypeController extends Controller
             'requires_attachment' => 'boolean',
             'is_active' => 'boolean',
         ]);
-        
+
         $leaveType->update($validated);
-        
-        return redirect()->route('leave-types.index')
+
+        return redirect()->route('leaves.leave-types.index')
             ->with('success', 'Leave type updated successfully.');
     }
 
@@ -131,16 +131,16 @@ class LeaveTypeController extends Controller
         if ($leaveType->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         // Check if leave type is being used
         if ($leaveType->leaveBalances()->count() > 0 || $leaveType->leaveRequests()->count() > 0) {
-            return redirect()->route('leave-types.index')
+            return redirect()->route('leaves.leave-types.index')
                 ->with('error', 'Cannot delete leave type as it is being used.');
         }
-        
+
         $leaveType->delete();
-        
-        return redirect()->route('leave-types.index')
+
+        return redirect()->route('leaves.leave-types.index')
             ->with('success', 'Leave type deleted successfully.');
     }
 }

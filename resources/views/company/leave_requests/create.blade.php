@@ -30,7 +30,7 @@
         <h1>Create Leave Request</h1>
         <div class="section-header-breadcrumb">
             <div class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></div>
-            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leaves.leave-requests.index') }}">Leave Requests</a></div>
             <div class="breadcrumb-item active">Create</div>
         </div>
     </div>
@@ -43,7 +43,7 @@
                 <div class="card" id="leaveBalanceInfo">
                     <div class="text-center">
                         <h5>Leave Balances</h5>
-                   
+
                     <div class="card-body">
                         <div class="row" id="leaveBalancesContainer">
                             <!-- Will be populated by JavaScript -->
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="card">
-                    
+
                     <div class="card-body">
                         <div class="table-responsive">
                             <table class="table table-bordered">
@@ -97,7 +97,7 @@
                     </div>
                     <div class="card-body">
 
-                        <form method="POST" action="{{ route('leave-requests.store') }}" enctype="multipart/form-data" id="leaveRequestForm">
+                        <form method="POST" action="{{ route('leaves.leave-requests.store') }}" enctype="multipart/form-data" id="leaveRequestForm">
                             @csrf
 
                             <div class="row">
@@ -172,7 +172,7 @@
                             @endif
 
                             <div class="d-flex gap-3 justify-content-center mt-4">
-                               <a href="{{ route('leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
+                               <a href="{{ route('leaves.leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
                                <i class="fas fa-arrow-left me-2"></i>Back
                                </a>
                                <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
@@ -205,22 +205,22 @@
         $('#leaveRequestForm').on('submit', function(e) {
             let isValid = true;
             const $form = $(this);
-            
+
             // Reset error states
             $form.find('.is-invalid').removeClass('is-invalid');
             $('.invalid-feedback').remove();
-            
+
             // Validate leave type
             if (!$('#leave_type_id').val()) {
                 showError('leave_type_id', 'Please select a leave type');
                 isValid = false;
             }
-            
+
             // Validate start date
             const startDate = new Date($('#start_date').val());
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            
+
             if (!$('#start_date').val()) {
                 showError('start_date', 'Please select a start date');
                 isValid = false;
@@ -228,7 +228,7 @@
                 showError('start_date', 'Start date cannot be in the past');
                 isValid = false;
             }
-            
+
             // Validate end date
             if (!$('#end_date').val()) {
                 showError('end_date', 'Please select an end date');
@@ -237,13 +237,13 @@
                 showError('end_date', 'End date cannot be before start date');
                 isValid = false;
             }
-            
+
             // Validate reason
             if ($.trim($('#reason').val()).length < 10) {
                 showError('reason', 'Reason must be at least 10 characters long');
                 isValid = false;
             }
-            
+
             if (!isValid) {
                 e.preventDefault();
                 $('html, body').animate({
@@ -251,7 +251,7 @@
                 }, 500);
             }
         });
-        
+
         function showError(field, message) {
             const $field = $('#' + field);
             $field.addClass('is-invalid');

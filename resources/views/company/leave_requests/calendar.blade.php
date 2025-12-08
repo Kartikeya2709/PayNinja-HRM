@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
             if ($('#department_filter').val()) params.append('department_id', $('#department_filter').val());
             if ($('#status_filter').val()) params.append('status', $('#status_filter').val());
 
-            fetch("{{ route('leave-requests.calendar-events') }}?" + params.toString())
+            fetch("{{ route('leaves.my-leaves.leave-requests.calendar-events') }}?" + params.toString())
                 .then(res => res.json())
                 .then(data => success(data))
                 .catch(err => failure(err));
@@ -259,13 +259,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (e.status === 'pending') {
                 $('#actionButtons').removeClass('d-none');
-                $('#approveForm').attr('action', "{{ url('company/leave-requests') }}/" + info.event.id + "/approve");
-                $('#rejectForm').attr('action', "{{ url('company/leave-requests') }}/" + info.event.id + "/reject");
+                $('#approveForm').attr('action', "{{ url('leaves/leave-requests') }}/" + info.event.id + "/approve");
+                $('#rejectForm').attr('action', "{{ url('leaves/leave-requests') }}/" + info.event.id + "/reject");
             } else {
                 $('#actionButtons').addClass('d-none');
             }
 
-            $('#viewDetailsBtn').attr('href', "{{ route('leave-requests.index') }}");
+            $('#viewDetailsBtn').attr('href', "{{ route('leaves.leave-requests.index') }}");
             $('#leaveRequestModal').modal('show');
         }
     });

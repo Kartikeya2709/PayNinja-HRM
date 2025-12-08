@@ -16,7 +16,7 @@
     <div class="card-1">
         <h5 class="mb-0">Leave Balances</h5>
         <div class="section-header-button">
-            <a href="{{ route('leave-balances.create') }}" class="btn btn-primary">Allocate Leave Balance</a>
+            <a href="{{ route('leaves.leave-balances.create') }}" class="btn btn-primary">Allocate Leave Balance</a>
         </div>
     </div>
 
@@ -50,7 +50,7 @@
                         <div class="row mb-4 leave-blnc">
                             <div class="col-md-12">
                                 <div class="filter-container bg-light p-3 rounded">
-                                    <form action="{{ route('leave-balances.index') }}" method="GET" id="filterForm" class="row align-items-end">
+                                    <form action="{{ route('leaves.leave-balances.index') }}" method="GET" id="filterForm" class="row align-items-end">
                                         <div class="col-md-3 mb-3">
                                             <label for="search">Search</label>
                                             <input type="text" class="form-control" id="search" name="search" value="{{ request('search') }}" placeholder="Search by name, email...">
@@ -145,7 +145,7 @@
                                             </td>
                                             <td>{{ $employee->year }}</td>
                                             <td>
-                                                <a href="{{ route('leave-balances.edit', $employee->balance_id) }}"
+                                                <a href="{{ route('leaves.leave-balances.edit', $employee->balance_id) }}"
                                                 class="btn btn-outline-info btn-sm action-btn"
                                                 data-id="{{ $employee->balance_id }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leave Balance" aria-label="Edit">
@@ -216,18 +216,18 @@ $(document).ready(function() {
     $('#exportExcel').click(function() {
         var params = new URLSearchParams(window.location.search);
         params.append('export', 'excel');
-        window.location.href = '{{ route('leave-balances.index') }}?' + params.toString();
+        window.location.href = '{{ route('leaves.leave-balances.index') }}?' + params.toString();
     });
 
     $('#exportPdf').click(function() {
         var params = new URLSearchParams(window.location.search);
         params.append('export', 'pdf');
-        window.location.href = '{{ route('leave-balances.index') }}?' + params.toString();
+        window.location.href = '{{ route('leaves.leave-balances.index') }}?' + params.toString();
     });
 
     // Reset filters
     $('#resetFilters').click(function() {
-        window.location.href = '{{ route('leave-balances.index') }}';
+        window.location.href = '{{ route('leaves.leave-balances.index') }}';
     });
 });
 </script>

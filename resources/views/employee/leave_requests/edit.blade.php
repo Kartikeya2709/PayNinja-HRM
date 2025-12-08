@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Edit Leave Request</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">My Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leaves.my-leaves.leave-requests.index') }}">My Leave Requests</a></div>
             <div class="breadcrumb-item active">Edit Request</div>
         </div>
     </div>
@@ -20,11 +20,11 @@
                         <h4>Leave Request Form</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('leave-requests.update', $leaveRequest->id) }}" 
-                              method="POST" 
+                        <form action="{{ route('leaves.my-leaves.leave-requests.update', $leaveRequest->id) }}"
+                              method="POST"
                               enctype="multipart/form-data">
-                            @csrf
-                            @method('PUT')
+                        @csrf
+                        @method('PUT')
 
                             <div class="form-group">
                                 <label>Leave Type</label>
@@ -34,11 +34,11 @@
 
                             <div class="form-group">
                                 <label for="start_date">Start Date <span class="text-danger">*</span></label>
-                                <input type="date" 
-                                       name="start_date" 
-                                       id="start_date" 
-                                       class="form-control @error('start_date') is-invalid @enderror" 
-                                       value="{{ old('start_date', $leaveRequest->start_date->format('Y-m-d')) }}" 
+                                <input type="date"
+                                       name="start_date"
+                                       id="start_date"
+                                       class="form-control @error('start_date') is-invalid @enderror"
+                                       value="{{ old('start_date', $leaveRequest->start_date->format('Y-m-d')) }}"
                                        min="{{ now()->format('Y-m-d') }}"
                                        required>
                                 @error('start_date')
@@ -50,11 +50,11 @@
 
                             <div class="form-group">
                                 <label for="end_date">End Date <span class="text-danger">*</span></label>
-                                <input type="date" 
-                                       name="end_date" 
-                                       id="end_date" 
-                                       class="form-control @error('end_date') is-invalid @enderror" 
-                                       value="{{ old('end_date', $leaveRequest->end_date->format('Y-m-d')) }}" 
+                                <input type="date"
+                                       name="end_date"
+                                       id="end_date"
+                                       class="form-control @error('end_date') is-invalid @enderror"
+                                       value="{{ old('end_date', $leaveRequest->end_date->format('Y-m-d')) }}"
                                        min="{{ now()->format('Y-m-d') }}"
                                        required>
                                 @error('end_date')
@@ -66,10 +66,10 @@
 
                             <div class="form-group">
                                 <label for="reason">Reason <span class="text-danger">*</span></label>
-                                <textarea name="reason" 
-                                          id="reason" 
-                                          class="form-control @error('reason') is-invalid @enderror" 
-                                          rows="3" 
+                                <textarea name="reason"
+                                          id="reason"
+                                          class="form-control @error('reason') is-invalid @enderror"
+                                          rows="3"
                                           required>{{ old('reason', $leaveRequest->reason) }}</textarea>
                                 @error('reason')
                                     <div class="invalid-feedback">
@@ -80,7 +80,7 @@
 
                             @if($leaveRequest->leaveType->requires_attachment)
                                 <div class="form-group">
-                                    <label for="attachment">Attachment 
+                                    <label for="attachment">Attachment
                                         @if(!$leaveRequest->attachment)
                                             <span class="text-danger">*</span>
                                         @endif
@@ -88,16 +88,16 @@
                                     </label>
                                     @if($leaveRequest->attachment)
                                         <div class="mb-2">
-                                            <a href="{{ Storage::url($leaveRequest->attachment) }}" 
-                                               target="_blank" 
+                                            <a href="{{ Storage::url($leaveRequest->attachment) }}"
+                                               target="_blank"
                                                class="btn btn-sm btn-info">
                                                 <i class="fas fa-download"></i> Current Attachment
                                             </a>
                                         </div>
                                     @endif
-                                    <input type="file" 
-                                           name="attachment" 
-                                           id="attachment" 
+                                    <input type="file"
+                                           name="attachment"
+                                           id="attachment"
                                            class="form-control @error('attachment') is-invalid @enderror"
                                            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
                                            {{ !$leaveRequest->attachment ? 'required' : '' }}>
@@ -111,7 +111,7 @@
 
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Update Leave Request</button>
-                                <a href="{{ route('leave-requests.index') }}" class="btn btn-link">Cancel</a>
+                                <a href="{{ route('leaves.my-leaves.leave-requests.index') }}" class="btn btn-link">Cancel</a>
                             </div>
                         </form>
                     </div>

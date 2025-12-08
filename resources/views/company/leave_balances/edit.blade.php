@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>Edit Leave Balance</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('leave-balances.index') }}">Leave Balances</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leaves.leave-balances.index') }}">Leave Balances</a></div>
             <div class="breadcrumb-item active"><a href="">Edit</a></div>
         </div>
     </div>
@@ -21,7 +21,7 @@
         <i class="fas fa-calendar-check me-2 text-primary"></i>Update Leave Balance
     </h5>
 
-    <form action="{{ route('leave-balances.update', $leaveBalance->id) }}" method="POST" class="leave-balance-form">
+    <form action="{{ route('leaves.leave-balances.update', $leaveBalance->id) }}" method="POST" class="leave-balance-form">
         @csrf
         @method('PUT')
 
@@ -78,7 +78,7 @@
             <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                 <i class="bi bi-save me-2"></i> Update Leave Balance
             </button>
-            <a href="{{ route('leave-balances.index') }}" class="btn btn-danger px-4 rounded-pill ms-2">
+            <a href="{{ route('leaves.leave-balances.index') }}" class="btn btn-danger px-4 rounded-pill ms-2">
                 <i class="bi bi-x-circle me-1"></i> Cancel
             </a>
         </div>

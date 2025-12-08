@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>View Leave Request</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">My Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leaves.my-leaves.leave-requests.index') }}">My Leave Requests</a></div>
             <div class="breadcrumb-item active">View</div>
         </div>
     </div>
@@ -15,7 +15,7 @@
     <div class="section-body">
         <div class="row">
             <div class="col-12">
-                
+
 <div class="card">
     <div class="leave-header">
         <h5><i class="bi bi-calendar-event me-2"></i>Leave Request Summary</h5>
@@ -48,7 +48,7 @@
                     <p class="form-control-static">{{ $leaveRequest->reason }}</p>
                 </div>
 
-                
+
             </div>
 
             <!-- Right Column -->
@@ -74,7 +74,7 @@
                     <label><i class="bi bi-calendar-date-fill me-1"></i> End Date</label>
                     <p class="form-control-static">{{ $leaveRequest->end_date->format('Y-m-d') }}</p>
                 </div>
-                
+
 <div class="form-group">
                     <label><i class="bi bi-clock me-1"></i> Total Calendar Days</label>
                     <p class="form-control-static">{{ $totalCalendarDays }} days</p>
@@ -135,14 +135,14 @@
         @endif
 
         <div class="leave-actions">
-            <a href="{{ route('leave-requests.index') }}" class="btn btn-secondary">
+            <a href="{{ route('leaves.my-leaves.leave-requests.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left"></i> Back
             </a>
             @if($leaveRequest->status === 'pending')
-                <a href="{{ route('leave-requests.edit', $leaveRequest->id) }}" class="btn btn-warning">
+                <a href="{{ route('leaves.my-leaves.leave-requests.edit', $leaveRequest->id) }}" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Edit
                 </a>
-                <form action="{{ route('leave-requests.cancel', $leaveRequest->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Cancel this leave request?');">
+                <form action="{{ route('leaves.my-leaves.leave-requests.cancel', $leaveRequest->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Cancel this leave request?');">
                     @csrf
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-times"></i> Cancel

@@ -7,7 +7,7 @@
     <div class="section-header">
         <h1>View Leave Request</h1>
         <div class="section-header-breadcrumb">
-            <div class="breadcrumb-item"><a href="{{ route('leave-requests.index') }}">Leave Requests</a></div>
+            <div class="breadcrumb-item"><a href="{{ route('leaves.leave-requests.index') }}">Leave Requests</a></div>
             <div class="breadcrumb-item active"><a href="">View</a></div>
         </div>
     </div>
@@ -37,8 +37,8 @@
             <div class="col-md-6">
                 <h6 class="glass-section-title"><i class="fas fa-clock me-2"></i>Leave Duration</h6>
 
-                <p><span class="label">Total Days:</span> 
-                    <span class="value">{{ $leaveRequest->total_days }} 
+                <p><span class="label">Total Days:</span>
+                    <span class="value">{{ $leaveRequest->total_days }}
                     <span class="text-muted">({{ count($approvedWorkingDays) }} working days)</span></span>
                 </p>
 
@@ -69,7 +69,7 @@
                     @endforelse
                 </p>
 
-                <p><span class="label">Status:</span> 
+                <p><span class="label">Status:</span>
                     <span class="badge badge-{{ $leaveRequest->status_color }}">{{ ucfirst($leaveRequest->status) }}</span>
                 </p>
 
@@ -77,7 +77,7 @@
 
                 @if($leaveRequest->attachment)
                     <div class="mt-3">
-                        <a href="{{ Storage::url($leaveRequest->attachment) }}" 
+                        <a href="{{ Storage::url($leaveRequest->attachment) }}"
                            target="_blank" class="btn btn-sm btn-glass">
                             <i class="fas fa-download"></i> Download Attachment
                         </a>
@@ -97,7 +97,7 @@
         @if($leaveRequest->status === 'pending')
             <div class="row mt-4 text-center">
                 <div class="col-md-6 mb-2">
-                    <form action="{{ route('leave-requests.approve', $leaveRequest->id) }}" method="POST" class="d-inline">
+                    <form action="{{ route('leaves.leave-requests.approve', $leaveRequest->id) }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-glass text-success">
                             <i class="fas fa-check"></i> Approve
@@ -113,7 +113,7 @@
         @endif
 
         <div class="d-flex gap-3 justify-content-center mt-4">
-             <a href="{{ route('leave-requests.index') }}" 
+             <a href="{{ route('leaves.leave-requests.index') }}"
               class="btn btn-secondary px-4 rounded-pill shadow-sm">
               <i class="bi bi-arrow-left me-2"></i>Back to Leave Requests
               </a>
@@ -130,7 +130,7 @@
     <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('leave-requests.reject', $leaveRequest->id) }}" method="POST">
+                <form action="{{ route('leaves.leave-requests.reject', $leaveRequest->id) }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="rejectModalLabel">Reject Leave Request</h5>
@@ -139,9 +139,9 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="rejection_reason">Rejection Reason (Optional)</label>
-                            <textarea name="rejection_reason" 
-                                      id="rejection_reason" 
-                                      class="form-control" 
+                            <textarea name="rejection_reason"
+                                      id="rejection_reason"
+                                      class="form-control"
                                       rows="3">{{ old('rejection_reason') }}</textarea>
                         </div>
                     </div>

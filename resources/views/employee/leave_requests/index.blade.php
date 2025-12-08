@@ -21,7 +21,7 @@ use Carbon\Carbon;
             <div class="card-1">
                 <h5 class="mb-0">My Leave Requests</h5>
                 <div class="section-header-button">
-                    <a href="{{ route('leave-requests.create') }}" class="btn btn-primary">Request Leave</a>
+                    <a href="{{ route('leaves.my-leaves.leave-requests.create') }}" class="btn btn-primary">Request Leave</a>
                 </div>
             </div>
         </div>
@@ -134,7 +134,7 @@ use Carbon\Carbon;
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('leave-requests.show', $request->id) }}"
+                                            <a href="{{ route('leaves.my-leaves.leave-requests.show', $request->id) }}"
                                                 class="btn btn-outline-info action-btn" data-id="{{ $request->id }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Show Request"
                                                 aria-label="Show">
@@ -146,7 +146,7 @@ use Carbon\Carbon;
                                             </a>
 
                                             @if($request->status === 'pending')
-                                            <a href="{{ route('leave-requests.edit', $request->id) }}"
+                                            <a href="{{ route('leaves.my-leaves.leave-requests.edit', $request->id) }}"
                                                 class="btn btn-outline-warning edit-leave-request"
                                                 data-id="{{ $request->id }}" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Edit Request" aria-label="Edit">
@@ -157,17 +157,17 @@ use Carbon\Carbon;
                                                     aria-hidden="true"></span>
                                             </a>
 
-                                            <form action="{{ route('leave-requests.cancel', $request->id) }}"
+                                            <form action="{{ route('leaves.my-leaves.leave-requests.cancel', $request->id) }}"
                                                 method="POST" class="d-inline"
                                                 onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
                                                 @csrf
-                                                <button type="submit" 
-                                                class="btn btn-outline-danger btn-sm action-btn rounded-start-0" 
-                                                data-id="1" 
-                                                data-bs-toggle="tooltip" 
-                                                data-bs-placement="top" 
-                                                title="Delete Category" 
-                                                aria-label="Delete" 
+                                                <button type="submit"
+                                                class="btn btn-outline-danger btn-sm action-btn rounded-start-0"
+                                                data-id="1"
+                                                data-bs-toggle="tooltip"
+                                                data-bs-placement="top"
+                                                title="Delete Category"
+                                                aria-label="Delete"
                                                 onclick="return confirm('Are you sure you want to delete this category?')">
                                                 <span class="btn-content">
                                                 <i class="fas fa-trash"></i>

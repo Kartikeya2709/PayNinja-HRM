@@ -55,13 +55,13 @@
                         <h5>Leave Request Form</h5>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('leave-requests.store') }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('leaves.my-leaves.leave-requests.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="form-group mb-4">
                                     <label for="leave_type_id">Leave Type <span class="text-danger">*</span></label>
-                                <select name="leave_type_id" 
-                                        id="leave_type_id" 
+                                <select name="leave_type_id"
+                                        id="leave_type_id"
                                         class="form-control select2 @error('leave_type_id') is-invalid @enderror"
                                         required>
                                         <option value="">Select Leave Type</option>
@@ -84,11 +84,11 @@
                                 <div class="col-lg-6 col-sm-12">
                                     <div class="form-group mb-4">
                                         <label for="start_date">Start Date <span class="text-danger">*</span></label>
-                                <input type="date" 
-                                       name="start_date" 
-                                       id="start_date" 
+                                <input type="date"
+                                       name="start_date"
+                                       id="start_date"
                                             class="form-control @error('start_date') is-invalid @enderror"
-                                       value="{{ old('start_date') }}" 
+                                       value="{{ old('start_date') }}"
                                        min="{{ now()->format('Y-m-d') }}"
                                        required>
                                         @error('start_date')
@@ -101,11 +101,11 @@
                                 <div class="col-lg-6 col-sm-12">
                                     <div class="form-group mb-4">
                                         <label for="end_date">End Date <span class="text-danger">*</span></label>
-                                <input type="date" 
-                                       name="end_date" 
-                                       id="end_date" 
+                                <input type="date"
+                                       name="end_date"
+                                       id="end_date"
                                             class="form-control @error('end_date') is-invalid @enderror"
-                                       value="{{ old('end_date') }}" 
+                                       value="{{ old('end_date') }}"
                                        min="{{ now()->format('Y-m-d') }}"
                                        required>
                                         @error('end_date')
@@ -119,10 +119,10 @@
                                 <div class="row">
                                     <div class="form-group mb-4">
                                         <label for="reason">Reason <span class="text-danger">*</span></label>
-                                <textarea name="reason" 
-                                          id="reason" 
-                                          class="form-control @error('reason') is-invalid @enderror" 
-                                          rows="3" 
+                                <textarea name="reason"
+                                          id="reason"
+                                          class="form-control @error('reason') is-invalid @enderror"
+                                          rows="3"
                                             required>{{ old('reason') }}</textarea>
                                         @error('reason')
                                         <div class="invalid-feedback">
@@ -132,16 +132,16 @@
                                     </div>
                                </div>
                                </div>
-                                
+
                                 <div class="row">
                                     <div class="form-group mb-4" id="attachmentGroup" style="display: none;">
                                         <label for="attachment">Attachment
                                             <span class="text-danger">*</span>
                                             <small class="text-muted">(Required for this leave type)</small>
                                         </label>
-                                <input type="file" 
-                                       name="attachment" 
-                                       id="attachment" 
+                                <input type="file"
+                                       name="attachment"
+                                       id="attachment"
                                             class="form-control @error('attachment') is-invalid @enderror"
                                             accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
                                         @error('attachment')
@@ -155,7 +155,7 @@
                                    <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                                    <i class="bi bi-send-check me-2"></i>Submit Leave Request
                                    </button>
-                                   <a href="{{ route('leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
+                                   <a href="{{ route('leaves.my-leaves.leave-requests.index') }}" class="btn btn-danger px-4 rounded-pill">
                                    <i class="bi bi-x-circle me-2"></i>Cancel
                                    </a>
                                 </div>

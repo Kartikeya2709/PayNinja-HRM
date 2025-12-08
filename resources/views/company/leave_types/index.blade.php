@@ -16,7 +16,7 @@
             <div class="card-1 card-header">
                 <h5 class="mb-0">Leave Types</h5>
                 <div class="section-header-button">
-                    <a href="{{ route('leave-types.create') }}" class="btn btn-primary">Add New Leave Type</a>
+                    <a href="{{ route('leaves.leave-types.create') }}" class="btn btn-primary">Add New Leave Type</a>
                 </div>
             </div>
 
@@ -81,7 +81,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-group btn-group-sm">
-                                                    <a href="{{ route('leave-types.edit', $leaveType->id) }}"
+                                                    <a href="{{ route('leaves.leave-types.edit', $leaveType->id) }}"
                                                         class="btn btn-outline-warning btn-sm action-btn rounded-end-0"
                                                         data-id="{{ $leaveType->id }}" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Edit Leave Type"
@@ -94,7 +94,7 @@
                                                     </a>
 
                                                     <form
-                                                        action="{{ route('leave-types.destroy', $leaveType->id) }}"
+                                                        action="{{ route('leaves.leave-types.destroy', $leaveType->id) }}"
                                                         method="POST" class="d-inline"
                                                         onsubmit="return confirm('Are you sure you want to delete this leave type?');">
                                                         @csrf

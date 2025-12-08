@@ -285,20 +285,20 @@
                     @if ($hasModuleAccess('leave', 'employee'))
                         <li class="menu-header">Leave Management</li>
                         <li
-                            class="menu-item {{ Request::is('leave-requests') && !Request::is('leave-requests/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-requests.index') }}">
+                            class="menu-item {{ Request::is('leaves/my-leaves/leave-requests') && !Request::is('leaves/my-leaves/leave-requests/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('leaves.my-leaves.leave-requests.index') }}">
                                 <i class="fas fa-plane-departure"></i>
                                 <span>My Leave Requests</span>
                             </a>
                         </li>
-                        <li class="{{ Request::is('leave-requests/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-requests.create') }}">
+                        <li class="{{ Request::is('leaves/my-leaves/leave-requests/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('leaves.my-leaves.leave-requests.create') }}">
                                 <i class="fas fa-calendar-plus"></i>
                                 <span>Apply for Leave</span>
                             </a>
                         </li>
                         {{-- <li class="{{ Request::is('leave-management/leave-requests/calendar') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-management.leave-requests.calendar') }}">
+                            <a class="nav-link" href="{{ route('leaves.leave-requests.calendar') }}">
                                 <i class="fas fa-calendar-alt"></i>
                                 <span>Leave Calendar</span>
                             </a>
@@ -503,27 +503,27 @@
                     <!-- Leave Management -->
                     <li class="menu-header">Leave Management</li>
                     <li class="{{ Request::is('leave-types*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('leave-types.index') }}">
+                        <a class="nav-link" href="{{ route('leaves.leave-types.index') }}">
                             <i class="fas fa-calendar-alt"></i>
                             <span>Leave Types</span>
                         </a>
                     </li>
                     <li class="{{ Request::is('leave-balances*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('leave-balances.index') }}">
+                        <a class="nav-link" href="{{ route('leaves.leave-balances.index') }}">
                             <i class="fas fa-balance-scale"></i>
                             <span>Leave Balances</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('leave-requests/create') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('leave-requests.create') }}">
+                    <li class="{{ Request::is('leaves/leave-requests/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('leaves.leave-requests.create') }}">
                             <i class="fas fa-calendar-plus"></i>
                             <span>Apply for Leave</span>
                             </i>
                         </a>
                     </li>
                     <li
-                        class="{{ Request::is('company/leave-requests') && !Request::is('company/leave-requests/calendar') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('leave-requests.index') }}">
+                        class="{{ Request::is('leaves/leave-requests') && !Request::is('leaves/leave-requests/calendar') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('leaves.leave-requests.index') }}">
                             <i class="fas fa-clipboard-list"></i>
                             <span>Leave Requests</span>
                         </a>
@@ -543,7 +543,7 @@
                         </a>
                     </li>
                     {{-- <li class="{{ Request::is('company/leave-requests/calendar') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('company.leave-requests.calendar') }}">
+                        <a class="nav-link" href="{{ route('leaves.leave-requests.calendar') }}">
                             <i class="fas fa-calendar-alt"></i>
                             <span>Leave Calendar</span>
                         </a>
@@ -762,24 +762,24 @@
                     @if ($hasModuleAccess('leave', 'admin'))
                         <li class="menu-header">Leave Management</li>
                         <li class="{{ Request::is('leave-types*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-types.index') }}"><i class="fas fa-calendar-alt"></i>
+                            <a class="nav-link" href="{{ route('leaves.leave-types.index') }}"><i class="fas fa-calendar-alt"></i>
                                 <span>Leave Types</span></a>
                         </li>
                         <li class="{{ Request::is('leave-balances*') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-balances.index') }}"><i
+                            <a class="nav-link" href="{{ route('leaves.leave-balances.index') }}"><i
                                     class="fas fa-balance-scale"></i> <span>Leave Balances</span></a>
                         </li>
-                        <li class="{{ Request::is('leave-requests/create') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-requests.create') }}"><i
+                        <li class="{{ Request::is('leaves/my-leaves/leave-requests/create') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('leaves.leave-requests.create') }}"><i
                                     class="fas fa-calendar-plus"></i> <span>Apply for Leave</span></a>
                         </li>
                         <li
-                            class="{{ Request::is('leave-requests') && !Request::is('leave-requests/calendar') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('leave-requests.index') }}"><i
+                            class="{{ Request::is('leaves/my-leaves/leave-requests') && !Request::is('leaves/my-leaves/leave-requests/calendar') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('leaves.my-leaves.leave-requests.index') }}"><i
                                     class="fas fa-clipboard-list"></i> <span>Leave Requests</span></a>
                         </li>
                         {{-- <li class="{{ Request::is('company/leave-requests/calendar') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('company.leave-requests.calendar') }}"><i
+                            <a class="nav-link" href="{{ route('leaves.leave-requests.calendar') }}"><i
                                     class="fas fa-calendar-alt"></i> <span>Leave Calendar</span></a>
                         </li> --}}
                     @endif
