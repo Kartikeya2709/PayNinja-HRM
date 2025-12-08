@@ -28,7 +28,7 @@
                     <div class="card-icon bg-primary">
                         <i class="fas fa-file-signature"></i>
                     </div>
-                    
+
                     </div>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                 <div class="card Resignations-icon">
                     <div class="d-flex justify-content-between align-items-center">
                      <div class="text-wrap">
-                        
+
                         <div class="card-header">
                             <h4>Pending</h4>
                         </div>
@@ -64,7 +64,7 @@
                     <div class="card-icon bg-success">
                         <i class="fas fa-check"></i>
                     </div>
-                   
+
                 </div>
                 </div>
                 </div>
@@ -82,7 +82,7 @@
                     <div class="card-icon bg-info">
                         <i class="fas fa-calendar"></i>
                     </div>
-                   
+
                     </div>
                 </div>
             </div>
@@ -95,7 +95,7 @@
                 <h5>Filter Resignations</h5>
             </div>
             <div class="card-body">
-                <form method="GET" action="{{ route('admin.resignations.index') }}" class="row g-3">
+                <form method="GET" action="{{ route('resignations.index') }}" class="row g-3">
                     <div class="col-lg-3 col-md-6 col-sm-12">
                         <label for="department_id" class="form-label">Department</label>
                         <select name="department_id" id="department_id" class="form-control">
@@ -152,7 +152,7 @@
                       <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                       <i class="fas fa-filter me-2"></i>Apply Filters
                       </button>
-                           <a href="{{ route('admin.resignations.index') }}" class="btn btn-danger px-4 rounded-pill">
+                           <a href="{{ route('resignations.index') }}" class="btn btn-danger px-4 rounded-pill">
                            <i class="fas fa-times me-2"></i>Clear Filters
                            </a>
                     </div>
@@ -230,7 +230,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.resignations.show', $resignation) }}"
+                                    <a href="{{ route('resignations.show', $resignation) }}"
                                         class="btn btn-outline-info btn-sm action-btn"
                                         data-id="{{ $resignation->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="View Resignation" aria-label="View">
@@ -314,7 +314,7 @@ function approveResignation(resignationId) {
             // Create form and submit
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/approve`;
+            form.action = `/resignations/${resignationId}/approve`;
 
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
@@ -358,7 +358,7 @@ function rejectResignation(resignationId) {
             // Create form and submit
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/reject`;
+            form.action = `/resignations/${resignationId}/reject`;
 
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';

@@ -18,12 +18,12 @@ class ResignationController extends Controller
     public function index()
     {
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
-        
+
         $resignations = EmployeeResignation::where('employee_id', $employee->id)
             ->with(['reportingManager', 'hrAdmin', 'approver'])
             ->latest()
             ->get();
-            
+
         return view('employee.resignations.index', compact('resignations'));
     }
 
@@ -33,17 +33,17 @@ class ResignationController extends Controller
     public function create()
     {
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
-        
+
         // Check if employee has any active resignation
         $activeResignation = EmployeeResignation::where('employee_id', $employee->id)
             ->whereIn('status', ['pending', 'hr_approved', 'manager_approved', 'approved'])
             ->first();
-            
+
         if ($activeResignation) {
-            return redirect()->route('resignations.index')
+            return redirect()->route('resignations.my-resignations.index')
                 ->with('error', 'You already have an active resignation request.');
         }
-        
+
         return view('employee.resignations.create');
     }
 
@@ -53,18 +53,18 @@ class ResignationController extends Controller
     public function store(Request $request)
     {
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
-        
+
         // Check if employee already has an active resignation
         $activeResignation = EmployeeResignation::where('employee_id', $employee->id)
             ->whereIn('status', ['pending', 'hr_approved', 'manager_approved', 'approved'])
             ->first();
-            
+
         if ($activeResignation) {
             return redirect()->back()
                 ->with('error', 'You already have an active resignation request.')
                 ->withInput();
         }
-        
+
         $validated = $request->validate([
             'resignation_type' => 'required|in:voluntary,retirement,contract_end',
             'reason' => 'required|string|max:1000',
@@ -79,7 +79,7 @@ class ResignationController extends Controller
         $resignationDate = Carbon::parse($validated['resignation_date']);
         $lastWorkingDate = Carbon::parse($validated['last_working_date']);
         $actualNoticeDays = $resignationDate->diffInDays($lastWorkingDate);
-        
+
         if ($actualNoticeDays != $validated['notice_period_days']) {
             return redirect()->back()
                 ->with('error', 'The notice period days must match the difference between resignation date and last working date.')
@@ -110,24 +110,27 @@ class ResignationController extends Controller
 
         // TODO: Send notification to HR and reporting manager
 
-        return redirect()->route('resignations.index')
+        return redirect()->route('resignations.my-resignations.index')
             ->with('success', 'Resignation request submitted successfully. You will be notified once it is reviewed.');
     }
 
     /**
      * Display the specified resignation request.
      */
-    public function show(EmployeeResignation $resignation)
+    public function show(EmployeeResignation $my_resignation)
     {
+        $resignation = $my_resignation;
+        // \Log::info('Show resignation called with : ' . $resignation->id);
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
-        
+
         // Check if the resignation belongs to the authenticated employee
+        \Log::info('the condition is '. $resignation->employee_id . ' vs ' . $employee->id);
         if ($resignation->employee_id !== $employee->id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         $resignation->load(['reportingManager', 'hrAdmin', 'approver', 'employee.department', 'employee.designation']);
-        
+
         return view('employee.resignations.show', compact('resignation'));
     }
 
@@ -137,68 +140,70 @@ class ResignationController extends Controller
     public function withdraw(EmployeeResignation $resignation)
     {
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
-        
+
         // Check if the resignation belongs to the authenticated employee
         if ($resignation->employee_id !== $employee->id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         // Check if resignation can be withdrawn
         if (!$resignation->canBeWithdrawn()) {
             return redirect()->back()
                 ->with('error', 'Resignation cannot be withdrawn at this stage. Please contact HR if you need assistance.');
         }
-        
+
         $resignation->update([
             'status' => 'withdrawn',
             'admin_remarks' => 'Withdrawn by employee on ' . now()->format('Y-m-d H:i:s')
         ]);
-        
+
         // TODO: Send notification to HR and reporting manager about withdrawal
-        
-        return redirect()->route('resignations.index')
+
+        return redirect()->route('resignations.my-resignations.index')
             ->with('success', 'Resignation request withdrawn successfully.');
     }
 
     /**
      * Show the form for editing the specified resignation request.
      */
-    public function edit(EmployeeResignation $resignation)
+    public function edit(EmployeeResignation $my_resignation)
     {
+        $resignation = $my_resignation;
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
-        
+
         // Check if the resignation belongs to the authenticated employee
         if ($resignation->employee_id !== $employee->id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         // Check if resignation can be edited (only pending status)
         if ($resignation->status !== 'pending') {
-            return redirect()->route('resignations.index')
+            return redirect()->route('resignations.my-resignations.index')
                 ->with('error', 'Only pending resignation requests can be edited.');
         }
-        
+
         return view('employee.resignations.edit', compact('resignation'));
     }
 
     /**
      * Update the specified resignation request in storage.
      */
-    public function update(Request $request, EmployeeResignation $resignation)
+    public function update(Request $request, EmployeeResignation $my_resignation)
     {
+        $resignation = $my_resignation;
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
-        
+
         // Check if the resignation belongs to the authenticated employee
         if ($resignation->employee_id !== $employee->id) {
             abort(403, 'Unauthorized action.');
         }
-        
+
         // Check if resignation can be updated (only pending status)
         if ($resignation->status !== 'pending') {
-            return redirect()->route('resignations.index')
+            return redirect()->route('resignations.my-resignations.index')
                 ->with('error', 'Only pending resignation requests can be updated.');
         }
-        
+
         $validated = $request->validate([
             'resignation_type' => 'required|in:voluntary,retirement,contract_end',
             'reason' => 'required|string|max:1000',
@@ -213,7 +218,7 @@ class ResignationController extends Controller
         $resignationDate = Carbon::parse($validated['resignation_date']);
         $lastWorkingDate = Carbon::parse($validated['last_working_date']);
         $actualNoticeDays = $resignationDate->diffInDays($lastWorkingDate);
-        
+
         if ($actualNoticeDays != $validated['notice_period_days']) {
             return redirect()->back()
                 ->with('error', 'The notice period days must match the difference between resignation date and last working date.')
@@ -226,7 +231,7 @@ class ResignationController extends Controller
             if ($resignation->attachment_path) {
                 Storage::disk('public')->delete($resignation->attachment_path);
             }
-            
+
             $file = $request->file('attachment');
             $fileName = 'resignation_' . $employee->id . '_' . time() . '.' . $file->getClientOriginalExtension();
             $validated['attachment_path'] = $file->storeAs('resignation-attachments', $fileName, 'public');
@@ -234,7 +239,7 @@ class ResignationController extends Controller
 
         $resignation->update($validated);
 
-        return redirect()->route('resignations.index')
+        return redirect()->route('resignations.my-resignations.index')
             ->with('success', 'Resignation request updated successfully.');
     }
 }

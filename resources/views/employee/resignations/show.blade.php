@@ -9,7 +9,7 @@
             <h1>Resignation Details</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('resignations.index') }}">Resignations</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('resignations.my-resignations.index') }}">Resignations</a></div>
                 <div class="breadcrumb-item">Details</div>
             </div>
         </div>
@@ -20,7 +20,7 @@
                     <div class="card-header">
                         <h5>Resignation Information</h5>
                         <div class="card-header-action">
-                            <a href="{{ route('resignations.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('resignations.my-resignations.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to List
                             </a>
                         </div>
@@ -174,7 +174,7 @@
         @endif
 
         @if($resignation->status === 'pending')
-            <a href="{{ route('resignations.edit', $resignation) }}" class="btn btn-warning">
+            <a href="{{ route('resignations.my-resignations.edit', $resignation) }}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Request
             </a>
         @endif
@@ -203,7 +203,7 @@ function withdrawResignation(resignationId) {
             // Create a form and submit it
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/employee/resignations/${resignationId}/withdraw`;
+            form.action = `/resignations/my-resignations/${resignationId}/withdraw`;
 
             // Add CSRF token
             const csrfToken = document.createElement('input');

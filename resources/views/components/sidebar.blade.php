@@ -364,14 +364,14 @@
                     <!-- Resignations -->
                     <li class="menu-header">Resignations</li>
                     <li
-                        class="{{ Request::is('resignations') && !Request::is('resignations/create') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('resignations.index') }}">
+                        class="{{ Request::is('resignations/my-resignations') && !Request::is('resignations/my-resignations/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('resignations.my-resignations.index') }}">
                             <i class="fas fa-file-signature"></i>
                             <span>My Resignations</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('resignations/create') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('resignations.create') }}">
+                    <li class="{{ Request::is('resignations/my-resignations/create') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('resignations.my-resignations.create') }}">
                             <i class="fas fa-plus-circle"></i>
                             <span>Submit Resignation</span>
                         </a>
@@ -401,8 +401,8 @@
                             <span>Employee Management</span>
                         </a>
                     </li>
-                    <li class="{{ Request::is('admin/resignations') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('admin.resignations.index') }}">
+                    <li class="{{ Request::is('resignations') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('resignations.index') }}">
                             <i class="fas fa-file-signature"></i>
                             <span>Employee Resignations</span>
                         </a>
@@ -643,8 +643,8 @@
                             </a>
                         </li>
                         <!-- Resignation Management -->
-                        <li class="{{ Request::is('admin/resignations') ? 'active' : '' }}">
-                            <a class="nav-link" href="{{ route('admin.resignations.index') }}">
+                        <li class="{{ Request::is('resignations') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('resignations.index') }}">
                                 <i class="fas fa-file-signature"></i>
                                 <span>Employee Resignations</span>
                             </a>

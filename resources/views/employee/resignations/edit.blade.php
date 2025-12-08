@@ -9,7 +9,7 @@
             <h1>Edit Resignation Request</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('resignations.index') }}">Resignations</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('resignations.my-resignations.index') }}">Resignations</a></div>
                 <div class="breadcrumb-item">Edit Request</div>
             </div>
         </div>
@@ -35,7 +35,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('resignations.update', $resignation) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('resignations.my-resignations.update', $resignation) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -157,10 +157,10 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Update Resignation
                         </button>
-                        <a href="{{ route('resignations.show', $resignation) }}" class="btn btn-secondary">
+                        <a href="{{ route('resignations.my-resignations.show', $resignation) }}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Cancel
                         </a>
-                        <a href="{{ route('resignations.index') }}" class="btn btn-outline-secondary">
+                        <a href="{{ route('resignations.my-resignations.index') }}" class="btn btn-outline-secondary">
                             <i class="fas fa-list"></i> Back to List
                         </a>
                     </div>

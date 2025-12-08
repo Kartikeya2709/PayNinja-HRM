@@ -147,7 +147,7 @@ class ResignationController extends Controller
             ? 'Resignation request has been fully approved.'
             : 'Resignation request has been approved and forwarded for final approval.';
 
-        return redirect()->route('admin.resignations.index')
+        return redirect()->route('resignations.index')
             ->with('success', $message);
     }
 
@@ -190,7 +190,7 @@ class ResignationController extends Controller
 
         // TODO: Send notification to employee about rejection
 
-        return redirect()->route('admin.resignations.index')
+        return redirect()->route('resignations.index')
             ->with('success', 'Resignation request has been rejected.');
     }
 

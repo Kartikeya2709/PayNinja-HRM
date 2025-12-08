@@ -31,7 +31,7 @@ class ResignationStatusNotification extends Notification
             ->subject($subject)
             ->greeting($greeting)
             ->line($this->getMessage())
-            ->action('View Resignation', route('resignations.show', $this->resignation))
+            ->action('View Resignation', route('resignations.my-resignations.show', $this->resignation))
             ->line('Thank you for using our application!');
     }
 

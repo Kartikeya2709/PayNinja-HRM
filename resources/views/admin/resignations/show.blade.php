@@ -9,7 +9,7 @@
             <h1>Resignation Details</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('admin.resignations.index') }}">Resignations</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('resignations.index') }}">Resignations</a></div>
                 <div class="breadcrumb-item">Details</div>
             </div>
         </div>
@@ -20,7 +20,7 @@
                     <div class="card-1">
                         <h5 class="mb-0">Employee Information</h5>
                         <div class="card-header-action">
-                            <a href="{{ route('admin.resignations.index') }}" class="btn btn-secondary">
+                            <a href="{{ route('resignations.index') }}" class="btn btn-secondary">
                                 <i class="fas fa-arrow-left"></i> Back to List
                             </a>
                         </div>
@@ -383,7 +383,7 @@ function approveResignation(resignationId) {
             // Create form and submit
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/approve`;
+            form.action = `/resignations/${resignationId}/approve`;
 
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
@@ -431,7 +431,7 @@ function rejectResignation(resignationId) {
         preConfirm: (reason) => {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/reject`;
+            form.action = `/resignations/${resignationId}/reject`;
 
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
@@ -481,7 +481,7 @@ function completeExitInterview(resignationId) {
 
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/complete-exit-interview`;
+            form.action = `/resignations/${resignationId}/complete-exit-interview`;
 
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
@@ -525,7 +525,7 @@ function completeHandover(resignationId) {
         preConfirm: (remarks) => {
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/complete-handover`;
+            form.action = `/resignations/${resignationId}/complete-handover`;
 
             const csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
@@ -549,7 +549,7 @@ function completeHandover(resignationId) {
 
 function markAssetsReturned(resignationId) {
     // First, fetch assigned assets
-    fetch(`/admin/resignations/${resignationId}/assigned-assets`, {
+    fetch(`/resignations/${resignationId}/assigned-assets`, {
         method: 'GET',
         headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -573,7 +573,7 @@ function markAssetsReturned(resignationId) {
                 preConfirm: (remarks) => {
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = `/admin/resignations/${resignationId}/mark-assets-returned`;
+                    form.action = `/resignations/${resignationId}/mark-assets-returned`;
 
                     const csrfToken = document.createElement('input');
                     csrfToken.type = 'hidden';
@@ -628,7 +628,7 @@ function markAssetsReturned(resignationId) {
 
                     const form = document.createElement('form');
                     form.method = 'POST';
-                    form.action = `/admin/resignations/${resignationId}/mark-assets-returned`;
+                    form.action = `/resignations/${resignationId}/mark-assets-returned`;
 
                     const csrfToken = document.createElement('input');
                     csrfToken.type = 'hidden';
@@ -694,7 +694,7 @@ function completeFinalSettlement(resignationId) {
 
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/admin/resignations/${resignationId}/complete-final-settlement`;
+            form.action = `/resignations/${resignationId}/complete-final-settlement`;
             form.enctype = 'multipart/form-data';
 
             const csrfToken = document.createElement('input');

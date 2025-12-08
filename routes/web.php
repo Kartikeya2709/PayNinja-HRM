@@ -263,7 +263,7 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('regularization-requests', AttendanceRegularizationController::class);
             Route::prefix('regularization-requests')->group(function () {
                 Route::put('/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('regularization-requests.approve');
-                Route::post('/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');                
+                Route::post('/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');
             });
 
             // Admin Attendance Management
@@ -425,7 +425,7 @@ Route::middleware(['auth'])->group(function () {
             'index' => 'departments.index',
             'create' => 'departments.create',
             'store' => 'departments.store',
-            'edit' => 'departments.edit',   
+            'edit' => 'departments.edit',
             'update' => 'departments.update',
             'destroy' => 'departments.destroy',
         ]);
@@ -456,10 +456,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/reimbursements/pending', [ReimbursementController::class, 'pending'])->name('reimbursements.pending');
 
         // Employee Resignation Management
-        Route::resource('resignations', ResignationController::class)
-            ->only(['index', 'create', 'store', 'show', 'edit', 'update']);
-        Route::post('resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])
-            ->name('resignations.withdraw');
+        Route::prefix('resignations')->name('resignations.')->group(function () {
+        });
 
         //Employee Management Routes
         Route::prefix('employees-management')->name('employees.management.')->group(function () {
@@ -475,25 +473,33 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Admin Resignation Routes
-        Route::prefix('admin')->name('admin.')->group(function () {
-            Route::resource('resignations', App\Http\Controllers\Admin\ResignationController::class)
-                ->only(['index', 'show']);
-            Route::post('resignations/{resignation}/approve', [App\Http\Controllers\Admin\ResignationController::class, 'approve'])
-                ->name('resignations.approve');
-            Route::post('resignations/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])
-                ->name('resignations.reject');
+        Route::prefix('resignations')->name('resignations.')->group(function () {
+            Route::get('/my-resignations', [ResignationController::class, 'index'])->name('my-resignations.index');
+            Route::get('/my-resignations/create', [ResignationController::class, 'create'])->name('my-resignations.create');
+            Route::post('/my-resignations', [ResignationController::class, 'store'])->name('my-resignations.store');
+            Route::get('/my-resignations/{my_resignation}', [ResignationController::class, 'show'])->name('my-resignations.show');
+            Route::get('/my-resignations/{my_resignation}/edit', [ResignationController::class, 'edit'])->name('my-resignations.edit');
+            Route::put('/my-resignations/{my_resignation}', [ResignationController::class, 'update'])->name('my-resignations.update');
+            Route::post('/my-resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])->name('my-resignations.withdraw');
+
+            Route::get('', [App\Http\Controllers\Admin\ResignationController::class, 'index'])->name('index');
+            Route::get('/{resignation}', [App\Http\Controllers\Admin\ResignationController::class, 'show'])->name('show');
+            Route::post('/{resignation}/approve', [App\Http\Controllers\Admin\ResignationController::class, 'approve'])
+                ->name('approve');
+            Route::post('/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])
+                ->name('reject');
 
             // Exit process management
-            Route::post('resignations/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])
-                ->name('resignations.complete-exit-interview');
-            Route::post('resignations/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])
-                ->name('resignations.complete-handover');
-            Route::get('resignations/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])
-                ->name('resignations.assigned-assets');
-            Route::post('resignations/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])
-                ->name('resignations.mark-assets-returned');
-            Route::post('resignations/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
-                ->name('resignations.complete-final-settlement');
+            Route::post('/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])
+                ->name('complete-exit-interview');
+            Route::post('/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])
+                ->name('complete-handover');
+            Route::get('/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])
+                ->name('assigned-assets');
+            Route::post('/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])
+                ->name('mark-assets-returned');
+            Route::post('/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
+                ->name('complete-final-settlement');
         });
 
         Route::prefix('company')->name('company.')->group(function () {

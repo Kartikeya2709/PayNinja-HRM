@@ -36,7 +36,7 @@
                         Welcome, {{ auth()->user()->name }}!
                         @if (in_array(auth()->user()->role, ['admin', 'company_admin']))
                             <form action="{{ route('dashboard.switch') }}" method="POST" class="d-inline ms-3">
-                                @csrf								
+                                @csrf
 								<label class="form-check-label" for="dashboardSwitch">
 									<span class="switch-label">
 										Admin View
@@ -111,7 +111,7 @@
                                 </a>
                             </div>
                             <div class="col-lg-12">
-                                <a href="{{ route('resignations.index') }}" class="card card-link">
+                                <a href="{{ route('resignations.my-resignations.index') }}" class="card card-link">
                                     <div class="card-body text-center d-flex align-items-center">
 
                                         <i class="fas fa-file-signature"></i>
