@@ -74,18 +74,38 @@
                 <!-- Dashboard -->
                 <li class="menu-header pt-0">Dashboard</li>
                 <li class="menu-item {{ Request::is('home') ? 'active' : '' }}">
-  <a class="nav-link" href="{{ url('home') }}">
-    <i class="fas fa-fire"></i>
-    <span>Dashboard</span>
-  </a>
-</li>
+                    <a class="nav-link" href="{{ url('home') }}">
+                        <i class="fas fa-fire"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                @unless(Auth::user()->hasRole('superadmin'))
+                    @php
+                        $employeeId = Auth::user()->employee ? Auth::user()->employee->id : null;
+                        $userId = Auth::id();
+                    @endphp
+                    <li class="menu-header">Tasks</li>
+                    <li class="{{ Request::is('tasks') && request('assigned_to') ? 'active' : '' }}">
+                        <a class="nav-link"
+                            href="{{ $employeeId ? route('tasks.index', ['assigned_to' => $employeeId]) : route('tasks.index') }}">
+                            <i class="fas fa-tasks"></i>
+                            <span>My Tasks</span>
+                        </a>
+                    </li>
+                    <li class="{{ Request::is('tasks') && request('assigned_by') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route('tasks.index', ['assigned_by' => $userId]) }}">
+                            <i class="fas fa-user-check"></i>
+                            <span>Assigned By Me</span>
+                        </a>
+                    </li>
+                @endunless
 
-                 <!-- Asset Management -->
+                <!-- Asset Management -->
                 @if (Auth::user()->hasRole('company_admin') || Auth::user()->hasRole('admin'))
                     <li class="menu-header">Asset Management</li>
 
                     <li class="{{ Request::is('company-admin/assets/dashboard') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.dashboard') }}">
+                        <a class="nav-link" href="{{ route('company-admin.assets.dashboard') }}">
                             <i class="fas fa-chart-line"></i>
                             <span>Asset Dashboard</span>
                         </a>
@@ -96,46 +116,46 @@
                             <span>Asset Categories</span>
                         </a>
                     </li>
-                    <li class="{{ (Request::is('admin/assets/*') || Request::is('admin/assets')) && !Request::is('admin/assets/assignments*') ? 'active' : '' }}">
+                    <li
+                        class="{{ (Request::is('admin/assets/*') || Request::is('admin/assets')) && !Request::is('admin/assets/assignments*') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ route('admin.assets.index') }}">
                             <i class="fas fa-laptop"></i>
                             <span>Assets</span>
                         </a>
                     </li>
                     <li class="{{ Request::is('admin/assets/assignments*') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('admin.assets.assignments.index') }}">
+                        <a class="nav-link" href="{{ route('admin.assets.assignments.index') }}">
                             <i class="fas fa-hand-holding"></i>
                             <span>Asset Assignments</span>
                         </a>
-
                     </li>
 
                     {{-- <li class="{{ Request::is('company-admin/assets/inventory') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.inventory') }}">
+                        <a class="nav-link" href="{{ route('company-admin.assets.inventory') }}">
                             <i class="fas fa-boxes"></i>
                             <span>Asset Inventory</span>
                         </a>
                     </li>
                     <li class="{{ Request::is('company-admin/assets/employees') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.employees') }}">
+                        <a class="nav-link" href="{{ route('company-admin.assets.employees') }}">
                             <i class="fas fa-user-tag"></i>
                             <span>Employees with Assets</span>
                         </a>
                     </li>
                     <li class="{{ Request::is('company-admin/assets/assignments') ? 'active' : '' }}">
-                       <a class="nav-link" href="{{ route('company-admin.assets.assignments') }}">
+                        <a class="nav-link" href="{{ route('company-admin.assets.assignments') }}">
                             <i class="fas fa-clipboard-list"></i>
                             <span>Asset Assignments</span>
                         </a>
                     </li> --}}
                 @endif
 
-                 {{-- <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('assets.index') }}">
-                            <i class="fas fa-laptop"></i>
-                            <span>Assets</span>
-                        </a>
-                    </li> --}}
+                {{-- <li class="{{ Request::is('admin/assets') && !Request::is('admin/assets/*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('assets.index') }}">
+                        <i class="fas fa-laptop"></i>
+                        <span>Assets</span>
+                    </a>
+                </li> --}}
 
 
                 <!-- End Asset Management -->
@@ -206,8 +226,8 @@
                             <a class="nav-link" href="{{ route('attendance.dashboard') }}">
                                 <i class="fas fa-calendar-check"></i>
                                 <span>Attendance Dashboard</span>
-  </a>
-</li>
+                            </a>
+                        </li>
                         <li class="{{ Request::is('attendance/check-in-out') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('attendance.check-in') }}">
                                 <i class="fas fa-sign-in-alt"></i>
@@ -234,10 +254,10 @@
                         <li
                             class="menu-item {{ Request::is('leave-management/leave-requests') && !Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('leave-management.leave-requests.index') }}">
-    <i class="fas fa-plane-departure"></i>
+                                <i class="fas fa-plane-departure"></i>
                                 <span>My Leave Requests</span>
-  </a>
-</li>
+                            </a>
+                        </li>
                         <li class="{{ Request::is('leave-management/leave-requests/create') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('leave-management.leave-requests.create') }}">
                                 <i class="fas fa-calendar-plus"></i>
@@ -307,14 +327,14 @@
                         </a>
                     </li>
 
-                     @if (Auth::user()->hasRole('employee'))
-                 <li class="menu-header">Holiday Management</li>
-                    <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
-                        <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
-                            <i class="fas fa-calendar"></i>
-                            <span>Academic Holidays</span>
-                        </a>
-                    </li>
+                    @if (Auth::user()->hasRole('employee'))
+                        <li class="menu-header">Holiday Management</li>
+                        <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
+                                <i class="fas fa-calendar"></i>
+                                <span>Academic Holidays</span>
+                            </a>
+                        </li>
                     @endif
 
                     <!-- Resignations -->
@@ -576,7 +596,7 @@
                 @if (Auth::user()->hasRole('admin'))
                     @if ($hasModuleAccess('team', 'admin'))
                         <!-- Holiday Management -->
-                        <li class="menu-header">Holiday Management  </li>
+                        <li class="menu-header">Holiday Management </li>
                         <li class="{{ Request::is('company/academic-holidays') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company.academic-holidays.index') }}">
                                 <i class="fas fa-calendar"></i>
@@ -614,7 +634,7 @@
                     @endif
 
                     <!-- Team Holiday Management -->
-                      @if (Auth::user()->hasRole('user'))
+                    @if (Auth::user()->hasRole('user'))
                         @if ($hasModuleAccess('team'))
                             <li class="menu-header">Team Holiday Management</li>
                             <li class="{{ Request::is('company-admin/team-holidays*') ? 'active' : '' }}">
@@ -624,7 +644,7 @@
                                 </a>
                             </li>
                         @endif
-                          @endif
+                    @endif
                     <!-- Team Management -->
                     @if ($hasModuleAccess('team', 'admin'))
                         <li class="menu-header">Team Management</li>
@@ -635,7 +655,7 @@
                             </a>
                         </li>
 
-                            </a>
+                        </a>
                         </li>
                         <li class="{{ Request::is('company-admin/settings*') ? 'active' : '' }}">
                             <a class="nav-link" href="{{ route('company-admin.settings.index') }}">

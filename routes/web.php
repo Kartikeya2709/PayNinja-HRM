@@ -432,7 +432,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('leave-balances/bulk-allocate', [LeaveBalanceController::class, 'bulkAllocate'])->name('leave-balances.bulk-allocate');
         Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
         Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
-
     });
 
 
@@ -616,5 +615,24 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('handbooks', HandbookController::class);
         Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
     });
+          // Task Management (Company-scoped)
+        Route::resource('tasks', \App\Http\Controllers\Company\TaskController::class)->names([
+            'index' => 'tasks.index',
+            'create' => 'tasks.create',
+            'store' => 'tasks.store',
+            'show' => 'tasks.show',
+            'edit' => 'tasks.edit',
+            'update' => 'tasks.update',
+            'destroy' => 'tasks.destroy',
+        ]);
+        
+        // Custom route for updating task status
+        Route::patch('tasks/{task}/update-status', [\App\Http\Controllers\Company\TaskController::class, 'updateStatus'])
+            ->name('tasks.update-status');
 
+        // Routes for task extension requests
+        Route::post('tasks/{task}/request-extension', [\App\Http\Controllers\Company\TaskController::class, 'requestExtension'])
+            ->name('tasks.request-extension');
+        Route::post('tasks/{task}/extension-request/{request}/approve', [\App\Http\Controllers\Company\TaskController::class, 'approveExtension'])
+            ->name('tasks.approve-extension');
 }); // End of auth middleware group
