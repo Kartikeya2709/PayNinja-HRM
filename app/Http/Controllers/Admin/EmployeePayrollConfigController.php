@@ -34,7 +34,9 @@ class EmployeePayrollConfigController extends Controller
      */
     public function edit(Employee $employee)
     {
+
         $companyId = Auth::user()->company_id;
+        // dd($employeeId,$companyId);
         if ($employee->company_id !== $companyId) {
             abort(403, 'Unauthorized action. Employee does not belong to your company.');
         }
@@ -416,8 +418,10 @@ class EmployeePayrollConfigController extends Controller
      * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\JsonResponse
      */
-    public function updateSalary(Request $request, Employee $employee)
+    public function updateSalary(Request $request,$employeeId)
     {
+        $employee = Employee::findOrFail($employeeId);
+
         \Log::info('🚀 Starting salary update', [
             'employee_id' => $employee->id,
             'user_id' => Auth::id(),
@@ -521,16 +525,8 @@ class EmployeePayrollConfigController extends Controller
                 ]);
             }
             
-            // return response()->json([
-            //     'success' => true,
-            //     'message' => 'Salary updated successfully',
-            //     'ctc' => $ctc,
-            //     'basic_salary' => $basicSalary,
-            //     'hra' => $hra,
-            //     'da' => $da,
-            //     'other_allowances' => $otherAllowances
-            // ]);
-            return redirect()->back()->with('success', 'Salary updated successfully');
+            return redirect()->back()
+                ->with('success', 'Salary updated successfully.');
             
         } catch (\Illuminate\Validation\ValidationException $e) {
             \Log::error('❌ Validation failed', [
@@ -538,14 +534,11 @@ class EmployeePayrollConfigController extends Controller
                 'employee_id' => $employee->id,
                 'user_id' => Auth::id()
             ]);
-            
-            // return response()->json([
-            //     'success' => false,
-            //     'message' => 'Validation failed',
-            //     'errors' => $e->errors()
-            // ], 422);
-            return redirect()->back()->with('error', 'Validation failed: ' . $e->getMessage());
-            
+
+            return redirect()->back()
+                ->withErrors($e->errors())
+                ->withInput();
+
         } catch (\Exception $e) {
             \Log::error('❌ Error updating salary', [
                 'error' => $e->getMessage(),
@@ -553,11 +546,9 @@ class EmployeePayrollConfigController extends Controller
                 'employee_id' => $employee->id,
                 'user_id' => Auth::id()
             ]);
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'An error occurred while updating the salary: ' . $e->getMessage()
-            ], 500);
+
+            return redirect()->back()
+                ->with('error', 'An error occurred while updating the salary: ' . $e->getMessage());
         }
     }
 

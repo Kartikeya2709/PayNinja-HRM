@@ -25,8 +25,10 @@
                    
            
                 <div class="section-header-button">
-                <a href="{{ route('admin.payroll.beneficiary-badges.create') }}" class="btn btn-primary add-list"><i class="fa-solid fa-plus me-2"></i>Create New Badge</a>
-            </div>
+                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/create', true))
+                    <a href="{{ route('admin.payroll.beneficiary-badges.create') }}" class="btn btn-primary add-list"><i class="fa-solid fa-plus me-2"></i>Create New Badge</a>
+                    @endif
+                </div>
 </div>
         
 
@@ -57,7 +59,11 @@
                 <div class="card-body">
                     @if($beneficiaryBadges->isEmpty())
                         <div class="text-center">
-                            <p>No beneficiary badges found. <a href="{{ route('admin.payroll.beneficiary-badges.create') }}">Create one now!</a></p>
+                            <p>No beneficiary badges found. 
+                                @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/create', true))
+                                <a href="{{ route('admin.payroll.beneficiary-badges.create') }}">Create one now!</a>
+                                @endif
+                            </p>
                         </div>
                     @else
                         <div class="table-responsive">
@@ -78,9 +84,13 @@
                                     @foreach ($beneficiaryBadges as $badge)
                                         <tr>
                                             <td>
+                                                @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/' . $badge->id, true))
                                                 <a href="{{ route('admin.payroll.beneficiary-badges.show', $badge->id) }}" class="text-primary">
                                                     {{ $badge->name }}
                                                 </a>
+                                                @else
+                                                {{ $badge->name }}
+                                                @endif
                                             </td>
                                             <td><span class="badge bg-{{ $badge->type == 'allowance' ? 'success' : 'danger' }}">{{ ucfirst($badge->type) }}</span></td>
                                             <td>{{ ucfirst($badge->calculation_type) }}</td>
@@ -109,12 +119,19 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex">
+                                                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}', true))
                                                     <a href="{{ route('admin.payroll.beneficiary-badges.show', $badge->id) }}" class="btn btn-sm btn-soft-info me-1" title="View Details">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </a>
+                                                    @endif
+                                                    
+                                                    @if(\App\Models\User::hasAccess('Beneficiary Badges edit'))
                                                     <a href="{{ route('admin.payroll.beneficiary-badges.edit', $badge->id) }}" class="btn btn-sm btn-soft-primary me-1" title="Edit">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </a>
+                                                    @endif
+                                                    
+                                                    @if(\App\Models\User::hasAccess('Beneficiary Badges edit'))
                                                     <form action="{{ route('admin.payroll.beneficiary-badges.destroy', $badge->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this badge? This action cannot be undone.');">
                                                         @csrf
                                                         @method('DELETE')
@@ -122,6 +139,7 @@
                                                             <i class="fa-solid fa-trash"></i>
                                                         </button>
                                                     </form>
+                                                    @endif
                                                 </div>
                                             </td>
                                         </tr>

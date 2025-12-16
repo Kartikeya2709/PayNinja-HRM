@@ -48,9 +48,9 @@ class PayrollSettingsController extends Controller
      */
     public function edit()
     {
-        // if (!Gate::allows('manage_payroll_settings')) {
-        //     abort(403, 'Unauthorized action.');
-        // }
+        if (!Gate::allows('manage_payroll_settings')) {
+            abort(403, 'Unauthorized action.');
+        }
 
         $company = Auth::user()->company;
         if (!$company) {
@@ -106,7 +106,7 @@ class PayrollSettingsController extends Controller
 
         // Ensure deductible_leave_type_ids is an empty array if not provided or null, to prevent DB errors with JSON field
         $validatedData['deductible_leave_type_ids'] = $validatedData['deductible_leave_type_ids'] ?? [];
-        
+
         // Get the current settings to compare changes
         $currentSettings = PayrollSetting::firstOrNew(['company_id' => $company->id]);
 
@@ -116,7 +116,7 @@ class PayrollSettingsController extends Controller
             $validatedData
         );
 
-        return redirect()->route('admin.payroll.settings.edit')
+        return redirect()->route('settings.edit')
             ->with('success', 'Payroll settings updated successfully.');
     }
 

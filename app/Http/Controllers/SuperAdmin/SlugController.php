@@ -38,9 +38,9 @@ class SlugController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:50',
-                'slug' => 'required|string|max:50|unique:slugs,slug',
-                'icon' => 'nullable|string|max:50',
+                'name' => 'required|string|max:100',
+                'slug' => 'required|string|max:100|unique:slugs,slug',
+                'icon' => 'nullable|string|max:100',
                 'parent' => 'nullable|numeric|exists:slugs,id',
                 'is_visible' => 'required|numeric|in:0,1',
                 'sort_order' => 'required|numeric|min:0|max:255',
@@ -82,9 +82,9 @@ class SlugController extends Controller
             // Handle POST request for updating
             try {
                 $validator = Validator::make($request->all(), [
-                    'name' => 'required|string|max:50',
-                    'slug' => 'required|string|max:50|unique:slugs,slug,' . $slug->id,
-                    'icon' => 'nullable|string|max:50',
+                    'name' => 'required|string|max:100',
+                    'slug' => 'required|string|max:100|unique:slugs,slug,' . $slug->id,
+                    'icon' => 'nullable|string|max:100',
                     'parent' => 'nullable|numeric|exists:slugs,id|not_in:' . $slug->id,
                     'is_visible' => 'required|numeric|in:0,1',
                     'sort_order' => 'required|numeric|min:0|max:255',

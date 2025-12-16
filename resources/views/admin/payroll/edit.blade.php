@@ -9,18 +9,19 @@
             <h1 class="mb-0">Edit Payroll</h1>
             <div class="section-header-breadcrumb">
                 <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                <div class="breadcrumb-item active"><a href="{{ route('admin.payroll.index') }}">Payroll Records</a></div>
-                <div class="breadcrumb-item active"><a href="{{ route('admin.payroll.show', $payroll->id) }}">Payroll #{{ $payroll->id }}</a></div>
+                {{-- <div class="breadcrumb-item active"><a href="{{ route('admin.payroll.index') }}">Payroll Records</a></div> --}}
+                {{-- <div class="breadcrumb-item active"><a href="{{ route('admin.payroll.show', $payroll->id) }}">Payroll #{{ $payroll->id }}</a></div> --}}
                 <div class="breadcrumb-item">Edit</div>
             </div>
         </div>
 
         <div class="row">
             <div class="col-md-12">
+                {{-- @if(\App\Models\User::hasAccess('Payroll Edit')) --}}
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">Edit Payroll for {{ $payroll->employee->user->name }}</h5>
-                        <a href="{{ route('admin.payroll.show', $payroll->id) }}" class="btn btn-secondary btn-sm">Back to Payroll</a>
+                        <h5 class="mb-0">Edit Payroll for {{ $payroll->employee->user->name ?? 'Unknown Employee' }}</h5>
+                        {{-- <a href="{{ route('admin.payroll.show', $payroll->id) }}" class="btn btn-secondary btn-sm">Back to Payroll</a> --}}
                     </div>
                     <div class="card-body">
                         @if(session('error'))
@@ -37,11 +38,11 @@
                                         <h6 class="mb-0">Employee Information</h6>
                                     </div>
                                     <div class="card-body">
-                                        <p><strong>Name:</strong> {{ $payroll->employee->user->name }}</p>
-                                        <p><strong>Employee ID:</strong> {{ $payroll->employee->employee_id }}</p>
+                                        <p><strong>Name:</strong> {{ $payroll->employee->user->name ?? 'Unknown Employee' }}</p>
+                                        <p><strong>Employee ID:</strong> {{ $payroll->employee->employee_id ?? 'N/A' }}</p>
                                         <p><strong>Department:</strong> {{ $payroll->employee->department->name ?? 'N/A' }}</p>
                                         <p><strong>Designation:</strong> {{ $payroll->employee->designation->name ?? 'N/A' }}</p>
-                                        <p><strong>Pay Period:</strong> {{ $payroll->pay_period_start->format('M d, Y') }} - {{ $payroll->pay_period_end->format('M d, Y') }}</p>
+                                        {{-- <p><strong>Pay Period:</strong> {{ $payroll->pay_period_start->format('M d, Y') }} - {{ $payroll->pay_period_end->format('M d, Y') }}</p> --}}
                                         <p><strong>Status:</strong> <span class="badge badge-{{ $payroll->status == 'paid' ? 'success' : ($payroll->status == 'processed' ? 'info' : 'warning') }}">{{ ucfirst($payroll->status) }}</span></p>
                                     </div>
                                 </div>
@@ -59,8 +60,8 @@
                                 </div>
                             </div>
                         </div>
+                        <form id="payroll-edit-form" action="{{ route('update', $payroll->id) }}" method="POST">
 
-                        <form id="payroll-edit-form" action="{{ route('admin.payroll.update', $payroll->id) }}" method="POST">
                             @csrf
                             @method('PUT')
 
@@ -143,12 +144,17 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i> Update Payroll
                                 </button>
-                                <a href="{{ route('admin.payroll.show', $payroll->id) }}" class="btn btn-secondary">Cancel</a>
+                                <a href="{{ route('show', $payroll) }}" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
+            {{-- @else --}}
+                <div class="alert alert-warning">
+                    You do not have permission to edit payrolls.
+                </div>
+            {{-- @endif --}}
         </div>
     </div>
 </section>

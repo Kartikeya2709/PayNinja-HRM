@@ -184,30 +184,30 @@ class SlugSeeder extends Seeder
             ],
 
             // Payroll Management
-            [
-                'name' => 'Salary Management',
-                'slug' => 'payroll_salary',
-                'icon' => 'fas fa-dollar-sign',
-                'parent_id' => $parentIds['payroll'],
-                'is_visible' => 1,
-                'sort_order' => 1,
-            ],
-            [
-                'name' => 'Payroll Processing',
-                'slug' => 'payroll_processing',
-                'icon' => 'fas fa-calculator',
-                'parent_id' => $parentIds['payroll'],
-                'is_visible' => 1,
-                'sort_order' => 2,
-            ],
-            [
-                'name' => 'Payroll Reports',
-                'slug' => 'payroll_reports',
-                'icon' => 'fas fa-chart-bar',
-                'parent_id' => $parentIds['payroll'],
-                'is_visible' => 1,
-                'sort_order' => 3,
-            ],
+            // [
+            //     'name' => 'Salary Management',
+            //     'slug' => 'payroll_salary',
+            //     'icon' => 'fas fa-dollar-sign',
+            //     'parent_id' => $parentIds['payroll'],
+            //     'is_visible' => 1,
+            //     'sort_order' => 1,
+            // ],
+            // [
+            //     'name' => 'Payroll Processing',
+            //     'slug' => 'payroll_processing',
+            //     'icon' => 'fas fa-calculator',
+            //     'parent_id' => $parentIds['payroll'],
+            //     'is_visible' => 1,
+            //     'sort_order' => 2,
+            // ],
+            // [
+            //     'name' => 'Payroll Reports',
+            //     'slug' => 'payroll_reports',
+            //     'icon' => 'fas fa-chart-bar',
+            //     'parent_id' => $parentIds['payroll'],
+            //     'is_visible' => 1,
+            //     'sort_order' => 3,
+            // ],
 
             // Leave Management
             [

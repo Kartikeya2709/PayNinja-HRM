@@ -47,9 +47,11 @@
         <div class="card-header margin-bottom">
             <h3 class="card-title">List of Generated Payrolls</h3>
             <div class="card-tools">
-                <a href="{{ route('admin.payroll.create') }}" class="btn btn-primary btn-sm">
+                @if(\App\Models\User::hasAccess('admin/payroll/create', true))
+                <a href="{{ route('create') }}" class="btn btn-primary btn-sm">
                     <i class="fas fa-plus"></i> Generate New Payroll
                 </a>
+                @endif
             </div>
         </div>
 
@@ -62,9 +64,11 @@
                     <small class="text-muted">Select payrolls to approve and mark as paid</small>
                 </div>
                 <div class="col-md-4 text-right">
+                    @if(\App\Models\User::hasAccess('admin/payroll/bulk-approve', true))
                     <button type="button" class="btn btn-success btn-sm" id="bulk-approve-btn" disabled>
                         <i class="fas fa-check"></i> Approve Selected & Mark as Paid
                     </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -121,14 +125,18 @@
                                 <td>{{ $payroll->processor->name ?? 'System' }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.payroll.show', $payroll->id) }}" class="btn btn-info btn-sm" title="View">
+                                        @if(\App\Models\User::hasAccess('admin/payroll/{payroll}', true))
+                                        <a href="{{ route('show', $payroll->id) }}" class="btn btn-info btn-sm" title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        @if($payroll->status !== 'paid')
-                                        <a href="{{ route('admin.payroll.edit', $payroll->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                        @endif
+                                        @if($payroll->status !== 'paid' && \App\Models\User::hasAccess('admin/payroll/{payroll}/edit', true))
+                                        <a href="{{ route('edit', $payroll->id) }}" class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <form action="{{ route('admin.payroll.destroy', $payroll->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this payroll record?')">
+                                        @endif
+                                        @if($payroll->status !== 'paid' && \App\Models\User::hasAccess('admin/payroll/{payroll}/destroy', true))
+                                        <form action="{{ route('destroy', $payroll->id)  }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this payroll record?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm" title="Delete">
@@ -136,14 +144,16 @@
                                             </button>
                                         </form>
                                         @endif
-                                        @if($payroll->status === 'pending' || $payroll->status === 'processed')
-                                        <form action="{{ route('admin.payroll.markAsPaid', $payroll->id) }}" method="POST" class="d-inline">
+                                        @if(\App\Models\User::hasAccess('admin/payroll/{payroll}/mark-as-paid', true))
+                                        @if(($payroll->status === 'pending' || $payroll->status === 'processed') )
+                                        <form action="{{ route('markAsPaid', $payroll->id) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="btn btn-success btn-sm" title="Mark as Paid">
                                                 <i class="fas fa-check"></i> Pay
                                             </button>
                                         </form>
+                                        @endif
                                         @endif
                                     </div>
                                 </td>
@@ -217,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Create form and submit
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '{{ route("admin.payroll.bulkApprove") }}';
+                form.action = '{{ route("bulkApprove") }}';
 
                 // Add CSRF token
                 const csrfToken = document.createElement('input');

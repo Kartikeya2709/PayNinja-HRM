@@ -33,7 +33,7 @@
                             <tbody>
                                 @forelse ($payrolls as $payroll)
                                     <tr>
-                                        <td>#{{ $payroll->id }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $payroll->pay_period_start->format('M d, Y') }} - {{ $payroll->pay_period_end->format('M d, Y') }}</td>
                                         <td>{{-- Format as currency --}} {{ number_format($payroll->net_salary, 2) }}</td>
                                         <td><span class="badge badge-{{ $payroll->status == 'paid' ? 'success' : 'secondary' }}">{{ ucfirst($payroll->status) }}</span></td>
@@ -41,7 +41,7 @@
                                         <td>
                                             <a href="{{ route('employee.payroll.show', $payroll->id) }}" class="btn btn-info btn-sm">View</a>
                                             @if($payroll->status == 'paid')
-                                                {{-- <a href="{{ route('employee.payroll.download', $payroll->id) }}" class="btn btn-primary btn-sm">Download PDF</a> --}}
+                                                <a href="{{ route('employee.payroll.download', $payroll->id) }}" class="btn btn-primary btn-sm">Download PDF</a>
                                             @endif
                                         </td>
                                     </tr>

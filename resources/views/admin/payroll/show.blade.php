@@ -11,7 +11,7 @@
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.payroll.index') }}">Payroll Records</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('index') }}">Payroll Records</a></li>
                 <li class="breadcrumb-item active">Details</li>
             </ol>
         </div>
@@ -25,7 +25,7 @@
             <div class="col-12">
                 <h4>
                     <i class="fas fa-file-invoice-dollar"></i> Payroll Statement
-                    <small class="float-right">Date: {{ $payroll->created_at->format('M d, Y') }}</small>
+                    <small class="float-right">Date: {{ $payroll->created_at ? $payroll->created_at->format('M d, Y') : 'N/A' }}</small>
                 </h4>
                 <i class="fas fa-arrow-left fa-sm text-white-50"></i> Back to List
                 </a>
@@ -37,17 +37,23 @@
                     <div>
                         {{-- Action buttons like Print, Process, Mark as Paid --}}
                         @if ($payroll->status === 'pending' || $payroll->status === 'processing')
-                            {{-- <a href="{{ route('admin.payroll.edit', $payroll->id) }}" class="btn btn-warning btn-sm">Edit</a> --}}
-                            {{-- <form action="{{ route('admin.payroll.process', $payroll->id) }}" method="POST" style="display: inline-block;">
-                        @csrf
-                        <button type="submit" class="btn btn-info btn-sm">Process Payroll</button>
-                    </form> --}}
+                            {{-- @if(\App\Models\User::hasAccess('Payroll Edit')) --}}
+                            <a href="{{ route('edit', $payroll->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            {{-- @endif --}}
+                            {{-- @if(\App\Models\User::hasAccess('Payroll Process'))
+                            <form action="{{ route('admin.payroll.process', $payroll->id) }}" method="POST" style="display: inline-block;">
+                                @csrf
+                                <button type="submit" class="btn btn-info btn-sm">Process Payroll</button>
+                            </form>
+                            @endif --}}
                         @endif
-                        @if ($payroll->status === 'processed')
-                            {{-- <form action="{{ route('admin.payroll.mark-as-paid', $payroll->id) }}" method="POST" style="display: inline-block;">
-                        @csrf
-                        <button type="submit" class="btn btn-success btn-sm">Mark as Paid</button>
-                    </form> --}}
+                        @if ($payroll->status === 'processed' && \App\Models\User::hasAccess('admin/payroll/mark-as-paid', true))
+                            {{-- @if(\App\Models\User::hasAccess('admin/payroll/mark-as-paid', true)) --}}
+                            <form action="{{ route('markAsPaid', $payroll->id) }}" method="POST" style="display: inline-block;">
+                                @csrf
+                                <button type="submit" class="btn btn-success btn-sm">Mark as Paid</button>
+                            </form>
+                            {{-- @endif --}}
                         @endif
                     </div>
                 </div>
@@ -57,8 +63,8 @@
                             <p><strong>Employee:</strong> {{ $payroll->employee->user->name ?? 'N/A' }} (ID:
                                 {{ $payroll->employee->employee_id ?? 'N/A' }})</p>
                             <p><strong>Company:</strong> {{ $payroll->company->name ?? 'N/A' }}</p>
-                            <p><strong>Pay Period:</strong> {{ $payroll->pay_period_start->format('M d, Y') }} -
-                                {{ $payroll->pay_period_end->format('M d, Y') }}</p>
+                            <p><strong>Pay Period:</strong> {{ $payroll->pay_period_start ? $payroll->pay_period_start->format('M d, Y') : 'N/A' }} -
+                                {{ $payroll->pay_period_end ? $payroll->pay_period_end->format('M d, Y') : 'N/A' }}</p>
                             <p><strong>Status:</strong> <span
                                     class="badge badge-{{ $payroll->status == 'paid' ? 'success' : ($payroll->status == 'processed' ? 'info' : 'warning') }}">{{ ucfirst($payroll->status) }}</span>
                             </p>
@@ -71,7 +77,7 @@
                                 <p><strong>Payment Date:</strong> {{ $payroll->payment_date->format('M d, Y') }}</p>
                             @endif
                             <p><strong>Processed By:</strong> {{ $payroll->processor->name ?? 'System' }} on
-                                {{ $payroll->updated_at->format('M d, Y H:i') }}</p>
+                                {{-- {{ $payroll->updated_at ->format('M d, Y H:i') }}</p> --}}
                         </div>
                     </div>
 

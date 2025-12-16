@@ -17,9 +17,11 @@
                     </nav>
                 </div>
                 <div>
-                    <a href="{{ route('admin.payroll.beneficiary-badges.edit', $beneficiaryBadge->id) }}" class="btn btn-primary me-2">
+                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/edit', true))
+                    <a href="{{ route('admin.payroll.beneficiary-badges.edit', $beneficiaryBadge) }}" class="btn btn-primary me-2">
                         <i class="fa-solid fa-pen-to-square me-1"></i> Edit
                     </a>
+                    @endif
                     <a href="{{ route('admin.payroll.beneficiary-badges.index') }}" class="btn btn-outline-secondary">
                         <i class="fa-solid fa-arrow-left me-1"></i> Back to List
                     </a>
@@ -138,6 +140,7 @@
                                 This is a company-wide badge and will be automatically applied to all employees.
                             </div> -->
                         @elseif($beneficiaryBadge->is_active)
+                            @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/apply-to-all', true))
                             <button type="button" class="btn btn-outline-info mb-2" id="applyToAllBtn">
                                 <i class="fa-solid fa-users me-2"></i> Apply to All Employees
                             </button>
@@ -145,6 +148,7 @@
                                 <i class="fa-solid fa-exclamation-triangle me-2"></i>
                                 This badge is not marked as company-wide. Click the button to apply it to all employees.
                             </div>
+                            @endif
                         @else
                             <button type="button" class="btn btn-outline-secondary mb-2" disabled>
                                 <i class="fa-solid fa-ban me-2"></i> Apply to All Employees
@@ -155,18 +159,22 @@
                             </div>
                         @endif
 
+                        @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/edit', true))
                         <a href="{{ route('admin.payroll.beneficiary-badges.edit', $beneficiaryBadge->id) }}" class="btn btn-primary mb-2">
                             <i class="fa-solid fa-pen-to-square me-2"></i> Edit Badge
                         </a>
+                        @endif
 
+                        @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/destroy', true))
                         <form action="{{ route('admin.payroll.beneficiary-badges.destroy', $beneficiaryBadge->id) }}" method="POST" class="d-grid">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger" 
+                            <button type="submit" class="btn btn-danger"
                                     onclick="return confirm('Are you sure you want to delete this badge? This action cannot be undone.')">
                                 <i class="fa-solid fa-trash me-2"></i> Delete Badge
                             </button>
                         </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -190,7 +198,7 @@
                     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Applying...';
                     
                     // Make AJAX request
-                    fetch(`{{ route('admin.payroll.beneficiary-badges.api.apply-to-all', $beneficiaryBadge->id) }}`, {
+                    fetch(`{{ route('api.apply-to-all', $beneficiaryBadge->id) }}`, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',

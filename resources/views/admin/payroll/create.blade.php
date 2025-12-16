@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container">
-    
+
     <section class="section">
        <div class="section-header">
         <h1 class="mb-0">Generate New Payroll</h1>
@@ -18,7 +18,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center btn-center">
                     <h5 class="mb-0">Generate New Payroll</h5>
-                    <a href="{{ route('admin.payroll.index') }}" class="btn btn-secondary btn-sm">Back to Payrolls</a>
+                    <a href="{{ route('index') }}" class="btn btn-secondary btn-sm">Back to Payrolls</a>
                 </div>
                 <div class="card-body">
                     @if(session('error'))
@@ -52,7 +52,7 @@
                         <div class="tab-content" id="payrollTabsContent">
                             <!-- Single Employee Tab -->
                             <div class="tab-pane fade show active" id="single" role="tabpanel" aria-labelledby="single-tab">
-                                <form action="{{ route('admin.payroll.store') }}" method="POST">
+                                <form action="{{ route('store') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="payroll_type" value="single">
 
@@ -81,7 +81,7 @@
 
                                     <div class="mt-4 text-center">
                                         <button type="submit" class="btn btn-primary">Generate Payroll</button>
-                                        <a href="{{ route('admin.payroll.index') }}" class="btn btn-link btn-danger">Cancel</a>
+                                        <a href="{{ route('index') }}" class="btn btn-link btn-danger">Cancel</a>
                                     </div>
                                 </form>
                             </div>
@@ -93,7 +93,7 @@
                                     This will generate payroll for all active employees in your company for the specified pay period.
                                 </div>
 
-                                <form action="{{ route('admin.payroll.store') }}" method="POST" id="bulk-payroll-form">
+                                <form action="{{ route('store') }}" method="POST" id="bulk-payroll-form">
                                     @csrf
                                     <input type="hidden" name="payroll_type" value="bulk">
 
@@ -122,7 +122,7 @@
                                             <span class="spinner-border spinner-border-sm d-none me-1" role="status" aria-hidden="true"></span>
                                             Generate Payroll for All Employees
                                         </button>
-                                        <a href="{{ route('admin.payroll.index') }}" class="btn btn-link btn-danger">Cancel</a>
+                                        <a href="{{ route('index') }}" class="btn btn-link btn-danger">Cancel</a>
                                     </div>
                                 </form>
                             </div>

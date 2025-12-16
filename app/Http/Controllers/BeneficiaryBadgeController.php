@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\BeneficiaryBadge;
@@ -134,7 +134,7 @@ class BeneficiaryBadgeController extends Controller
                 $successMessage .= " Applied to {$employeesAffected} employees.";
             }
 
-            return redirect()->route('admin.payroll.beneficiary-badges.index')
+            return redirect()->route('index')
                              ->with('success', $successMessage);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -272,7 +272,7 @@ class BeneficiaryBadgeController extends Controller
 
         $beneficiaryBadge->delete();
 
-        return redirect()->route('admin.payroll.beneficiary-badges.index')
+        return redirect()->route('index')
                          ->with('success', 'Beneficiary badge deleted successfully.');
     }
 

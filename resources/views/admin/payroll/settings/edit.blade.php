@@ -49,7 +49,7 @@
                             </div>
                             @endif
 
-                            <form method="POST" action="{{ route('admin.payroll.settings.update') }}"
+                            <form method="POST" action="{{ route('settings.update') }}"
                                 class="needs-validation" novalidate="">
                                 @csrf
                                 @method('PUT')

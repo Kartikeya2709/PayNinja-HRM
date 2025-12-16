@@ -309,8 +309,8 @@
                     @if ($hasModuleAccess('payroll', 'employee'))
                         <li class="menu-header">Payroll Management</li>
                         @if (isset(Auth::user()->employee) && Auth::user()->employee->currentSalary)
-                            <li class="{{ Request::is('employee/salary/payslips*') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('employee.salary.payslips') }}">
+                            <li class="{{ Request::is('employee/payroll*') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('employee.payroll.index') }}">
                                     <i class="fas fa-file-pdf"></i>
                                     <span>My Payslips</span>
                                 </a>
@@ -555,22 +555,22 @@
                         <a href="#" class="nav-link has-dropdown"><i
                                 class="fas fa-file-invoice-dollar"></i><span>Payroll</span></a>
                         <ul class="dropdown-menu">
-                            <li class="{{ Request::routeIs('admin.payroll.create') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('admin.payroll.create') }}">Generate Payroll</a>
+                            <li class="{{ Request::routeIs('create') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('create') }}">Generate Payroll</a>
                             </li>
-                            <li class="{{ Request::routeIs('admin.payroll.index') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('admin.payroll.index') }}">View Payrolls</a>
+                            <li class="{{ Request::routeIs('index') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('index') }}">View Payrolls</a>
                             </li>
-                            <li class="{{ Request::routeIs('admin.payroll.settings.edit') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('admin.payroll.settings.edit') }}">Payroll
+                            <li class="{{ Request::routeIs('settings.edit') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('settings.edit') }}">Payroll
                                     Settings</a>
                             </li>
-                            <li class="{{ Request::routeIs('admin.beneficiary-badges.index') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('admin.beneficiary-badges.index') }}">Beneficiary
+                            <li class="{{ Request::routeIs('admin.payroll.beneficiary-badges.index') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('admin.payroll.beneficiary-badges.index') }}">Beneficiary
                                     Badges</a>
                             </li>
-                            <li class="{{ Request::routeIs('admin.employee-payroll-configurations.index') ? 'active' : '' }}">
-                                <a class="nav-link" href="{{ route('admin.employee-payroll-configurations.index') }}">Employee
+                            <li class="{{ Request::routeIs('admin.payroll.employee-configurations.index') ? 'active' : '' }}">
+                                <a class="nav-link" href="{{ route('admin.payroll.employee-configurations.index') }}">Employee
                                     Payroll
                                     Configs</a>
                             </li>
@@ -807,22 +807,22 @@
                             <a href="#" class="nav-link has-dropdown"><i
                                     class="fas fa-file-invoice-dollar"></i><span>Payroll</span></a>
                             <ul class="dropdown-menu">
-                                <li class="{{ Request::routeIs('admin.payroll.create') ? 'active' : '' }}">
-                                    <a class="nav-link" href="{{ route('admin.payroll.create') }}">Generate Payroll</a>
+                                <li class="{{ Request::routeIs('create') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('create') }}">Generate Payroll</a>
                                 </li>
-                                <li class="{{ Request::routeIs('admin.payroll.index') ? 'active' : '' }}">
-                                    <a class="nav-link" href="{{ route('admin.payroll.index') }}">View Payrolls</a>
+                                <li class="{{ Request::routeIs('index') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('index') }}">View Payrolls</a>
                                 </li>
-                                <li class="{{ Request::routeIs('admin.payroll.settings.edit') ? 'active' : '' }}">
-                                    <a class="nav-link" href="{{ route('admin.payroll.settings.edit') }}">Payroll
+                                <li class="{{ Request::routeIs('settings.edit') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('settings.edit') }}">Payroll
                                         Settings</a>
                                 </li>
-                                <li class="{{ Request::routeIs('admin.beneficiary-badges.index') ? 'active' : '' }}">
-                                    <a class="nav-link" href="{{ route('admin.beneficiary-badges.index') }}">
+                                <li class="{{ Request::routeIs('admin.payroll.beneficiary-badges.index') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('admin.payroll.beneficiary-badges.index') }}">
                                         <span>Beneficiary Badges</span></a>
                                 </li>
-                                <li class="{{ Request::routeIs('admin.employee-payroll-configurations.index') ? 'active' : '' }}">
-                                    <a class="nav-link" href="{{ route('admin.employee-payroll-configurations.index') }}">
+                                <li class="{{ Request::routeIs('admin.payroll.employee-payroll-configurations.index') ? 'active' : '' }}">
+                                    <a class="nav-link" href="{{ route('admin.payroll.employee-configurations.index') }}">
                                         <span>Employee
                                             Payroll Configs</span></a>
                                 </li>

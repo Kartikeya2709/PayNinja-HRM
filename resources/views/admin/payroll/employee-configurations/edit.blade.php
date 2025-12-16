@@ -313,7 +313,7 @@
 
                 <!-- <div class="card-footer text-right">
                     <button type="submit" class="btn btn-primary">Save Configuration</button>
-                    <a href="{{ route('admin.employee-payroll-configurations.index') }}" class="btn btn-secondary">Cancel</a>
+                    <a href="{{ route('admin.payroll.employee-configurations.index') }}" class="btn btn-secondary">Cancel</a>
                 </div> -->
             </form>
         </div>
