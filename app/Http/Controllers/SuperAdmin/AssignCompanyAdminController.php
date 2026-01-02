@@ -144,44 +144,44 @@ class AssignCompanyAdminController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
-    {
-        try {
-            $admin = Employee::with(['user'])->findOrFail($id);
-            $user = $admin->user;
+    // public function update(Request $request, $id)
+    // {
+    //     try {
+    //         $admin = Employee::with(['user'])->findOrFail($id);
+    //         $user = $admin->user;
 
-            // Enhanced validation rules
-            $validator = $this->validateUpdateRequest($request, $user->id);
+    //         // Enhanced validation rules
+    //         $validator = $this->validateUpdateRequest($request, $user->id);
 
-            if ($validator->fails()) {
-                return back()
-                    ->withErrors($validator)
-                    ->withInput($request->all());
-            }
+    //         if ($validator->fails()) {
+    //             return back()
+    //                 ->withErrors($validator)
+    //                 ->withInput($request->all());
+    //         }
 
-            // Get validated data
-            $validated = $validator->validated();
+    //         // Get validated data
+    //         $validated = $validator->validated();
 
-            // Prevent duplicate company admin assignment (except current record)
-            $alreadyAssigned = Employee::where('company_id', $validated['company_id'])
-                ->whereHas('user', function($q) {
-                    $q->where('role', 'company_admin');
-                })
-                ->where('id', '!=', $admin->id)
-                ->exists();
+    //         // Prevent duplicate company admin assignment (except current record)
+    //         $alreadyAssigned = Employee::where('company_id', $validated['company_id'])
+    //             ->whereHas('user', function($q) {
+    //                 $q->where('role', 'company_admin');
+    //             })
+    //             ->where('id', '!=', $admin->id)
+    //             ->exists();
 
-            if ($alreadyAssigned) {
-                return back()
-                    ->withErrors(['company_id' => 'This company already has a company admin assigned.'])
-                    ->withInput();
-            }
+    //         if ($alreadyAssigned) {
+    //             return back()
+    //                 ->withErrors(['company_id' => 'This company already has a company admin assigned.'])
+    //                 ->withInput();
+    //         }
 
-            return $this->updateCompanyAdmin($request, $admin, $user, $validated);
+    //         return $this->updateCompanyAdmin($request, $admin, $user, $validated);
 
-        } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Company admin not found or update failed.']);
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         return back()->withErrors(['error' => 'Company admin not found or update failed.']);
+    //     }
+    // }
 
     public function destroy($id)
     {
@@ -400,13 +400,13 @@ class AssignCompanyAdminController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        $admin = Employee::with(['user', 'company'])->findOrFail($id);
-        $users = User::where('role', 'user')->orWhere('id', $admin->user_id)->get();
-        $companies = Company::all();
-        return view('superadmin.assign_company_admin', compact('admin', 'users', 'companies'));
-    }
+    // public function edit($id)
+    // {
+    //     $admin = Employee::with(['user', 'company'])->findOrFail($id);
+    //     $users = User::where('role', 'user')->orWhere('id', $admin->user_id)->get();
+    //     $companies = Company::all();
+    //     return view('superadmin.assign_company_admin', compact('admin', 'users', 'companies'));
+    // }
 
     public function update(Request $request, $id)
     {
