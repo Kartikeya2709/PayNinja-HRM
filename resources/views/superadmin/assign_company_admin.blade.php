@@ -89,7 +89,7 @@
                 </div>
                 <div class="form-group">
                     <label for="address">Address</label>
-                    <textarea name="address" id="address" class="form-control" rows="2">{{ old('address', $admin->address ?? '') }}</textarea>
+                    <textarea name="address" id="address" class="form-control" rows="2">{{ old('address', $admin->current_address ?? '') }}</textarea>
                     @error('address')
                         <span class="text-danger small">{{ $message }}</span>
                     @enderror

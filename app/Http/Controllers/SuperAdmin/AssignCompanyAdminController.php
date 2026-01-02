@@ -135,8 +135,9 @@ class AssignCompanyAdminController extends Controller
     {
         $admin = Employee::findOrFail($id);
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
             'company_id' => 'required|exists:companies,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $admin->user_id,
             'phone' => 'nullable|string|max:10',
             'dob' => 'nullable|date',
             'gender' => 'nullable|in:male,female,other',
@@ -155,8 +156,12 @@ class AssignCompanyAdminController extends Controller
 
         DB::beginTransaction();
         try {
-            $user = User::findOrFail($validated['user_id']);
+            $user = $admin->user;
             Log::info('AssignCompanyAdminController@update: User found', ['user_id' => $user->id, 'role' => $user->role]);
+
+            // Update user information
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
             $user->role = 'company_admin';
             $user->company_id = $validated['company_id']; // Store company_id in user
             $user->save();
@@ -187,7 +192,7 @@ class AssignCompanyAdminController extends Controller
             Log::info('AssignCompanyAdminController@update: Designation ensured', ['designation_id' => $designation->id]);
 
             $admin->update([
-                'user_id' => $validated['user_id'],
+                'user_id' => $user->id,
                 'company_id' => $validated['company_id'],
                 'department_id' => $department->id,
                 'designation_id' => $designation->id,
@@ -197,7 +202,7 @@ class AssignCompanyAdminController extends Controller
                 'dob' => $validated['dob'] ?? null,
                 'gender' => $validated['gender'] ?? null,
                 'emergency_contact' => $validated['emergency_contact'] ?? null,
-                'address' => $validated['address'] ?? null,
+                'current_address' => $validated['address'] ?? null,
             ]);
             Log::info('AssignCompanyAdminController@update: Employee updated', ['employee_id' => $admin->id]);
             DB::commit();
