@@ -18,11 +18,11 @@ class AssignCompanyAdminController extends Controller
     public function index()
     {
         $admins = Employee::with(['user', 'company'])
-            ->whereHas('user', function($q) { 
-                $q->where('role', 'company_admin'); 
+            ->whereHas('user', function($q) {
+                $q->where('role', 'company_admin');
             })
             ->get();
-            
+
         return view('superadmin.assigned_company_admins', compact('admins'));
     }
 
@@ -69,7 +69,7 @@ class AssignCompanyAdminController extends Controller
     {
         // Enhanced validation rules
         $validator = $this->validateStoreRequest($request);
-        
+
         if ($validator->fails()) {
             return back()
                 ->withErrors($validator)
@@ -81,11 +81,11 @@ class AssignCompanyAdminController extends Controller
 
         // Prevent duplicate company admin assignment
         $alreadyAssigned = Employee::where('company_id', $validated['company_id'])
-            ->whereHas('user', function($q) { 
-                $q->where('role', 'company_admin'); 
+            ->whereHas('user', function($q) {
+                $q->where('role', 'company_admin');
             })
             ->exists();
-            
+
         if ($alreadyAssigned) {
             return back()
                 ->withErrors(['company_id' => 'This company already has a company admin assigned.'])
@@ -99,7 +99,7 @@ class AssignCompanyAdminController extends Controller
     {
         try {
             $admin = Employee::with(['user', 'company'])->findOrFail($id);
-            
+
             // Pre-load companies with comprehensive data for dynamic display
             $companies = Company::with([
                 'employees.user', // Load employees with their user relationships
@@ -138,7 +138,7 @@ class AssignCompanyAdminController extends Controller
             ];
 
             return view('superadmin.assign_company_admin', $viewData);
-            
+
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Company admin not found.']);
         }
@@ -152,7 +152,7 @@ class AssignCompanyAdminController extends Controller
 
             // Enhanced validation rules
             $validator = $this->validateUpdateRequest($request, $user->id);
-            
+
             if ($validator->fails()) {
                 return back()
                     ->withErrors($validator)
@@ -164,12 +164,12 @@ class AssignCompanyAdminController extends Controller
 
             // Prevent duplicate company admin assignment (except current record)
             $alreadyAssigned = Employee::where('company_id', $validated['company_id'])
-                ->whereHas('user', function($q) { 
-                    $q->where('role', 'company_admin'); 
+                ->whereHas('user', function($q) {
+                    $q->where('role', 'company_admin');
                 })
                 ->where('id', '!=', $admin->id)
                 ->exists();
-                
+
             if ($alreadyAssigned) {
                 return back()
                     ->withErrors(['company_id' => 'This company already has a company admin assigned.'])
@@ -187,21 +187,21 @@ class AssignCompanyAdminController extends Controller
     {
         $admin = Employee::findOrFail($id);
         DB::beginTransaction();
-        
+
         try {
             $user = $admin->user;
-            $user->role = 'employee'; 
-            $user->removeRole(); 
+            $user->role = 'employee';
+            $user->removeRole();
             $user->save();
-            
+
             $admin->delete();
-            
+
             DB::commit();
-            
+
             return redirect()
                 ->route('superadmin.assigned-company-admins.index')
                 ->with('success', 'Company admin assignment removed successfully.');
-                
+
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->withErrors(['error' => 'Failed to remove company admin assignment.']);
@@ -329,8 +329,8 @@ class AssignCompanyAdminController extends Controller
     private function createCompanyAdmin($validated)
     {
         // Generate secure password
-        $password = config('app.env') === 'local' 
-            ? '12345678' 
+        $password = config('app.env') === 'local'
+            ? '12345678'
             : \Illuminate\Support\Str::random(12);
 
         DB::beginTransaction();
@@ -389,42 +389,60 @@ class AssignCompanyAdminController extends Controller
             }
 
             DB::commit();
-            
+
             return redirect()
                 ->route('superadmin.assigned-company-admins.index')
                 ->with('success', 'Company admin created successfully. Login credentials have been sent to the email address.');
-                
+
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('AssignCompanyAdminController@store: Failed', ['error' => $e->getMessage()]);
-            return back()
-                ->withErrors(['error' => 'Failed to assign company admin: ' . $e->getMessage()])
-                ->withInput();
+            return back()->withErrors(['error' => 'Failed to assign company admin: ' . $e->getMessage()])->withInput();
         }
     }
 
-    /**
-     * Update company admin with enhanced error handling
-     */
-    private function updateCompanyAdmin(Request $request, Employee $admin, User $user, $validated)
+    public function edit($id)
     {
+        $admin = Employee::with(['user', 'company'])->findOrFail($id);
+        $users = User::where('role', 'user')->orWhere('id', $admin->user_id)->get();
+        $companies = Company::all();
+        return view('superadmin.assign_company_admin', compact('admin', 'users', 'companies'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $admin = Employee::findOrFail($id);
+        $validated = $request->validate([
+            'company_id' => 'required|exists:companies,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $admin->user_id,
+            'phone' => 'nullable|string|max:10',
+            'dob' => 'nullable|date',
+            'gender' => 'nullable|in:male,female,other',
+            'emergency_contact' => 'nullable|string|max:10',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        // Prevent duplicate company admin assignment (except for current record)
+        $alreadyAssigned = Employee::where('company_id', $validated['company_id'])
+            ->whereHas('user', function($q){ $q->where('role', 'company_admin'); })
+            ->where('id', '!=', $admin->id)
+            ->exists();
+        if ($alreadyAssigned) {
+            return back()->withErrors(['company_id' => 'This company already has a company admin assigned.'])->withInput();
+        }
+
         DB::beginTransaction();
         try {
-            // Update user data
-            $user->update([
-                'name' => $validated['name'],
-                'email' => $validated['email'],
-                'role_id' => $validated['role_id'],
-                'company_id' => $validated['company_id'],
-            ]);
+            $user = $admin->user;
+            Log::info('AssignCompanyAdminController@update: User found', ['user_id' => $user->id, 'role' => $user->role]);
 
-            // $user->assignRole('Company Admin');
-            Log::info('AssignCompanyAdminController@update: User updated', [
-                'user_id' => $user->id,
-                'role' => $user->role,
-                'role_id' => $user->role_id,
-                'company_id' => $user->company_id
-            ]);
+            // Update user information
+            $user->name = $validated['name'];
+            $user->email = $validated['email'];
+            $user->role = 'company_admin';
+            $user->company_id = $validated['company_id']; // Store company_id in user
+            $user->save();
+            Log::info('AssignCompanyAdminController@update: User updated', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
 
             // Ensure department and designation exist
             $department = \App\Models\Department::firstOrCreate(
@@ -439,24 +457,25 @@ class AssignCompanyAdminController extends Controller
 
             // Update employee data
             $admin->update([
+                'user_id' => $user->id,
                 'company_id' => $validated['company_id'],
                 'department_id' => $department->id,
                 'designation_id' => $designation->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'phone' => $validated['phone'],
-                'dob' => $validated['dob'],
-                'gender' => $validated['gender'],
-                'emergency_contact' => $validated['emergency_contact'],
-                'current_address' => $validated['address'],
+                'phone' => $validated['phone'] ?? null,
+                'dob' => $validated['dob'] ?? null,
+                'gender' => $validated['gender'] ?? null,
+                'emergency_contact' => $validated['emergency_contact'] ?? null,
+                'current_address' => $validated['address'] ?? null,
             ]);
 
             DB::commit();
-            
+
             return redirect()
                 ->route('superadmin.assigned-company-admins.index')
                 ->with('success', 'Company admin updated successfully.');
-                
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('AssignCompanyAdminController@update: Failed', ['error' => $e->getMessage()]);

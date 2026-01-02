@@ -7,7 +7,7 @@
         <div class="section-header">
             <h1>{{ $pageTitle ?? (isset($admin) ? 'Edit Company Admin' : 'Create Company Admin') }}</h1>
         </div>
-        
+
         <div class="section-body">
             {{-- Success/Error Messages --}}
             @if(session('success'))
@@ -100,11 +100,11 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    
+
                                     @if(isset($admin))
                                         <input type="hidden" name="company_id" value="{{ $admin->company_id }}">
                                     @endif
-                                    
+
                                     <div class="invalid-feedback">
                                         @error('company_id')
                                             {{ $message }}
@@ -123,7 +123,7 @@
                                         </h6>
                                         <span id="companyStatusBadge" class="badge badge-secondary">No Company Selected</span>
                                     </div>
-                                    
+
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="company-detail-item">
@@ -165,7 +165,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="row mt-3">
                                         <div class="col-12">
                                             <div class="company-detail-item">
@@ -175,7 +175,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {{-- Edit Mode Current Assignment Card --}}
                                 @if(isset($admin) && $admin->company)
                                     <div class="current-assignment-card mt-3 p-3 border rounded" style="border-left: 4px solid #007bff;">
@@ -214,7 +214,7 @@
                                     <i class="fas fa-user mr-2"></i>
                                     Personal Details
                                 </h6>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -235,7 +235,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="email" class="form-label">
@@ -262,7 +262,7 @@
                                     <i class="fas fa-phone mr-2"></i>
                                     Contact Details
                                 </h6>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -287,19 +287,19 @@
                                             <span class="invalid-feedback">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="gender" class="form-label">Gender <span class="text-danger">*</span></label>
-                                            <select 
-                                                name="gender" 
-                                                id="gender" 
+                                            <select
+                                                name="gender"
+                                                id="gender"
                                                 class="form-control @error('gender') is-invalid @enderror"
                                             >
                                                 <option value="">-- Select Gender --</option>
                                                 @foreach(['male' => 'Male', 'female' => 'Female', 'other' => 'Other'] as $value => $label)
-                                                    <option 
-                                                        value="{{ $value }}" 
+                                                    <option
+                                                        value="{{ $value }}"
                                                         {{ old('gender', $admin->gender ?? '') == $value ? 'selected' : '' }}
                                                     >
                                                         {{ $label }}
@@ -318,7 +318,7 @@
                                     <i class="fas fa-calendar-alt mr-2"></i>
                                     Additional Details
                                 </h6>
-                                
+
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -336,7 +336,7 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="emergency_contact" class="form-label">Emergency Contact <span class="text-danger">*</span></label>
@@ -425,9 +425,9 @@
                                 <i class="fas fa-arrow-left mr-2"></i>
                                 Back to List
                             </a>
-                            
-                            <button 
-                                type="submit" 
+
+                            <button
+                                type="submit"
                                 class="btn btn-primary"
                                 id="submitBtn"
                                 data-loading-text="Processing..."
@@ -437,6 +437,12 @@
                             </button>
                         </div>
                     </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <textarea name="address" id="address" class="form-control" rows="2">{{ old('address', $admin->current_address ?? '') }}</textarea>
+                    @error('address')
+                        <span class="text-danger small">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 {{-- Hidden Fields --}}
@@ -464,18 +470,18 @@ $(document).ready(function() {
 function initializeCompanyInfoDisplay() {
     const $companySelect = $('#company_id');
     const $companyInfoCard = $('#companyInfoCard');
-    
+
     if ($companySelect.length === 0 || $companyInfoCard.length === 0) return;
-    
+
     // Show initial selected company info on page load
     const selectedOption = $companySelect.find('option:selected')[0];
     if (selectedOption && selectedOption.value && selectedOption.dataset.companyData) {
         updateCompanyInfo(JSON.parse(selectedOption.dataset.companyData));
     }
-    
+
     $companySelect.on('change', function() {
         const selectedOption = $(this).find('option:selected')[0];
-        
+
         if (selectedOption && selectedOption.value && selectedOption.dataset.companyData) {
             const companyData = JSON.parse(selectedOption.dataset.companyData);
             updateCompanyInfo(companyData);
@@ -489,38 +495,38 @@ function updateCompanyInfo(companyData) {
     const $companyInfoCard = $('#companyInfoCard');
     const $companyInfoTitle = $('#companyInfoTitle');
     const $companyStatusBadge = $('#companyStatusBadge');
-    
+
     // Update title
     $companyInfoTitle.text(companyData.name);
-    
+
     // Update status badge
     let statusClass = 'badge-success';
     let statusText = 'Available';
-    
+
     if (companyData.adminCount > 0) {
         statusClass = 'badge-warning';
         statusText = `${companyData.adminCount} Admin${companyData.adminCount !== 1 ? 's' : ''} Assigned`;
     }
-    
+
     $companyStatusBadge.removeClass().addClass(`badge ${statusClass}`).text(statusText);
-    
+
     // Update company details
     $('#companyName').text(companyData.name || '-');
     $('#companyDomain').text(companyData.domain || '-');
     $('#companyEmail').text(companyData.email || '-');
     $('#companyPhone').text(companyData.phone || '-');
     $('#companyAddress').text(companyData.address || '-');
-    
+
     // Update counts
     $('#employeeCount').text(companyData.employeeCount || 0);
     $('#adminCount').text(companyData.adminCount || 0);
     $('#userCount').text(companyData.userCount || 0);
     $('#departmentCount').text(companyData.departmentCount || 0);
     $('#designationCount').text(companyData.designationCount || 0);
-    
+
     // Show the card
     $companyInfoCard.show().css('opacity', '0');
-    
+
     // Add animation
     setTimeout(() => {
         $companyInfoCard.css('transition', 'opacity 0.3s ease').css('opacity', '1');
@@ -530,10 +536,10 @@ function updateCompanyInfo(companyData) {
 function hideCompanyInfo() {
     const $companyInfoCard = $('#companyInfoCard');
     const $companyStatusBadge = $('#companyStatusBadge');
-    
+
     // Reset status
     $companyStatusBadge.removeClass().addClass('badge badge-secondary').text('No Company Selected');
-    
+
     // Hide with animation
     $companyInfoCard.css('transition', 'opacity 0.3s ease').css('opacity', '0');
     setTimeout(() => {
