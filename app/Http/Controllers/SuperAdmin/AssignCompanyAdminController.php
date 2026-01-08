@@ -420,6 +420,7 @@ class AssignCompanyAdminController extends Controller
             'gender' => 'nullable|in:male,female,other',
             'emergency_contact' => 'nullable|string|max:10',
             'address' => 'nullable|string|max:255',
+            'role_id'=>'nullable|exists:roles,id'
         ]);
 
         // Prevent duplicate company admin assignment (except for current record)
@@ -441,6 +442,7 @@ class AssignCompanyAdminController extends Controller
             $user->email = $validated['email'];
             $user->role = 'company_admin';
             $user->company_id = $validated['company_id']; // Store company_id in user
+            $user->role_id = $validated['role_id'] ?? null;
             $user->save();
             Log::info('AssignCompanyAdminController@update: User updated', ['user_id' => $user->id, 'role' => $user->role, 'company_id' => $user->company_id]);
 
@@ -468,6 +470,7 @@ class AssignCompanyAdminController extends Controller
                 'gender' => $validated['gender'] ?? null,
                 'emergency_contact' => $validated['emergency_contact'] ?? null,
                 'current_address' => $validated['address'] ?? null,
+                'role_id' => $validated['role_id'] ?? null,
             ]);
 
             DB::commit();
