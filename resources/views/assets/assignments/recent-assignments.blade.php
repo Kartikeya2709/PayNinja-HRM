@@ -1,15 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
+@if(\App\Models\User::hasAccess('assets/assignments/recent', true))
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Recent Asset Assignments</h3>
-                    <a href="{{ route('assets.dashboard') }}" class="btn btn-warning">
+                    {{-- <a href="{{ route('assets.dashboard') }}" class="btn btn-warning">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="card-body">
                     @if(session('success'))
@@ -49,9 +50,13 @@
                                     </td>
                                     <td>{{ $assignment->returned_date ? $assignment->condition_on_return : $assignment->condition_on_assignment }}</td>
                                     <td>
+                                        @if(\App\Models\User::hasAccess('assets/assignments/show/{assignment}', true))
                                         <a href="{{ route('assets.assignments.show', $assignment->id) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i> View
                                         </a>
+                                        @else
+                                        <span class="text-muted">No access</span>
+                                        @endif
                                     </td>
                                 </tr>
                                 @empty
@@ -71,4 +76,11 @@
         </div>
     </div>
 </div>
+@else
+<div class="container">
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> You don't have permission to view recent asset assignments.
+    </div>
+</div>
+@endif
 @endsection

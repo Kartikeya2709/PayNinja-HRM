@@ -5,14 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\Designation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Crypt;
 use App\Models\Department;
 
 class DesignationManagementController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:admin,company_admin']);
+        // $this->middleware(['auth', 'role:admin,company_admin']);
+    }
+
+    /**
+     * Get designation from encrypted ID.
+     */
+    private function getDesignationFromEncryptedId(string $encryptedId): Designation
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return Designation::where('company_id', auth()->user()->company_id)->findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
     }
 
     /**
@@ -29,11 +42,11 @@ class DesignationManagementController extends Controller
 
     /**
      * Show the form for creating a new designation.
-     * 
+     *
      */
     public function create()
     {
-        $departments= Department::with("designations") ->where('company_id', auth()->user()->company_id)->get();    
+        $departments= Department::with("designations") ->where('company_id', auth()->user()->company_id)->get();
         return view('company.employees.designations.create', compact('departments'));
     }
 
@@ -57,18 +70,20 @@ class DesignationManagementController extends Controller
             'department_id'=>$request->department_id,
         ]);
 
-        return redirect()->route('designations.index', ['companyId' => auth()->user()->company_id])
+        // return redirect()->route('designations.index', ['companyId' => auth()->user()->company_id])
+        //     ->with('success', 'Designation created successfully.');
+
+        return redirect()->route('designations.index')
             ->with('success', 'Designation created successfully.');
     }
 
     /**
      * Show the form for editing the designation.
      */
-    public function edit(Designation $designation)
+    public function edit(string $encryptedId)
     {
-        if ($designation->company_id !== auth()->user()->company_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $designation = $this->getDesignationFromEncryptedId($encryptedId);
+
          // fetch only departments of the same company
         $departments = Department::where('company_id', auth()->user()->company_id)->get();
         return view('company.employees.designations.edit', compact('designation', 'departments'));
@@ -77,11 +92,9 @@ class DesignationManagementController extends Controller
     /**
      * Update the specified designation in storage.
      */
-    public function update(Request $request, Designation $designation)
+    public function update(Request $request, string $encryptedId)
     {
-        if ($designation->company_id !== auth()->user()->company_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $designation = $this->getDesignationFromEncryptedId($encryptedId);
 
         // Validate input
         $request->validate([
@@ -100,20 +113,17 @@ class DesignationManagementController extends Controller
         ]);
 
             // Redirect back with success message
-            return redirect()->route('designations.index', ['companyId' => auth()->user()->company_id])
+            return redirect()->route('designations.index')
                             ->with('success', 'Designation updated successfully.');
     }
 
     /**
      * Remove the specified designation from storage.
      */
-    public function destroy(Designation $designation)
+    public function destroy(string $encryptedId)
     {
-        if ($designation->company_id !== auth()->user()->company_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $designation = $this->getDesignationFromEncryptedId($encryptedId);
         $designation->delete();
-        return redirect()->route('designations.index', ['companyId' => auth()->user()->company_id])
-            ->with('success', 'Designation deleted successfully.');
+        return redirect()->route('designations.index')->with('success', 'Designation deleted successfully.');
     }
 }

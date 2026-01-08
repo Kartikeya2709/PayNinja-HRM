@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Crypt;
+@endphp
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -7,9 +11,11 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Asset Categories</h3>
+                    @if(\App\Models\User::hasAccess('assets/asset-category-create', true))
                     <a href="{{ route('assets.categories.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Add Category
                     </a>
+                    @endif
                 </div>
                 <div class="card-body">
                     @if(session('success'))
@@ -34,7 +40,8 @@
                                     <td>{{ $category->assets_count }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                          <a href="{{ route('assets.categories.show', $category->id) }}"
+                                          @if(\App\Models\User::hasAccess('assets/asset-category-show/{encryptedId}', true))
+                                          <a href="{{ route('assets.categories.show', ['encryptedId' => Crypt::encrypt($category->id)]) }}"
                                           class="btn btn-outline-info btn-sm action-btn"
                                           data-id="{{ $category->id }}" data-bs-toggle="tooltip"
                                           data-bs-placement="top" title="View Category" aria-label="View">
@@ -43,8 +50,10 @@
                                           </span>
                                           <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                           </a>
+                                          @endif
 
-                                          <a href="{{ route('assets.categories.edit', $category->id) }}"
+                                          @if(\App\Models\User::hasAccess('assets/asset-category-edit/{encryptedId}', true))
+                                          <a href="{{ route('assets.categories.edit', ['encryptedId' => Crypt::encrypt($category->id)]) }}"
                                           class="btn btn-outline-primary btn-sm action-btn"
                                           data-id="{{ $category->id }}" data-bs-toggle="tooltip"
                                           data-bs-placement="top" title="Edit Category" aria-label="Edit">
@@ -53,8 +62,10 @@
                                           </span>
                                           <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                           </a>
+                                          @endif
 
-                                          <form action="{{ route('assets.categories.destroy', $category->id) }}" method="POST" class="d-inline-block">
+                                          @if(\App\Models\User::hasAccess('assets/asset-category-delete/{encryptedId}', true))
+                                          <form action="{{ route('assets.categories.destroy', ['encryptedId' => Crypt::encrypt($category->id)]) }}" method="POST" class="d-inline-block">
                                           @csrf
                                           @method('DELETE')
                                           <button type="submit"
@@ -68,6 +79,7 @@
                                           <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                           </button>
                                           </form>
+                                          @endif
                                         </div>
 
                                     </td>
@@ -80,7 +92,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="mt-3">
                         {{ $categories->links() }}
                     </div>

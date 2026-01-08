@@ -4,19 +4,31 @@
 <div class="container">
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Assign Shift: {{ $shift->name }}</h1>
-        <a href="{{ route('admin.shifts.show', $shift) }}" class="btn btn-secondary btn-sm">
+        <a href="{{ route('admin.shifts.show', Crypt::encrypt($shift->id)) }}" class="btn btn-secondary btn-sm">
             <i class="fas fa-arrow-left fa-sm"></i> Back to Shift
         </a>
     </div>
+
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Assign to Employees</h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.shifts.assign', $shift) }}" method="POST">
+            <form action="{{ route('admin.shifts.assign', Crypt::encrypt($shift->id)) }}" method="POST">
                 @csrf
-                
+
                 <div class="form-group">
                     <label for="employee_ids">Select Employees *</label>
                     <select name="employee_ids[]" id="employee_ids" class="form-control select2 @error('employee_ids') is-invalid @enderror" multiple required>
@@ -32,14 +44,14 @@
                         </span>
                     @enderror
                 </div>
-                
+
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="start_date">Start Date *</label>
-                            <input type="date" class="form-control @error('start_date') is-invalid @enderror" 
-                                   id="start_date" name="start_date" 
-                                   value="{{ old('start_date', now()->format('Y-m-d')) }}" 
+                            <input type="date" class="form-control @error('start_date') is-invalid @enderror"
+                                   id="start_date" name="start_date"
+                                   value="{{ old('start_date', now()->format('Y-m-d')) }}"
                                    min="{{ now()->format('Y-m-d') }}" required>
                             @error('start_date')
                                 <span class="invalid-feedback" role="alert">
@@ -48,13 +60,13 @@
                             @enderror
                         </div>
                     </div>
-                    
+
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="end_date">End Date (Optional)</label>
-                            <input type="date" class="form-control @error('end_date') is-invalid @enderror" 
-                                   id="end_date" name="end_date" 
-                                   value="{{ old('end_date') }}" 
+                            <input type="date" class="form-control @error('end_date') is-invalid @enderror"
+                                   id="end_date" name="end_date"
+                                   value="{{ old('end_date') }}"
                                    min="{{ now()->addDay()->format('Y-m-d') }}">
                             <small class="form-text text-muted">Leave empty for ongoing assignment</small>
                             @error('end_date')
@@ -65,7 +77,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="form-group">
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" id="is_default" name="is_default" value="1">
@@ -77,12 +89,12 @@
                         </small>
                     </div>
                 </div>
-                
+
                 <div class="form-group mt-4">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i> Assign Shift
                     </button>
-                    <a href="{{ route('admin.shifts.show', $shift) }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.shifts.show', Crypt::encrypt($shift->id)) }}" class="btn btn-secondary">
                         Cancel
                     </a>
                 </div>
@@ -130,15 +142,15 @@
             allowClear: true,
             width: '100%'
         });
-        
+
         // Set minimum end date based on start date
         $('#start_date').on('change', function() {
             const startDate = new Date($(this).val());
             const minEndDate = new Date(startDate);
             minEndDate.setDate(minEndDate.getDate() + 1);
-            
+
             $('#end_date').attr('min', minEndDate.toISOString().split('T')[0]);
-            
+
             // If current end date is before new min date, clear it
             if ($('#end_date').val() && new Date($('#end_date').val()) < minEndDate) {
                 $('#end_date').val('');

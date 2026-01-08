@@ -77,6 +77,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/holidays', [AcademicHolidayController::class, 'getHolidays']);
         Route::get('/holidays/calendar', [AcademicHolidayController::class, 'getCalendar']);
         Route::get('/holidays/{id}', [AcademicHolidayController::class, 'getHoliday']);
+        Route::get('/holidays/employee/index', [AcademicHolidayController::class, 'getEmployeeHolidays']);
 
         // Salary Management
         Route::prefix('salary')->group(function () {

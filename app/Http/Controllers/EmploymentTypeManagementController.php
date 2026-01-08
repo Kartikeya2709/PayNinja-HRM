@@ -5,13 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\EmploymentType;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 
 class EmploymentTypeManagementController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth', 'role:admin,company_admin']);
+        // $this->middleware(['auth', 'role:admin,company_admin']);
+    }
+
+    /**
+     * Get employment type from encrypted ID.
+     */
+    private function getEmploymentTypeFromEncryptedId(string $encryptedId): EmploymentType
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return EmploymentType::where('company_id', auth()->user()->company_id)->findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
     }
 
     /**
@@ -66,11 +80,9 @@ class EmploymentTypeManagementController extends Controller
     /**
      * Show the form for editing the employment type.
      */
-    public function edit(EmploymentType $employmentType)
+    public function edit(string $encryptedId)
     {
-        if ($employmentType->company_id !== auth()->user()->company_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $employmentType = $this->getEmploymentTypeFromEncryptedId($encryptedId);
 
         return view('company.employment-types.edit', compact('employmentType'));
     }
@@ -78,11 +90,9 @@ class EmploymentTypeManagementController extends Controller
     /**
      * Update the specified employment type in storage.
      */
-    public function update(Request $request, EmploymentType $employmentType)
+    public function update(Request $request, string $encryptedId)
     {
-        if ($employmentType->company_id !== auth()->user()->company_id) {
-            abort(403, 'Unauthorized action.');
-        }
+        $employmentType = $this->getEmploymentTypeFromEncryptedId($encryptedId);
 
         $request->validate([
             'name' => [

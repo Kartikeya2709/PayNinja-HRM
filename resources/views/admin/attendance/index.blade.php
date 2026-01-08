@@ -20,20 +20,37 @@
         </div>
         @endif
 
+        @php
+            $canCreateAttendance = \App\Models\User::hasAccess('attendance-management/attendance/store', true);
+            $canImportAttendance = \App\Models\User::hasAccess('attendance-management/attendance/import', true);
+            $canExportAttendance = \App\Models\User::hasAccess('attendance-management/attendance/export', true);
+            $canDownloadAttendanceTemplate = \App\Models\User::hasAccess('attendance-management/attendance/template', true);
+            $canEditAttendance = \App\Models\User::hasAccess('attendance-management/attendance/{encryptedId}/edit', true);
+            $canUpdateAttendance = \App\Models\User::hasAccess('attendance-management/attendance/{encryptedId}/update', true);
+            $canDeleteAttendance = \App\Models\User::hasAccess('attendance-management/attendance/{encryptedId}/delete', true);
+        @endphp
+
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Attendance Records</h5>
                         <div class="record-btn btn-center">
+                            @if($canCreateAttendance)
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                 data-bs-target="#addAttendanceModal">
                                 <i class="bi bi-plus-lg me-1"></i> Add Record
                             </button>
+                            @endif
+
+                            @if($canImportAttendance)
                             <button type="button" class="btn btn-success btn-sm ms-2" data-bs-toggle="modal"
                                 data-bs-target="#importModal">
                                 <i class="bi bi-upload me-1"></i> Import
                             </button>
+                            @endif
+
+                            @if($canExportAttendance)
                             <div class="btn-group ms-2">
                                 <button type="button" class="btn btn-info btn-sm dropdown-toggle"
                                     data-bs-toggle="dropdown" aria-expanded="false">
@@ -46,10 +63,14 @@
                                                 class="bi bi-file-pdf me-2"></i>Export to PDF</a></li>
                                 </ul>
                             </div>
+                            @endif
+
+                            @if($canDownloadAttendanceTemplate)
                             <a href="{{ route('admin-attendance.template') }}"
                                 class="btn btn-outline-secondary btn-sm ms-2" title="Download Import Template">
                                 <i class="bi bi-file-earmark-arrow-down me-1"></i> Template
                             </a>
+                            @endif
                         </div>
                     </div>
                     <div class="card-body">
@@ -197,12 +218,12 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <span class="badge bg-{{ 
-                                                $attendance->status === 'Present' ? 'success' : 
-                                                ($attendance->status === 'Absent' ? 'danger' : 
-                                                ($attendance->status === 'Late' ? 'warning' : 
-                                                ($attendance->status === 'On Leave' ? 'info' : 
-                                                ($attendance->status === 'Holiday' ? 'primary' : 'secondary')))) 
+                                            <span class="badge bg-{{
+                                                $attendance->status === 'Present' ? 'success' :
+                                                ($attendance->status === 'Absent' ? 'danger' :
+                                                ($attendance->status === 'Late' ? 'warning' :
+                                                ($attendance->status === 'On Leave' ? 'info' :
+                                                ($attendance->status === 'Holiday' ? 'primary' : 'secondary'))))
                                             }}">
                                                 {{ $attendance->status }}
                                             </span>
@@ -223,8 +244,9 @@
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
+                                                @if($canEditAttendance)
                                                 <button type="button" class="btn btn-outline-primary edit-attendance"
-                                                    data-id="{{ $attendance->id }}" data-bs-toggle="tooltip"
+                                                    data-id="{{ Crypt::encrypt($attendance->id) }}" data-bs-toggle="tooltip"
                                                     data-bs-placement="top" title="Edit Record" aria-label="Edit">
                                                     <span class="btn-content">
                                                         <i class="bi bi-pencil"></i>
@@ -232,8 +254,10 @@
                                                     <span class="spinner-border spinner-border-sm d-none" role="status"
                                                         aria-hidden="true"></span>
                                                 </button>
+                                                @endif
+                                                @if($canDeleteAttendance)
                                                 <button type="button" class="btn btn-outline-danger delete-attendance"
-                                                    data-id="{{ $attendance->id }}"
+                                                    data-id="{{ Crypt::encrypt($attendance->id) }}"
                                                     data-employee="{{ $attendance->employee->user->name ?? 'N/A' }}"
                                                     data-date="{{ $attendance->date->format('M d, Y') }}"
                                                     data-bs-toggle="tooltip" data-bs-placement="top"
@@ -244,6 +268,7 @@
                                                     <span class="spinner-border spinner-border-sm d-none" role="status"
                                                         aria-hidden="true"></span>
                                                 </button>
+                                                @endif
                                             </div>
                                         </td>
                                     </tr>
@@ -279,8 +304,10 @@
                 </div>
             </div>
         </div>
+    </div>
 </div>
 
+@if($canCreateAttendance)
 <!-- Add Attendance Modal -->
 <div class="modal fade" id="addAttendanceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -351,7 +378,9 @@
         </div>
     </div>
 </div>
+@endif
 
+@if($canEditAttendance || $canUpdateAttendance)
 <!-- Edit Attendance Modal -->
 <div class="modal fade" id="editAttendanceModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -406,13 +435,17 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @if($canUpdateAttendance)
                     <button type="submit" class="btn btn-primary">Save Changes</button>
+                    @endif
                 </div>
             </form>
         </div>
     </div>
 </div>
+@endif
 
+@if($canImportAttendance)
 <!-- Import Modal -->
 <div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -482,7 +515,9 @@
         </div>
     </div>
 </div>
+@endif
 
+@if($canExportAttendance)
 <!-- Export Modal -->
 <div class="modal fade" id="exportModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
@@ -516,6 +551,7 @@
         </div>
     </div>
 </div>
+@endif
 
 @endsection
 
@@ -780,7 +816,7 @@ $(document).ready(function() {
 
         // Submit form data
         $.ajax({
-            url: `/attendance-management/attendance/${id}`,
+            url: `/attendance-management/attendance/${id}/update`,
             type: 'POST',
             data: $form.serialize(),
             success: function(response) {

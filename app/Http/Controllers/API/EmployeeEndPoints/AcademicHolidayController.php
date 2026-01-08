@@ -91,11 +91,11 @@ class AcademicHolidayController extends BaseApiController
     {
         try {
             $employee = Auth::user()->employee;
-            
+
             // Get month and year from request or use current
             $month = $request->month ?? Carbon::now()->month;
             $year = $request->year ?? Carbon::now()->year;
-            
+
             $startDate = Carbon::createFromDate($year, $month, 1)->startOfMonth();
             $endDate = $startDate->copy()->endOfMonth();
 
@@ -146,6 +146,36 @@ class AcademicHolidayController extends BaseApiController
     }
 
     /**
+     * Get employee holidays index - company specific holidays
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getEmployeeHolidays(Request $request)
+    {
+        try {
+            $companyHolidays = AcademicHoliday::where('company_id', Auth::user()->company_id)
+                ->orderBy('from_date', 'asc')
+                ->get()
+                ->map(function($holiday) {
+                    $holiday->duration = Carbon::parse($holiday->from_date)->diffInDays(Carbon::parse($holiday->to_date)) + 1;
+                    $holiday->from_date_formatted = Carbon::parse($holiday->from_date)->format('M d, Y');
+                    $holiday->to_date_formatted = Carbon::parse($holiday->to_date)->format('M d, Y');
+                    return $holiday;
+                });
+
+            return $this->sendResponse([
+                'company_holidays' => $companyHolidays,
+                'total_holidays' => $companyHolidays->count(),
+                'total_days' => $companyHolidays->sum('duration')
+            ], 'Company holidays retrieved successfully');
+
+        } catch (\Exception $e) {
+            return $this->sendError('Error retrieving company holidays', [$e->getMessage()], 500);
+        }
+    }
+
+    /**
      * Get details of a specific holiday
      *
      * @param int $id
@@ -155,7 +185,7 @@ class AcademicHolidayController extends BaseApiController
     {
         try {
             $employee = Auth::user()->employee;
-            
+
             $holiday = AcademicHoliday::where('company_id', $employee->company_id)
                 ->where('id', $id)
                 ->first();

@@ -8,9 +8,9 @@
                 <div class="card-header">
                     <h4>{{ $handbook->title }}</h4>
                     <div class="">
-                    <a href="{{ route('handbooks.index') }}" class="btn btn-secondary">Back to List</a>
-                    @if(Auth::user()->hasRole(['admin', 'company_admin']))
-                        <a href="{{ route('handbooks.edit', $handbook) }}" class="btn btn-warning">Edit</a>
+                    {{-- <a href="{{ route('handbooks.index') }}" class="btn btn-secondary">Back to List</a> --}}
+                    @if(\App\Models\User::hasAccess('handbooks-list', true))
+                        <a href="{{ route('handbooks.edit', Crypt::encrypt($handbook->id)) }}" class="btn btn-warning">Edit</a>
                     @endif
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                                 <i class="fas fa-download"></i> Download/View File
                             </a>
                             @if(!$acknowledged)
-                                <form action="{{ route('handbooks.acknowledge', $handbook) }}" method="POST" style="margin-top: 10px;">
+                                <form action="{{ route('handbooks.acknowledge', Crypt::encrypt($handbook->id)) }}" method="POST" style="margin-top: 10px;">
                                     @csrf
                                     <button type="submit" class="btn btn-success btn-block">
                                         <i class="fas fa-check"></i> Mark as Read
@@ -73,7 +73,7 @@
                         </div>
                     </div>
 
-                    @if(Auth::user()->hasRole(['admin', 'company_admin']))
+                    @if(\App\Models\User::hasAccess('handbooks-list', true))
                         <hr>
                         <h5 class="mt-4">Acknowledgments</h5>
                         <div class="table-responsive">

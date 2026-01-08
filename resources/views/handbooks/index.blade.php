@@ -16,7 +16,7 @@
             <div class="card">
                 <div class="card-header justify-content-center">
                     <h4 class="mb-3">HR Handbooks</h4>
-                    @if(Auth::user()->hasRole(['admin', 'company_admin']))
+                    @if(\App\Models\User::hasAccess('handbooks-list', true))
                         <a href="{{ route('handbooks.create') }}" class="btn btn-primary">Create New Handbook</a>
                     @endif
                 </div>
@@ -32,7 +32,7 @@
                                     <th>Status</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
-                                    @if(Auth::user()->hasRole(['admin', 'company_admin']))
+                                    @if(\App\Models\User::hasAccess('handbooks-list', true))
                                         <th>Actions</th>
                                     @endif
                                 </tr>
@@ -46,7 +46,7 @@
                                                 {{ $handbook->title }}
                                             {{-- </a> --}}
                                             @if($handbook->file_path)
-                                                <a href="{{ route('handbooks.download', $handbook) }}"
+                                                <a href="{{ route('handbooks.download', Crypt::encrypt($handbook->id)) }}"
                                                    class="btn btn-sm btn-outline-primary ms-2"
                                                    data-bs-toggle="tooltip"
                                                    data-bs-placement="top"
@@ -64,12 +64,13 @@
                                         </td>
                                         <td>{{ $handbook->creator->name ?? 'N/A' }}</td>
                                         <td>{{ $handbook->created_at->format('M d, Y') }}</td>
-                                        @if(Auth::user()->hasRole(['admin', 'company_admin']))
+                                        @if(\App\Models\User::hasAccess('handbooks-list', true))
                                             <td>
                                                 <div class="btn-group btn-group-sm">
 
                                                 <!-- View Button -->
-                                                <a href="{{ route('handbooks.show', $handbook) }}"
+                                                @if(\App\Models\User::hasAccess('handbook-show/{handbookId}', true))
+                                                <a href="{{ route('handbooks.show', Crypt::encrypt($handbook->id)) }}"
                                                    class="btn btn-outline-info btn-sm action-btn"
                                                    data-id="{{ $handbook->id }}" data-bs-toggle="tooltip"
                                                    data-bs-placement="top" title="View Handbook" aria-label="View">
@@ -78,9 +79,11 @@
                                                    </span>
                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                 </a>
+                                                @endif
 
                                                 <!-- Edit Button -->
-                                                <a href="{{ route('handbooks.edit', $handbook) }}"
+                                                @if(\App\Models\User::hasAccess('handbook-edit/{handbookId}', true))
+                                                <a href="{{ route('handbooks.edit', Crypt::encrypt($handbook->id)) }}"
                                                    class="btn btn-outline-primary btn-sm action-btn"
                                                    data-id="{{ $handbook->id }}" data-bs-toggle="tooltip"
                                                    data-bs-placement="top" title="Edit Handbook" aria-label="Edit">
@@ -89,9 +92,11 @@
                                                    </span>
                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                 </a>
+                                                @endif
 
                                                 <!-- Delete Button -->
-                                                <form action="{{ route('handbooks.destroy', $handbook) }}" method="POST" class="d-inline-block">
+                                                @if(\App\Models\User::hasAccess('handbook-delete/{handbookId}', true))
+                                                <form action="{{ route('handbooks.destroy', Crypt::encrypt($handbook->id)) }}" method="POST" class="d-inline-block">
                                                    @csrf
                                                    @method('DELETE')
                                                    <button type="submit"
@@ -105,15 +110,14 @@
                                                    <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                    </button>
                                                 </form>
+                                                @endif
                                                 </div>
-
                                             </td>
-
                                         @endif
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="{{ Auth::user()->hasRole(['admin', 'company_admin']) ? 7 : 6 }}" class="text-center">
+                                        <td colspan="{{ \App\Models\User::hasAccess('handbooks-list', true) ? 7 : 6 }}" class="text-center">
                                             No handbooks found.
                                         </td>
                                     </tr>

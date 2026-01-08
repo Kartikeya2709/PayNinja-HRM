@@ -6,10 +6,43 @@ use App\Models\LeaveType;
 use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Validation\Rule;
 
 class LeaveTypeController extends Controller
 {
+    /**
+     * Get encrypted ID from model ID
+     */
+    private function getEncryptedId($id)
+    {
+        return Crypt::encrypt($id);
+    }
+
+    /**
+     * Get decrypted ID from encrypted string
+     */
+    private function getDecryptedId($encryptedId)
+    {
+        try {
+            return Crypt::decrypt($encryptedId);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Get model from encrypted ID
+     */
+    private function getLeaveTypeFromEncryptedId(string $encryptedId): LeaveType
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return LeaveType::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
     /**
      * Display a listing of the leave types.
      *
@@ -72,8 +105,9 @@ class LeaveTypeController extends Controller
      * @param  \App\Models\LeaveType  $leaveType
      * @return \Illuminate\Http\Response
      */
-    public function edit(LeaveType $leaveType)
+    public function edit($encryptedId)
     {
+        $leaveType = $this->getLeaveTypeFromEncryptedId($encryptedId);
         // Check if leave type belongs to the company
         if ($leaveType->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -89,8 +123,9 @@ class LeaveTypeController extends Controller
      * @param  \App\Models\LeaveType  $leaveType
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, LeaveType $leaveType)
+    public function update(Request $request, $encryptedId)
     {
+        $leaveType = $this->getLeaveTypeFromEncryptedId($encryptedId);
         // Check if leave type belongs to the company
         if ($leaveType->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -125,8 +160,9 @@ class LeaveTypeController extends Controller
      * @param  \App\Models\LeaveType  $leaveType
      * @return \Illuminate\Http\Response
      */
-    public function destroy(LeaveType $leaveType)
+    public function destroy($encryptedId)
     {
+        $leaveType = $this->getLeaveTypeFromEncryptedId($encryptedId);
         // Check if leave type belongs to the company
         if ($leaveType->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');

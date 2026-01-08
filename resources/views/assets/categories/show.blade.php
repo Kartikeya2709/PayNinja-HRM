@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Crypt;
+@endphp
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -73,7 +77,7 @@
                                                 <div class="btn-group btn-group-sm">
 
                                                 <!-- View Asset Button -->
-                                                <a href="{{ route('assets.show', $asset->id) }}"
+                                                <a href="{{ route('assets.show', ['encryptedId' => Crypt::encrypt($asset->id)]) }}"
                                                 class="btn btn-outline-info btn-sm action-btn"
                                                 data-id="{{ $asset->id }}"
                                                 data-bs-toggle="tooltip"
@@ -87,7 +91,7 @@
                                                 </a>
 
                                                 <!-- Edit Asset Button -->
-                                                <a href="{{ route('assets.edit', $asset->id) }}"
+                                                <a href="{{ route('assets.edit', ['encryptedId' => Crypt::encrypt($asset->id)]) }}"
                                                 class="btn btn-outline-primary btn-sm action-btn"
                                                 data-id="{{ $asset->id }}"
                                                 data-bs-toggle="tooltip"

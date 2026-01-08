@@ -97,7 +97,7 @@
         @if($leaveRequest->status === 'pending')
             <div class="row mt-4 text-center">
                 <div class="col-md-6 mb-2">
-                    <form action="{{ route('leaves.leave-requests.approve', $leaveRequest->id) }}" method="POST" class="d-inline">
+                    <form action="{{ route('leaves.leave-requests.approve', \Illuminate\Support\Facades\Crypt::encrypt($leaveRequest->id)) }}" method="POST" class="d-inline">
                         @csrf
                         <button type="submit" class="btn btn-glass text-success">
                             <i class="fas fa-check"></i> Approve
@@ -125,12 +125,14 @@
     </div>
 
 
-@if($leaveRequest->status === 'pending')
+
+    </section>
+    @if($leaveRequest->status === 'pending')
     <!-- Reject Modal -->
     <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('leaves.leave-requests.reject', $leaveRequest->id) }}" method="POST">
+                <form action="{{ route('leaves.leave-requests.reject', \Illuminate\Support\Facades\Crypt::encrypt($leaveRequest->id)) }}" method="POST">
                     @csrf
                     <div class="modal-header">
                         <h5 class="modal-title" id="rejectModalLabel">Reject Leave Request</h5>
@@ -153,6 +155,5 @@
             </div>
         </div>
     </div>
-    </section>
 @endif
 @endsection

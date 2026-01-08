@@ -20,15 +20,15 @@
                     <h3 class="card-title">Create New Department</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('departments.store', ['companyId' => Auth::user()->company_id]) }}" method="POST">
+                    <form action="{{ route('departments.store') }}" method="POST">
                         @csrf
                         <div class="form-group mb-4">
                             <label for="name">Name</label>
-                            <input type="text" 
-                                class="form-control @error('name') is-invalid @enderror" 
-                                id="name" 
-                                name="name" 
-                                value="{{ old('name') }}" 
+                            <input type="text"
+                                class="form-control @error('name') is-invalid @enderror"
+                                id="name"
+                                name="name"
+                                value="{{ old('name') }}"
                                 required>
                             @error('name')
                                 <div class="invalid-feedback">
@@ -39,10 +39,10 @@
 
                         <div class="form-group">
                             <label for="description">Description</label>
-                            <textarea 
-                                class="form-control @error('description') is-invalid @enderror" 
-                                id="description" 
-                                name="description" 
+                            <textarea
+                                class="form-control @error('description') is-invalid @enderror"
+                                id="description"
+                                name="description"
                                 rows="3">{{ old('description') }}</textarea>
                             @error('description')
                                 <div class="invalid-feedback">
@@ -55,7 +55,7 @@
                            <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                            <i class="bi bi-save me-2"></i>Create Department
                            </button>
-                           <a href="{{ route('departments.index', ['companyId' => Auth::user()->company_id]) }}" class="btn btn-danger px-4 rounded-pill">
+                           <a href="{{ route('departments.index') }}" class="btn btn-danger px-4 rounded-pill">
                            <i class="bi bi-x-circle me-2"></i>Cancel
                            </a>
                         </div>

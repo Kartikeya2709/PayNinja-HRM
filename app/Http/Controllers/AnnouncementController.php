@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Models\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class AnnouncementController extends Controller
 {
+    /**
+     * Decrypt encrypted ID safely
+     */
+    private function getAnnouncementFromEncryptedId(string $encryptedId): Announcement
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return Announcement::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -23,7 +37,7 @@ class AnnouncementController extends Controller
 
         return view('company_admin.announcements.index', compact('announcements'));
     }
- 
+
     /**
      * Show the form for creating a new resource.
      */
@@ -46,19 +60,13 @@ class AnnouncementController extends Controller
         ]);
 
         $user = Auth::user();
-        $audience = $request->audience;
-
-        // HR Admins can only target employees
-        if ($user->hasRole('admin')) {
-            $audience = 'employees';
-        }
 
         Announcement::create([
             'company_id' => $user->employee->company_id,
             'created_by' => $user->id,
             'title' => $request->title,
             'description' => $request->description,
-            'audience' => $audience,
+            'audience' => $request->audience,
             'publish_date' => $request->publish_date,
             'expires_at' => $request->expires_at,
         ]);
@@ -70,14 +78,9 @@ class AnnouncementController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Announcement $announcement)
+    public function show(string $announcement)
     {
-        $user = Auth::user();
-
-        // Ensure only same-company users can view
-        if ($announcement->company_id !== $user->employee->company_id) {
-            abort(403, 'Unauthorized access.');
-        }
+        $announcement = $this->getAnnouncementFromEncryptedId($announcement);
 
         return view('company_admin.announcements.show', compact('announcement'));
     }
@@ -85,14 +88,9 @@ class AnnouncementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Announcement $announcement)
+    public function edit(string $announcement)
     {
-        $user = Auth::user();
-
-        // Only company_admin who created it can edit
-        if ($announcement->created_by !== $user->id && !$user->hasRole('company_admin')) {
-            abort(403, 'Unauthorized access.');
-        }
+        $announcement = $this->getAnnouncementFromEncryptedId($announcement);
 
         return view('company_admin.announcements.edit', compact('announcement'));
     }
@@ -100,14 +98,9 @@ class AnnouncementController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Announcement $announcement)
+    public function update(Request $request, string $announcement)
     {
-        $user = Auth::user();
-
-        // Only company_admin who created it can update
-        if ($announcement->created_by !== $user->id && !$user->hasRole('company_admin')) {
-            abort(403, 'Unauthorized access.');
-        }
+        $announcement = $this->getAnnouncementFromEncryptedId($announcement);
 
         $request->validate([
             'title' => 'required|string|max:255',
@@ -117,17 +110,10 @@ class AnnouncementController extends Controller
             'expires_at' => 'nullable|date|after_or_equal:publish_date',
         ]);
 
-        $audience = $request->audience;
-
-        // HR Admins can only target employees
-        if ($user->hasRole('admin')) {
-            $audience = 'employees';
-        }
-
         $announcement->update([
             'title' => $request->title,
             'description' => $request->description,
-            'audience' => $audience,
+            'audience' => $request->audience,
             'publish_date' => $request->publish_date,
             'expires_at' => $request->expires_at,
         ]);
@@ -139,18 +125,12 @@ class AnnouncementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Announcement $announcement)
+    public function destroy(string $announcement)
     {
-        $user = Auth::user();
-
-        // Only company_admin who created it can delete
-        if ($announcement->created_by !== $user->id && !$user->hasRole('company_admin')) {
-            abort(403, 'Unauthorized access.');
-        }
-
+        $announcement = $this->getAnnouncementFromEncryptedId($announcement);
         $announcement->delete();
 
         return redirect()->route('announcements.index')
-            ->with('success', 'Announcement deleted (soft deleted) successfully!');
+            ->with('success', 'Announcement deleted successfully!');
     }
 }

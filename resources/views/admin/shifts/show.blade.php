@@ -5,10 +5,10 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Shift Details: {{ $shift->name }}</h1>
         <div>
-            <a href="{{ route('admin.shifts.edit', $shift) }}" class="btn btn-primary btn-sm">
+            <a href="{{ route('admin.shifts.edit', Crypt::encrypt($shift->id)) }}" class="btn btn-primary btn-sm">
                 <i class="fas fa-edit fa-sm"></i> Edit
             </a>
-            <a href="{{ route('admin.shifts.assign.show', $shift) }}" class="btn btn-info btn-sm">
+            <a href="{{ route('admin.shifts.assign.show', Crypt::encrypt($shift->id)) }}" class="btn btn-info btn-sm">
                 <i class="fas fa-user-plus fa-sm"></i> Assign to Employees
             </a>
             <a href="{{ route('admin.shifts.index') }}" class="btn btn-secondary btn-sm">
@@ -16,6 +16,18 @@
             </a>
         </div>
     </div>
+
+    @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <div class="row">
         <div class="col-lg-8">
@@ -35,7 +47,7 @@
                     <div class="row mb-3">
                         <div class="col-md-4 font-weight-bold">Shift Hours:</div>
                         <div class="col-md-8">
-                            {{ \Carbon\Carbon::parse($shift->start_time)->format('h:i A') }} - 
+                            {{ \Carbon\Carbon::parse($shift->start_time)->format('h:i A') }} -
                             {{ \Carbon\Carbon::parse($shift->end_time)->format('h:i A') }}
                             @if($shift->is_night_shift)
                                 <span class="badge badge-info ml-2">Night Shift</span>
@@ -50,7 +62,7 @@
                     <div class="row mb-3">
                         <div class="col-md-4 font-weight-bold">Break Time:</div>
                         <div class="col-md-8">
-                            {{ \Carbon\Carbon::parse($shift->break_start)->format('h:i A') }} - 
+                            {{ \Carbon\Carbon::parse($shift->break_start)->format('h:i A') }} -
                             {{ \Carbon\Carbon::parse($shift->break_end)->format('h:i A') }}
                             ({{ \Carbon\Carbon::parse($shift->break_start)->diffInMinutes(\Carbon\Carbon::parse($shift->break_end)) }} minutes)
                         </div>

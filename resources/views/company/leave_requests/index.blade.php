@@ -114,7 +114,7 @@
                                             <th>End Date</th>
                                             <th>Days</th>
                                             <th>Status</th>
-                                            <th>Action</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -134,37 +134,47 @@
                                                 </span>
                                             </td>
                                             <td>
-                                                <a href="{{ route('leaves.leave-requests.show', $request->id) }}"
-                                                    class="btn btn-outline-info btn-sm action-btn"
-                                                    data-id="{{ $request->id }}" data-bs-toggle="tooltip"
-                                                    data-bs-placement="top" title="View Leave Request"
-                                                    aria-label="View">
-                                                    <span class="btn-content">
-                                                        <i class="fas fa-eye"></i>
-                                                    </span>
-                                                    <span class="spinner-border spinner-border-sm d-none" role="status"
-                                                        aria-hidden="true"></span>
-                                                </a>
+                                                <div class="btn-group btn-group-sm">
+                                                    @if(\App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}', true))
+                                                    <a href="{{ route('leaves.leave-requests.show', \Illuminate\Support\Facades\Crypt::encrypt($request->id)) }}"
+                                                        class="btn btn-outline-info action-btn"
+                                                        data-id="{{ $request->id }}" data-bs-toggle="tooltip"
+                                                        data-bs-placement="top" title="View Leave Request"
+                                                        aria-label="View">
+                                                        <span class="btn-content">
+                                                            <i class="fas fa-eye"></i>
+                                                        </span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                            aria-hidden="true"></span>
+                                                    </a>
+                                                    @endif
 
-                                                @if($request->status === 'pending')
-                                                <form
-                                                    action="{{ route('leaves.leave-requests.approve', $request->id) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-success btn-sm"
-                                                        title="Approve">
-                                                        <i class="fas fa-check"></i>
-                                                    </button>
-                                                </form>
-                                                <form
-                                                    action="{{ route('leaves.leave-requests.reject', $request->id) }}"
-                                                    method="POST" class="d-inline">
-                                                    @csrf
-                                                    <button type="submit" class="btn btn-danger btn-sm" title="Reject">
-                                                        <i class="fas fa-times"></i>
-                                                    </button>
-                                                </form>
-                                                @endif
+                                                    @if($request->status === 'pending')
+                                                        @if(\App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}/approve', true))
+                                                        <form action="{{ route('leaves.leave-requests.approve', \Illuminate\Support\Facades\Crypt::encrypt($request->id)) }}"
+                                                            method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-outline-success"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Approve Leave Request">
+                                                                <i class="fas fa-check"></i>
+                                                            </button>
+                                                        </form>
+                                                        @endif
+
+                                                        @if(\App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}/reject', true))
+                                                        <form action="{{ route('leaves.leave-requests.reject', \Illuminate\Support\Facades\Crypt::encrypt($request->id)) }}"
+                                                            method="POST" class="d-inline">
+                                                            @csrf
+                                                            <button type="submit" class="btn btn-outline-danger"
+                                                                data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                title="Reject Leave Request">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                        @endif
+                                                    @endif
+                                                </div>
                                             </td>
                                         </tr>
                                         @empty
@@ -194,6 +204,12 @@
 $(document).ready(function() {
     // Initialize select2
     $('.select2').select2();
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 });
 </script>
 @endpush

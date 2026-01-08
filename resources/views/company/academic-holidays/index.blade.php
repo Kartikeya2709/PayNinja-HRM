@@ -18,15 +18,19 @@
                     <div class="card-header d-flex justify-content-center align-items-center">
                         <h3 class="card-title mb-3">Academic Holidays</h3>
                         <div class="academic d-flex align-items-center gap-2">
-                            @if(!$isReadOnly)
+                            @if(\App\Models\User::hasAccess('academic-holidays/create', true))
                             <a href="{{ route('academic-holidays.create') }}"
                                 class="btn btn-primary d-flex align-items-center gap-1">
                                 <i class="fas fa-plus"></i> Add Holiday
                             </a>
+                            @endif
+                            @if(\App\Models\User::hasAccess('academic-holidays/import', true))
                             <button type="button" class="btn btn-success d-flex align-items-center gap-1"
                                 data-bs-toggle="modal" data-bs-target="#importModal">
                                 <i class="fas fa-file-import"></i> Import Holidays
                             </button>
+                            @endif
+                            @if(\App\Models\User::hasAccess('academic-holidays/template', true))
                             <a href="{{ route('academic-holidays.template') }}"
                                 class="btn btn-info d-flex align-items-center gap-1">
                                 <i class="fas fa-download"></i> Download Template
@@ -49,8 +53,7 @@
                                         <th>From Date</th>
                                         <th>To Date</th>
                                         <th>Description</th>
-                                        @if(!$isReadOnly)
-                                     
+                                        @if(\App\Models\User::hasAccess('academic-holidays/{encryptedId}/edit', true) || \App\Models\User::hasAccess('academic-holidays/{encryptedId}/delete', true))
                                         <th>Actions</th>
                                         @endif
                                     </tr>
@@ -64,12 +67,13 @@
                                         <td>{{ $holiday->to_date ? \Carbon\Carbon::parse($holiday->to_date)->format('Y-m-d') : '-' }}
                                         </td>
                                         <td>{{ $holiday->description ?? '-' }}</td>
-                                          @if(!$isReadOnly)
+                                        @if(\App\Models\User::hasAccess('academic-holidays/{encryptedId}/edit', true) || \App\Models\User::hasAccess('academic-holidays/{encryptedId}/delete', true))
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('academic-holidays.edit', $holiday->id) }}"
+                                            @if(\App\Models\User::hasAccess('academic-holidays/{encryptedId}/edit', true))
+                                            <a href="{{ route('academic-holidays.edit', $holiday->encrypted_id) }}"
                                                 class="btn btn-outline-primary btn-sm action-btn"
-                                                data-id="{{ $holiday->id }}" data-bs-toggle="tooltip"
+                                                data-id="{{ $holiday->encrypted_id }}" data-bs-toggle="tooltip"
                                                 data-bs-placement="top" title="Edit Holiday" aria-label="Edit">
                                                 <span class="btn-content">
                                                     <i class="fas fa-edit"></i>
@@ -77,15 +81,17 @@
                                                 <span class="spinner-border spinner-border-sm d-none" role="status"
                                                     aria-hidden="true"></span>
                                             </a>
-                                          
+                                            @endif
+
+                                            @if(\App\Models\User::hasAccess('academic-holidays/{encryptedId}/delete', true))
                                             <form
-                                                action="{{ route('academic-holidays.destroy', $holiday->id) }}"
+                                                action="{{ route('academic-holidays.destroy', $holiday->encrypted_id) }}"
                                                 method="POST" class="d-inline-block">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
-                                                    class="btn btn-outline-danger btn-sm action-btn rounded-start-0"
-                                                    data-id="{{ $holiday->id }}" data-bs-toggle="tooltip"
+                                                    class="btn btn-outline-danger btn-sm action-btn {{ \App\Models\User::hasAccess('academic-holidays/{encryptedId}/edit', true) ? 'rounded-start-0' : '' }}"
+                                                    data-id="{{ $holiday->encrypted_id }}" data-bs-toggle="tooltip"
                                                     data-bs-placement="top" title="Delete Holiday" aria-label="Delete"
                                                     onclick="return confirm('Are you sure you want to delete this holiday?')">
                                                     <span class="btn-content">
@@ -94,12 +100,11 @@
                                                     <span class="spinner-border spinner-border-sm d-none" role="status"
                                                         aria-hidden="true"></span>
                                                 </button>
-
                                             </form>
-                                          
+                                            @endif
                                             </div>
                                         </td>
-                                          @endif
+                                        @endif
                                     </tr>
                                     @empty
                                     <tr>

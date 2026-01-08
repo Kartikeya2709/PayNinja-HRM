@@ -12,18 +12,39 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
 class AttendanceRegularizationController extends Controller
 {
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index(Request $request)
     {
         $employee = Auth::user()->employee;
-        $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name', 'company_admin');
-
+        // $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name', 'company_admin');
+     $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name');
         // Get filter parameters
         $filters = [
             'from_date' => $request->get('from_date'),
@@ -81,6 +102,57 @@ class AttendanceRegularizationController extends Controller
             return view('employee.regularization.index', compact('requests', 'filters'));
         }
     }
+
+    public function myRequests(Request $request)
+    {
+        // Get the authenticated user's employee record
+        $employee = Auth::user()->employee;
+
+        // Get all regularization requests for this employee
+        $requests = AttendanceRegularization::where('employee_id', $employee->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10); // Show 10 requests per page
+
+        return view('employee.regularization.my', compact('requests'));
+    }
+
+ public function companyRequests(Request $request)
+    {
+        // $this->ensureCompanyManagementAccess();
+
+        $employee = Auth::user()->employee;
+       $filters = [
+            'from_date' => $request->get('from_date'),
+            'to_date' => $request->get('to_date'),
+            'status' => $request->get('status'),
+            'employee_id' => $request->get('employee_id'),
+            'month' => $request->get('month'),
+            'year' => $request->get('year'),
+            'search' => $request->get('search'),
+        ];
+
+        $pending_requests = $this->buildFilteredQuery($employee, 'pending', $filters, true);
+        $approved_requests = $this->buildFilteredQuery($employee, 'approved', $filters, true);
+        $rejected_requests = $this->buildFilteredQuery($employee, 'rejected', $filters, true);
+
+        $employees = Employee::where('company_id', $employee->company_id)
+            ->select('id', 'name', 'employee_code')
+            ->orderBy('name')
+            ->get();
+
+        return view('employee.regularization.company', [
+            'pending_requests' => $pending_requests,
+            'approved_requests' => $approved_requests,
+            'rejected_requests' => $rejected_requests,
+            'employees' => $employees,
+            'filters' => $filters,
+
+        ]);
+    }
+
+
+
+
 
     /**
      * Build filtered query for company admins and managers
@@ -167,7 +239,7 @@ class AttendanceRegularizationController extends Controller
     public function create()
     {
         if (is_null(Auth::user()->employee->reporting_manager_id)) {
-            return redirect()->route('regularization-requests.index')->with('error', 'Managers cannot create regularization requests.');
+            return redirect()->back()->with('error', 'Managers cannot create regularization requests.');
         }
 
         $employee = Auth::user()->employee;
@@ -186,7 +258,7 @@ class AttendanceRegularizationController extends Controller
     {
         $employee = Auth::user()->employee;
         if (is_null($employee->reporting_manager_id)) {
-            return redirect()->route('regularization-requests.index')->with('error', 'Managers cannot create regularization requests.');
+            return redirect()->back()->with('error', 'Managers cannot create regularization requests.');
         }
 
         // Get attendance settings for office timings
@@ -237,16 +309,16 @@ class AttendanceRegularizationController extends Controller
             ]);
         }
 
-        return redirect()->route('regularization-requests.index')
+        return redirect()->back()
             ->with('success', 'Your regularization requests have been submitted successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function show($encryptedId)
     {
-        $request = AttendanceRegularization::with('employee', 'approver')->findOrFail($id);
+        $request = $this->getModelFromEncryptedId($encryptedId, AttendanceRegularization::class);
         $employee = Auth::user()->employee;
         $requests = $employee->attendanceRegularizations()
             ->with('employee', 'approver')
@@ -259,9 +331,9 @@ class AttendanceRegularizationController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($id)
+    public function edit($encryptedId)
     {
-        $request = AttendanceRegularization::findOrFail($id);
+        $request = $this->getModelFromEncryptedId($encryptedId, AttendanceRegularization::class);
         // Add authorization logic here if needed
 
         return view('employee.regularization.edit', compact('request'));
@@ -270,9 +342,9 @@ class AttendanceRegularizationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $encryptedId)
     {
-        $regularizationRequest = AttendanceRegularization::findOrFail($id);
+        $regularizationRequest = $this->getModelFromEncryptedId($encryptedId, AttendanceRegularization::class);
         $employee = Auth::user()->employee;
         $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name', 'company_admin');
 
@@ -308,7 +380,7 @@ class AttendanceRegularizationController extends Controller
             $this->updateAttendanceFromRegularization($regularizationRequest, $validated['attendance_status']);
         }
 
-        return redirect()->route('regularization-requests.index')
+        return redirect()->back()
             ->with('success', 'Request has been ' . $validated['status'] . '.');
     }
 
@@ -320,24 +392,71 @@ class AttendanceRegularizationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(AttendanceRegularization $regularization)
+    public function destroy(AttendanceRegularization $regularization,$encryptedId)
     {
+
+        // Decrypt the ID if needed
+        $id = decrypt($encryptedId);
+        $regularization = AttendanceRegularization::findOrFail($id);
+
         $regularization->delete();
 
-        return redirect()->route('regularization-requests.index')
+        return redirect()->back()
             ->with('success', 'Request deleted successfully.');
+    }
+
+    /**
+     * Bulk destroy regularization requests
+     */
+    public function bulkDestroy(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'request_ids' => 'required|array',
+            'request_ids.*' => 'string',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator);
+        }
+
+        $validated = $validator->validated();
+        $deletedCount = 0;
+
+        foreach ($validated['request_ids'] as $encryptedId) {
+            try {
+                $request = $this->getModelFromEncryptedId($encryptedId, AttendanceRegularization::class);
+                $request->delete();
+                $deletedCount++;
+            } catch (\Exception $e) {
+                // Skip invalid IDs
+                continue;
+            }
+        }
+
+        return redirect()->back()
+            ->with('success', "{$deletedCount} requests deleted successfully.");
     }
 
     public function bulkUpdate(Request $request)
     {
         $employee = Auth::user()->employee;
-        $is_company_admin = Auth::user()->roles && Auth::user()->roles->contains('name', 'company_admin');
+        $is_company_admin = Auth::user();
 
         $validator = Validator::make($request->all(), [
             'request_ids' => 'required|array',
-            'request_ids.*' => 'exists:attendance_regularizations,id',
+            'request_ids.*' => 'string',
             'action' => 'required|in:approve,reject',
         ]);
+
+        $decryptedRequestIds = [];
+        foreach ($request->input('request_ids', []) as $encryptedId) {
+            try {
+                $id = Crypt::decrypt($encryptedId);
+                $decryptedRequestIds[] = $id;
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Invalid request ID provided.');
+            }
+        }
 
         $validator->sometimes('attendance_status', 'required|in:Present,Late,Half Day', function ($input) {
             return $input->action == 'approve';
@@ -350,7 +469,7 @@ class AttendanceRegularizationController extends Controller
         $validated = $validator->validated();
         $status = ($validated['action'] == 'approve') ? 'approved' : 'rejected';
 
-        $query = AttendanceRegularization::whereIn('id', $validated['request_ids'])
+        $query = AttendanceRegularization::whereIn('id', $decryptedRequestIds)
             ->where('status', 'pending');
 
         // If not company admin, only allow updating requests where user is reporting manager
@@ -368,7 +487,7 @@ class AttendanceRegularizationController extends Controller
             }
         }
 
-        return redirect()->route('regularization-requests.index')
+        return redirect()->back()
             ->with('success', 'Selected requests have been ' . $status . '.');
     }
 

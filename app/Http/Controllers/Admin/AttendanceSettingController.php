@@ -11,9 +11,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Crypt;
 
 class AttendanceSettingController extends Controller
 {
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
     /**
      * Display the attendance settings form.
      */
@@ -115,9 +136,28 @@ class AttendanceSettingController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(AttendanceSetting $attendanceSetting)
+    public function edit($encryptedId)
     {
-        //
+        $attendanceSetting = $this->getModelFromEncryptedId($encryptedId, AttendanceSetting::class);
+
+        // Check if user has permission to edit this setting
+        if ($attendanceSetting->company_id !== Auth::user()->company_id) {
+            abort(403);
+        }
+
+        $companyId = Auth::user()->company_id;
+        $company = Company::findOrFail($companyId);
+        $departments = Department::where('company_id', $companyId)->get();
+        $employees = Employee::where('company_id', $companyId)->with('department')->get();
+
+        $attendanceSetting->load(['exemptedDepartments', 'exemptedEmployees']);
+
+        return view('admin.attendance.edit', [
+            'settings' => $attendanceSetting,
+            'company' => $company,
+            'departments' => $departments,
+            'employees' => $employees,
+        ]);
     }
 
     /**
@@ -126,9 +166,8 @@ class AttendanceSettingController extends Controller
     /**
      * Update the attendance settings including geolocation exemptions.
      */
-    public function update(Request $request, $id = null)
+    public function update(Request $request, $encryptedId = null)
     {
-
         try {
             // Check if this is an AJAX request
             $isAjax = $request->ajax() || $request->wantsJson();
@@ -139,15 +178,20 @@ class AttendanceSettingController extends Controller
             // Prepare the data for validation
             $data = $request->all();
 
-            // Ensure the user can only update settings for their own company
-            if (isset($data['company_id']) && $data['company_id'] != $userCompanyId) {
-                if ($isAjax) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Unauthorized: You can only update settings for your own company.'
-                    ], 403);
+            // If encryptedId is provided, decrypt it and verify ownership
+            if ($encryptedId) {
+                $settings = $this->getModelFromEncryptedId($encryptedId, AttendanceSetting::class);
+
+                // Verify the settings belong to the user's company
+                if ($settings->company_id !== $userCompanyId) {
+                    if ($isAjax) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Unauthorized: You can only update settings for your own company.'
+                        ], 403);
+                    }
+                    return redirect()->back()->with('error', 'Unauthorized: You can only update settings for your own company.');
                 }
-                return redirect()->back()->with('error', 'Unauthorized: You can only update settings for your own company.');
             }
 
             // Set the company_id to the user's company to prevent tampering
@@ -265,7 +309,7 @@ class AttendanceSettingController extends Controller
             \Log::debug('Encoded weekend_days for storage:', ['encoded' => $validated['weekend_days']]);
 
             // Set created_by if it's a new record
-            if (empty($id)) {
+            if (empty($encryptedId)) {
                 $validated['created_by'] = Auth::id();
             }
 
@@ -304,23 +348,8 @@ class AttendanceSettingController extends Controller
             // Persist settings and sync exemptions in a transaction
             \DB::beginTransaction();
             try {
-                if ($id) {
-                    // For updates, first find the setting and verify it belongs to the user's company
-                    $settings = AttendanceSetting::where('id', $id)
-                        ->where('company_id', $userCompanyId)
-                        ->first();
-
-                    if (!$settings) {
-                        if ($isAjax) {
-                            return response()->json([
-                                'success' => false,
-                                'message' => 'Settings not found or you do not have permission to update them.'
-                            ], 404);
-                        }
-                        return redirect()->back()->with('error', 'Settings not found or you do not have permission to update them.');
-                    }
-
-                    // Update existing settings
+                if ($encryptedId) {
+                    // Update existing settings (already loaded above)
                     $settings->update($validated);
                     $settings->updated_by = Auth::id();
                     $settings->save();

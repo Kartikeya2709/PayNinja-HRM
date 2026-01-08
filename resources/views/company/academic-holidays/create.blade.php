@@ -36,7 +36,7 @@
 
                         <form
                             action="{{ isset($holiday)
-                                ? route('academic-holidays.update', $holiday->id)
+                                ? route('academic-holidays.update', $holiday->encrypted_id)
                                 : route('academic-holidays.store') }}"
                             method="POST">
                             @csrf
@@ -107,7 +107,7 @@
                             </div>
 
                             <div class="form-group row">
-                               
+
                                 <div class="col-12 d-flex gap-3 justify-content-center mt-4">
                                    <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
                                    <i class="bi bi-calendar-event me-2"></i>{{ isset($holiday) ? 'Update' : 'Create' }} Holiday

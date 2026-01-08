@@ -24,7 +24,7 @@
 
                     <tr>
                         @if ($show_actions)
-                            <td><input type="checkbox" name="request_ids[]" value="{{ $request->id }}"></td>
+                            <td><input type="checkbox" name="request_ids[]" value="{{ Crypt::encrypt($request->id) }}"></td>
                         @endif
                         <td>{{ $key + 1 }}</td>
                         <td>{{ $request->employee->name ?? 'N/A' }}</td>
@@ -37,10 +37,14 @@
                         </td>
                         <td>{{ $request->approver->name ?? '' }}</td>
                         @if ($show_actions)
-                            <td>
-                                <a href="{{ route('regularization-requests.edit', $request->id) }}"
-                                    class="btn btn-primary btn-sm">Edit</a>
-                            </td>
+                            @if (isset($canEditRegularization) && $canEditRegularization)
+                                <td>
+                                    <a href="{{ route('regularization-requests.edit', Crypt::encrypt($request->id)) }}"
+                                        class="btn btn-primary btn-sm">Edit</a>
+                                </td>
+                            @else
+                                <td></td>
+                            @endif
                         @endif
                     </tr>
                 @endforeach

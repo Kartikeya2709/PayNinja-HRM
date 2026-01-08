@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Crypt;
+@endphp
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -8,12 +12,12 @@
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Assets</h3>
                     <div class="btn-group">
-                        @if(url()->previous() == route('assets.dashboard'))
+                        {{-- @if(url()->previous() == route('assets.dashboard'))
                         <a href="{{ route('assets.dashboard') }}" class="btn btn-warning">
                             <i class="fas fa-arrow-left"></i> Back to Dashboard
                         </a>
-                        @endif
-                        @if(\App\Models\User::hasAccess('Asset Create'))
+                        @endif --}}
+                        @if(\App\Models\User::hasAccess('assets/create',true))
                             <a href="{{ route('assets.create') }}" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Add Asset
                             </a>
@@ -68,7 +72,8 @@
                                     <td>
                                         <div class="btn-group btn-group-sm">
                                         <!-- View Asset -->
-                                        <a href="{{ route('assets.show', $asset->id) }}"
+                                        @if(\App\Models\User::hasAccess('assets/show/{encryptedId}',true))
+                                        <a href="{{ route('assets.show', ['encryptedId' => Crypt::encrypt($asset->id)]) }}"
                                         class="btn btn-outline-info btn-sm action-btn"
                                         data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="View Asset" aria-label="View">
@@ -77,9 +82,11 @@
                                         </span>
                                         <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                         </a>
+                                        @endif
 
                                         <!-- Edit Asset -->
-                                        <a href="{{ route('assets.edit', $asset->id) }}"
+                                        @if(\App\Models\User::hasAccess('assets/{encryptedId}/edit',true))
+                                        <a href="{{ route('assets.edit', ['encryptedId' => Crypt::encrypt($asset->id)]) }}"
                                         class="btn btn-outline-primary btn-sm action-btn"
                                         data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="Edit Asset" aria-label="Edit">
@@ -88,10 +95,12 @@
                                         </span>
                                         <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                         </a>
+                                        @endif
 
                                         <!-- Assign Asset -->
                                         @if($asset->status === 'available')
-                                        <a href="{{ route('assets.assignments.create', ['asset' => $asset->id]) }}"
+                                          @if(\App\Models\User::hasAccess('assets/create',true))
+                                        <a href="{{ route('assets.assignments.create') }}"
                                         class="btn btn-outline-success btn-sm action-btn"
                                         data-id="{{ $asset->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="Assign Asset" aria-label="Assign">
@@ -101,20 +110,31 @@
                                         <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                         </a>
                                         @endif
+                                        @endif
+                                        <!-- Delete Asset -->
+                                        @if(\App\Models\User::hasAccess('assets/{encryptedId}/delete',true))
+                                        <form action="{{ route('assets.destroy', ['encryptedId' => Crypt::encrypt($asset->id)]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this asset?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Asset">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                        @endif
                                         </div>
                                     </td>
-                                    {{-- <td>
+                                    {{-- {{-- <td>
                                         <!-- View Asset -->
-                                        <a href="{{ route('admin.assets.show', $asset->id) }}" class="btn btn-info btn-sm">
+                                        <a href="{{ route('assets.show', ['encryptedId' => Crypt::encrypt($asset->id)]) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         <!-- Edit Asset -->
-                                        <a href="{{ route('admin.assets.assignments.edit', $asset->id) }}" class="btn btn-primary btn-sm">
+                                        <a href="{{ route('assets.edit', ['encryptedId' => Crypt::encrypt($asset->id)]) }}" class="btn btn-primary btn-sm">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <!-- Assign Asset (only if available) -->
                                         @if($asset->status === 'available')
-                                            <a href="{{ route('admin.assets.assignments.create', ['asset' => $asset->id]) }}" class="btn btn-success btn-sm">
+                                            <a href="{{ route('assets.assignments.create') }}" class="btn btn-success btn-sm">
                                                 <i class="fas fa-user-plus"></i>
                                             </a>
                                         @endif

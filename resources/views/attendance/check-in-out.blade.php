@@ -25,13 +25,13 @@
                         Attendance Recorded
                     @endif
                 </h5>
-                
+
                 <!-- Current Time -->
                 <div class="mb-4">
                     <div class="display-4 mb-2" id="currentTime">--:--:--</div>
                     <div class="text-muted" id="currentDate">-- --- ----</div>
                 </div>
-                
+
                 <!-- Office Timings -->
                 <div class="office-timings mb-4">
                     <div class="row justify-content-center check-in">
@@ -40,9 +40,9 @@
                                 <div class="card-body p-3">
                                     <div class="row text-center">
                                         <div class="col-md-3 col-sm-6">
-                                           
+
                                         <i class="bi bi-box-arrow-in-right"></i>
-                                        
+
                                             <div class="text-muted small">Check In</div>
                                             <div class="h5 mb-0">
                                                 @if(isset($todayAttendance) && $todayAttendance && $todayAttendance->check_in)
@@ -100,25 +100,25 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Geolocation Status (if enabled) -->
                 @if(isset($settings) && $settings->enable_geolocation)
                 <div id="locationStatus" class="alert alert-info mb-4">
                     <i class="bi bi-info-circle-fill me-2"></i>
                     <span>Please update your location before checking in/out</span>
                 </div>
-                
+
                 <!-- Location Button (if geolocation is enabled) -->
                 <div class="d-grid gap-3 col-md-12 mx-auto mb-4">
                     <button id="getLocationBtn" class="btn button btn-lg">
                         <i class="bi bi-geo-alt-fill me-2"></i> Update Location
                     </button>
                 </div>
-                
+
                 <!-- Map Container (initially hidden) -->
                 <div id="map" style="height: 250px; width: 100%; margin-bottom: 20px; display: none;" class="rounded"></div>
                 @endif
-                
+
                 <!-- Check In/Out Buttons -->
                 <div class="d-grid gap-3 col-md-12 mx-auto">
                     @if(!$todayAttendance || !$todayAttendance->check_in)
@@ -136,7 +136,7 @@
                         </div>
                     @endif
                 </div>
-                
+
                 <!-- Remarks Input (only shown when check-in/out is possible) -->
                 <!-- @if(!$todayAttendance || !$todayAttendance->check_in || (!$todayAttendance->check_out && $todayAttendance->check_in))
                 <div class="mt-4 col-md-8 mx-auto">
@@ -146,7 +146,7 @@
                     </div>
                 </div>
                 @endif -->
-                
+
                 <!-- Today's Status -->
                 @if($todayAttendance)
                     <div class="mt-4 pt-3">
@@ -173,7 +173,7 @@
                                                 </div>
                                             @endif
                                         @endif
-                                        
+
                                         @if($todayAttendance->check_out)
                                             <div class="d-flex justify-content-center align-items-center mb-2">
                                                 <div>
@@ -192,7 +192,7 @@
                                                 </div>
                                             @endif
                                         @endif
-                                        
+
 
                                     </div>
                                 </div>
@@ -223,28 +223,128 @@ $(document).ready(function() {
     let isLocationValid = false;
     let geolocationRequired = {{ $settings->enable_geolocation ? 'true' : 'false' }};
     let isExempt = {{ isset($isExemptFromGeolocation) && $isExemptFromGeolocation ? 'true' : 'false' }};
-    
+    const MAP_STYLE_URL = "https://api.olamaps.io/tiles/vector/v1/styles/default-light-standard/style.json";
+    const GEOFENCE_SOURCE_ID = 'office-geofence-source';
+    const GEOFENCE_FILL_LAYER_ID = 'office-geofence-fill';
+    const GEOFENCE_OUTLINE_LAYER_ID = 'office-geofence-outline';
+    let styleGuardsAttached = false;
+    const GEOLOCATION_PRIMARY_OPTIONS = {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0
+    };
+    const GEOLOCATION_FALLBACK_OPTIONS = {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 30000
+    };
+
     // Initialize Ola Maps
     const olaMaps = new OlaMaps({
         apiKey: "{{ config('services.krutrim.maps_api_key') }}"
     });
-    
+
+    function attachMapGuards(mapInstance) {
+        if (styleGuardsAttached || !mapInstance) {
+            return;
+        }
+
+        mapInstance.on('styleimagemissing', (event) => {
+            if (mapInstance.hasImage(event.id)) {
+                return;
+            }
+            const size = 2;
+            const data = new Uint8Array(size * size * 4);
+            mapInstance.addImage(event.id, { width: size, height: size, data }, { pixelRatio: 1 });
+        });
+
+        mapInstance.on('styledata', () => {
+            const unsupportedLayers = ['3d_model_data'];
+            unsupportedLayers.forEach((layerId) => {
+                if (mapInstance.getLayer(layerId)) {
+                    mapInstance.removeLayer(layerId);
+                }
+            });
+        });
+
+        styleGuardsAttached = true;
+    }
+
+    function generateCircleFeature(center, radiusMeters, points = 64) {
+        const [lng, lat] = center;
+        const coordinates = [];
+        for (let i = 0; i <= points; i++) {
+            const angle = (i / points) * (2 * Math.PI);
+            const deltaLat = (radiusMeters * Math.cos(angle)) / 110540;
+            const deltaLng = (radiusMeters * Math.sin(angle)) / (111320 * Math.cos(lat * Math.PI / 180));
+            coordinates.push([lng + deltaLng, lat + deltaLat]);
+        }
+        return {
+            type: 'Feature',
+            geometry: {
+                type: 'Polygon',
+                coordinates: [coordinates]
+            }
+        };
+    }
+
+    function addOrUpdateGeofence(mapInstance, center, radiusMeters) {
+        if (!mapInstance || !center) {
+            return;
+        }
+        const circleFeature = generateCircleFeature(center, radiusMeters);
+
+        if (mapInstance.getSource(GEOFENCE_SOURCE_ID)) {
+            mapInstance.getSource(GEOFENCE_SOURCE_ID).setData(circleFeature);
+        } else {
+            mapInstance.addSource(GEOFENCE_SOURCE_ID, {
+                type: 'geojson',
+                data: circleFeature
+            });
+        }
+
+        if (!mapInstance.getLayer(GEOFENCE_FILL_LAYER_ID)) {
+            mapInstance.addLayer({
+                id: GEOFENCE_FILL_LAYER_ID,
+                type: 'fill',
+                source: GEOFENCE_SOURCE_ID,
+                paint: {
+                    'fill-color': '#4285F4',
+                    'fill-opacity': 0.1
+                }
+            });
+        }
+
+        if (!mapInstance.getLayer(GEOFENCE_OUTLINE_LAYER_ID)) {
+            mapInstance.addLayer({
+                id: GEOFENCE_OUTLINE_LAYER_ID,
+                type: 'line',
+                source: GEOFENCE_SOURCE_ID,
+                paint: {
+                    'line-color': '#4285F4',
+                    'line-width': 2,
+                    'line-opacity': 0.8
+                }
+            });
+        }
+    }
+
     // Update current time
     function updateCurrentTime() {
         const now = new Date();
-        const timeStr = now.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit', 
-            hour12: true 
+        const timeStr = now.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
         });
-        const dateStr = now.toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
+        const dateStr = now.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
         });
-        
+
         $('#currentTime').text(timeStr);
         $('#currentDate').text(dateStr);
     }
@@ -252,7 +352,7 @@ $(document).ready(function() {
     // Update time every second
     setInterval(updateCurrentTime, 1000);
     updateCurrentTime();
-    
+
     // Show alert function
     function showAlert(type, message) {
         const alertHtml = `
@@ -261,27 +361,33 @@ $(document).ready(function() {
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         `;
-        
+
         // Remove any existing alerts
         $('.alert-dismissible').alert('close');
-        
+
         // Add and show the new alert
         $('.card-body').prepend(alertHtml);
-        
+
         // Auto-dismiss after 5 seconds
         setTimeout(() => {
             $('.alert-dismissible').alert('close');
         }, 5000);
     }
-    
+
     // Initialize Map
     function initMap(defaultLocation) {
+        if (!defaultLocation || !olaMaps) {
+            return;
+        }
+
         myMap = olaMaps.init({
-            style: "https://api.olamaps.io/tiles/vector/v1/styles/default-light-standard/style.json",
+            style: MAP_STYLE_URL,
             container: 'map',
             center: defaultLocation,
             zoom: 15
         });
+
+        attachMapGuards(myMap);
 
         // Add marker after map is loaded
         myMap.on('load', () => {
@@ -296,86 +402,86 @@ $(document).ready(function() {
                 parseFloat('{{ $settings->office_longitude }}'),
                 parseFloat('{{ $settings->office_latitude }}')
             ];
-            
+
             // Add office marker
             const officeMarker = olaMaps
                 .addMarker({ offset: [0, -15], anchor: 'bottom', color: 'blue' })
                 .setLngLat(officeLocation)
                 .addTo(myMap);
-            
-            // Add geofence circle
+
             const geofenceRadius = {{ $settings->geofence_radius ?? 100 }};
-            const circle = olaMaps.addCircle({
-                center: officeLocation,
-                radius: geofenceRadius,
-                fillColor: '#4285F4',
-                fillOpacity: 0.1,
-                strokeColor: '#4285F4',
-                strokeOpacity: 0.8,
-                strokeWidth: 2
-            }).addTo(myMap);
+            addOrUpdateGeofence(myMap, officeLocation, geofenceRadius);
             @endif
         });
     }
-    
+
     // Get current location
     function getCurrentLocation() {
         const $btn = $('#getLocationBtn');
         const $status = $('#locationStatus');
-        
+
         // Update UI
         $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Getting Location...');
         $status.removeClass('alert-success alert-danger').addClass('alert-info').html('<i class="bi bi-info-circle-fill me-2"></i><span>Getting your location...</span>');
-        
+
         // Check if geolocation is supported
         if (!navigator.geolocation) {
             $status.removeClass('alert-info').addClass('alert-danger').html('<i class="bi bi-exclamation-triangle-fill me-2"></i><span>Geolocation is not supported by your browser</span>');
             $btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
             return;
         }
-        
-        // Get current position
-        navigator.geolocation.getCurrentPosition(
-            function(position) {
-                // Success callback
-                const { latitude, longitude, accuracy } = position.coords;
-                currentPosition = [longitude, latitude]; // Note: Ola Maps uses [longitude, latitude] format
-                
-                // Update map
-                if (myMap && marker) {
-                    marker.setLngLat(currentPosition);
-                    myMap.setCenter(currentPosition);
-                    $('#map').show();
-                } else {
-                    initMap(currentPosition);
-                    $('#map').show();
-                }
-                
-                // Validate location
-                validateLocation(latitude, longitude);
-            },
-            function(error) {
-                // Error callback
-                console.error('Error getting location:', error);
-                $status.removeClass('alert-info').addClass('alert-danger').html(`
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <span>Error getting your location: ${error.message}</span>
-                `);
-                $btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
+
+        const handleSuccess = (position) => {
+            const { latitude, longitude } = position.coords;
+            currentPosition = [longitude, latitude];
+
+            if (myMap && marker) {
+                marker.setLngLat(currentPosition);
+                myMap.setCenter(currentPosition);
+                $('#map').show();
+            } else {
+                initMap(currentPosition);
+                $('#map').show();
             }
-        );
+
+            validateLocation(latitude, longitude);
+        };
+
+        const handleError = (error, attemptedFallback) => {
+            console.error('Error getting location:', error);
+
+            if (!attemptedFallback && (error.code === error.TIMEOUT || error.code === error.POSITION_UNAVAILABLE)) {
+                $status.removeClass('alert-danger').addClass('alert-info').html(`
+                    <i class="bi bi-arrow-repeat me-2"></i>
+                    <span>High accuracy timed out. Retrying with standard accuracy...</span>
+                `);
+                requestLocation(true);
+                return;
+            }
+
+            $status.removeClass('alert-info').addClass('alert-danger').html(`
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span>Error getting your location: ${error.message}</span>
+            `);
+            $btn.prop('disabled', false).html('<i class="bi bi-geo-alt-fill me-2"></i> Update Location');
+        };
+
+        function requestLocation(useFallback = false) {
+            navigator.geolocation.getCurrentPosition(
+                handleSuccess,
+                (error) => handleError(error, useFallback),
+                useFallback ? GEOLOCATION_FALLBACK_OPTIONS : GEOLOCATION_PRIMARY_OPTIONS
+            );
+        }
+
+        requestLocation(false);
     }
-    
+
     // Validate location
     function validateLocation(latitude, longitude) {
         const $btn = $('#getLocationBtn');
         const $status = $('#locationStatus');
-        
+
         // If geolocation is not required, always valid
         if (!geolocationRequired) {
             isLocationValid = true;
@@ -393,33 +499,33 @@ $(document).ready(function() {
             $btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-2"></i> Update Location');
             return;
         }
-        
+
         // Check if office coordinates are set
         @if($settings->office_latitude && $settings->office_longitude)
         const officePosition = {
             lat: {{ $settings->office_latitude }},
             lng: {{ $settings->office_longitude }}
         };
-        
+
         // Calculate distance from office
         const distance = calculateDistance(
-            latitude, 
-            longitude, 
-            officePosition.lat, 
+            latitude,
+            longitude,
+            officePosition.lat,
             officePosition.lng
         );
-        
+
         // Check if within geofence radius
         const geofenceRadius = {{ $settings->geofence_radius ?? 100 }};
         isLocationValid = distance <= geofenceRadius;
-        
+
         if (isLocationValid) {
             // Within geofence
             $status.removeClass('alert-info alert-danger').addClass('alert-success').html(`
                 <i class="bi bi-check-circle-fill me-2"></i>
                 <span>Location verified! You are within ${Math.round(distance)}m of the office (max: ${geofenceRadius}m)</span>
             `);
-            
+
             // Enable check-in/out buttons
             $('#checkInBtn, #checkOutBtn').prop('disabled', false);
         } else {
@@ -428,7 +534,7 @@ $(document).ready(function() {
                 <i class="bi bi-exclamation-triangle-fill me-2"></i>
                 <span>You are ${Math.round(distance)}m away from the office (max allowed: ${geofenceRadius}m)</span>
             `);
-            
+
             // Disable check-in/out buttons
             $('#checkInBtn, #checkOutBtn').prop('disabled', true);
         }
@@ -439,14 +545,14 @@ $(document).ready(function() {
             <i class="bi bi-check-circle-fill me-2"></i>
             <span>Location updated successfully!</span>
         `);
-        
+
         // Enable check-in/out buttons
         $('#checkInBtn, #checkOutBtn').prop('disabled', false);
         @endif
-        
+
         $btn.prop('disabled', false).html('<i class="bi bi-arrow-clockwise me-2"></i> Update Location');
     }
-    
+
     // Calculate distance between two coordinates using Haversine formula
     function calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 6371e3; // Earth radius in meters
@@ -462,49 +568,49 @@ $(document).ready(function() {
 
         return R * c; // Distance in meters
     }
-    
+
     // Handle check-in button click
     $('#checkInBtn').click(function() {
         performAction('check-in');
     });
-    
+
     // Handle check-out button click
     $('#checkOutBtn').click(function() {
         performAction('check-out');
     });
-    
+
     // Perform check-in or check-out action
     function performAction(action) {
         const $btn = action === 'check-in' ? $('#checkInBtn') : $('#checkOutBtn');
         const originalText = $btn.html();
-        
+
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i> Processing...');
-        
+
         // Prepare data
         const data = {
             _token: '{{ csrf_token() }}',
             remarks: $('#remarks').val()
         };
-        
+
         // Add location data if available
         if (currentPosition) {
             // Fix: Send coordinates in correct order [lat, lng]
             data.location = `${currentPosition[1]},${currentPosition[0]}`; // Convert from [lng,lat] to "lat,lng"
             data.latitude = currentPosition[1];  // Latitude
             data.longitude = currentPosition[0]; // Longitude
-            
+
             console.log('Sending location data:', {
                 location: data.location,
                 latitude: data.latitude,
                 longitude: data.longitude
             });
         }
-        
+
         // Determine URL based on action
-        const url = action === 'check-in' 
-            ? '{{ route("check-in.post") }}' 
+        const url = action === 'check-in'
+            ? '{{ route("check-in.post") }}'
             : '{{ route("check-out.post") }}';
-        
+
         // Send request
         $.ajax({
             url: url,
@@ -512,12 +618,12 @@ $(document).ready(function() {
             data: data,
             success: function(response) {
                 if (response.success) {
-                    const message = action === 'check-in' 
-                        ? 'Checked in successfully!' 
+                    const message = action === 'check-in'
+                        ? 'Checked in successfully!'
                         : 'Checked out successfully!';
-                    
+
                     showAlert('success', message);
-                    
+
                     // Reload page after a short delay
                     setTimeout(() => {
                         window.location.reload();
@@ -529,9 +635,9 @@ $(document).ready(function() {
             },
             error: function(xhr) {
                 console.log('AJAX error:', xhr);
-                
+
                 let errorMessage = 'An error occurred. Please try again.';
-                
+
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     errorMessage = xhr.responseJSON.message;
                     console.log('Server error message:', errorMessage);
@@ -540,20 +646,20 @@ $(document).ready(function() {
                     const errors = xhr.responseJSON.errors;
                     errorMessage = Object.values(errors).flat().join('<br>');
                 }
-                
+
                 showAlert('danger', errorMessage);
                 $btn.prop('disabled', false).html(originalText);
             }
         });
     }
-    
+
     // Initialize page
     if (geolocationRequired) {
         // If geolocation is required, attach click handler to location button
         $('#getLocationBtn').on('click', function() {
             getCurrentLocation();
         });
-    
+
         // Initialize map with default office location if available
         @if($settings->office_latitude && $settings->office_longitude)
         const defaultLocation = [

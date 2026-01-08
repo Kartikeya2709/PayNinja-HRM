@@ -8,9 +8,23 @@ use App\Models\Asset;
 use App\Models\AssetAssignment;
 use App\Models\Department;
 use App\Models\Employee;
+use Illuminate\Support\Facades\Crypt;
 
 class AssetAssignmentController extends Controller
 {
+    /**
+     * Get asset assignment from encrypted ID.
+     */
+    private function getAssetAssignmentFromEncryptedId(string $encryptedId): AssetAssignment
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return AssetAssignment::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -31,15 +45,15 @@ class AssetAssignmentController extends Controller
      */
     public function create()
     {
-         $assets = Asset::where('company_id', Auth::user()->company_id)
-        ->where('status', 'available')
-        ->select('id', 'name', 'asset_code')
-        ->get();
+        $assets = Asset::where('company_id', Auth::user()->company_id)
+            ->where('status', 'available')
+            ->select('id', 'name', 'asset_code')
+            ->get();
 
         $departments = Department::where('company_id', Auth::user()->company_id)
             ->with(['designations.employees'])
             ->get();
-            // Add employees variable
+        // Add employees variable
         $employees = Employee::where('company_id', Auth::user()->company_id)->get();
         // dd($employees);
 
@@ -81,35 +95,22 @@ class AssetAssignmentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $encryptedId)
     {
-        //  $assignment = AssetAssignment::with(['asset', 'employee', 'assignedBy'])->findOrFail($id);
-        // return view('assets.assignments.show', compact('assignment'));
-
-        //         $assignment = AssetAssignment::with([
-        //         'asset.assignments.employee',
-        //         'asset.assignments.assignedBy',
-        //         'employee',
-        //         'assignedBy'
-        //     ])->findOrFail($id);
-
-        //     return view('assets.assignments.show', compact('assignment'));
-
         // Load assignment with its asset, category, employee, and assignedBy
-        $assignment = AssetAssignment::with([
+        $assignment = $this->getAssetAssignmentFromEncryptedId($encryptedId)
+            ->load([
             'asset',                 // eager load asset
             'asset.category',        // eager load category
             'employee',              // eager load employee
             'assignedBy'             // eager load who assigned it
-        ])->findOrFail($id);
+        ]);
 
         // Get all assignments for this asset (across employees)
         $assetassignmenthistory = AssetAssignment::with(['assignedBy', 'employee', 'asset', 'asset.category'])
                             ->where('asset_id', $assignment->asset_id)
                             ->orderBy('assigned_date', 'desc')
-                            ->get();                            
-
-        // $assethisthis = Asset::with('lastAssignment')->find($assignment->asset_id);
+                            ->get();
 
         return view('assets.assignments.show', compact('assignment', 'assetassignmenthistory'));
     }
@@ -117,25 +118,45 @@ class AssetAssignmentController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
-        //
+        $assignment = $this->getAssetAssignmentFromEncryptedId($encryptedId);
+        return view('assets.assignments.edit', compact('assignment'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $encryptedId)
     {
-        //
+        $assignment = $this->getAssetAssignmentFromEncryptedId($encryptedId);
+
+        $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'assigned_date' => 'required|date',
+            'expected_return_date' => 'nullable|date|after_or_equal:assigned_date',
+            'condition_on_assignment' => 'required|in:good,fair,poor,damaged',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $assignment->update([
+            'employee_id' => $request->employee_id,
+            'assigned_date' => $request->assigned_date,
+            'expected_return_date' => $request->expected_return_date,
+            'condition_on_assignment' => $request->condition_on_assignment,
+            'notes' => $request->notes,
+        ]);
+
+        return redirect()->route('assets.assignments.index')
+            ->with('success', 'Asset assignment updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $encryptedId)
     {
-        $assignment = AssetAssignment::findOrFail($id);
+        $assignment = $this->getAssetAssignmentFromEncryptedId($encryptedId);
 
         // Only allow deletion if assignment is returned
         if ($assignment->status !== 'returned') {
@@ -151,14 +172,14 @@ class AssetAssignmentController extends Controller
     /**
      * Return an asset assignment.
      */
-    public function returnAsset(Request $request, string $id)
+    public function returnAsset(Request $request, string $encryptedId)
     {
+
         $request->validate([
             'return_condition' => 'required|in:good,fair,poor,damaged',
             'return_notes' => 'nullable|string|max:1000',
         ]);
-
-        $assignment = AssetAssignment::findOrFail($id);
+$assignment = $this->getAssetAssignmentFromEncryptedId($encryptedId);
 
         $assignment->update([
             'status' => 'returned',
@@ -171,7 +192,7 @@ class AssetAssignmentController extends Controller
         $assignment->asset->update(['status' => 'available']);
          $assignment->asset->update(['condition' => $request->return_condition]);
 
-        return redirect()->route('assets.assignments.show', $assignment->id)
+        return redirect()->route('assets.assignments.index')
             ->with('success', 'Asset returned successfully.');
     }
 

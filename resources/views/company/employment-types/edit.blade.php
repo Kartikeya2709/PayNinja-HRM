@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Crypt;
+@endphp
+
 @section('content')
 <div class="section container">
     <div class="section-header">
@@ -16,7 +20,7 @@
                     <h3 class="card-title">Edit Employment Type</h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('employment-types.update', $employmentType) }}" method="POST">
+                    <form action="{{ route('employment-types.update', ['encryptedId' => Crypt::encrypt($employmentType->id)]) }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="form-group">

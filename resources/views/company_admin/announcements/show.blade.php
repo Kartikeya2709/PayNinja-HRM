@@ -29,15 +29,15 @@
                       {{ $announcement->expires_at ? \Carbon\Carbon::parse($announcement->expires_at)->format('Y-m-d') : '-' }}
                       </div>
                       <div><span>Created By:</span> {{ $announcement->creator->name ?? '-' }}</div>
-                      <div><span>Created At:</span> {{ $announcement->created_at->format('Y-m-d H:i') }}</div>
+                      <div><span>Created At:</span> {{ $announcement->created_at ? $announcement->created_at->format('Y-m-d H:i') : 'N/A' }}</div>
                       </div>
 
                       <div class="mt-4">
                          <a href="{{ url()->previous() }}" class="btn btn-secondary">
                          <i class="fas fa-arrow-left me-1"></i> Back
                          </a>
-                         @if(auth()->id() === $announcement->created_by || auth()->user()->hasRole('company_admin'))
-                         <a href="{{ route('announcements.edit', $announcement->id) }}" class="btn btn-primary ms-2">
+                         @if(auth()->id() === $announcement->created_by)
+                         <a href="{{ route('announcements.edit', \Illuminate\Support\Facades\Crypt::encrypt($announcement->id)) }}" class="btn btn-primary ms-2">
                          <i class="fas fa-edit me-1"></i> Edit
                          </a>
                          @endif

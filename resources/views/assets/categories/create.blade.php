@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Crypt;
+@endphp
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -19,7 +23,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($category) ? route('assets.categories.update', $category->id) : route('assets.categories.store') }}" method="POST">
+                    <form action="{{ isset($category) ? route('assets.categories.update', ['encryptedId' => Crypt::encrypt($category->id)]) : route('assets.categories.store') }}" method="POST">
                     @csrf
                     @if(isset($category))
                     @method('PUT')

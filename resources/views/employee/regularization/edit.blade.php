@@ -16,7 +16,7 @@
 
                     <hr>
 
-                    <form action="{{ route('regularization-requests.update', $request->id) }}" method="POST">
+                    <form action="{{ route('regularization-requests.update', Crypt::encrypt($request->id)) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -83,7 +83,7 @@
         }
 
         statusSelect.addEventListener('change', toggleFields);
-        
+
         // Initial check in case of validation errors
         toggleFields();
     });

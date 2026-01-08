@@ -10,9 +10,42 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class LeaveBalanceController extends Controller
 {
+    /**
+     * Get encrypted ID from model ID
+     */
+    private function getEncryptedId($id)
+    {
+        return Crypt::encrypt($id);
+    }
+
+    /**
+     * Get decrypted ID from encrypted string
+     */
+    private function getDecryptedId($encryptedId)
+    {
+        try {
+            return Crypt::decrypt($encryptedId);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Get model from encrypted ID
+     */
+    private function getLeaveBalanceFromEncryptedId(string $encryptedId): LeaveBalance
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return LeaveBalance::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
     /**
      * Display a listing of the leave balances.
      *
@@ -260,8 +293,9 @@ class LeaveBalanceController extends Controller
      * @param  \App\Models\LeaveBalance  $leaveBalance
      * @return \Illuminate\Http\Response
      */
-    public function edit(LeaveBalance $leaveBalance)
+    public function edit($encryptedId)
     {
+        $leaveBalance = $this->getLeaveBalanceFromEncryptedId($encryptedId);
         // Check if leave balance belongs to an employee in the company
         if ($leaveBalance->employee->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -281,8 +315,9 @@ class LeaveBalanceController extends Controller
      * @param  \App\Models\LeaveBalance  $leaveBalance
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, LeaveBalance $leaveBalance)
+    public function update(Request $request, $encryptedId)
     {
+        $leaveBalance = $this->getLeaveBalanceFromEncryptedId($encryptedId);
         // Check if leave balance belongs to an employee in the company
         if ($leaveBalance->employee->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');

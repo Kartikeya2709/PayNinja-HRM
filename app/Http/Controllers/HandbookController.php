@@ -6,12 +6,72 @@ use App\Models\Handbook;
 use App\Models\HandbookAcknowledgment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class HandbookController extends Controller
 {
+
+    private function getHandbookFromEncryptedId(string $handbookId): Handbook
+    {
+        try {
+            $id = Crypt::decrypt($handbookId);
+            return Handbook::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+
     /**
-     * Display a listing of the resource.
+     * Display handbooks for employees.
+     */
+    public function employeeIndex()
+    {
+        $user = Auth::user();
+        $companyId = $user->employee->company_id ?? null;
+
+        if (!$companyId) {
+            abort(403, 'No company associated with your account.');
+        }
+
+        // Debug: Log user info
+        Log::info('Employee accessing handbooks:', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'user_role' => $user->role,
+            'company_id' => $companyId,
+            'employee_department_id' => $user->employee->department_id,
+        ]);
+
+        $query = Handbook::with(['creator', 'department'])
+            ->where('company_id', $companyId)
+            ->published();
+
+        // Filter by user's department if handbook is targeted
+        $userDepartmentId = $user->employee->department_id ?? null;
+
+        $query->where(function ($q) use ($userDepartmentId) {
+            $q->whereNull('department_id')
+              ->orWhere('department_id', $userDepartmentId);
+        });
+
+        $handbooks = $query->latest()->paginate(10);
+
+        // Debug: Log query results
+        Log::info('Employee handbook query results:', [
+            'handbooks_count' => $handbooks->total(),
+            'handbooks' => $handbooks->pluck('id', 'title')->toArray(),
+            'user_department_id' => $userDepartmentId,
+            'query_sql' => $query->toSql()
+        ]);
+
+        return view('handbooks.employee-index', compact('handbooks'));
+    }
+
+    /**
+     * Display a listing of the resource (for admins).
      */
     public function index()
     {
@@ -25,20 +85,20 @@ class HandbookController extends Controller
         $query = Handbook::with(['creator', 'department'])
             ->where('company_id', $companyId);
 
-        if (!$user->hasRole(['admin', 'company_admin'])) {
-            $query->published();
+        // if (!$user->hasRole(['admin', 'company_admin'])) {
+        //     $query->published();
 
-            // Filter by user's department if handbook is targeted
-            $userDepartmentId = $user->employee->department_id ?? null;
+        //     // Filter by user's department if handbook is targeted
+        //     $userDepartmentId = $user->employee->department_id ?? null;
 
-            $query->where(function ($q) use ($userDepartmentId) {
-                $q->whereNull('department_id')
-                  ->orWhere('department_id', $userDepartmentId);
-            });
-        }
+        //     $query->where(function ($q) use ($userDepartmentId) {
+        //         $q->whereNull('department_id')
+        //           ->orWhere('department_id', $userDepartmentId);
+        //     });
+        // }
 
         $handbooks = $query->latest()->paginate(10);
-
+// dd($handbooks);
         return view('handbooks.index', compact('handbooks'));
     }
 
@@ -101,8 +161,10 @@ class HandbookController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Handbook $handbook)
+    public function show(string $handbookId)
     {
+        $handbook = $this->getHandbookFromEncryptedId($handbookId);
+
         $user = Auth::user();
         $companyId = $user->employee->company_id ?? null;
 
@@ -122,8 +184,9 @@ class HandbookController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Handbook $handbook)
+    public function edit(string $handbookId)
     {
+        $handbook = $this->getHandbookFromEncryptedId($handbookId);
         $user = Auth::user();
         $companyId = $user->employee->company_id ?? null;
 
@@ -139,8 +202,9 @@ class HandbookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Handbook $handbook)
+    public function update(Request $request, string $handbookId)
     {
+        $handbook = $this->getHandbookFromEncryptedId($handbookId);
         // dd($request->all());
         $user = Auth::user();
         $companyId = $user->employee->company_id ?? null;
@@ -190,8 +254,9 @@ class HandbookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Handbook $handbook)
+    public function destroy(string $handbookId)
     {
+        $handbook = $this->getHandbookFromEncryptedId($handbookId);
         $user = Auth::user();
         $companyId = $user->employee->company_id ?? null;
 
@@ -208,8 +273,9 @@ class HandbookController extends Controller
     /**
      * Download the handbook PDF.
      */
-    public function download(Handbook $handbook)
+    public function download(string $handbookId)
     {
+        $handbook = $this->getHandbookFromEncryptedId($handbookId);
         $user = Auth::user();
         $companyId = $user->employee->company_id ?? null;
 
@@ -231,8 +297,9 @@ class HandbookController extends Controller
     /**
      * Acknowledge the handbook.
      */
-    public function acknowledge(Handbook $handbook)
+    public function acknowledge(string $handbookId)
     {
+        $handbook = $this->getHandbookFromEncryptedId($handbookId);
         $user = Auth::user();
         $companyId = $user->employee->company_id ?? null;
 

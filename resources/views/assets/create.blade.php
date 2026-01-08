@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Crypt;
+@endphp
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -19,7 +23,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ isset($asset) ? route('assets.update', $asset->id) : route('assets.store') }}"
+                    <form action="{{ isset($asset) ? route('assets.update', ['encryptedId' => Crypt::encrypt($asset->id)]) : route('assets.store') }}"
                           method="POST">
                         @csrf
                         @if(isset($asset))
@@ -61,7 +65,7 @@
                                 <div class="form-group">
                                     <label for="purchase_date">Purchase Date</label>
                                     <input type="date" class="form-control @error('purchase_date') is-invalid @enderror"
-                                           id="purchase_date" name="purchase_date" value="{{ old('purchase_date', (isset($asset) && $assets && $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '') ?? '') }}">
+                                           id="purchase_date" name="purchase_date" value="{{ old('purchase_date', (isset($asset) && $asset && $asset->purchase_date ? $asset->purchase_date->format('Y-m-d') : '') ?? '') }}">
                                 </div>
                             </div>
                         </div>

@@ -25,7 +25,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Admin\PayrollController as AdminPayrollController;
 use App\Http\Controllers\Employee\PayrollController as EmployeePayrollController;
-
 use App\Http\Controllers\Admin\BeneficiaryBadgeController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Admin\EmployeePayrollConfigController;
@@ -41,7 +40,6 @@ use App\Http\Controllers\SuperAdmin\ContactMessagesController;
 use App\Http\Controllers\SuperAdmin\DatabaseController;
 use App\Http\Controllers\SuperAdmin\LogsController;
 use App\Http\Controllers\LeadController;
-// Test logging route - can be removed after testing
 use App\Http\Controllers\PackageController;
 use App\Http\Controllers\CompanyPackageController;
 use App\Http\Controllers\PackagePricingController;
@@ -49,6 +47,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TaxController;
 use App\Http\Controllers\InvoiceController;
+
 require __DIR__ . '/test-logging.php';
 
 
@@ -92,112 +91,51 @@ Auth::routes(['register' => false]);
 
 Route::middleware(['auth'])->group(function () {
 
-    // dashboard routes
+    // =============================================
+    // DASHBOARD & PROFILE ROUTES
+    // =============================================
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/blank-page', [App\Http\Controllers\HomeController::class, 'blank'])->name('blank');
+    Route::post('/dashboard/switch', [HomeController::class, 'switchDashboard'])->name('dashboard.switch');
 
-    // Profile routes
+    // Profile Management
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/profile/change-password', [ProfileController::class, 'changepassword'])->name('profile.change-password');
     Route::put('/profile/password', [ProfileController::class, 'password'])->name('profile.password');
-    Route::get('/blank-page', [App\Http\Controllers\HomeController::class, 'blank'])->name('blank');
 
-   
-
-    // SuperAdmin Routes (Can manage Companies)
+    // =============================================
+    // SUPER ADMIN ROUTES
+    // =============================================
     Route::middleware(['superadmin'])->prefix('superadmin')->name('superadmin.')->group(function () {
+
+        // User Management
         Route::get('/users', [App\Http\Controllers\HakaksesController::class, 'index'])->name('users.index');
         Route::get('/user/{user}/edit', [App\Http\Controllers\HakaksesController::class, 'edit'])->name('users.edit');
         Route::put('/user/{user}', [App\Http\Controllers\HakaksesController::class, 'update'])->name('users.update');
         Route::delete('/user/{user}', [App\Http\Controllers\HakaksesController::class, 'destroy'])->name('users.delete');
 
-        Route::resource('companies', SuperAdminController::class)->only(['index', 'create', 'store', 'edit', 'update', 'destroy', 'show']);
-        Route::resource('assign-company-admin', \App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class)->except(['show']);
+        // *** COMPANY MANAGEMENT ***
+        Route::get('companies-list', [SuperAdminController::class, 'index'])->name('companies.index');
+        Route::get('company-create', [SuperAdminController::class, 'create'])->name('companies.create');
+        Route::post('company-store', [SuperAdminController::class, 'store'])->name('companies.store');
+        Route::get('company-show/{company}', [SuperAdminController::class, 'show'])->name('companies.show');
+        Route::get('company-edit/{company}', [SuperAdminController::class, 'edit'])->name('companies.edit');
+        Route::put('company-update/{company}', [SuperAdminController::class, 'update'])->name('companies.update');
+        Route::delete('company-delete/{company}', [SuperAdminController::class, 'destroy'])->name('companies.destroy');
+        Route::post('companies/{id}/deactivate', [SuperAdminController::class, 'deactivateCompany'])->name('companies.deactivate');
+        Route::post('companies/{id}/activate', [SuperAdminController::class, 'activateCompany'])->name('companies.activate');
+        Route::post('companies/{companyId}/employees/{employeeId}/deactivate', [SuperAdminController::class, 'deactivateEmployee'])->name('companies.employees.deactivate');
+        Route::post('companies/{companyId}/employees/{employeeId}/activate', [SuperAdminController::class, 'activateEmployee'])->name('companies.employees.activate');
+
+        // Company Admin Assignment
+        Route::get('assign-company-admins-list', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'index'])->name('assign-company-admin.index');
+        Route::get('assign-company-admin-create', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'create'])->name('assign-company-admin.create');
+        Route::post('assign-company-admin-store', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'store'])->name('assign-company-admin.store');
+        Route::get('assign-company-admin-edit/{assign_company_admin}', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'edit'])->name('assign-company-admin.edit');
+        Route::put('assign-company-admin-update/{assign_company_admin}', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'update'])->name('assign-company-admin.update');
+        Route::delete('assign-company-admin-delete/{assign_company_admin}', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'destroy'])->name('assign-company-admin.destroy');
         Route::get('assigned-company-admins', [\App\Http\Controllers\SuperAdmin\AssignCompanyAdminController::class, 'index'])->name('assigned-company-admins.index');
-
-        // Demo Requests and Contact Messages Views
-        Route::get('demo-requests', [DemoRequestsController::class, 'index'])->name('demo-requests.index');
-        Route::get('contact-messages', [ContactMessagesController::class, 'index'])->name('contact-messages.index');
-
-        // Slug Management
-        Route::get('setting/slugs', [SlugController::class, 'slugs'])->name('setting.slugs');
-        Route::post('setting/slug/add', [SlugController::class, 'add_slug'])->name('setting.slug.add');
-        Route::match(['get', 'post'], 'setting/slug/edit/{id}', [SlugController::class, 'edit_slug'])->name('setting.slug.edit');
-        Route::get('setting/slug/destroy/{id}', [SlugController::class, 'destroy_slug'])->name('setting.slug.destroy');
-
-        // Role Management
-        Route::resource('roles', RoleController::class);
-
-        // Package Management Routes
-        Route::resource('packages', PackageController::class)->names([
-            'index' => 'packages.index',
-            'create' => 'packages.create',
-            'store' => 'packages.store',
-            'show' => 'packages.show',
-            'edit' => 'packages.edit',
-            'update' => 'packages.update',
-            'destroy' => 'packages.destroy',
-        ]);
-        Route::post('packages/{package}/toggle-active', [PackageController::class, 'toggleActive'])->name('packages.toggle-active');
-        Route::get('packages/{package}/modules', [PackageController::class, 'getModules'])->name('packages.modules');
-
-        // Company Package Assignment Routes
-        Route::prefix('company-packages')->name('company-packages.')->group(function () {
-            Route::get('/', [CompanyPackageController::class, 'index'])->name('index');
-            Route::get('/view/{companyPackage}', [CompanyPackageController::class, 'show'])->name('show');
-            Route::get('/assign', [CompanyPackageController::class, 'create'])->name('assign.form');
-            Route::post('/assign', [CompanyPackageController::class, 'assign'])->name('assign');
-            Route::get('/edit/{id}', [CompanyPackageController::class, 'edit'])->name('edit');
-            Route::put('/edit/{id}', [CompanyPackageController::class, 'update'])->name('update');
-            Route::delete('/unassign/{id}', [CompanyPackageController::class, 'unassign'])->name('unassign');
-            Route::post('/{id}/toggle-active', [CompanyPackageController::class, 'toggleActive'])->name('toggle-active');
-            Route::get('/get-company-packages', [CompanyPackageController::class, 'getCompanyPackages'])->name('get-company-packages');
-            Route::post('/bulk-assign', [CompanyPackageController::class, 'bulkAssign'])->name('bulk-assign');
-            Route::get('/validate-permission-state/{companyId}', [CompanyPackageController::class, 'validatePermissionState'])->name('validate-permission-state');
-        });
-
-        // Pricing Management Routes
-        Route::post('packages/{package}/pricing-tiers', [PackagePricingController::class, 'storeTier'])->name('packages.pricing-tiers.store');
-        Route::put('pricing-tiers/{tier}', [PackagePricingController::class, 'updateTier'])->name('pricing-tiers.update');
-        Route::delete('pricing-tiers/{tier}', [PackagePricingController::class, 'deleteTier'])->name('pricing-tiers.destroy');
-        Route::post('packages/{package}/calculate-price', [PackagePricingController::class, 'calculatePrice'])->name('packages.calculate-price');
-
-        // Discount Management Routes
-        Route::resource('discounts', DiscountController::class)->names([
-            'index' => 'discounts.index',
-            'create' => 'discounts.create',
-            'store' => 'discounts.store',
-            'show' => 'discounts.show',
-            'edit' => 'discounts.edit',
-            'update' => 'discounts.update',
-            'destroy' => 'discounts.destroy',
-        ]);
-        Route::post('discounts/{discount}/validate-code', [DiscountController::class, 'validateCode'])->name('discounts.validate-code');
-
-        // Tax Management Routes
-        Route::resource('taxes', TaxController::class)->names([
-            'index' => 'taxes.index',
-            'create' => 'taxes.create',
-            'store' => 'taxes.store',
-            'show' => 'taxes.show',
-            'edit' => 'taxes.edit',
-            'update' => 'taxes.update',
-            'destroy' => 'taxes.destroy',
-        ]);
-
-        // Invoice Management Routes
-        Route::resource('invoices', InvoiceController::class)->names([
-            'index' => 'invoices.index',
-            'create' => 'invoices.create',
-            'store' => 'invoices.store',
-            'show' => 'invoices.show',
-            'edit' => 'invoices.edit',
-            'update' => 'invoices.update',
-            'destroy' => 'invoices.destroy',
-        ]);
-        Route::post('invoices/{invoice}/generate', [InvoiceController::class, 'generate'])->name('invoices.generate');
-        Route::post('invoices/{invoice}/mark-paid', [InvoiceController::class, 'markPaid'])->name('invoices.mark-paid');
-        Route::post('invoices/{invoice}/send-invoice', [InvoiceController::class, 'sendInvoice'])->name('invoices.send-invoice');
 
         // Company Documents Management
         Route::prefix('companies/{company}/documents')->name('companies.documents.')->group(function () {
@@ -209,13 +147,89 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/{document}/reject', [CompanyDocumentController::class, 'reject'])->name('reject');
         });
 
-        // Company and Employee Deactivation
-        Route::post('companies/{id}/deactivate', [SuperAdminController::class, 'deactivateCompany'])->name('companies.deactivate');
-        Route::post('companies/{id}/activate', [SuperAdminController::class, 'activateCompany'])->name('companies.activate');
-        Route::post('companies/{companyId}/employees/{employeeId}/deactivate', [SuperAdminController::class, 'deactivateEmployee'])->name('companies.employees.deactivate');
-        Route::post('companies/{companyId}/employees/{employeeId}/activate', [SuperAdminController::class, 'activateEmployee'])->name('companies.employees.activate');
+        // *** ROLE MANAGEMENT ***
+        Route::get('superadmin-roles-list', [RoleController::class, 'index'])->name('roles.index');
+        Route::get('superadmin-role-create', [RoleController::class, 'create'])->name('roles.create');
+        Route::post('superadmin-role-store', [RoleController::class, 'store'])->name('roles.store');
+        Route::get('superadmin-role-show/{role}', [RoleController::class, 'show'])->name('roles.show');
+        Route::get('superadmin-role-edit/{role}', [RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('superadmin-role-update/{role}', [RoleController::class, 'update'])->name('roles.update');
+        Route::delete('superadmin-role-delete/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
-        // Database Management
+        // *** SLUG MANAGEMENT ***
+        Route::get('setting/slugs', [SlugController::class, 'slugs'])->name('setting.slugs');
+        Route::post('setting/slug/add', [SlugController::class, 'add_slug'])->name('setting.slug.add');
+        Route::match(['get', 'post'], 'setting/slug/edit/{id}', [SlugController::class, 'edit_slug'])->name('setting.slug.edit');
+        Route::get('setting/slug/destroy/{id}', [SlugController::class, 'destroy_slug'])->name('setting.slug.destroy');
+
+        // *** PACKAGE MANAGEMENT ***
+        Route::get('packages-list', [PackageController::class, 'index'])->name('packages.index');
+        Route::get('package-create', [PackageController::class, 'create'])->name('packages.create');
+        Route::post('package-store', [PackageController::class, 'store'])->name('packages.store');
+        Route::get('package-show/{package}', [PackageController::class, 'show'])->name('packages.show');
+        Route::get('package-edit/{package}', [PackageController::class, 'edit'])->name('packages.edit');
+        Route::put('package-update/{package}', [PackageController::class, 'update'])->name('packages.update');
+        Route::delete('package-delete/{package}', [PackageController::class, 'destroy'])->name('packages.destroy');
+        Route::post('packages/{package}/toggle-active', [PackageController::class, 'toggleActive'])->name('packages.toggle-active');
+        Route::get('packages/{package}/modules', [PackageController::class, 'getModules'])->name('packages.modules');
+
+        // Company Package Assignment
+        Route::prefix('company-packages')->name('company-packages.')->group(function () {
+            Route::get('/', [CompanyPackageController::class, 'index'])->name('index');
+            Route::get('/view/{companyPackage}', [CompanyPackageController::class, 'show'])->name('show');
+            Route::get('/assign', [CompanyPackageController::class, 'create'])->name('assign.form');
+            Route::post('/assign', [CompanyPackageController::class, 'assign'])->name('assign');
+            Route::get('/edit/{id}', [CompanyPackageController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [CompanyPackageController::class, 'update'])->name('update');
+            Route::delete('/unassign/{id}', [CompanyPackageController::class, 'unassign'])->name('unassign');
+            Route::post('/{id}/toggle-active', [CompanyPackageController::class, 'toggleActive'])->name('toggle-active');
+            Route::get('/get-company-packages', [CompanyPackageController::class, 'getCompanyPackages'])->name('get-company-packages');
+            Route::post('/bulk-assign', [CompanyPackageController::class, 'bulkAssign'])->name('bulk-assign');
+            Route::get('/validate-permission-state/{companyId}', [CompanyPackageController::class, 'validatePermissionState'])->name('validate-permission-state');
+        });
+
+        // Pricing Tiers
+        Route::post('packages/{package}/pricing-tiers', [PackagePricingController::class, 'storeTier'])->name('packages.pricing-tiers.store');
+        Route::put('pricing-tiers/{tier}', [PackagePricingController::class, 'updateTier'])->name('pricing-tiers.update');
+        Route::delete('pricing-tiers/{tier}', [PackagePricingController::class, 'deleteTier'])->name('pricing-tiers.destroy');
+        Route::post('packages/{package}/calculate-price', [PackagePricingController::class, 'calculatePrice'])->name('packages.calculate-price');
+
+        // *** DISCOUNT MANAGEMENT ***
+        Route::get('discounts-list', [DiscountController::class, 'index'])->name('discounts.index');
+        Route::get('discount-create', [DiscountController::class, 'create'])->name('discounts.create');
+        Route::post('discount-store', [DiscountController::class, 'store'])->name('discounts.store');
+        Route::get('discount-show/{discount}', [DiscountController::class, 'show'])->name('discounts.show');
+        Route::get('discount-edit/{discount}', [DiscountController::class, 'edit'])->name('discounts.edit');
+        Route::put('discount-update/{discount}', [DiscountController::class, 'update'])->name('discounts.update');
+        Route::delete('discount-delete/{discount}', [DiscountController::class, 'destroy'])->name('discounts.destroy');
+        Route::post('discounts/{discount}/validate-code', [DiscountController::class, 'validateCode'])->name('discounts.validate-code');
+
+        // *** TAX MANAGEMENT ***
+        Route::get('taxes-list', [TaxController::class, 'index'])->name('taxes.index');
+        Route::get('tax-create', [TaxController::class, 'create'])->name('taxes.create');
+        Route::post('tax-store', [TaxController::class, 'store'])->name('taxes.store');
+        Route::get('tax-show/{tax}', [TaxController::class, 'show'])->name('taxes.show');
+        Route::get('tax-edit/{tax}', [TaxController::class, 'edit'])->name('taxes.edit');
+        Route::put('tax-update/{tax}', [TaxController::class, 'update'])->name('taxes.update');
+        Route::delete('tax-delete/{tax}', [TaxController::class, 'destroy'])->name('taxes.destroy');
+
+        // *** INVOICE MANAGEMENT ***
+        Route::get('invoices-list', [InvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('invoice-create', [InvoiceController::class, 'create'])->name('invoices.create');
+        Route::post('invoice-store', [InvoiceController::class, 'store'])->name('invoices.store');
+        Route::get('invoice-show/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
+        Route::get('invoice-edit/{invoice}', [InvoiceController::class, 'edit'])->name('invoices.edit');
+        Route::put('invoice-update/{invoice}', [InvoiceController::class, 'update'])->name('invoices.update');
+        Route::delete('invoice-delete/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+        Route::post('invoices/{invoice}/generate', [InvoiceController::class, 'generate'])->name('invoices.generate');
+        Route::post('invoices/{invoice}/mark-paid', [InvoiceController::class, 'markPaid'])->name('invoices.mark-paid');
+        Route::post('invoices/{invoice}/send-invoice', [InvoiceController::class, 'sendInvoice'])->name('invoices.send-invoice');
+
+        // *** DEMO & CONTACT MANAGEMENT ***
+        Route::get('demo-requests', [DemoRequestsController::class, 'index'])->name('demo-requests.index');
+        Route::get('contact-messages', [ContactMessagesController::class, 'index'])->name('contact-messages.index');
+
+        // *** DATABASE MANAGEMENT ***
         Route::get('database', [DatabaseController::class, 'index'])->name('database.index');
         Route::match(['get', 'post'], 'database/table/{table}', [DatabaseController::class, 'showTable'])->name('database.show');
         Route::get('database/table/{table}/export', [DatabaseController::class, 'exportTable'])->name('database.export-table');
@@ -223,420 +237,369 @@ Route::middleware(['auth'])->group(function () {
         Route::match(['get', 'post'], 'database/query', [DatabaseController::class, 'query'])->name('database.query');
         Route::post('database/query', [DatabaseController::class, 'executeQuery'])->name('database.execute-query');
 
-        // Logs Management
+        // *** LOGS MANAGEMENT ***
         Route::get('logs', [LogsController::class, 'index'])->name('logs.index');
         Route::get('logs/{filename}', [LogsController::class, 'show'])->name('logs.show');
         Route::get('logs/{filename}/download', [LogsController::class, 'download'])->name('logs.download');
     });
 
-    Route::middleware(['role:company_admin,admin,employee'])->group(function () {
+// Route::middleware('auth')->group(function () {
+    Route::middleware('checkAccess')->group(function () {
+    // =============================================
+    // ANNOUNCEMENTS
+    // =============================================
+    Route::get('announcements-list', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('announcement-create', [AnnouncementController::class, 'create'])->name('announcements.create');
+    Route::post('announcement-store', [AnnouncementController::class, 'store'])->name('announcements.store');
+    Route::get('announcement-show/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+    Route::get('announcement-edit/{announcement}', [AnnouncementController::class, 'edit'])->name('announcements.edit');
+    Route::put('announcement-update/{announcement}', [AnnouncementController::class, 'update'])->name('announcements.update');
+    Route::delete('announcement-delete/{announcement}', [AnnouncementController::class, 'destroy'])->name('announcements.destroy');
 
-        //Announcements Routes
-        Route::resource('announcements', AnnouncementController::class);
+    // =============================================
+    // ATTENDANCE MANAGEMENT
+    // =============================================
+    Route::prefix('attendance-management')->group(function () {
 
-        Route::prefix('attendance-management')->group(function () {
-            //Regularization Routes
-            Route::resource('regularization-requests', AttendanceRegularizationController::class);
-            Route::prefix('regularization-requests')->group(function () {
-                Route::put('/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('regularization-requests.approve');
-                Route::post('/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');
-            });
+        // *** ATTENDANCE REGULARIZATION ***
+        Route::get('regularization-requests-list', [AttendanceRegularizationController::class, 'index'])->name('regularization-requests.index');
+        Route::get('regularization-requests/my', [AttendanceRegularizationController::class, 'myRequests'])->name('regularization-requests.my');
+        Route::get('regularization-requests/company', [AttendanceRegularizationController::class, 'companyRequests'])->name('regularization-requests.company');
+        Route::get('regularization-request-create', [AttendanceRegularizationController::class, 'create'])->name('regularization-requests.create');
+        Route::post('regularization-request-store', [AttendanceRegularizationController::class, 'store'])->name('regularization-requests.store');
+        Route::get('regularization-request-show/{encryptedId}', [AttendanceRegularizationController::class, 'show'])->name('regularization-requests.show');
+        Route::get('regularization-request-edit/{encryptedId}', [AttendanceRegularizationController::class, 'edit'])->name('regularization-requests.edit');
+        Route::put('regularization-request-update/{encryptedId}', [AttendanceRegularizationController::class, 'update'])->name('regularization-requests.update');
+        Route::delete('regularization-request-delete/{encryptedId}', [AttendanceRegularizationController::class, 'destroy'])->name('regularization-requests.destroy');
+        Route::put('regularization-requests/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('regularization-requests.approve');
+        Route::post('regularization-requests/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('regularization-requests.bulk-update');
 
-            // Admin Attendance Management
-            Route::prefix('attendance')->name('admin-attendance.')->group(function () {
-                Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
-                Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
-                Route::post('/', [AdminAttendanceController::class, 'store'])->name('store');
-                Route::get('/{id}/edit', [AdminAttendanceController::class, 'edit'])->name('edit');
-                Route::put('/{id}', [AdminAttendanceController::class, 'update'])->name('update');
-                Route::delete('/{id}', [AdminAttendanceController::class, 'destroy'])->name('destroy');
-                Route::post('/import', [AdminAttendanceController::class, 'import'])->name('import');
-                Route::get('/import-results', [AdminAttendanceController::class, 'importResults'])->name('import-results');
-                Route::get('/export', [AdminAttendanceController::class, 'export'])->name('export');
-                Route::get('/template', [AdminAttendanceController::class, 'template'])->name('template');
+        // *** ADMIN ATTENDANCE MANAGEMENT ***
+        Route::prefix('attendance')->name('admin-attendance.')->group(function () {
+            Route::get('/', [AdminAttendanceController::class, 'index'])->name('index');
+            Route::get('/summary', [AdminAttendanceController::class, 'summary'])->name('summary');
+            Route::post('/store', [AdminAttendanceController::class, 'store'])->name('store');
+            Route::get('/{encryptedId}/edit', [AdminAttendanceController::class, 'edit'])->name('edit');
+            Route::put('/{encryptedId}/update', [AdminAttendanceController::class, 'update'])->name('update');
+            Route::delete('/{encryptedId}/delete', [AdminAttendanceController::class, 'destroy'])->name('destroy');
+            Route::post('/import', [AdminAttendanceController::class, 'import'])->name('import');
+            Route::get('/import-results', [AdminAttendanceController::class, 'importResults'])->name('import-results');
+            Route::get('/export', [AdminAttendanceController::class, 'export'])->name('export');
+            Route::get('/template', [AdminAttendanceController::class, 'template'])->name('template');
 
-                // Attendance Settings
-                Route::get('/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'index'])->name('settings');
-                Route::get('/settings/view', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'show'])->name('settings.view');
-                Route::match(['post', 'put'], '/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])->name('settings.update');
-                Route::get('/api/office-timings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'getOfficeTimings'])->name('api.office-timings');
-            });
-
-            //Attendance Routes
-            Route::get('/attendance/dashboard', [EmployeeAttendanceController::class, 'dashboard'])->name('attendance.dashboard');
-            Route::get('/attendance/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in-out');
-            Route::get('/attendance/my-attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('my-attendance');
-
-            // Export routes
-            Route::get('/attendance/my-attendance/export', [EmployeeAttendanceController::class, 'exportAttendance'])->name('my-attendance.export');
-            Route::get('/attendance/my-attendance/export-pdf', [EmployeeAttendanceController::class, 'exportAttendancePdf'])->name('my-attendance.exportPdf');
-
-            // API endpoints for check-in/out
-            Route::post('/attendance/check-in', [EmployeeAttendanceController::class, 'checkIn'])->name('check-in.post')->middleware('check.attendance.access');
-            Route::post('/attendance/check-out', [EmployeeAttendanceController::class, 'checkOut'])->name('check-out.post')->middleware('check.attendance.access');
-            Route::get('/attendance/check-location', [EmployeeAttendanceController::class, 'checkLocation'])->name('check-location')->middleware('check.attendance.access');
-
-            // Get geolocation settings
-            Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])->name('geolocation-settings');
+            // Attendance Settings
+            Route::get('/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'index'])->name('settings');
+            Route::get('/settings/view', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'show'])->name('settings.view');
+            Route::match(['post', 'put'], '/settings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])->name('settings.update');
+            // Route::post('/settings/post', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])->name('settings.update');
+            Route::put('/settings/put', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'update'])->name('settings.update');
+            Route::get('/api/office-timings', [\App\Http\Controllers\Admin\AttendanceSettingController::class, 'getOfficeTimings'])->name('api.office-timings');
         });
 
-        Route::post('/dashboard/switch', [HomeController::class, 'switchDashboard'])->name('dashboard.switch');
+        Route::get('/attendance/{encryptedId}/show', [EmployeeAttendanceController::class, 'show'])->name('attendance.show');
+        Route::get('/attendance/dashboard', [EmployeeAttendanceController::class, 'dashboard'])->name('attendance.dashboard');
+        Route::get('/attendance/check-in-out', [EmployeeAttendanceController::class, 'checkInOut'])->name('check-in-out');
+        Route::get('/attendance/my-attendance', [EmployeeAttendanceController::class, 'myAttendance'])->name('my-attendance');
+        Route::get('/attendance/my-attendance/export', [EmployeeAttendanceController::class, 'exportAttendance'])->name('my-attendance.export');
+        Route::get('/attendance/my-attendance/export-pdf', [EmployeeAttendanceController::class, 'exportAttendancePdf'])->name('my-attendance.exportPdf');
 
-       
-
-        // =============================================
-        // LEAVE MANAGEMENT ROUTES - COMMENTED OUT
-        // =============================================
-        
-        Route::prefix('leaves')->name('leaves.')->group(function () {
-            // Admin Routes for Leave
-            Route::resource('leave-types', LeaveTypeController::class);
-            Route::resource('leave-balances', LeaveBalanceController::class)->except(['show', 'destroy']);
-            Route::post('leave-balances/bulk-allocate', [LeaveBalanceController::class, 'bulkAllocate'])->name('leave-balances.bulk-allocate');
-            Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
-            Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
-
-            // Admin leave-requests
-            Route::get('leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('leave-requests.index');
-            Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
-            Route::get('leave-requests/create', [LeaveRequestController::class, 'adminCreate'])->name('leave-requests.create');
-            Route::post('leave-requests', [LeaveRequestController::class, 'adminStore'])->name('leave-requests.store');
-            Route::get('leave-requests/{leave_request}', [LeaveRequestController::class, 'adminShow'])->name('leave-requests.show');
-            Route::post('leave-requests/{leave_request}/approve', [LeaveRequestController::class, 'approve'])->name('leave-requests.approve');
-            Route::post('leave-requests/{leave_request}/reject', [LeaveRequestController::class, 'reject'])->name('leave-requests.reject');
-            Route::get('leave-requests/export', [LeaveRequestController::class, 'export'])->name('leave-requests.export');
-            Route::get('leave-requests/report', [LeaveRequestController::class, 'report'])->name('leave-requests.report');
-
-            // Employee Routes for Leave
-            Route::prefix('my-leaves')->name('my-leaves.')->group(function () {
-                Route::resource('leave-requests', LeaveRequestController::class)->except(['destroy']);
-                Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
-                Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'employeeCalendarEvents'])->name('leaves.my-leaves.leave-requests.calendar-events');
-                Route::post('leave-requests/{leave_request}/cancel', [LeaveRequestController::class, 'cancel'])->name('leave-requests.cancel');
-                Route::get('leave-requests/export', [LeaveRequestController::class, 'employeeExport'])->name('leave-requests.export');
-
-                Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
-                Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
-            });
-        });
-        
-
-        // Employee Leave Management
-        Route::prefix('leave-management')->name('leave-management.')->group(function () {
-            // Leave Requests
-            Route::get('leave-requests', [LeaveRequestController::class, 'employeeIndex'])->name('leave-requests.index');
-            Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
-            Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'employeeCalendarEvents'])->name('leave-requests.calendar-events');
-            Route::get('leave-requests/create', [LeaveRequestController::class, 'create'])->name('leave-requests.create');
-            Route::post('leave-requests', [LeaveRequestController::class, 'store'])->name('leave-requests.store');
-            Route::get('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'show'])->name('leave-requests.show');
-            Route::get('leave-requests/{leaveRequest}/edit', [LeaveRequestController::class, 'edit'])->name('leave-requests.edit');
-            Route::put('leave-requests/{leaveRequest}', [LeaveRequestController::class, 'update'])->name('leave-requests.update');
-            Route::post('leave-requests/{leaveRequest}/cancel', [LeaveRequestController::class, 'cancel'])->name('leave-requests.cancel');
-            Route::get('leave-requests/export', [LeaveRequestController::class, 'employeeExport'])->name('leave-requests.export');
-
-            // Leave Balances
-            Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
-            Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
-        });
-
-        // Leave Management
-
-        // Leave Requests
-
-        // Shift Management
-        Route::resource('shifts', '\App\Http\Controllers\Admin\ShiftController');
-
-        // Additional shift routes
-        Route::get('shifts/{shift}/assign', '\App\Http\Controllers\Admin\ShiftController@showAssignForm')
-            ->name('shifts.assign.show');
-        Route::post('shifts/{shift}/assign', '\App\Http\Controllers\Admin\ShiftController@assignShift')
-            ->name('shifts.assign');
-
-
-        // Asset Management Routes
-        Route::prefix('assets')->name('assets.')->group(function () {
-            // Asset routes
-            Route::get('/index', [AssetController::class, 'index'])->name('index')->middleware('checkAccess');
-            Route::get('/create', [AssetController::class, 'create'])->name('create')->middleware('checkAccess');
-            Route::post('/store', [AssetController::class, 'store'])->name('store');
-            Route::get('/show/{asset}', [AssetController::class, 'show'])->name('show');
-            Route::get('/{asset}/edit', [AssetController::class, 'edit'])->name('edit');
-            Route::put('/{asset}', [AssetController::class, 'update'])->name('update');
-            Route::delete('/{asset}', [AssetController::class, 'destroy'])->name('destroy');
-            Route::get('/dashboard', [AssetController::class, 'dashboard'])->name('dashboard');
-            Route::get('/employees', [AssetController::class, 'employeesWithAssets'])->name('employees');
-            Route::get('/own', [AssetController::class, 'ownAssets'])->name('ownAssets');
-
-            Route::resource('categories', AssetCategoryController::class)->names([
-                'index' => 'categories.index',
-                'create' => 'categories.create',
-                'store' => 'categories.store',
-                'show' => 'categories.show',
-                'edit' => 'categories.edit',
-                'update' => 'categories.update',
-                'destroy' => 'categories.destroy',
-            ]);
-
-            // Asset Assignments, distinct from assets route by naming convention and URL structure
-            Route::prefix('assignments')->name('assignments.')->group(function () {
-                Route::get('/', [AssetAssignmentController::class, 'index'])->name('index');
-                Route::get('/create', [AssetAssignmentController::class, 'create'])->name('create');
-                Route::post('/', [AssetAssignmentController::class, 'store'])->name('store');
-                Route::get('/show/{assignment}', [AssetAssignmentController::class, 'show'])->name('show');
-                Route::get('/{assignment}/edit', [AssetAssignmentController::class, 'edit'])->name('edit');
-                Route::put('/{assignment}', [AssetAssignmentController::class, 'update'])->name('update');
-                Route::delete('/{assignment}', [AssetAssignmentController::class, 'destroy'])->name('destroy');
-                Route::post('/{assignment}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
-                Route::get('/recent', [AssetAssignmentController::class, 'recentAssignments'])->name('recent');
-            });
-        });
-
-        // Academic Holidays Management
-        Route::prefix('academic-holidays')->name('academic-holidays.')->group(function () {
-            Route::get('/', [AcademicHolidayController::class, 'index'])->name('index');
-            Route::get('/create', [AcademicHolidayController::class, 'create'])->name('create');
-            Route::post('/', [AcademicHolidayController::class, 'store'])->name('store');
-            Route::get('/{holiday}/edit', [AcademicHolidayController::class, 'edit'])->name('edit');
-            Route::put('/{holiday}', [AcademicHolidayController::class, 'update'])->name('update');
-            Route::delete('/{holiday}', [AcademicHolidayController::class, 'destroy'])->name('destroy');
-            Route::post('/import', [AcademicHolidayController::class, 'import'])->name('import');
-            Route::get('/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('template');
-        });
-
-        // Employee Handbook Management
-        Route::resource('handbooks', HandbookController::class);
-        Route::get('handbooks/{handbook}/download', [HandbookController::class, 'download'])->name('handbooks.download');
-        Route::post('handbooks/{handbook}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
-
-        // Field Visit Management
-        Route::get('/field-visits/pending', [FieldVisitController::class, 'pendingApprovals'])->name('field-visits.pending');
-        Route::resource('field-visits', FieldVisitController::class)->except(['store']);
-        Route::post('/field-visits', [FieldVisitController::class, 'store'])->name('field-visits.store');
-        Route::post('/field-visits/{fieldVisit}/approve', [FieldVisitController::class, 'approve'])->name('field-visits.approve');
-        Route::post('/field-visits/{fieldVisit}/reject', [FieldVisitController::class, 'reject'])->name('field-visits.reject');
-        Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
-        Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
-
-        // Designation Management
-        Route::resource('designations', DesignationManagementController::class)->except(['show'])->names([
-            'index' => 'designations.index',
-            'create' => 'designations.create',
-            'store' => 'designations.store',
-            'edit' => 'designations.edit',
-            'update' => 'designations.update',
-            'destroy' => 'designations.destroy',
-        ]);
-
-        // Employment Type Management
-        Route::resource('employment-types', \App\Http\Controllers\EmploymentTypeManagementController::class)->except(['show', 'destroy'])->names([
-            'index' => 'employment-types.index',
-            'create' => 'employment-types.create',
-            'store' => 'employment-types.store',
-            'edit' => 'employment-types.edit',
-            'update' => 'employment-types.update',
-        ]);
-
-        // Department Management
-        Route::resource('departments', DepartmentManagementController::class)->except(['show'])->names([
-            'index' => 'departments.index',
-            'create' => 'departments.create',
-            'store' => 'departments.store',
-            'edit' => 'departments.edit',
-            'update' => 'departments.update',
-            'destroy' => 'departments.destroy',
-        ]);
-
-        // Reimbursement Management
-        Route::get('/reimbursements', [ReimbursementController::class, 'index'])->name('reimbursements.index');
-        Route::get('/reimbursements/create', [ReimbursementController::class, 'create'])->name('reimbursements.create');
-        Route::post('/reimbursements', [ReimbursementController::class, 'store'])->name('reimbursements.store');
-        Route::get('/reimbursements/{reimbursement}', [ReimbursementController::class, 'show'])->name('reimbursements.show');
-        Route::post('/reimbursements/{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
-        Route::post('/reimbursements/{reimbursement}/approve/reporter', [ReimbursementController::class, 'approveReporter'])->name('reimbursements.approve.reporter');
-        Route::post('/reimbursements/{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
-        Route::get('/reimbursements/pending', [ReimbursementController::class, 'pending'])->name('reimbursements.pending');
-
-        // Employee Resignation Management
-        Route::prefix('resignations')->name('resignations.')->group(function () {
-        });
-
-        //Employee Management Routes
-        Route::prefix('employees-management')->name('employees.management.')->group(function () {
-            Route::get('/', [\App\Http\Controllers\CompanyAdminController::class, 'employees'])->name('index');
-            Route::get('/create', [\App\Http\Controllers\CompanyAdminController::class, 'createEmployee'])->name('create');
-            Route::post('/', [\App\Http\Controllers\CompanyAdminController::class, 'storeEmployee'])->name('store');
-            Route::get('/{id}/view', [\App\Http\Controllers\CompanyAdminController::class, 'viewEmployee'])->name('view');
-            Route::get('/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('edit');
-            Route::put('/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('update');
-            Route::put('/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('update-role');
-            Route::post('/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('toggleStatus');
-            Route::get('/next-employee-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('next-code');
-        });
-
-        // Admin Resignation Routes
-        Route::prefix('resignations')->name('resignations.')->group(function () {
-            Route::get('/my-resignations', [ResignationController::class, 'index'])->name('my-resignations.index');
-            Route::get('/my-resignations/create', [ResignationController::class, 'create'])->name('my-resignations.create');
-            Route::post('/my-resignations', [ResignationController::class, 'store'])->name('my-resignations.store');
-            Route::get('/my-resignations/{my_resignation}', [ResignationController::class, 'show'])->name('my-resignations.show');
-            Route::get('/my-resignations/{my_resignation}/edit', [ResignationController::class, 'edit'])->name('my-resignations.edit');
-            Route::put('/my-resignations/{my_resignation}', [ResignationController::class, 'update'])->name('my-resignations.update');
-            Route::post('/my-resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])->name('my-resignations.withdraw');
-
-            Route::get('', [App\Http\Controllers\Admin\ResignationController::class, 'index'])->name('index');
-            Route::get('/{resignation}', [App\Http\Controllers\Admin\ResignationController::class, 'show'])->name('show');
-            Route::post('/{resignation}/approve', [App\Http\Controllers\Admin\ResignationController::class, 'approve'])
-                ->name('approve');
-            Route::post('/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])
-                ->name('reject');
-
-            // Exit process management
-            Route::post('/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])
-                ->name('complete-exit-interview');
-            Route::post('/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])
-                ->name('complete-handover');
-            Route::get('/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])
-                ->name('assigned-assets');
-            Route::post('/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])
-                ->name('mark-assets-returned');
-            Route::post('/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])
-                ->name('complete-final-settlement');
-        });
-
-        Route::prefix('company')->name('company.')->group(function () {
-            // Company Settings
-            Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
-            Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
-
-            // Employee ID Prefix Settings Save
-            Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
-
-            // Role Management
-            Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);
-        });
-
+        // Check-in/out API endpoints
+        Route::post('/attendance/check-in', [EmployeeAttendanceController::class, 'checkIn'])->name('check-in.post')->middleware('check.attendance.access');
+        Route::post('/attendance/check-out', [EmployeeAttendanceController::class, 'checkOut'])->name('check-out.post')->middleware('check.attendance.access');
+        Route::get('/attendance/check-location', [EmployeeAttendanceController::class, 'checkLocation'])->name('check-location')->middleware('check.attendance.access');
+        Route::get('/geolocation-settings', [EmployeeAttendanceController::class, 'getGeolocationSettings'])->name('geolocation-settings');
     });
 
-    // // Admin Regularization Management
-    // Route::middleware(['role:admin,company_admin'])->prefix('admin/regularization')->name('admin.regularization.')->group(function () {
-    //     Route::resource('requests', AttendanceRegularizationController::class);
-    //     Route::put('requests/{id}/approve', [AttendanceRegularizationController::class, 'approve'])->name('requests.approve');
-    //     Route::post('requests/bulk-update', [AttendanceRegularizationController::class, 'bulkUpdate'])->name('requests.bulk-update');
-    // });
+    // =============================================
+    // LEAVE MANAGEMENT
+    // =============================================
+    Route::prefix('leaves')->name('leaves.')->group(function () {
 
-    // Employee Leave Management
+        // *** LEAVE TYPES ***
+        Route::get('leave-types-list', [LeaveTypeController::class, 'index'])->name('leave-types.index');
+        Route::get('leave-type-create', [LeaveTypeController::class, 'create'])->name('leave-types.create');
+        Route::post('leave-type-store', [LeaveTypeController::class, 'store'])->name('leave-types.store');
+        Route::get('leave-type-show/{leave_type}', [LeaveTypeController::class, 'show'])->name('leave-types.show');
+        Route::get('leave-type-edit/{encryptedId}', [LeaveTypeController::class, 'edit'])->name('leave-types.edit');
+        Route::put('leave-type-update/{encryptedId}', [LeaveTypeController::class, 'update'])->name('leave-types.update');
+        Route::delete('leave-type-delete/{encryptedId}', [LeaveTypeController::class, 'destroy'])->name('leave-types.destroy');
 
-    // Shift Management
-    // Route::middleware(['auth', 'role:admin,company_admin'])->prefix('admin')->name('admin.')->group(function () {
+        // *** LEAVE BALANCES ***
+        Route::get('leave-balances-list', [LeaveBalanceController::class, 'index'])->name('leave-balances.index');
+        Route::get('leave-balance-create', [LeaveBalanceController::class, 'create'])->name('leave-balances.create');
+        Route::post('leave-balance-store', [LeaveBalanceController::class, 'store'])->name('leave-balances.store');
+        Route::get('leave-balance-edit/{encryptedId}', [LeaveBalanceController::class, 'edit'])->name('leave-balances.edit');
+        Route::put('leave-balance-update/{encryptedId}', [LeaveBalanceController::class, 'update'])->name('leave-balances.update');
+        Route::post('leave-balances/bulk-allocate', [LeaveBalanceController::class, 'bulkAllocate'])->name('leave-balances.bulk-allocate');
+        Route::post('leave-balances/reset', [LeaveBalanceController::class, 'resetBalances'])->name('leave-balances.reset');
+        Route::get('leave-balances/export', [LeaveBalanceController::class, 'export'])->name('leave-balances.export');
 
+        // *** ADMIN LEAVE REQUESTS ***
+        Route::get('leave-requests', [LeaveRequestController::class, 'adminIndex'])->name('leave-requests.index');
+        Route::get('leave-requests/calendar', [LeaveRequestController::class, 'adminCalendar'])->name('leave-requests.calendar');
+        Route::get('leave-requests/create', [LeaveRequestController::class, 'adminCreate'])->name('leave-requests.create');
+        Route::post('leave-requests/store', [LeaveRequestController::class, 'adminStore'])->name('leave-requests.store');
+        Route::get('leave-requests/{encryptedId}', [LeaveRequestController::class, 'adminShow'])->name('leave-requests.show');
+        Route::post('leave-requests/{encryptedId}/approve', [LeaveRequestController::class, 'approve'])->name('leave-requests.approve');
+        Route::post('leave-requests/{encryptedId}/reject', [LeaveRequestController::class, 'reject'])->name('leave-requests.reject');
 
-        // Salary Management
-        // Route::get('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'index'])->name('salary.index');
-        // Route::get('salary/create', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'create'])->name('salary.create');
-        // Route::post('salary', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'store'])->name('salary.store');
-        // Route::get('salary/{employee}/edit', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'edit'])->name('salary.edit');
-        // Route::put('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'update'])->name('salary.update');
-        // Route::get('salary/{employee}/show', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'show'])->name('salary.show');
-        // Route::delete('salary/{employee}', [\App\Http\Controllers\Admin\EmployeeSalaryController::class, 'destroy'])->name('salary.destroy');
+        //not corrected yet
+        Route::get('leave-requests/export', [LeaveRequestController::class, 'export'])->name('leave-requests.export');
+        Route::get('leave-requests/report', [LeaveRequestController::class, 'report'])->name('leave-requests.report');
 
-    // });
-
-    
-
-    // Route::get('company/academic-holidays', [AcademicHolidayController::class, 'index'])->name('company.academic-holidays.index');
-
-    // Route::middleware(['auth', 'role:admin,company_admin,employee', 'ensure.company'])->prefix('company')->name('company.')->group(function () {
-        // // Team Management
-        // Route::get('departments/{department}/employees', [TeamController::class, 'getEmployeesByDepartment'])->name('departments.employees');
-        // Route::resource('teams', TeamController::class)->except(['show']);
-    // });
-
-
-
-
-    // Debug route for attendance data
-    Route::get('/debug/attendance', function () {
-        $user = \App\Models\User::first();
-        $employee = $user->employee;
-        $month = now()->format('Y-m');
-
-        $attendances = $employee->attendances()
-            ->whereYear('date', '=', date('Y', strtotime($month)))
-            ->whereMonth('date', '=', date('m', strtotime($month)))
-            ->orderBy('date', 'desc')
-            ->get();
-
-        return response()->json([
-            'employee_id' => $employee->id,
-            'month' => $month,
-            'total_attendances' => $attendances->count(),
-            'attendances' => $attendances->map(function ($att) {
-                return [
-                    'date' => $att->date,
-                    'status' => $att->status,
-                    'check_in' => $att->check_in,
-                    'check_out' => $att->check_out
-                ];
-            })
-        ]);
+        // *** EMPLOYEE LEAVE REQUESTS (My Leaves) ***
+        Route::prefix('my-leaves')->name('my-leaves.')->group(function () {
+            Route::get('my-leave-requests-list', [LeaveRequestController::class, 'index'])->name('leave-requests.index');
+            Route::get('my-leave-request-create', [LeaveRequestController::class, 'create'])->name('leave-requests.create');
+            Route::post('my-leave-request-store', [LeaveRequestController::class, 'store'])->name('leave-requests.store');
+            Route::get('my-leave-request-show/{encryptedId}', [LeaveRequestController::class, 'show'])->name('leave-requests.show');
+            Route::get('my-leave-request-edit/{encryptedId}', [LeaveRequestController::class, 'edit'])->name('leave-requests.edit');
+            Route::put('my-leave-request-update/{encryptedId}', [LeaveRequestController::class, 'update'])->name('leave-requests.update');
+            Route::post('leave-requests/{encryptedId}/cancel', [LeaveRequestController::class, 'cancel'])->name('leave-requests.cancel');
+            // Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
+            // Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'employeeCalendarEvents'])->name('leaves.my-leaves.leave-requests.calendar-events');
+            // Route::get('leave-requests/export', [LeaveRequestController::class, 'employeeExport'])->name('leave-requests.export');
+            // Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
+            // Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
+        });
     });
 
-    // Employee Routes
-    Route::middleware(['role:user,admin,employee'])->prefix('employee')->name('employee.')->group(function () {
-        // Profile
+    // Employee Leave Management (Alternative prefix)
+    // Route::prefix('leave-management')->name('leave-management.')->group(function () {
+    //     Route::get('leave-requests', [LeaveRequestController::class, 'employeeIndex'])->name('leave-requests.index');
+    //     Route::get('leave-requests/calendar', [LeaveRequestController::class, 'employeeCalendar'])->name('leave-requests.calendar');
+    //     Route::get('leave-requests/calendar-events', [LeaveRequestController::class, 'employeeCalendarEvents'])->name('leave-requests.calendar-events');
+    //     Route::get('leave-requests/create', [LeaveRequestController::class, 'create'])->name('leave-requests.create');
+    //     Route::post('leave-requests', [LeaveRequestController::class, 'store'])->name('leave-requests.store');
+    //     Route::get('leave-requests/{leaveRequest}/view', [LeaveRequestController::class, 'show'])->name('leave-requests.show');
+    //     Route::get('leave-requests/{leaveRequest}/edit', [LeaveRequestController::class, 'edit'])->name('leave-requests.edit');
+    //     Route::put('leave-requests/{leaveRequest}/update', [LeaveRequestController::class, 'update'])->name('leave-requests.update');
+    //     Route::post('leave-requests/{leaveRequest}/cancel', [LeaveRequestController::class, 'cancel'])->name('leave-requests.cancel');
+    //     Route::get('leave-requests/export', [LeaveRequestController::class, 'employeeExport'])->name('leave-requests.export');
+    //     Route::get('leave-balances', [LeaveBalanceController::class, 'employeeBalances'])->name('leave-balances.index');
+    //     Route::get('leave-balances/history', [LeaveBalanceController::class, 'history'])->name('leave-balances.history');
+    // });
+
+    // =============================================
+    // DESIGNATION & ORGANIZATIONAL MANAGEMENT
+    // =============================================
+    Route::get('designations-list', [DesignationManagementController::class, 'index'])->name('designations.index');
+    Route::get('designation-create', [DesignationManagementController::class, 'create'])->name('designations.create');
+    Route::post('designation-store', [DesignationManagementController::class, 'store'])->name('designations.store');
+    Route::get('designation-edit/{encryptedId}', [DesignationManagementController::class, 'edit'])->name('designations.edit');
+    Route::put('designation-update/{encryptedId}', [DesignationManagementController::class, 'update'])->name('designations.update');
+    Route::delete('designation-delete/{encryptedId}', [DesignationManagementController::class, 'destroy'])->name('designations.destroy');
+
+    Route::get('employment-types-list', [\App\Http\Controllers\EmploymentTypeManagementController::class, 'index'])->name('employment-types.index');
+    Route::get('employment-type-create', [\App\Http\Controllers\EmploymentTypeManagementController::class, 'create'])->name('employment-types.create');
+    Route::post('employment-type-store', [\App\Http\Controllers\EmploymentTypeManagementController::class, 'store'])->name('employment-types.store');
+    Route::get('employment-type-edit/{encryptedId}', [\App\Http\Controllers\EmploymentTypeManagementController::class, 'edit'])->name('employment-types.edit');
+    Route::put('employment-type-update/{encryptedId}', [\App\Http\Controllers\EmploymentTypeManagementController::class, 'update'])->name('employment-types.update');
+
+    Route::get('departments-list', [DepartmentManagementController::class, 'index'])->name('departments.index');
+    Route::get('department-create', [DepartmentManagementController::class, 'create'])->name('departments.create');
+    Route::post('department-store', [DepartmentManagementController::class, 'store'])->name('departments.store');
+    Route::get('department-edit/{encryptedId}', [DepartmentManagementController::class, 'edit'])->name('departments.edit');
+    Route::put('department-update/{encryptedId}', [DepartmentManagementController::class, 'update'])->name('departments.update');
+    Route::delete('department-delete/{encryptedId}', [DepartmentManagementController::class, 'destroy'])->name('departments.destroy');
+
+    // =============================================
+    // SHIFT MANAGEMENT
+    // =============================================
+    Route::get('shifts-list', '\App\Http\Controllers\Admin\ShiftController@index')->name('admin.shifts.index');
+    Route::get('shift-create', '\App\Http\Controllers\Admin\ShiftController@create')->name('admin.shifts.create');
+    Route::post('shift-store', '\App\Http\Controllers\Admin\ShiftController@store')->name('admin.shifts.store');
+    Route::get('shift-show/{encryptedId}', '\App\Http\Controllers\Admin\ShiftController@show')->name('admin.shifts.show');
+    Route::get('shift-edit/{encryptedId}', '\App\Http\Controllers\Admin\ShiftController@edit')->name('admin.shifts.edit');
+    Route::put('shift-update/{encryptedId}', '\App\Http\Controllers\Admin\ShiftController@update')->name('admin.shifts.update');
+    Route::delete('shift-delete/{encryptedId}', '\App\Http\Controllers\Admin\ShiftController@destroy')->name('admin.shifts.destroy');
+    Route::get('shifts/{encryptedId}/assign', '\App\Http\Controllers\Admin\ShiftController@showAssignForm')->name('admin.shifts.assign.show');
+    Route::post('shifts/{encryptedId}/assign', '\App\Http\Controllers\Admin\ShiftController@assignShift')->name('admin.shifts.assign');
+
+    // =============================================
+    // ASSET MANAGEMENT
+    // =============================================
+    Route::prefix('assets')->name('assets.')->group(function () {
+
+        // *** ASSETS ***
+        Route::get('/index', [AssetController::class, 'index'])->name('index');
+        Route::get('/create', [AssetController::class, 'create'])->name('create');
+        Route::post('/store', [AssetController::class, 'store'])->name('store');
+        Route::get('/show/{encryptedId}', [AssetController::class, 'show'])->name('show');
+        Route::get('/{encryptedId}/edit', [AssetController::class, 'edit'])->name('edit');
+        Route::put('/{encryptedId}/update', [AssetController::class, 'update'])->name('update');
+        Route::delete('/{encryptedId}/delete', [AssetController::class, 'destroy'])->name('destroy');
+        Route::get('/dashboard', [AssetController::class, 'dashboard'])->name('dashboard');
+        Route::get('/employees', [AssetController::class, 'employeesWithAssets'])->name('employees');
+        Route::get('/own', [AssetController::class, 'ownAssets'])->name('ownAssets');
+
+        // *** ASSET CATEGORIES ***
+        Route::get('asset-categories-list', [AssetCategoryController::class, 'index'])->name('categories.index');
+        Route::get('asset-category-create', [AssetCategoryController::class, 'create'])->name('categories.create');
+        Route::post('asset-category-store', [AssetCategoryController::class, 'store'])->name('categories.store');
+        Route::get('asset-category-show/{encryptedId}', [AssetCategoryController::class, 'show'])->name('categories.show');
+        Route::get('asset-category-edit/{encryptedId}', [AssetCategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('asset-category-update/{encryptedId}', [AssetCategoryController::class, 'update'])->name('categories.update');
+        Route::delete('asset-category-delete/{encryptedId}', [AssetCategoryController::class, 'destroy'])->name('categories.destroy');
+
+        // *** ASSET ASSIGNMENTS ***
+        Route::prefix('assignments')->name('assignments.')->group(function () {
+            Route::get('/', [AssetAssignmentController::class, 'index'])->name('index');
+            Route::get('/create', [AssetAssignmentController::class, 'create'])->name('create');
+            Route::post('/', [AssetAssignmentController::class, 'store'])->name('store');
+            Route::get('/show/{encryptedId}', [AssetAssignmentController::class, 'show'])->name('show');
+            Route::get('/{encryptedId}/edit', [AssetAssignmentController::class, 'edit'])->name('edit');
+            Route::put('/{encryptedId}/update', [AssetAssignmentController::class, 'update'])->name('update');
+            Route::delete('/{encryptedId}/delete', [AssetAssignmentController::class, 'destroy'])->name('destroy');
+            Route::post('/{encryptedId}/return', [AssetAssignmentController::class, 'returnAsset'])->name('return');
+            Route::get('/recent', [AssetAssignmentController::class, 'recentAssignments'])->name('recent');
+        });
+    });
+
+    // =============================================
+    // HOLIDAYS & HOLIDAYS MANAGEMENT
+    // =============================================
+    Route::prefix('academic-holidays')->name('academic-holidays.')->group(function () {
+        Route::get('/', [AcademicHolidayController::class, 'index'])->name('index');
+        Route::get('/employee-index', [AcademicHolidayController::class, 'EmployeeIndex'])->name('employee.index');
+        Route::get('/create', [AcademicHolidayController::class, 'create'])->name('create');
+        Route::post('/', [AcademicHolidayController::class, 'store'])->name('store');
+        Route::get('/{encryptedId}/edit', [AcademicHolidayController::class, 'edit'])->name('edit');
+        Route::put('/{encryptedId}/update', [AcademicHolidayController::class, 'update'])->name('update');
+        Route::delete('/{encryptedId}/delete', [AcademicHolidayController::class, 'destroy'])->name('destroy');
+        Route::post('/import', [AcademicHolidayController::class, 'import'])->name('import');
+        Route::get('/template', [AcademicHolidayController::class, 'downloadTemplate'])->name('template');
+    });
+
+    // =============================================
+    // HANDBOOKS & POLICIES
+    // =============================================
+    Route::get('handbooks-list', [HandbookController::class, 'index'])->name('handbooks.index');
+    Route::get('employee-handbooks', [HandbookController::class, 'employeeIndex'])->name('handbooks.employee.index');
+    Route::get('handbook-create', [HandbookController::class, 'create'])->name('handbooks.create');
+    Route::post('handbook-store', [HandbookController::class, 'store'])->name('handbooks.store');
+    Route::get('handbook-show/{handbookId}', [HandbookController::class, 'show'])->name('handbooks.show');
+    Route::get('handbook-edit/{handbookId}', [HandbookController::class, 'edit'])->name('handbooks.edit');
+    Route::put('handbook-update/{handbookId}', [HandbookController::class, 'update'])->name('handbooks.update');
+    Route::delete('handbook-delete/{handbookId}', [HandbookController::class, 'destroy'])->name('handbooks.destroy');
+    Route::get('handbooks/{handbookId}/download', [HandbookController::class, 'download'])->name('handbooks.download');
+    Route::post('handbooks/{handbookId}/acknowledge', [HandbookController::class, 'acknowledge'])->name('handbooks.acknowledge');
+
+    // =============================================
+    // FIELD VISIT MANAGEMENT
+    // =============================================
+    Route::get('/field-visits/pending', [FieldVisitController::class, 'pendingApprovals'])->name('field-visits.pending');
+    Route::get('field-visits-list', [FieldVisitController::class, 'index'])->name('field-visits.index');
+    Route::get('field-visit-create', [FieldVisitController::class, 'create'])->name('field-visits.create');
+    Route::get('field-visit-show/{field_visit}', [FieldVisitController::class, 'show'])->name('field-visits.show');
+    Route::get('field-visit-edit/{field_visit}', [FieldVisitController::class, 'edit'])->name('field-visits.edit');
+    Route::put('field-visit-update/{field_visit}', [FieldVisitController::class, 'update'])->name('field-visits.update');
+    Route::delete('field-visit-delete/{field_visit}', [FieldVisitController::class, 'destroy'])->name('field-visits.destroy');
+    Route::post('/field-visits', [FieldVisitController::class, 'store'])->name('field-visits.store');
+    Route::post('/field-visits/{fieldVisit}/approve', [FieldVisitController::class, 'approve'])->name('field-visits.approve');
+    Route::post('/field-visits/{fieldVisit}/reject', [FieldVisitController::class, 'reject'])->name('field-visits.reject');
+    Route::post('/field-visits/{fieldVisit}/start', [FieldVisitController::class, 'start'])->name('field-visits.start');
+    Route::post('/field-visits/{fieldVisit}/complete', [FieldVisitController::class, 'complete'])->name('field-visits.complete');
+
+    // =============================================
+    // REIMBURSEMENT MANAGEMENT
+    // =============================================
+    Route::get('/reimbursements', [ReimbursementController::class, 'index'])->name('reimbursements.index');
+    Route::get('/reimbursements/create', [ReimbursementController::class, 'create'])->name('reimbursements.create');
+    Route::post('/reimbursements', [ReimbursementController::class, 'store'])->name('reimbursements.store');
+    Route::get('/reimbursements/{reimbursement}', [ReimbursementController::class, 'show'])->name('reimbursements.show');
+    Route::post('/reimbursements/{reimbursement}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
+    Route::post('/reimbursements/{reimbursement}/approve/reporter', [ReimbursementController::class, 'approveReporter'])->name('reimbursements.approve.reporter');
+    Route::post('/reimbursements/{reimbursement}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
+    Route::get('/reimbursements/pending', [ReimbursementController::class, 'pending'])->name('reimbursements.pending');
+
+    // =============================================
+    // EMPLOYEE MANAGEMENT
+    // =============================================
+    Route::prefix('employees-management')->name('employees.management.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CompanyAdminController::class, 'employees'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\CompanyAdminController::class, 'createEmployee'])->name('create');
+        Route::post('/', [\App\Http\Controllers\CompanyAdminController::class, 'storeEmployee'])->name('store');
+        Route::get('/{id}/view', [\App\Http\Controllers\CompanyAdminController::class, 'viewEmployee'])->name('view');
+        Route::get('/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('edit');
+        Route::put('/{id}/update', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('update');
+        Route::put('/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('update-role');
+        Route::post('/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('toggleStatus');
+        Route::get('/next-employee-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('next-code');
+    });
+
+    // Employee Profile
+    Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(function () {
         Route::get('profile', [\App\Http\Controllers\Employee\ProfileController::class, 'show'])->name('profile');
         Route::post('profile/update', [\App\Http\Controllers\Employee\ProfileController::class, 'update'])->name('profile.update');
         Route::post('profile/update-image', [\App\Http\Controllers\Employee\ProfileController::class, 'updateImage'])->name('profile.update-image');
         Route::get('colleagues', [EmployeeController::class, 'listColleagues'])->name('colleagues');
-
-        // Assets
-        // Route::get('assets', [AssetController::class, 'employeeAssets'])->name('assets.index');
-
     });
 
-    // Company Admin Routes (accessible to company_admin and admin roles)
-    Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
-        // Leads Management
-        Route::resource('leads', LeadController::class);
+    // =============================================
+    // RESIGNATION & EXIT MANAGEMENT
+    // =============================================
+    Route::prefix('resignations')->name('resignations.')->group(function () {
 
-        // Payslips Management
-        // Route::get('/payslips', [\App\Http\Controllers\PayslipController::class, 'getAllPayslips'])
-        //     ->name('payslips.index');
+        // Employee Resignations
+        Route::get('/my-resignations', [ResignationController::class, 'index'])->name('my-resignations.index');
+        Route::get('/my-resignations/create', [ResignationController::class, 'create'])->name('my-resignations.create');
+        Route::post('/my-resignations', [ResignationController::class, 'store'])->name('my-resignations.store');
+        Route::get('/my-resignations/{my_resignation}', [ResignationController::class, 'show'])->name('my-resignations.show');
+        Route::get('/my-resignations/{my_resignation}/edit', [ResignationController::class, 'edit'])->name('my-resignations.edit');
+        Route::put('/my-resignations/{my_resignation}', [ResignationController::class, 'update'])->name('my-resignations.update');
+        Route::post('/my-resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])->name('my-resignations.withdraw');
 
-        // Export Payslips
-        // Route::get('/payslips/export', [\App\Http\Controllers\PayslipController::class, 'exportPayslips'])
-        //     ->name('payslips.export');
+        // Admin Resignation Management
+        Route::get('', [App\Http\Controllers\Admin\ResignationController::class, 'index'])->name('index');
+        Route::get('/{resignation}', [App\Http\Controllers\Admin\ResignationController::class, 'show'])->name('show');
+        Route::post('/{resignation}/approve', [App\Http\Controllers\Admin\ResignationController::class, 'approve'])->name('approve');
+        Route::post('/{resignation}/reject', [App\Http\Controllers\Admin\ResignationController::class, 'reject'])->name('reject');
+
+        // Exit Process Management
+        Route::post('/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])->name('complete-exit-interview');
+        Route::post('/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])->name('complete-handover');
+        Route::get('/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])->name('assigned-assets');
+        Route::post('/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])->name('mark-assets-returned');
+        Route::post('/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])->name('complete-final-settlement');
+    });
+
+    // =============================================
+    // COMPANY SETTINGS & MANAGEMENT
+    // =============================================
+    Route::prefix('company')->name('company.')->group(function () {
+
+        // Company Settings
+        Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
+        Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
+        Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
+
+        // Company Role Management
+        Route::get('company-roles-list', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'index'])->name('roles.index');
+        Route::get('company-role-create', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'create'])->name('roles.create');
+        Route::post('company-role-store', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'store'])->name('roles.store');
+        Route::get('company-role-show/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'show'])->name('roles.show');
+        Route::get('company-role-edit/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'edit'])->name('roles.edit');
+        Route::put('company-role-update/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'update'])->name('roles.update');
+        Route::delete('company-role-delete/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'destroy'])->name('roles.destroy');
+    });
+
+    // =============================================
+    // LEADS MANAGEMENT (CRM)
+    // =============================================
+    Route::middleware(['auth'])->prefix('company-admin')->name('company-admin.')->group(function () {
+        Route::get('leads-list', [LeadController::class, 'index'])->name('leads.index');
+        Route::get('lead-create', [LeadController::class, 'create'])->name('leads.create');
+        Route::post('lead-store', [LeadController::class, 'store'])->name('leads.store');
+        Route::get('lead-show/{lead}', [LeadController::class, 'show'])->name('leads.show');
+        Route::get('lead-edit/{lead}', [LeadController::class, 'edit'])->name('leads.edit');
+        Route::put('lead-update/{lead}', [LeadController::class, 'update'])->name('leads.update');
+        Route::delete('lead-delete/{lead}', [LeadController::class, 'destroy'])->name('leads.destroy');
 
         // Module Access Management
         Route::get('/module-access', [\App\Http\Controllers\CompanyAdminController::class, 'moduleAccess'])->name('module-access.index');
         Route::put('/module-access', [\App\Http\Controllers\CompanyAdminController::class, 'updateModuleAccess'])->name('module-access.update');
-
-        // Employee Management
-        // Route::get('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'employees'])->name('employees.index');
-        // Route::get('/employees/create', [\App\Http\Controllers\CompanyAdminController::class, 'createEmployee'])->name('employees.create');
-        // Route::post('/employees', [\App\Http\Controllers\CompanyAdminController::class, 'storeEmployee'])->name('employees.store');
-        // Route::get('/employees/{id}/view', [\App\Http\Controllers\CompanyAdminController::class, 'viewEmployee'])->name('employees.view');
-        // Route::get('/employees/{id}/edit', [\App\Http\Controllers\CompanyAdminController::class, 'editEmployee'])->name('employees.edit');
-        // Route::put('/employees/{id}', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployee'])->name('employees.update');
-        // Route::put('/employees/{employee}/role', [\App\Http\Controllers\CompanyAdminController::class, 'updateEmployeeRole'])->name('employees.update-role');
-        // Route::post('/employees/{id}/toggle-status', [\App\Http\Controllers\CompanyAdminController::class, 'toggleStatus'])->name('employees.toggleStatus');
-
-        // Company Settings
-        // Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
-        // Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
-
-        // // Employee ID Prefix Settings Save
-        // Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
-
-        // Employee code generation for company-admin (AJAX)
-        // Route::get('/employees/next-code', [\App\Http\Controllers\CompanyAdminController::class, 'getNextEmployeeCode'])->name('employees.next-code');
-
-        // Role Management
-        // Route::resource('roles', \App\Http\Controllers\CompanyAdmin\RoleController::class);
-
     });
-
 
 });
 
@@ -645,14 +608,14 @@ Route::middleware(['auth'])->group(function () {
  * PAYROLL MANAGEMENT ROUTES - CONSOLIDATED SECTION
  * =============================================
  */
- 
+
 // Admin Payroll Management Routes
 Route::middleware(['auth'])->group(function () {
 
     // Main Admin Payroll Routes
     Route::middleware('auth')->group(function () {
 
-         // Employee Payroll Management        
+         // Employee Payroll Management
 Route::get('employee/payroll/', [EmployeePayrollController::class, 'index'])->name('employee.payroll.index'); // List my payslips
 Route::get('employee/payroll/{payroll}', [EmployeePayrollController::class, 'show'])->name('employee.payroll.show'); // View a specific payslip
 Route::get('employee/payroll/{payroll}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('employee.payroll.download'); // Download payslip PDF
@@ -672,12 +635,12 @@ Route::get('admin/payroll/employee-configurations/{employee}/edit', [EmployeePay
 Route::put('admin/payroll/employee-configurations/{employee}', [EmployeePayrollConfigController::class, 'update'])->name('admin.payroll.employee-configurations.update');
 Route::put('admin/payroll/employee-configurations/{employee}/set-current/{employeeSalary?}', [EmployeePayrollConfigController::class, 'setCurrent'])->name('admin.payroll.employee-configurations.set-current');
 Route::post('admin/payroll/employee-configurations/{employee}/create-salary', [EmployeePayrollConfigController::class, 'createSalary'])->name('admin.payroll.employee-configurations.create-salary');
-   
-   
+
+
 Route::get('admin/employee-payroll-configurations/{employee}/edit', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'edit'])->name('admin.employee-payroll-configurations.edit');
 Route::put('admin/employee-payroll-configurations/{employee}', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'update'])->name('admin.employee-payroll-configurations.update');
 Route::put('admin/employee-payroll-configurations/{employee}/update-salary', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'updateSalary'])->name('admin.employee-payroll-configurations.update-salary');
-     
+
 
        // Beneficiary Badges (Allowances/Deductions) - standalone routes
 Route::get('admin/payroll/beneficiary-badges/index', [BeneficiaryBadgeController::class, 'index'])->name('admin.payroll.beneficiary-badges.index');
@@ -702,13 +665,8 @@ Route::delete('/admin/payroll/{payroll}/destroy', [AdminPayrollController::class
     });
 
 
-
-    // Company Admin Payslip Routes
-    // Route::middleware(['role:admin,company_admin'])->prefix('company-admin')->name('company-admin.')->group(function () {
-    //     Route::get('/payslips', [\App\Http\Controllers\PayslipController::class, 'getAllPayslips'])->name('payslips.index')->middleware('auth');
-    //     Route::get('/payslips/export', [\App\Http\Controllers\PayslipController::class, 'exportPayslips'])->name('payslips.export')->middleware('auth');
-    // });
    // PDF Payslip Routes
         Route::get('employee/salary/payslips', [\App\Http\Controllers\PayslipController::class, 'listPayslips'])->name('employee.salary.payslips');
 
+    });
 });

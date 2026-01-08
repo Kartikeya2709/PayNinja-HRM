@@ -21,7 +21,7 @@
         <i class="fas fa-calendar-check me-2 text-primary"></i>Update Leave Balance
     </h5>
 
-    <form action="{{ route('leaves.leave-balances.update', $leaveBalance->id) }}" method="POST" class="leave-balance-form">
+    <form action="{{ route('leaves.leave-balances.update', \Illuminate\Support\Facades\Crypt::encrypt($leaveBalance->id)) }}" method="POST" class="leave-balance-form">
         @csrf
         @method('PUT')
 

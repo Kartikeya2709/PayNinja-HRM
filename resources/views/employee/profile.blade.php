@@ -108,7 +108,7 @@
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">Other Details</h5>
-                      
+
                 </div>
                 <div class="card-body ">
                    <p><strong>Emergency Contact:</strong> {{ $employee->emergency_contact_name }}</p>

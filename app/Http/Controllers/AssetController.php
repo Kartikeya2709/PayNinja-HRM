@@ -8,10 +8,24 @@ use App\Models\AssetAssignment;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 
 class AssetController extends Controller
 {
+    /**
+     * Get asset from encrypted ID.
+     */
+    private function getAssetFromEncryptedId(string $encryptedId): Asset
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return Asset::where('company_id', Auth::user()->company_id)->findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -66,13 +80,14 @@ class AssetController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $encryptedId)
     {
-
+        $id = Crypt::decrypt($encryptedId);
         $asset = Asset::where('company_id', Auth::user()->company_id)
             ->with(['category', 'assignments.employee', 'assignments.assignedBy', 'conditions'])
             ->findOrFail($id);
-
+        // $asset = $this->getAssetFromEncryptedId($encryptedId)
+        //     ->with(['category', 'assignments.employee', 'assignments.assignedBy', 'conditions']);
 
         return view('assets.show', compact('asset'));
     }
@@ -80,10 +95,9 @@ class AssetController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
-        $asset = Asset::where('company_id', Auth::user()->company_id)
-            ->findOrFail($id);
+        $asset = $this->getAssetFromEncryptedId($encryptedId);
 
         $categories = AssetCategory::where('company_id', Auth::user()->company_id)
             ->pluck('name', 'id');
@@ -94,10 +108,9 @@ class AssetController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $encryptedId)
     {
-        $asset = Asset::where('company_id', Auth::user()->company_id)
-            ->findOrFail($id);
+        $asset = $this->getAssetFromEncryptedId($encryptedId);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -118,10 +131,9 @@ class AssetController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $encryptedId)
     {
-        $asset = Asset::where('company_id', Auth::user()->company_id)
-            ->findOrFail($id);
+        $asset = $this->getAssetFromEncryptedId($encryptedId);
 
         // Check if asset is currently assigned
         if ($asset->status === 'assigned') {

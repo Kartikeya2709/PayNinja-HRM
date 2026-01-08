@@ -12,10 +12,32 @@ use App\Services\AttendanceService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class AttendanceController extends Controller
 {
     protected $attendanceService;
+
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
 
     /**
      * Create a new controller instance.
@@ -475,12 +497,19 @@ class AttendanceController extends Controller
         ], 400);
     }
 
-    /**
-     * Display employee's attendance history.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function show($encryptedId)
+    {
+        $attendance = $this->getModelFromEncryptedId($encryptedId, Attendance::class);
+        $user = Auth::user();
+        $employee = $user->employee;
+
+        // Ensure the attendance belongs to the authenticated employee
+        if ($attendance->employee_id !== $employee->id) {
+            abort(403);
+        }
+
+        return view('attendance.show', compact('attendance'));
+    }
     public function myAttendance(Request $request)
     {
         $user = Auth::user();

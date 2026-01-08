@@ -12,7 +12,7 @@
     </div>
     <div class="card">
     <div class="card-1">
-   
+
         <h5 class="mb-0">Manage Shifts</h5>
         <div class="section-header-button">
         <a href="{{ route('admin.shifts.create') }}" class="btn btn-primary">
@@ -53,16 +53,16 @@
                             <tr>
                                 <td>{{ $shift->name }}</td>
                                 <td>
-                                    {{ \Carbon\Carbon::parse($shift->start_time)->format('h:i A') }} - 
+                                    {{ \Carbon\Carbon::parse($shift->start_time)->format('h:i A') }} -
                                     {{ \Carbon\Carbon::parse($shift->end_time)->format('h:i A') }}
-                                    @if($shift->is_night_shift) 
+                                    @if($shift->is_night_shift)
                                         <span class="badge badge-info">Night Shift</span>
                                     @endif
                                 </td>
                                 <td>{{ $shift->grace_period_minutes }} minutes</td>
                                 <td>
                                     @if($shift->has_break)
-                                        {{ \Carbon\Carbon::parse($shift->break_start)->format('h:i A') }} - 
+                                        {{ \Carbon\Carbon::parse($shift->break_start)->format('h:i A') }} -
                                         {{ \Carbon\Carbon::parse($shift->break_end)->format('h:i A') }}
                                     @else
                                         No Break
@@ -76,12 +76,12 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.shifts.edit', $shift->id) }}" 
+                                    <a href="{{ route('admin.shifts.edit', $shift->encrypted_id) }}"
                                        class="btn btn-sm btn-primary" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <form action="{{ route('admin.shifts.destroy', $shift->id) }}" 
-                                          method="POST" class="d-inline" 
+                                    <form action="{{ route('admin.shifts.destroy', $shift->encrypted_id) }}"
+                                          method="POST" class="d-inline"
                                           onsubmit="return confirm('Are you sure you want to delete this shift?')">
                                         @csrf
                                         @method('DELETE')

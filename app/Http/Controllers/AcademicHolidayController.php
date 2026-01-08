@@ -8,21 +8,52 @@ use App\Imports\AcademicHolidayImport;
 use App\Exports\AcademicHolidayTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Carbon;
 
 class AcademicHolidayController extends Controller
 {
+    private function getAcademicHolidayFromEncryptedId(string $encryptedId): AcademicHoliday
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            $user = Auth::user();
+            $companyId = $user->company_id;
+            return AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    private function encryptAcademicHolidayId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     public function index()
     {
         $user = Auth::user();
         $companyId = $user->company_id;
         $holidays = AcademicHoliday::where('company_id', $companyId)
             ->orderBy('from_date')
+            ->get()
+            ->map(function ($holiday) {
+                $holiday->encrypted_id = $this->encryptAcademicHolidayId($holiday->id);
+                return $holiday;
+            });
+
+        $isReadOnly = $user; // can’t add/edit/delete
+        return view('company.academic-holidays.index', compact('holidays', 'isReadOnly'));
+    }
+
+    public function EmployeeIndex()
+    {
+        $companyHolidays = AcademicHoliday::where('company_id', Auth::user()->company_id)
+            ->orderBy('from_date')
             ->get();
 
-        $isReadOnly = $user->hasRole('employee'); // can’t add/edit/delete
-        return view('company.academic-holidays.index', compact('holidays', 'isReadOnly'));
+        return view('company.academic-holidays.EmployeeIndex', compact('companyHolidays'));
     }
 
     public function create(Request $request)
@@ -54,11 +85,10 @@ class AcademicHolidayController extends Controller
         return redirect()->route('academic-holidays.index')->with('success', 'Holiday created successfully');
     }
 
-    public function edit(Request $request, $id)
+    public function edit(Request $request, $encryptedId)
     {
-        $user = Auth::user();
-        $companyId = $user->company_id;
-        $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
+        $holiday = $this->getAcademicHolidayFromEncryptedId($encryptedId);
+        $holiday->encrypted_id = $encryptedId;
 
         // Explicitly cast from_date and to_date to Carbon instances
         if ($holiday->from_date && !($holiday->from_date instanceof Carbon)) {
@@ -71,11 +101,9 @@ class AcademicHolidayController extends Controller
         return view('company.academic-holidays.create', compact('holiday'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $encryptedId)
     {
-        $user = Auth::user();
-        $companyId = $user->company_id;
-        $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
+        $holiday = $this->getAcademicHolidayFromEncryptedId($encryptedId);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -89,11 +117,9 @@ class AcademicHolidayController extends Controller
         return redirect()->route('academic-holidays.index')->with('success', 'Holiday updated successfully');
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request, $encryptedId)
     {
-        $user = Auth::user();
-        $companyId = $user->company_id;
-        $holiday = AcademicHoliday::where('company_id', $companyId)->findOrFail($id);
+        $holiday = $this->getAcademicHolidayFromEncryptedId($encryptedId);
         $holiday->delete();
 
         return redirect()->route('academic-holidays.index')->with('success', 'Holiday deleted successfully');

@@ -44,6 +44,7 @@
     .table-responsive {
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
     }
 
     .table th {
@@ -78,11 +79,21 @@
     /* Filter Toggle Styles */
     .filter-section.collapsed {
         display: none;
+        height: 0;
+        opacity: 0;
+        transform: translateY(-20px);
     }
 
     .filter-section {
         transition: all 0.3s ease-in-out;
         overflow: hidden;
+    }
+
+    .filter-section.expanded {
+        display: block;
+        height: auto;
+        opacity: 1;
+        transform: translateY(0);
     }
 
     #toggleFiltersBtn {
@@ -102,14 +113,7 @@
         transform: rotate(-90deg);
     }
 
-    .filter-section.expanded {
-        animation: slideDown 0.3s ease-out;
-    }
-
-    .filter-section.collapsed {
-        animation: slideUp 0.3s ease-in;
-    }
-
+    /* Animations */
     @keyframes slideDown {
         from {
             max-height: 0;
@@ -143,49 +147,61 @@
 @endpush
 
 @section('content')
-    <div class="container">
-        <section class="section">
-            <div class="section-header">
-                <h1>Regularization Requests</h1>
-                <div class="section-header-breadcrumb">
-                    <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="">Regularization Requests</a></div>
-                </div>
+@php
+    // Permission checks using hasAccess
+    $canCreateRegularization = \App\Models\User::hasAccess('attendance-management/regularization-request-create', true);
+    $canViewRegularizationList = \App\Models\User::hasAccess('attendance-management/regularization-requests-list', true);
+    $canViewMyRegularization = \App\Models\User::hasAccess('attendance-management/regularization-requests/my', true);
+    $canViewCompanyRegularization = \App\Models\User::hasAccess('attendance-management/regularization-requests/company', true);
+    $canBulkUpdateRegularization = \App\Models\User::hasAccess('attendance-management/regularization-requests/bulk-update', true);
+    $canApproveRegularization = \App\Models\User::hasAccess('attendance-management/regularization-requests/{encryptedId}/approve', true);
+    $canEditRegularization = \App\Models\User::hasAccess('attendance-management/regularization-request-edit/{encryptedId}', true);
+    $canUpdateRegularization = \App\Models\User::hasAccess('attendance-management/regularization-request-update/{encryptedId}', true);
+    $canDeleteRegularization = \App\Models\User::hasAccess('attendance-management/regularization-request-delete/{encryptedId}', true);
+@endphp
+
+<div class="container">
+    <section class="section">
+        <div class="section-header">
+            <h1>Regularization Requests</h1>
+            <div class="section-header-breadcrumb">
+                <div class="breadcrumb-item active"><a href="{{ route('home') }}">Dashboard</a></div>
+                <div class="breadcrumb-item"><a href="">Regularization Requests</a></div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
+        </div>
+        <div class="row">
+            <div class="col-md-12">
 
 
-                    <div class="card">
-                        <div class="card-1 card-header">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-0">Attendance Regularization Requests</h5>
-
-                                </div>
-                                <div class="btn-center d-flex align-items-center gap-2">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleFiltersBtn">
-                                        <i class="fas fa-filter"></i> <span id="filterToggleText">Hide Filters</span>
-                                    </button>
-                                    @if (!is_null(Auth::user()->employee->reporting_manager_id))
-                                        <a href="{{ route('regularization-requests.create') }}" class="btn btn-primary">New
-                                            Request</a>
-                                    @endif
-                                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-0">Attendance Regularization Requests</h5>
+                            </div>
+                            <div class="btn-center d-flex align-items-center gap-2">
+                                <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleFiltersBtn">
+                                    <i class="fas fa-filter"></i> <span id="filterToggleText">Hide Filters</span>
+                                </button>
+                                @if ($canCreateRegularization)
+                                    <a href="{{ route('regularization-requests.create') }}" class="btn btn-primary">New
+                                        Request</a>
+                                @endif
                             </div>
                         </div>
+                    </div>
 
-                        @if (session('success'))
-                            <div class="alert alert-success" role="alert">
-                                {{ session('success') }}
-                            </div>
-                        @endif
+                    @if (session('success'))
+                        <div class="alert alert-success" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
 
-                        @if (session('error'))
-                            <div class="alert alert-danger" role="alert">
-                                {{ session('error') }}
-                            </div>
-                        @endif
+                    @if (session('error'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
                         {{-- Filter Section --}}
                         <div class="card-body border-bottom filter-section">
@@ -297,16 +313,18 @@
                             </form>
                         </div>
 
-                        @if (is_null(Auth::user()->employee->reporting_manager_id))
-                            <form action="{{ route('regularization-requests.bulk-update') }}" method="POST"
-                                id="bulk-action-form">
-                                @csrf
-
-                                <button type="button" id="bulk-approve-btn" class="btn btn-success">Approve Selected</button>
-                                <button type="submit" name="action" value="reject" class="btn btn-danger">Reject Selected</button>
-                    </div>
-                </div>
-                @endif
+                        @if ($canBulkUpdateRegularization)
+                            <div class="card-body border-top">
+                                <form action="{{ route('regularization-requests.bulk-update') }}" method="POST"
+                                    id="bulk-action-form">
+                                    @csrf
+                                    <div class="d-flex gap-2">
+                                        <button type="button" id="bulk-approve-btn" class="btn btn-success">Approve Selected</button>
+                                        <button type="submit" name="action" value="reject" class="btn btn-danger">Reject Selected</button>
+                                    </div>
+                                </form>
+                            </div>
+                        @endif
 
                 @if (isset($pending_requests))
                     <ul class="nav nav-tabs Attendance-Regularization pt-4" id="myTab" role="tablist">
@@ -331,6 +349,7 @@
                                 'requests' => $pending_requests,
                                 'show_actions' => true,
                                 'pagination_name' => 'pending_page',
+                                'canEditRegularization' => $canEditRegularization,
                             ])
                         </div>
                         <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
@@ -338,6 +357,7 @@
                                 'requests' => $approved_requests,
                                 'show_actions' => false,
                                 'pagination_name' => 'approved_page',
+                                'canEditRegularization' => $canEditRegularization,
                             ])
                         </div>
                         <div class="tab-pane fade" id="rejected" role="tabpanel" aria-labelledby="rejected-tab">
@@ -345,6 +365,7 @@
                                 'requests' => $rejected_requests,
                                 'show_actions' => false,
                                 'pagination_name' => 'rejected_page',
+                                'canEditRegularization' => $canEditRegularization,
                             ])
                         </div>
                     </div>
@@ -352,22 +373,18 @@
                     @include('employee.regularization._request_table', [
                         'requests' => $requests,
                         'show_actions' => false,
+                        'canEditRegularization' => $canEditRegularization,
                     ])
-                @endif
-
-                @if (is_null(Auth::user()->employee->reporting_manager_id))
-                    </form>
                 @endif
 
                 {{-- @if (isset($requests) && $requests instanceof \Illuminate\Pagination\LengthAwarePaginator)
                         {{ $requests->links() }}
                     @endif --}}
+                </div>
             </div>
         </section>
     </div>
-    </div>
-    </div>
-    </div>
+</div>
 
                 <!-- Approval Modal -->
                 <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel"

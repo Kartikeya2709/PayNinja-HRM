@@ -20,7 +20,7 @@
                         <h4>Leave Request Form</h4>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('leaves.my-leaves.leave-requests.update', $leaveRequest->id) }}"
+                        <form action="{{ route('leaves.my-leaves.leave-requests.update', \Illuminate\Support\Facades\Crypt::encrypt($leaveRequest->id)) }}"
                               method="POST"
                               enctype="multipart/form-data">
                         @csrf

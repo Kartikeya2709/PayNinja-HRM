@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@php
+use Illuminate\Support\Facades\Crypt;
+@endphp
+
 @section('content')
 <div class="container-fluid">
     <div class="row">
@@ -7,9 +11,11 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Asset Assignments</h3>
+                    @if(\App\Models\User::hasAccess('assets/assignments/create', true))
                     <a href="{{ route('assets.assignments.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> New Assignment
                     </a>
+                    @endif
                 </div>
                 <div class="card-body">
                     @if(session('success'))
@@ -26,7 +32,9 @@
                                     <th>Expected Return</th>
                                     <th>Status</th>
                                     <th>Condition</th>
+                                    {{-- @if(\App\Models\User::hasAccess('assets/assignments/recent', true)) --}}
                                     <th>Actions</th>
+                                    {{-- @endif --}}
                                 </tr>
                             </thead>
                             <tbody>
@@ -47,14 +55,16 @@
                                         <td>{{ $assignment->condition_on_assignment }}</td>
                                     @endif
                                     <td>
-                                        <a href="{{ route('assets.assignments.show', $assignment->id) }}" class="btn btn-info btn-sm">
+                                        @if(\App\Models\User::hasAccess('assets/assignments/show/{encryptedId}', true))
+                                        <a href="{{ route('assets.assignments.show', ['encryptedId' => Crypt::encrypt($assignment->id)]) }}" class="btn btn-info btn-sm">
                                             <i class="fas fa-eye"></i>
                                         </a>
+                                        @endif
                                         <!-- Return Button -->
-                                        @if(!$assignment->returned_date)
-                                            <button type="button" 
-                                                    class="btn btn-warning btn-sm" 
-                                                    data-toggle="modal" 
+                                        @if(!$assignment->returned_date && \App\Models\User::hasAccess('assets/assignments/{encryptedId}/return', true))
+                                            <button type="button"
+                                                    class="btn btn-warning btn-sm"
+                                                    data-toggle="modal"
                                                     data-target="#returnModal{{ $assignment->id }}">
                                                 <i class="fas fa-undo"></i> Return
                                             </button>
@@ -63,7 +73,7 @@
                                         <div class="modal fade" id="returnModal{{ $assignment->id }}" tabindex="-1" aria-labelledby="returnModalLabel{{ $assignment->id }}" aria-hidden="true">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
-                                                    <form action="{{ route('assets.assignments.return', $assignment->id) }}" method="POST">
+                                                    <form action="{{ route('assets.assignments.return', ['encryptedId' => Crypt::encrypt($assignment->id)]) }}" method="POST">
                                                         @csrf
                                                         <div class="modal-header">
                                                             <h5 class="modal-title" id="returnModalLabel{{ $assignment->id }}">Return Asset</h5>
@@ -111,7 +121,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <div class="mt-3">
                         {{ $assignments->links() }}
                     </div>

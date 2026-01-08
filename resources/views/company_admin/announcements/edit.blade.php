@@ -17,7 +17,7 @@
 				<h5>Edit Announcement</h5>
 			</div>
 			<div class="card-body">
-				<form method="POST" action="{{ route('announcements.update', $announcement->id) }}">
+				<form method="POST" action="{{ route('announcements.update', \Illuminate\Support\Facades\Crypt::encrypt($announcement->id)) }}">
 					@csrf
 					@method('PUT')
 					<div class="row">
@@ -37,7 +37,7 @@
 					<div class="row">
 						<div class="col-md-6 col-sm-6">
 					<div class="mb-3 form-group">
-						
+
 						<label for="expires_at" class="form-label">Expires At</label>
 						<input type="date" name="expires_at" id="expires_at" class="form-control" value="{{ old('expires_at', $announcement->expires_at ? \Carbon\Carbon::parse($announcement->expires_at)->format('Y-m-d') : '') }}">
 					</div>

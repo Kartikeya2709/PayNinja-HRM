@@ -16,7 +16,7 @@
                     <p><strong>Status:</strong> {{ ucfirst($request->status) }}</p>
                     <p><strong>Approved By:</strong> {{ $request->approver->name ?? 'N/A' }}</p>
 
-                    <a href="{{ route('regularization-requests.index') }}" class="btn btn-secondary">Back to List</a>
+                    {{-- <a href="{{ route('regularization-requests.index') }}" class="btn btn-secondary">Back to List</a> --}}
                 </div>
             </div>
         </div>

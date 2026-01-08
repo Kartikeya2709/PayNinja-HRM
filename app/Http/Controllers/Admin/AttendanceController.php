@@ -15,12 +15,33 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use function Symfony\Component\Translation\t;
 
 
 class AttendanceController extends Controller
 {
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
     /**
      * Display a listing of the attendance records.
      *
@@ -170,13 +191,13 @@ class AttendanceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($encryptedId)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance = $this->getModelFromEncryptedId($encryptedId, Attendance::class);
         // dd($attendance);
         // return response()->json($attendance);
         $attendance = [
-            'id' => $attendance->id,
+            'id' => $encryptedId,
             'employee_id' => $attendance->employee_id,
             'date' => $attendance->date->format('Y-m-d'),
             'check_in' => $attendance->check_in ? $attendance->check_in->format('H:i') : null,
@@ -195,15 +216,20 @@ class AttendanceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $encryptedId)
     {
         $companyId = auth()->user()->company_id;
 
         // Find the attendance record and ensure it belongs to the user's company
-        $attendance = Attendance::whereHas('employee', function ($q) use ($companyId) {
-            $q->where('company_id', $companyId);
-        })
-            ->findOrFail($id);
+        $attendance = $this->getModelFromEncryptedId($encryptedId, Attendance::class);
+
+        // Additional company check
+        if ($attendance->employee->company_id !== $companyId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized access to attendance record'
+            ], 403);
+        }
 
         $validated = $request->validate([
             // 'employee_id' => [
@@ -254,17 +280,24 @@ class AttendanceController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($encryptedId)
     {
         try {
             $companyId = auth()->user()->company_id;
 
-            // Find the attendance record and ensure it belongs to the user's company
-            $attendance = Attendance::withTrashed()
-                ->whereHas('employee', function ($q) use ($companyId) {
-                    $q->where('company_id', $companyId);
-                })
-                ->findOrFail($id);
+            // Find the attendance record using encrypted ID
+            $attendance = $this->getModelFromEncryptedId($encryptedId, Attendance::class);
+
+            // Additional company check
+            if ($attendance->employee->company_id !== $companyId) {
+                if (request()->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Unauthorized access to attendance record'
+                    ], 403);
+                }
+                return redirect()->back()->with('error', 'Unauthorized access to attendance record');
+            }
 
             // Force delete if already soft deleted, otherwise soft delete
             if ($attendance->trashed()) {
@@ -277,7 +310,7 @@ class AttendanceController extends Controller
 
             // Log the deletion
             \Log::info('Attendance deleted', [
-                'attendance_id' => $id,
+                'attendance_id' => $attendance->id,
                 'deleted_by' => auth()->id(),
                 'deleted_at' => now(),
                 'method' => request()->method()
@@ -295,7 +328,7 @@ class AttendanceController extends Controller
 
         } catch (\Exception $e) {
             \Log::error('Error deleting attendance: ' . $e->getMessage(), [
-                'attendance_id' => $id,
+                'attendance_id' => $encryptedId,
                 'user_id' => auth()->id(),
                 'trace' => $e->getTraceAsString()
             ]);

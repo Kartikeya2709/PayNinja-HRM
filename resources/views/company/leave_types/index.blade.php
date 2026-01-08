@@ -16,8 +16,12 @@
             <div class="card-1 card-header">
                 <h5 class="mb-0">Leave Types</h5>
                 <div class="section-header-button">
-                    <a href="{{ route('leaves.leave-types.create') }}" class="btn btn-primary">Add New Leave Type</a>
-                </div>
+                @if(\App\Models\User::hasAccess('leaves/leave-type-create', true))
+                <a href="{{ route('leaves.leave-types.create') }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Add New Leave Type">
+                    <i class="fas fa-plus"></i> Add New Leave Type
+                </a>
+                @endif
+            </div>
             </div>
 
             <div class="section-body">
@@ -56,7 +60,9 @@
                                                 <th>Default Days</th>
                                                 <th>Requires Attachment</th>
                                                 <th>Status</th>
-                                                <th>Action</th>
+                                                @if(\App\Models\User::hasAccess('leaves/leave-type-edit/{encryptedId}', true) || \App\Models\User::hasAccess('leaves/leave-type-delete/{encryptedId}', true))
+                                                <th>Actions</th>
+                                                @endif
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -79,10 +85,12 @@
                                                     <span class="badge badge-danger">Inactive</span>
                                                     @endif
                                                 </td>
+                                                @if(\App\Models\User::hasAccess('leaves/leave-type-edit/{encryptedId}', true) || \App\Models\User::hasAccess('leaves/leave-type-delete/{encryptedId}', true))
                                                 <td>
                                                     <div class="btn-group btn-group-sm">
-                                                    <a href="{{ route('leaves.leave-types.edit', $leaveType->id) }}"
-                                                        class="btn btn-outline-warning btn-sm action-btn rounded-end-0"
+                                                    @if(\App\Models\User::hasAccess('leaves/leave-type-edit/{encryptedId}', true))
+                                                    <a href="{{ route('leaves.leave-types.edit', \Illuminate\Support\Facades\Crypt::encrypt($leaveType->id)) }}"
+                                                        class="btn btn-outline-warning btn-sm action-btn {{ \App\Models\User::hasAccess('leaves/leave-type-delete/{encryptedId}', true) ? 'rounded-end-0' : 'rounded' }}"
                                                         data-id="{{ $leaveType->id }}" data-bs-toggle="tooltip"
                                                         data-bs-placement="top" title="Edit Leave Type"
                                                         aria-label="Edit">
@@ -92,29 +100,31 @@
                                                         <span class="spinner-border spinner-border-sm d-none"
                                                             role="status" aria-hidden="true"></span>
                                                     </a>
+                                                    @endif
 
+                                                    @if(\App\Models\User::hasAccess('leaves/leave-type-delete/{encryptedId}', true))
                                                     <form
-                                                        action="{{ route('leaves.leave-types.destroy', $leaveType->id) }}"
-                                                        method="POST" class="d-inline"
-                                                        onsubmit="return confirm('Are you sure you want to delete this leave type?');">
+                                                        action="{{ route('leaves.leave-types.destroy', \Illuminate\Support\Facades\Crypt::encrypt($leaveType->id)) }}"
+                                                            method="POST" class="d-inline"
+                                                            onsubmit="return confirm('Are you sure you want to delete this leave type?');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="btn btn-outline-danger btn-sm action-btn rounded-start-0"
+                                                            class="btn btn-outline-danger btn-sm action-btn {{ \App\Models\User::hasAccess('leaves/leave-type-edit/{encryptedId}', true) ? 'rounded-start-0' : 'rounded' }}"
                                                             data-id="{{ $leaveType->id ?? '' }}"
                                                             data-bs-toggle="tooltip" data-bs-placement="top"
-                                                            title="Delete Leave Type" aria-label="Delete"
-                                                            onclick="return confirm('Are you sure you want to delete this leave type?')">
+                                                            title="Delete Leave Type" aria-label="Delete">
                                                             <span class="btn-content">
                                                                 <i class="fas fa-trash"></i>
                                                             </span>
                                                             <span class="spinner-border spinner-border-sm d-none"
                                                                 role="status" aria-hidden="true"></span>
                                                         </button>
-
                                                     </form>
+                                                    @endif
                                                     </div>
                                                 </td>
+                                                @endif
                                             </tr>
                                             @endforeach
                                         </tbody>
@@ -131,8 +141,13 @@
 
 @push('scripts')
 <script>
-$(document).ready(function() {
+    // Initialize DataTable
     $('#leaveTypesTable').DataTable();
-});
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
 </script>
 @endpush

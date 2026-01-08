@@ -24,11 +24,11 @@
 
                         <div class="form-group">
                             <label for="asset_id">Asset <span class="text-danger">*</span></label>
-                            <select class="form-control @error('asset_id') is-invalid @enderror" 
+                            <select class="form-control @error('asset_id') is-invalid @enderror"
                                     id="asset_id" name="asset_id" required>
                                 <option value="">Select Asset</option>
                                 @foreach($assets as $asset)
-                                    <option value="{{ $asset->id }}" {{ old('asset_id') == $asset->id || request('asset') == $asset->id ? 'selected' : '' }}>
+                                    <option value="{{ $asset->id }}" {{ old('asset_id') == $asset->id ? 'selected' : '' }}>
                                         {{ $asset->name }} ({{ $asset->asset_code }})
                                     </option>
                                 @endforeach
@@ -37,7 +37,7 @@
 
                         <!-- <div class="form-group mt-3">
                             <label for="employee_id">Employee <span class="text-danger">*</span></label>
-                            <select class="form-control @error('employee_id') is-invalid @enderror" 
+                            <select class="form-control @error('employee_id') is-invalid @enderror"
                                     id="employee_id" name="employee_id" required>
                                 <option value="">Select Employee</option>
                                 @foreach($employees as $id => $name)
@@ -49,7 +49,7 @@
                         </div>
                           <div class="form-group mt-3">
                             <label for="employee_id">Employee <span class="text-danger">*</span></label>
-                            <select class="form-control @error('employee_id') is-invalid @enderror" 
+                            <select class="form-control @error('employee_id') is-invalid @enderror"
                                     id="employee_id" name="employee_id" required>
                                 <option value="">Select Employee</option>
                                 @foreach($employees as $id => $name)
@@ -59,9 +59,9 @@
                                 @endforeach
                             </select>
                         </div> -->
-                
+
                                <div class="row mt-3">
-  
+
 
     <!-- Department -->
     <div class="col-md-4 form-group">
@@ -97,19 +97,19 @@
 
 
 
-            
+
                         <div class="row mt-3">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="assigned_date">Assignment Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control @error('assigned_date') is-invalid @enderror" 
+                                    <input type="date" class="form-control @error('assigned_date') is-invalid @enderror"
                                            id="assigned_date" name="assigned_date" value="{{ old('assigned_date', date('Y-m-d')) }}" required>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="expected_return_date">Expected Return Date</label>
-                                    <input type="date" class="form-control @error('expected_return_date') is-invalid @enderror" 
+                                    <input type="date" class="form-control @error('expected_return_date') is-invalid @enderror"
                                            id="expected_return_date" name="expected_return_date" value="{{ old('expected_return_date') }}">
                                 </div>
                             </div>
@@ -129,7 +129,7 @@
 
                         <div class="form-group mt-3">
                             <label for="notes">Notes</label>
-                            <textarea class="form-control @error('notes') is-invalid @enderror" 
+                            <textarea class="form-control @error('notes') is-invalid @enderror"
                                       id="notes" name="notes" rows="3">{{ old('notes') }}</textarea>
                         </div>
 

@@ -7,9 +7,9 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h3 class="card-title">Employees with Assigned Assets</h3>
-                    <a href="{{ route('assets.dashboard') }}" class="btn btn-warning">
+                    {{-- <a href="{{ route('assets.dashboard') }}" class="btn btn-warning">
                         <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </a>
+                    </a> --}}
                 </div>
                 <div class="card-body">
                     @if(session('success'))

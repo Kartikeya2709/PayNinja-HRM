@@ -139,10 +139,10 @@
                 <i class="fas fa-arrow-left"></i> Back
             </a>
             @if($leaveRequest->status === 'pending')
-                <a href="{{ route('leaves.my-leaves.leave-requests.edit', $leaveRequest->id) }}" class="btn btn-warning">
+                <a href="{{ route('leaves.my-leaves.leave-requests.edit', \Illuminate\Support\Facades\Crypt::encrypt($leaveRequest->id)) }}" class="btn btn-warning">
                     <i class="fas fa-edit"></i> Edit
                 </a>
-                <form action="{{ route('leaves.my-leaves.leave-requests.cancel', $leaveRequest->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Cancel this leave request?');">
+                <form action="{{ route('leaves.my-leaves.leave-requests.cancel', \Illuminate\Support\Facades\Crypt::encrypt($leaveRequest->id)) }}" method="POST" class="d-inline" onsubmit="return confirm('Cancel this leave request?');">
                     @csrf
                     <button type="submit" class="btn btn-danger">
                         <i class="fas fa-times"></i> Cancel

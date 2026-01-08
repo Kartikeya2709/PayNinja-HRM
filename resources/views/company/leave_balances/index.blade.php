@@ -16,7 +16,11 @@
     <div class="card-1">
         <h5 class="mb-0">Leave Balances</h5>
         <div class="section-header-button">
-            <a href="{{ route('leaves.leave-balances.create') }}" class="btn btn-primary">Allocate Leave Balance</a>
+            @if(\App\Models\User::hasAccess('leaves/leave-balance-create', true))
+            <a href="{{ route('leaves.leave-balances.create') }}" class="btn btn-primary" data-bs-toggle="tooltip" data-bs-placement="top" title="Allocate Leave Balance">
+                <i class="fas fa-plus"></i> Allocate Leave Balance
+            </a>
+            @endif
         </div>
     </div>
 
@@ -125,7 +129,9 @@
                                         <th>Used Days</th>
                                         <th>Remaining Days</th>
                                         <th>Year</th>
-                                        <th>Action</th>
+                                        @if(\App\Models\User::hasAccess('leaves/leave-balance-edit/{leave_balance}', true))
+                                    <th>Action</th>
+                                    @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -145,7 +151,8 @@
                                             </td>
                                             <td>{{ $employee->year }}</td>
                                             <td>
-                                                <a href="{{ route('leaves.leave-balances.edit', $employee->balance_id) }}"
+                                                @if(\App\Models\User::hasAccess('leaves/leave-balance-edit/{encryptedId}', true))
+                                                <a href="{{ route('leaves.leave-balances.edit', \Illuminate\Support\Facades\Crypt::encrypt($employee->balance_id)) }}"
                                                 class="btn btn-outline-info btn-sm action-btn"
                                                 data-id="{{ $employee->balance_id }}"
                                                 data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Leave Balance" aria-label="Edit">
@@ -154,12 +161,12 @@
                                                 </span>
                                                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                 </a>
-
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="text-center">No leave balances found</td>
+                                            <td colspan="{{ \App\Models\User::hasAccess('leaves/leave-balance-edit/{leave_balance}', true) ? '8' : '7' }}" class="text-center">No leave balances found</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -169,15 +176,19 @@
                         <div class="row mt-4">
                             <div class="col-md-6">
                                 <div class="btn-group">
+                                    @if(\App\Models\User::hasAccess('leaves/leave-balances/export', true))
                                     <button type="button" id="exportExcel" class="btn btn-success btn-sm">
                                         <i class="fas fa-file-excel"></i> Export to Excel
                                     </button>
                                     <button type="button" id="exportPdf" class="btn btn-danger btn-sm ml-2">
                                         <i class="fas fa-file-pdf"></i> Export to PDF
                                     </button>
+                                    @endif
+                                    @if(\App\Models\User::hasAccess('leaves/leave-balances/reset', true))
                                     <button type="button" id="resetFilters" class="btn btn-secondary btn-sm ml-2">
                                         <i class="fas fa-undo"></i> Reset Filters
                                     </button>
+                                    @endif
                                 </div>
                             </div>
                             <div class="col-md-6">

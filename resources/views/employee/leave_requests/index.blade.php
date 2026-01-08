@@ -21,7 +21,15 @@ use Carbon\Carbon;
             <div class="card-1">
                 <h5 class="mb-0">My Leave Requests</h5>
                 <div class="section-header-button">
-                    <a href="{{ route('leaves.my-leaves.leave-requests.create') }}" class="btn btn-primary">Request Leave</a>
+                    @if(\App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-create', true))
+                    <a href="{{ route('leaves.my-leaves.leave-requests.create') }}"
+                       class="btn btn-primary"
+                       data-bs-toggle="tooltip"
+                       data-bs-placement="top"
+                       title="Request Leave">
+                        <i class="fas fa-plus"></i> Request Leave
+                    </a>
+                    @endif
                 </div>
             </div>
         </div>
@@ -134,47 +142,58 @@ use Carbon\Carbon;
                                         </td>
                                         <td>
                                             <div class="btn-group btn-group-sm">
-                                            <a href="{{ route('leaves.my-leaves.leave-requests.show', $request->id) }}"
-                                                class="btn btn-outline-info action-btn" data-id="{{ $request->id }}"
-                                                data-bs-toggle="tooltip" data-bs-placement="top" title="Show Request"
-                                                aria-label="Show">
-                                                <span class="btn-content">
-                                                    <i class="fas fa-eye"></i>
-                                                </span>
-                                                <span class="spinner-border spinner-border-sm d-none" role="status"
-                                                    aria-hidden="true"></span>
-                                            </a>
+                                                @if(\App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-show/{encryptedId}', true))
+                                                <a href="{{ route('leaves.my-leaves.leave-requests.show', \Illuminate\Support\Facades\Crypt::encrypt($request->id)) }}"
+                                                    class="btn btn-outline-info action-btn"
+                                                    data-id="{{ $request->id }}"
+                                                    data-bs-toggle="tooltip"
+                                                    data-bs-placement="top"
+                                                    title="View Leave Request"
+                                                    aria-label="View">
+                                                    <span class="btn-content">
+                                                        <i class="fas fa-eye"></i>
+                                                    </span>
+                                                    <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                        aria-hidden="true"></span>
+                                                </a>
+                                                @endif
 
-                                            @if($request->status === 'pending')
-                                            <a href="{{ route('leaves.my-leaves.leave-requests.edit', $request->id) }}"
-                                                class="btn btn-outline-warning edit-leave-request"
-                                                data-id="{{ $request->id }}" data-bs-toggle="tooltip"
-                                                data-bs-placement="top" title="Edit Request" aria-label="Edit">
-                                                <span class="btn-content">
-                                                    <i class="fas fa-edit"></i>
-                                                </span>
-                                                <span class="spinner-border spinner-border-sm d-none" role="status"
-                                                    aria-hidden="true"></span>
-                                            </a>
+                                                @if($request->status === 'pending')
+                                                    @if(\App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-edit/{encryptedId}', true))
+                                                    <a href="{{ route('leaves.my-leaves.leave-requests.edit', \Illuminate\Support\Facades\Crypt::encrypt($request->id)) }}"
+                                                        class="btn btn-outline-warning {{ !\App\Models\User::hasAccess('leaves/my-leaves/leave-requests/{encryptedId}/cancel', true) ? 'rounded-end' : '' }}"
+                                                        data-id="{{ $request->id }}"
+                                                        data-bs-toggle="tooltip"
+                                                        data-bs-placement="top"
+                                                        title="Edit Leave Request"
+                                                        aria-label="Edit">
+                                                        <span class="btn-content">
+                                                            <i class="fas fa-edit"></i>
+                                                        </span>
+                                                        <span class="spinner-border spinner-border-sm d-none" role="status"
+                                                            aria-hidden="true"></span>
+                                                    </a>
+                                                    @endif
 
-                                            <form action="{{ route('leaves.my-leaves.leave-requests.cancel', $request->id) }}"
-                                                method="POST" class="d-inline"
-                                                onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
-                                                @csrf
-                                                <button type="submit"
-                                                class="btn btn-outline-danger btn-sm action-btn rounded-start-0"
-                                                data-id="1"
-                                                data-bs-toggle="tooltip"
-                                                data-bs-placement="top"
-                                                title="Delete Category"
-                                                aria-label="Delete"
-                                                onclick="return confirm('Are you sure you want to delete this category?')">
-                                                <span class="btn-content">
-                                                <i class="fas fa-trash"></i>
-                                                </span>
-                                                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-                                                 </button>
-                                            </form>
+                                                    @if(\App\Models\User::hasAccess('leaves/my-leaves/leave-requests/{encryptedId}/cancel', true))
+                                                    <form action="{{ route('leaves.my-leaves.leave-requests.cancel', \Illuminate\Support\Facades\Crypt::encrypt($request->id)) }}"
+                                                        method="POST"
+                                                        class="d-inline"
+                                                        onsubmit="return confirm('Are you sure you want to cancel this leave request?');">
+                                                        @csrf
+                                                        <button type="submit"
+                                                            class="btn btn-outline-danger {{ !\App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-edit/{encryptedId}', true) ? 'rounded-start' : 'rounded-start-0' }}"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Cancel Leave Request"
+                                                            aria-label="Cancel">
+                                                            <span class="btn-content">
+                                                                <i class="fas fa-times"></i>
+                                                            </span>
+                                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                                                        </button>
+                                                    </form>
+                                                    @endif
                                             </div>
                                             @endif
                                         </td>
@@ -193,7 +212,12 @@ use Carbon\Carbon;
 
 @push('scripts')
 <script>
-$(document).ready(function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
     $('#leaveRequestsTable').DataTable({
         order: [
             [1, 'desc']

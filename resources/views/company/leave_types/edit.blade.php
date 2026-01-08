@@ -17,7 +17,7 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="{{ route('leaves.leave-types.update', $leaveType->id) }}" method="POST">
+                        <form action="{{ route('leaves.leave-types.update', \Illuminate\Support\Facades\Crypt::encrypt($leaveType->id)) }}" method="POST">
                         @csrf
                         @method('PUT')
 
