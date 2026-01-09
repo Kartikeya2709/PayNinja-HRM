@@ -9,9 +9,9 @@
                     <h4>{{ $handbook->title }}</h4>
                     <div class="">
                     {{-- <a href="{{ route('handbooks.index') }}" class="btn btn-secondary">Back to List</a> --}}
-                    @if(\App\Models\User::hasAccess('handbooks-list', true))
+                    {{-- @if(\App\Models\User::hasAccess('handbooks-list', true))
                         <a href="{{ route('handbooks.edit', Crypt::encrypt($handbook->id)) }}" class="btn btn-warning">Edit</a>
-                    @endif
+                    @endif --}}
                     </div>
                 </div>
                 <div class="card-body">

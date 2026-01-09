@@ -30,17 +30,22 @@
                                         <th>Status</th>
                                         <th>Created By</th>
                                         <th>Created At</th>
-                                        <th>Actions</th>
+                                        @if(\App\Models\User::hasAccess('employee-handbooks', true))
+                                            <th>Actions</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($handbooks as $handbook)
                                         <tr>
                                               <td>{{ $loop->iteration }}</td>
-                                            <td>
+                                              @if(\App\Models\User::hasAccess('employee-handbooks', true))
+                                                <td>
                                                 <a href="{{ route('handbooks.show', Crypt::encrypt($handbook->id)) }}">
                                                     {{ $handbook->title }}
                                                 </a>
+                                                  @endif
+                                              @if(\App\Models\User::hasAccess('handbooks/{handbookId}/download', true))
                                                 @if($handbook->file_path)
                                                     <a href="{{ route('handbooks.download', Crypt::encrypt($handbook->id)) }}"
                                                        class="btn btn-sm btn-outline-primary ms-2"
@@ -50,6 +55,7 @@
                                                        <i class="fas fa-download"></i>
                                                     </a>
                                                 @endif
+                                              @endif
                                             </td>
                                             <td>{{ $handbook->version }}</td>
                                             <td>{{ $handbook->department->name ?? 'All Departments' }}</td>
@@ -60,7 +66,9 @@
                                             </td>
                                             <td>{{ $handbook->creator->name ?? 'N/A' }}</td>
                                             <td>{{ $handbook->created_at->format('M d, Y') }}</td>
+
                                             <td>
+                                                 @if(\App\Models\User::hasAccess('handbook-show/{handbookId}', true))
                                                 <div class="btn-group btn-group-sm">
                                                     <!-- View Button -->
                                                     <a href="{{ route('handbooks.show', Crypt::encrypt($handbook->id)) }}"
@@ -72,9 +80,11 @@
                                                        </span>
                                                        <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                     </a>
-
+                                                    @endif
                                                     <!-- Acknowledge Button -->
+                                                     @if(\App\Models\User::hasAccess('handbooks/{handbookId}/acknowledge', true))
                                                     @if(!$handbook->isAcknowledgedBy(Auth::user()))
+
                                                         <form action="{{ route('handbooks.acknowledge', Crypt::encrypt($handbook->id)) }}" method="POST" class="d-inline-block">
                                                            @csrf
                                                            <button type="submit"
@@ -88,14 +98,15 @@
                                                            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
                                                            </button>
                                                         </form>
-                                                    @else
+                                                        @else
                                                         <button class="btn btn-success btn-sm" disabled title="Already Acknowledged">
                                                             <i class="fas fa-check-circle"></i> Acknowledged
                                                         </button>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </td>
-                                        </tr>
+                                            </tr>
                                     @empty
                                         <tr>
                                             <td colspan="8" class="text-center">

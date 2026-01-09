@@ -16,7 +16,7 @@
             <div class="card">
                 <div class="card-header justify-content-center">
                     <h4 class="mb-3">HR Handbooks</h4>
-                    @if(\App\Models\User::hasAccess('handbooks-list', true))
+                    @if(\App\Models\User::hasAccess('handbook-create', true))
                         <a href="{{ route('handbooks.create') }}" class="btn btn-primary">Create New Handbook</a>
                     @endif
                 </div>
@@ -45,6 +45,7 @@
                                             {{-- <a href="{{ route('handbooks.show', $handbook) }}"> --}}
                                                 {{ $handbook->title }}
                                             {{-- </a> --}}
+                                            @if(\App\Models\User::hasAccess('handbooks/{handbookId}/download', true))
                                             @if($handbook->file_path)
                                                 <a href="{{ route('handbooks.download', Crypt::encrypt($handbook->id)) }}"
                                                    class="btn btn-sm btn-outline-primary ms-2"
@@ -53,6 +54,7 @@
                                                    title="Download Handbook PDF">
                                                    <i class="fas fa-download"></i>
                                                 </a>
+                                            @endif
                                             @endif
                                         </td>
                                         <td>{{ $handbook->version }}</td>
