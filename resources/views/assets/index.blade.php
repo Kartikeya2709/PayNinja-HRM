@@ -40,7 +40,12 @@ use Illuminate\Support\Facades\Crypt;
                                     <th>Date Assigned</th>
                                     <th>Current Assignment</th>
                                     <th>Condition</th>
+                                    @if(\App\Models\User::hasAccess('assets/show/{encryptedId}', true) ||
+                                        \App\Models\User::hasAccess('assets/{encryptedId}/edit', true) ||
+                                        \App\Models\User::hasAccess('assets/create', true) ||
+                                        \App\Models\User::hasAccess('assets/{encryptedId}/delete', true))
                                     <th>Actions</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,7 +74,13 @@ use Illuminate\Support\Facades\Crypt;
                                         {{-- {{ optional($asset->currentAssignment)->condition_on_assignment ?? '-' }}    --}}
                                     </td>
                                     </td>
+                                    @if(\App\Models\User::hasAccess('assets/show/{encryptedId}', true) ||
+                                        \App\Models\User::hasAccess('assets/{encryptedId}/edit', true) ||
+                                        \App\Models\User::hasAccess('assets/create', true) ||
+                                        \App\Models\User::hasAccess('assets/{encryptedId}/delete', true))
+                                    
                                     <td>
+                                        
                                         <div class="btn-group btn-group-sm">
                                         <!-- View Asset -->
                                         @if(\App\Models\User::hasAccess('assets/show/{encryptedId}',true))
@@ -123,6 +134,7 @@ use Illuminate\Support\Facades\Crypt;
                                         @endif
                                         </div>
                                     </td>
+                                    @endif
                                     {{-- {{-- <td>
                                         <!-- View Asset -->
                                         <a href="{{ route('assets.show', ['encryptedId' => Crypt::encrypt($asset->id)]) }}" class="btn btn-info btn-sm">

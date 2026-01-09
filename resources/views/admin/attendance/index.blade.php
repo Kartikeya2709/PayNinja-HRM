@@ -165,7 +165,9 @@
                                         <th>Check Out</th>
                                         <th>Status</th>
                                         <th>Hours</th>
+                                        @if($canEditAttendance || $canDeleteAttendance)
                                         <th>Actions</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -242,6 +244,8 @@
                                             <span class="text-muted">-:--</span>
                                             @endif
                                         </td>
+                                        @if($canEditAttendance || $canDeleteAttendance)
+                                        
                                         <td>
                                             <div class="btn-group btn-group-sm">
                                                 @if($canEditAttendance)
@@ -271,6 +275,7 @@
                                                 @endif
                                             </div>
                                         </td>
+                                        @endif
                                     </tr>
                                     @empty
                                     <tr>

@@ -32,7 +32,10 @@
                                     <th>Status</th>
                                     <th>Created By</th>
                                     <th>Created At</th>
-                                    @if(\App\Models\User::hasAccess('handbooks-list', true))
+                                     @if(\App\Models\User::hasAccess('handbook-show/{handbookId}', true) ||
+                                             \App\Models\User::hasAccess('handbook-edit/{handbookId}', true) ||
+                                             \App\Models\User::hasAccess('handbook-delete/{handbookId}', true))
+                                       <td>
                                         <th>Actions</th>
                                     @endif
                                 </tr>

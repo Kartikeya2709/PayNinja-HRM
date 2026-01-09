@@ -114,7 +114,9 @@
                                             <th>End Date</th>
                                             <th>Days</th>
                                             <th>Status</th>
+                                            @if(\App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}', true) || \App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}/approve', true) || \App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}/reject', true))
                                             <th>Actions</th>
+                                            @endif
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -133,6 +135,7 @@
                                                     {{ ucfirst($request->status) }}
                                                 </span>
                                             </td>
+                                            @if(\App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}', true) || \App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}/approve', true) || \App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}/reject', true))
                                             <td>
                                                 <div class="btn-group btn-group-sm">
                                                     @if(\App\Models\User::hasAccess('leaves/leave-requests/{encryptedId}', true))
@@ -176,6 +179,7 @@
                                                     @endif
                                                 </div>
                                             </td>
+                                            @endif
                                         </tr>
                                         @empty
                                         <tr>

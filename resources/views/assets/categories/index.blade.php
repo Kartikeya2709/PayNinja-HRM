@@ -29,7 +29,11 @@ use Illuminate\Support\Facades\Crypt;
                                     <th>Name</th>
                                     <th>Description</th>
                                     <th>Total Assets</th>
+                                    @if(\App\Models\User::hasAccess('assets/asset-category-show/{encryptedId}', true) ||
+                                        \App\Models\User::hasAccess('assets/asset-category-edit/{encryptedId}', true) ||
+                                        \App\Models\User::hasAccess('assets/asset-category-delete/{encryptedId}', true))
                                     <th>Actions</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,6 +42,9 @@ use Illuminate\Support\Facades\Crypt;
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->description }}</td>
                                     <td>{{ $category->assets_count }}</td>
+                                    @if(\App\Models\User::hasAccess('assets/asset-category-show/{encryptedId}', true) ||
+                                        \App\Models\User::hasAccess('assets/asset-category-edit/{encryptedId}', true) ||
+                                        \App\Models\User::hasAccess('assets/asset-category-delete/{encryptedId}', true))
                                     <td>
                                         <div class="btn-group btn-group-sm">
                                           @if(\App\Models\User::hasAccess('assets/asset-category-show/{encryptedId}', true))
@@ -83,6 +90,7 @@ use Illuminate\Support\Facades\Crypt;
                                         </div>
 
                                     </td>
+                                    @endif
                                 </tr>
                                 @empty
                                 <tr>

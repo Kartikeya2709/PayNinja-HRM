@@ -109,7 +109,11 @@ use Carbon\Carbon;
                                         <th>Days</th>
                                         <th>Working Days</th>
                                         <th>Status</th>
+                                        @if(\App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-show/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-edit/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('leaves/my-leaves/leave-requests/{encryptedId}/cancel', true))
                                         <th>Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -140,7 +144,12 @@ use Carbon\Carbon;
                                                 {{ ucfirst($request->status) }}
                                             </span>
                                         </td>
+                                        @if(\App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-show/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-edit/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('leaves/my-leaves/leave-requests/{encryptedId}/cancel', true))
+                                        
                                         <td>
+                                        
                                             <div class="btn-group btn-group-sm">
                                                 @if(\App\Models\User::hasAccess('leaves/my-leaves/my-leave-request-show/{encryptedId}', true))
                                                 <a href="{{ route('leaves.my-leaves.leave-requests.show', \Illuminate\Support\Facades\Crypt::encrypt($request->id)) }}"
@@ -197,6 +206,8 @@ use Carbon\Carbon;
                                             </div>
                                             @endif
                                         </td>
+                                        @endif
+                                       
                                     </tr>
                                     @endforeach
                                 </tbody>

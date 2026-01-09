@@ -35,7 +35,11 @@
                                         <th>Description</th>
                                         <th>Date</th>
                                         <th>Status</th>
+                                         @if(\App\Models\User::hasAccess('announcement-show/{announcement}', true) ||
+                                             \App\Models\User::hasAccess('announcement-edit/{announcement}', true) ||
+                                             \App\Models\User::hasAccess('announcement-delete/{announcement}', true))
                                         <th>Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
 
@@ -66,16 +70,20 @@
                                             @endphp
                                             <span class="badge bg-{{ $status[1] }}">{{ $status[0] }}</span>
                                         </td>
-
+                                             @if(\App\Models\User::hasAccess('announcement-show/{announcement}', true) ||
+                                             \App\Models\User::hasAccess('announcement-edit/{announcement}', true) ||
+                                             \App\Models\User::hasAccess('announcement-delete/{announcement}', true))
+                                        
+                                       
                                         <td>
                                             <div class="btn-group btn-group-sm">
 
                                                 {{-- SHOW --}}
                                                 @if(\App\Models\User::hasAccess('announcement-show/{announcement}', true))
                                                 <a href="{{ route('announcements.show', $encryptedId) }}"
-                                                   class="btn btn-outline-info btn-sm"
+                                                   class="btn btn-outline-info btn-sm action-btn"
                                                    title="Show Announcement">
-                                                    <i class="fas fa-eye"></i>
+                                                   <i class="fas fa-eye"></i>
                                                 </a>
                                                 @endif
 
@@ -83,7 +91,7 @@
                                                     @if(\App\Models\User::hasAccess('announcement-edit/{announcement}', true))
                                                         {{-- EDIT --}}
                                                         <a href="{{ route('announcements.edit', $encryptedId) }}"
-                                                           class="btn btn-outline-primary btn-sm"
+                                                           class="btn btn-outline-primary btn-sm action-btn"
                                                            title="Edit Announcement">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
@@ -97,7 +105,7 @@
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit"
-                                                                    class="btn btn-outline-danger btn-sm rounded-start-0"
+                                                                    class="btn btn-outline-danger btn-sm rounded-start-0 action-btn"
                                                                     title="Delete Announcement"
                                                                     onclick="return confirm('Delete this announcement?')">
                                                                 <i class="fas fa-trash"></i>
@@ -108,6 +116,7 @@
 
                                             </div>
                                         </td>
+                                        @endif
                                     </tr>
                                     @empty
                                     <tr>

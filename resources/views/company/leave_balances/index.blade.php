@@ -129,9 +129,9 @@
                                         <th>Used Days</th>
                                         <th>Remaining Days</th>
                                         <th>Year</th>
-                                        @if(\App\Models\User::hasAccess('leaves/leave-balance-edit/{leave_balance}', true))
-                                    <th>Action</th>
-                                    @endif
+                                         @if(\App\Models\User::hasAccess('leaves/leave-balance-edit/{encryptedId}', true))
+                                        <th>Action</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -150,6 +150,7 @@
                                                 <span class="badge badge-{{ $badgeClass }}">{{ $remainingDays }}</span>
                                             </td>
                                             <td>{{ $employee->year }}</td>
+                                            @if(\App\Models\User::hasAccess('leaves/leave-balance-edit/{encryptedId}', true))
                                             <td>
                                                 @if(\App\Models\User::hasAccess('leaves/leave-balance-edit/{encryptedId}', true))
                                                 <a href="{{ route('leaves.leave-balances.edit', \Illuminate\Support\Facades\Crypt::encrypt($employee->balance_id)) }}"
@@ -163,6 +164,7 @@
                                                 </a>
                                                 @endif
                                             </td>
+                                            @endif
                                         </tr>
                                     @empty
                                         <tr>

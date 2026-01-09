@@ -2140,10 +2140,7 @@ color: #fff;
    margin-bottom: 10px;
     margin-top: 10px;
 }
-.container{
-  padding-left: 0px!important;
-  padding-right: 0px!important;
-}
+
 .alert.alert-warning {
   background-color: #ffa426;
    margin-bottom: 10px;
@@ -5261,10 +5258,16 @@ html,body{
 .sidebar-menu li.active > a i{
 color: #fff;
 }
+.main-sidebar .sidebar-menu li.active > ul.dropdown-menu li a:hover i{
+color: #ff9705;
+}
+.main-sidebar .sidebar-menu li.active > ul.dropdown-menu li a:hover div{
+  font-weight: 400;
+}
 .main-sidebar .sidebar-menu li.active a:hover {
     background: #ff9705;
     color: white !important;
-    box-shadow: 0 4px 12px rgba(255, 151, 5, 0.6);
+    
     margin-bottom: 10px !important;
 }
 .main-sidebar .sidebar-menu li a:hover {

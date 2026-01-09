@@ -1,6 +1,6 @@
 @if ($requests->count() > 0)
     <div class="table-responsive">
-        <table class="table table-bordered table-hover mt-4">
+        <table class="table table-bordered table-hover">
             <thead>
                 <tr>
                     @if ($show_actions)
@@ -40,7 +40,9 @@
                             @if (isset($canEditRegularization) && $canEditRegularization)
                                 <td>
                                     <a href="{{ route('regularization-requests.edit', Crypt::encrypt($request->id)) }}"
-                                        class="btn btn-primary btn-sm">Edit</a>
+                                    class="btn btn-outline-primary btn-sm action-btn" title="Edit Request">
+                                    <i class="fas fa-edit"></i>
+                                    </a>
                                 </td>
                             @else
                                 <td></td>
