@@ -254,12 +254,12 @@ $(document).ready(function() {
     // Edit slug button click
     $('.edit-slug-btn').on('click', function() {
         var slugId = $(this).data('id');
-        var modalBody = $('#editSlugModalBody');
+        var modalBody = $('#editSlugModalBody');    
 
         modalBody.html('<div class="text-center p-4"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>');
 
         $.ajax({
-            url: '{{ route("superadmin.setting.slug.edit", ":id") }}'.replace(':id', slugId),
+            url: '{{ route("superadmin.setting.slug.visible", ":id") }}'.replace(':id', slugId),
             type: 'GET',
             success: function(response) {
                 modalBody.html(response);

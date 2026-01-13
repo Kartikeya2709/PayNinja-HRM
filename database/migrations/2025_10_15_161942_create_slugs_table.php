@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('slugs', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);
-            $table->string('slug', 50)->unique();
+            $table->string('slug', 255)->unique();
             $table->string('icon', 50)->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
             $table->tinyInteger('is_visible')->default(0);

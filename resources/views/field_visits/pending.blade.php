@@ -30,7 +30,8 @@
                                     <td>{{ $visit->scheduled_start_datetime->format('M d, Y H:i') }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
-                                        <a href="{{ route('field-visits.show', $visit) }}"
+                                        @if(\App\Models\User::hasAccess('field-visit-show/{encryptedId}', true))
+                                        <a href="{{ route('field-visits.show', Crypt::encrypt($visit->id)) }}"
                                             class="btn btn-outline-info btn-sm action-btn"
                                             data-id="{{ $visit->id ?? '' }}" data-bs-toggle="tooltip"
                                             data-bs-placement="top" title="View Visit" aria-label="View">
@@ -40,8 +41,10 @@
                                             <span class="spinner-border spinner-border-sm d-none" role="status"
                                                 aria-hidden="true"></span>
                                         </a>
+                                        @endif
 
-                                        <form action="{{ route('field-visits.approve', $visit) }}" method="POST"
+                                        @if(\App\Models\User::hasAccess('field-visits/{encryptedId}/approve', true))
+                                        <form action="{{ route('field-visits.approve', Crypt::encrypt($visit->id)) }}" method="POST"
                                             style="display: inline;">
                                             @csrf
                                             @method('POST')
@@ -56,7 +59,9 @@
                                             </button>
 
                                         </form>
-                                        <form action="{{ route('field-visits.reject', $visit) }}" method="POST"
+                                        @endif
+                                        @if(\App\Models\User::hasAccess('field-visits/{encryptedId}/reject', true))
+                                        <form action="{{ route('field-visits.reject', Crypt::encrypt($visit->id)) }}" method="POST"
                                             style="display: inline;">
                                             @csrf
                                             @method('POST')
@@ -71,6 +76,7 @@
                                             </button>
 
                                         </form>
+                                        @endif
                                         </div>
                                     </td>
                                 </tr>

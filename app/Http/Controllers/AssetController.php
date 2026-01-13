@@ -48,8 +48,9 @@ class AssetController extends Controller
     {
         $categories = AssetCategory::where('company_id', Auth::user()->company_id)
             ->pluck('name', 'id');
+        $asset = null; // For form reuse
 
-        return view('assets.create', compact('categories'));
+        return view('assets.create', compact('categories' , 'asset' ));
     }
 
     /**

@@ -90,7 +90,7 @@ class AllSectionsSlugsSeeder extends Seeder
                     ['name' => 'Template Attendance', 'slug' => 'attendance-management/attendance/template', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 19],
                     ['name' => 'Attendance Settings', 'slug' => 'attendance-management/attendance/settings', 'icon' => 'fas fa-cog', 'is_visible' => 1, 'sort_order' => 20],
                     ['name' => 'Attendance-View Settings', 'slug' => 'attendance-management/attendance/settings/view', 'icon' => 'fas fa-cog', 'is_visible' => 1, 'sort_order' => 21],
-                    ['name' => 'Attendance-Put Settings', 'slug' => 'attendance-management/attendance/settings/put', 'icon' => 'fas fa-cog', 'is_visible' => 0  , 'sort_order' => 22],
+                    ['name' => 'Attendance-Put Settings', 'slug' => 'attendance-management/attendance/settings/put', 'icon' => 'fas fa-cog', 'is_visible' => 0, 'sort_order' => 22],
                     ['name' => 'Attendance-Api office Timings Settings', 'slug' => 'attendance-management/attendance/api/office-timings', 'icon' => 'fas fa-cog', 'is_visible' => 0, 'sort_order' => 23],
 
                     // Employee Attendance
@@ -167,30 +167,30 @@ class AllSectionsSlugsSeeder extends Seeder
                 'is_visible' => 1,
                 'sort_order' => 5,
                 'children' => [
-                ['name' => 'Designations', 'slug' => 'designations-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
-                ['name' => 'Create Designation', 'slug' => 'designation-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 2],
-                ['name' => 'Store Designation', 'slug' => 'designation-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
-                ['name' => 'Edit Designation', 'slug' => 'designation-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 4],
-                ['name' => 'Update Designation', 'slug' => 'designation-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 5],
-                ['name' => 'Delete Designation', 'slug' => 'designation-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 6],
-                // -----------------------------
-                // EMPLOYMENT TYPES
-                // -----------------------------
-                ['name' => 'Employment Types', 'slug' => 'employment-types-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 7],
-                ['name' => 'Create Employment Type', 'slug' => 'employment-type-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 8],
-                ['name' => 'Store Employment Type', 'slug' => 'employment-type-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 9],
-                ['name' => 'Edit Employment Type', 'slug' => 'employment-type-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 10],
-                ['name' => 'Update Employment Type', 'slug' => 'employment-type-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 11],
-                // -----------------------------
-                // DEPARTMENTS
-                // -----------------------------
-                ['name' => 'Departments', 'slug' => 'departments-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 12],
-                ['name' => 'Create Department', 'slug' => 'department-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 13],
-                ['name' => 'Store Department', 'slug' => 'department-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 14],
-                ['name' => 'Edit Department', 'slug' => 'department-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 15],
-                ['name' => 'Update Department', 'slug' => 'department-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 16],
-                ['name' => 'Delete Department', 'slug' => 'department-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 17],
-                    ]
+                    ['name' => 'Designations', 'slug' => 'designations-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Create Designation', 'slug' => 'designation-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 2],
+                    ['name' => 'Store Designation', 'slug' => 'designation-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Edit Designation', 'slug' => 'designation-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Update Designation', 'slug' => 'designation-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Delete Designation', 'slug' => 'designation-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 6],
+                    // -----------------------------
+                    // EMPLOYMENT TYPES
+                    // -----------------------------
+                    ['name' => 'Employment Types', 'slug' => 'employment-types-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 7],
+                    ['name' => 'Create Employment Type', 'slug' => 'employment-type-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Store Employment Type', 'slug' => 'employment-type-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 9],
+                    ['name' => 'Edit Employment Type', 'slug' => 'employment-type-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 10],
+                    ['name' => 'Update Employment Type', 'slug' => 'employment-type-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 11],
+                    // -----------------------------
+                    // DEPARTMENTS
+                    // -----------------------------
+                    ['name' => 'Departments', 'slug' => 'departments-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 12],
+                    ['name' => 'Create Department', 'slug' => 'department-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 13],
+                    ['name' => 'Store Department', 'slug' => 'department-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 14],
+                    ['name' => 'Edit Department', 'slug' => 'department-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 15],
+                    ['name' => 'Update Department', 'slug' => 'department-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 16],
+                    ['name' => 'Delete Department', 'slug' => 'department-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 17],
+                ]
             ],
 
             // 6. SHIFT MANAGEMENT
@@ -202,15 +202,15 @@ class AllSectionsSlugsSeeder extends Seeder
                 'is_visible' => 1,
                 'sort_order' => 6,
                 'children' => [
-                ['name' => 'Shifts', 'slug' => 'shifts-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
-                ['name' => 'Create Shift', 'slug' => 'shift-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 2],
-                ['name' => 'Store Shift', 'slug' => 'shift-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
-                ['name' => 'Show Shift', 'slug' => 'shift-show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
-                ['name' => 'Edit Shift', 'slug' => 'shift-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
-                ['name' => 'Update Shift', 'slug' => 'shift-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 6],
-                ['name' => 'Delete Shift', 'slug' => 'shift-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 7],
-                ['name' => 'Assign Shift', 'slug' => 'shifts/{encryptedId}/assign', 'icon' => 'fas fa-user-plus', 'is_visible' => 0, 'sort_order' => 8],
-                ['name' => 'Assign Shift Store', 'slug' => 'shifts/{encryptedId}/assign', 'icon' => 'fas fa-user-check', 'is_visible' => 0, 'sort_order' => 9],
+                    ['name' => 'Shifts', 'slug' => 'shifts-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Create Shift', 'slug' => 'shift-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 2],
+                    ['name' => 'Store Shift', 'slug' => 'shift-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Show Shift', 'slug' => 'shift-show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Edit Shift', 'slug' => 'shift-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Update Shift', 'slug' => 'shift-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Delete Shift', 'slug' => 'shift-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Assign Shift', 'slug' => 'shifts/{encryptedId}/assign', 'icon' => 'fas fa-user-plus', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Assign Shift Store', 'slug' => 'shifts/{encryptedId}/assign', 'icon' => 'fas fa-user-check', 'is_visible' => 0, 'sort_order' => 9],
                 ]
             ],
 
@@ -225,41 +225,41 @@ class AllSectionsSlugsSeeder extends Seeder
                 'children' => [
 
                     // -----------------------------
-                // ASSETS
-                // -----------------------------
-                ['name' => 'Assets', 'slug' => 'assets/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 18],
-                ['name' => 'Create Asset', 'slug' => 'assets/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 19],
-                ['name' => 'Store Asset', 'slug' => 'assets/store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 20],
-                ['name' => 'Show Asset', 'slug' => 'assets/show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 21],
-                ['name' => 'Edit Asset', 'slug' => 'assets/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 22],
-                ['name' => 'Update Asset', 'slug' => 'assets/{encryptedId}/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 23],
-                ['name' => 'Delete Asset', 'slug' => 'assets/{encryptedId}/delete', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 24],
-                ['name' => 'Asset Dashboard', 'slug' => 'assets/dashboard', 'icon' => 'fas fa-tachometer-alt', 'is_visible' => 1, 'sort_order' => 25],
-                ['name' => 'Asset Employees', 'slug' => 'assets/employees', 'icon' => 'fas fa-users', 'is_visible' => 0, 'sort_order' => 26],
-                ['name' => 'Own Assets', 'slug' => 'assets/own', 'icon' => 'fas fa-user', 'is_visible' => 0, 'sort_order' => 27],
-                // -----------------------------
-                // ASSET CATEGORIES
-                // -----------------------------
-                ['name' => 'Asset Categories', 'slug' => 'assets/asset-categories-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 28],
-                ['name' => 'Create Asset Category', 'slug' => 'assets/asset-category-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 29],
-                ['name' => 'Store Asset Category', 'slug' => 'assets/asset-category-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 30],
-                ['name' => 'Show Asset Category', 'slug' => 'assets/asset-category-show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 31],
-                ['name' => 'Edit Asset Category', 'slug' => 'assets/asset-category-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 32],
-                ['name' => 'Update Asset Category', 'slug' => 'assets/asset-category-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 33],
-                ['name' => 'Delete Asset Category', 'slug' => 'assets/asset-category-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 34],
-                // -----------------------------
-                // ASSET ASSIGNMENTS
-                // -----------------------------
-                ['name' => 'Asset Assignments', 'slug' => 'assets/assignments', 'icon' => 'fas fa-exchange-alt', 'is_visible' => 1, 'sort_order' => 35],
-                ['name' => 'Create Asset Assignment', 'slug' => 'assets/assignments/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 36],
-                ['name' => 'Store Asset Assignment', 'slug' => 'assets/assignments/store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 37],
-                ['name' => 'Show Asset Assignment', 'slug' => 'assets/assignments/show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 38],
-                ['name' => 'Edit Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 39],
-                ['name' => 'Update Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 40],
-                ['name' => 'Delete Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/delete', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 41],
-                ['name' => 'Return Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/return', 'icon' => 'fas fa-undo', 'is_visible' => 0, 'sort_order' => 42],
-                ['name' => 'Recent Asset Assignments', 'slug' => 'assets/assignments/recent', 'icon' => 'fas fa-clock', 'is_visible' => 0, 'sort_order' => 43],
-                    ]
+                    // ASSETS
+                    // -----------------------------
+                    ['name' => 'Assets', 'slug' => 'assets/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 18],
+                    ['name' => 'Create Asset', 'slug' => 'assets/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 19],
+                    ['name' => 'Store Asset', 'slug' => 'assets/store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 20],
+                    ['name' => 'Show Asset', 'slug' => 'assets/show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 21],
+                    ['name' => 'Edit Asset', 'slug' => 'assets/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 22],
+                    ['name' => 'Update Asset', 'slug' => 'assets/{encryptedId}/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 23],
+                    ['name' => 'Delete Asset', 'slug' => 'assets/{encryptedId}/delete', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 24],
+                    ['name' => 'Asset Dashboard', 'slug' => 'assets/dashboard', 'icon' => 'fas fa-tachometer-alt', 'is_visible' => 1, 'sort_order' => 25],
+                    ['name' => 'Asset Employees', 'slug' => 'assets/employees', 'icon' => 'fas fa-users', 'is_visible' => 0, 'sort_order' => 26],
+                    ['name' => 'Own Assets', 'slug' => 'assets/own', 'icon' => 'fas fa-user', 'is_visible' => 0, 'sort_order' => 27],
+                    // -----------------------------
+                    // ASSET CATEGORIES
+                    // -----------------------------
+                    ['name' => 'Asset Categories', 'slug' => 'assets/asset-categories-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 28],
+                    ['name' => 'Create Asset Category', 'slug' => 'assets/asset-category-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 29],
+                    ['name' => 'Store Asset Category', 'slug' => 'assets/asset-category-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 30],
+                    ['name' => 'Show Asset Category', 'slug' => 'assets/asset-category-show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 31],
+                    ['name' => 'Edit Asset Category', 'slug' => 'assets/asset-category-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 32],
+                    ['name' => 'Update Asset Category', 'slug' => 'assets/asset-category-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 33],
+                    ['name' => 'Delete Asset Category', 'slug' => 'assets/asset-category-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 34],
+                    // -----------------------------
+                    // ASSET ASSIGNMENTS
+                    // -----------------------------
+                    ['name' => 'Asset Assignments', 'slug' => 'assets/assignments', 'icon' => 'fas fa-exchange-alt', 'is_visible' => 1, 'sort_order' => 35],
+                    ['name' => 'Create Asset Assignment', 'slug' => 'assets/assignments/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 36],
+                    ['name' => 'Store Asset Assignment', 'slug' => 'assets/assignments/store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 37],
+                    ['name' => 'Show Asset Assignment', 'slug' => 'assets/assignments/show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 38],
+                    ['name' => 'Edit Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 39],
+                    ['name' => 'Update Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 40],
+                    ['name' => 'Delete Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/delete', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 41],
+                    ['name' => 'Return Asset Assignment', 'slug' => 'assets/assignments/{encryptedId}/return', 'icon' => 'fas fa-undo', 'is_visible' => 0, 'sort_order' => 42],
+                    ['name' => 'Recent Asset Assignments', 'slug' => 'assets/assignments/recent', 'icon' => 'fas fa-clock', 'is_visible' => 0, 'sort_order' => 43],
+                ]
             ],
 
             // 8. HOLIDAYS & HOLIDAYS MANAGEMENT
@@ -271,15 +271,15 @@ class AllSectionsSlugsSeeder extends Seeder
                 'is_visible' => 1,
                 'sort_order' => 8,
                 'children' => [
-                   ['name' => 'Academic Holidays', 'slug' => 'academic-holidays', 'icon' => 'fas fa-calendar', 'is_visible' => 1, 'sort_order' => 1],
-                   ['name' => 'Employee Holidays', 'slug' => 'academic-holidays/employee-index', 'icon' => 'fas fa-calendar-alt', 'is_visible' => 1, 'sort_order' => 2],
-                   ['name' => 'Create Holiday', 'slug' => 'academic-holidays/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 3],
-                   ['name' => 'Store Holiday', 'slug' => 'academic-holidays/store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 4],
-                   ['name' => 'Edit Holiday', 'slug' => 'academic-holidays/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
-                   ['name' => 'Update Holiday', 'slug' => 'academic-holidays/{encryptedId}/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 6],
-                   ['name' => 'Delete Holiday', 'slug' => 'academic-holidays/{encryptedId}/delete', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 7],
-                   ['name' => 'Import Holidays', 'slug' => 'academic-holidays/import', 'icon' => 'fas fa-file-import', 'is_visible' => 0, 'sort_order' => 8],
-                   ['name' => 'Download Template', 'slug' => 'academic-holidays/template', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 9],
+                    ['name' => 'Academic Holidays', 'slug' => 'academic-holidays', 'icon' => 'fas fa-calendar', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Employee Holidays', 'slug' => 'academic-holidays/employee-index', 'icon' => 'fas fa-calendar-alt', 'is_visible' => 1, 'sort_order' => 2],
+                    ['name' => 'Create Holiday', 'slug' => 'academic-holidays/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Store Holiday', 'slug' => 'academic-holidays/store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Edit Holiday', 'slug' => 'academic-holidays/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Update Holiday', 'slug' => 'academic-holidays/{encryptedId}/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Delete Holiday', 'slug' => 'academic-holidays/{encryptedId}/delete', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Import Holidays', 'slug' => 'academic-holidays/import', 'icon' => 'fas fa-file-import', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Download Template', 'slug' => 'academic-holidays/template', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 9],
                 ]
             ],
 
@@ -292,18 +292,185 @@ class AllSectionsSlugsSeeder extends Seeder
                 'is_visible' => 1,
                 'sort_order' => 9,
                 'children' => [
-                 ['name' => 'Employee Handbooks', 'slug' => 'employee-handbooks', 'icon' => 'fas fa-book-open', 'is_visible' => 1, 'sort_order' => 1],
-                 ['name' => 'Admin Handbooks', 'slug' => 'handbooks-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 2],
-                 ['name' => 'Create Handbook', 'slug' => 'handbook-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 3],
-                 ['name' => 'Store Handbook', 'slug' => 'handbook-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
-                 ['name' => 'Show Handbook', 'slug' => 'handbook-show/{handbookId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
-                 ['name' => 'Edit Handbook', 'slug' => 'handbook-edit/{handbookId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
-                 ['name' => 'Update Handbook', 'slug' => 'handbook-update/{handbookId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 6],
-                 ['name' => 'Delete Handbook', 'slug' => 'handbook-delete/{handbookId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 7],
-                 ['name' => 'Download Handbook', 'slug' => 'handbooks/{handbookId}/download', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 8],
-                 ['name' => 'Acknowledge Handbook', 'slug' => 'handbooks/{handbookId}/acknowledge', 'icon' => 'fas fa-check-circle', 'is_visible' => 0, 'sort_order' => 9],
+                    ['name' => 'Employee Handbooks', 'slug' => 'employee-handbooks', 'icon' => 'fas fa-book-open', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Admin Handbooks', 'slug' => 'handbooks-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 2],
+                    ['name' => 'Create Handbook', 'slug' => 'handbook-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Store Handbook', 'slug' => 'handbook-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Show Handbook', 'slug' => 'handbook-show/{handbookId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Edit Handbook', 'slug' => 'handbook-edit/{handbookId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Update Handbook', 'slug' => 'handbook-update/{handbookId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Delete Handbook', 'slug' => 'handbook-delete/{handbookId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Download Handbook', 'slug' => 'handbooks/{handbookId}/download', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Acknowledge Handbook', 'slug' => 'handbooks/{handbookId}/acknowledge', 'icon' => 'fas fa-check-circle', 'is_visible' => 0, 'sort_order' => 9],
                 ]
             ],
+
+            // 10. FIELD VISIT MANAGEMENT
+            [
+                'name' => 'Field Visit Management',
+                'slug' => 'field-visits',
+                'icon' => 'fas fa-map-marker-alt',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 10,
+                'children' => [
+                    ['name' => 'Field Visits', 'slug' => 'field-visits-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Create Field Visit', 'slug' => 'field-visit-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 2],
+                    ['name' => 'Pending Approvals', 'slug' => 'field-visits/pending', 'icon' => 'fas fa-clock', 'is_visible' => 1, 'sort_order' => 3],
+                    ['name' => 'Show Field Visit', 'slug' => 'field-visit-show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Edit Field Visit', 'slug' => 'field-visit-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Approve Field Visit', 'slug' => 'field-visits/{encryptedId}/approve', 'icon' => 'fas fa-check', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Start Field Visit', 'slug' => 'field-visits/{encryptedId}/start', 'icon' => 'fas fa-play', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Complete Field Visit', 'slug' => 'field-visits/{encryptedId}/complete', 'icon' => 'fas fa-check-circle', 'is_visible' => 0, 'sort_order' => 8],
+                ]
+            ],
+
+            // 11. REIMBURSEMENT MANAGEMENT
+            [
+                'name' => 'Reimbursement Management',
+                'slug' => 'reimbursement',
+                'icon' => 'fas fa-hand-holding-usd',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 11,
+                'children' => [
+                    ['name' => 'Reimbursements List', 'slug' => 'reimbursements/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Create Reimbursement', 'slug' => 'reimbursements/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 2],
+                    // ['name' => 'Pending Reimbursements', 'slug' => 'reimbursements/pending', 'icon' => 'fas fa-clock', 'is_visible' => 1, 'sort_order' => 3],
+                    ['name' => 'Show Reimbursement', 'slug' => 'reimbursements/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Approve Reimbursement', 'slug' => 'reimbursements/{encryptedId}/approve', 'icon' => 'fas fa-check', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Approve Reimbursement by Reporter', 'slug' => 'reimbursements/{encryptedId}/approve/reporter', 'icon' => 'fas fa-check-double', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Reject Reimbursement', 'slug' => 'reimbursements/{encryptedId}/reject', 'icon' => 'fas fa-times', 'is_visible' => 0, 'sort_order' => 6],
+                ]
+            ],
+
+            // 12. EMPLOYEE MANAGEMENT
+            [
+                'name' => 'Employee Management',
+                'slug' => 'employee-management',
+                'icon' => 'fas fa-users',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 12,
+                'children' => [
+                    ['name' => 'Employees', 'slug' => 'employees-management/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Create Employee', 'slug' => 'employees-management/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 2],
+                    ['name' => 'Store Employee', 'slug' => 'employees-management/', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'View Employee', 'slug' => 'employees-management/{encryptedId}/view', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Edit Employee', 'slug' => 'employees-management/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Update Employee', 'slug' => 'employees-management/{encryptedId}/update', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Update Employee Role', 'slug' => 'employees-management/{encryptedId}/role', 'icon' => 'fas fa-user-tag', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Toggle Status', 'slug' => 'employees-management/{encryptedId}/toggle-status', 'icon' => 'fas fa-toggle-on', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Next Employee Code', 'slug' => 'employees-management/next-employee-code', 'icon' => 'fas fa-hashtag', 'is_visible' => 0, 'sort_order' => 9],
+                ]
+            ],
+
+            // 13. EMPLOYEE PROFILE
+            [
+                'name' => 'Employee Profile',
+                'slug' => 'employee-profile',
+                'icon' => 'fas fa-user-circle',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 13,
+                'children' => [
+                    ['name' => 'My Profile', 'slug' => 'employee/profile', 'icon' => 'fas fa-user', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Update Profile', 'slug' => 'employee/profile/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 2],
+                    ['name' => 'Update Profile Image', 'slug' => 'employee/profile/update-image', 'icon' => 'fas fa-camera', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Colleagues', 'slug' => 'employee/colleagues', 'icon' => 'fas fa-users', 'is_visible' => 1, 'sort_order' => 4],
+                ]
+            ],
+
+            // 14. RESIGNATION & EXIT MANAGEMENT
+            [
+                'name' => 'Resignation & Exit',
+                'slug' => 'resignation-exit',
+                'icon' => 'fas fa-sign-out-alt',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 14,
+                'children' => [
+                    // Employee Resignations
+                    ['name' => 'My Resignations', 'slug' => 'resignations/my-resignations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Submit Resignation', 'slug' => 'resignations/my-resignations/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 2],
+                    ['name' => 'Show Resignation', 'slug' => 'resignations/my-resignations/{id}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 3],
+                    // Admin Resignations
+                    ['name' => 'All Resignations', 'slug' => 'resignations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 4],
+                    ['name' => 'Show All Resignations', 'slug' => 'resignations/{resignation}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Approve Resignation', 'slug' => 'resignations/{resignation}/approve', 'icon' => 'fas fa-check', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Exit Interview', 'slug' => 'resignations/{resignation}/complete-exit-interview', 'icon' => 'fas fa-comments', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Handover', 'slug' => 'resignations/{resignation}/complete-handover', 'icon' => 'fas fa-exchange-alt', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Assets Return', 'slug' => 'resignations/{resignation}/assigned-assets', 'icon' => 'fas fa-boxes', 'is_visible' => 0, 'sort_order' => 9],
+                    ['name' => 'Final Settlement', 'slug' => 'resignations/{resignation}/complete-final-settlement', 'icon' => 'fas fa-file-invoice-dollar', 'is_visible' => 0, 'sort_order' => 10],
+                ]
+            ],
+
+            // 15. COMPANY SETTINGS & MANAGEMENT
+            [
+                'name' => 'Company Settings',
+                'slug' => 'company-settings',
+                'icon' => 'fas fa-cog',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 15,
+                'children' => [
+                    ['name' => 'Company Settings', 'slug' => 'company/settings', 'icon' => 'fas fa-cog', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Company Roles', 'slug' => 'company/company-roles-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 2],
+                    ['name' => 'Create Role', 'slug' => 'company/company-role-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 3],
+                    ['name' => 'Edit Role', 'slug' => 'company/company-role-edit/{role}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 4],
+                ]
+            ],
+
+            // 16. LEADS MANAGEMENT (CRM)
+            [
+                'name' => 'Leads Management',
+                'slug' => 'leads-crm',
+                'icon' => 'fas fa-user-tie',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 16,
+                'children' => [
+                    ['name' => 'Leads', 'slug' => 'company-admin/leads-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Create Lead', 'slug' => 'company-admin/lead-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 2],
+                    ['name' => 'Show Lead', 'slug' => 'company-admin/lead-show/{lead}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Edit Lead', 'slug' => 'company-admin/lead-edit/{lead}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Module Access', 'slug' => 'company-admin/module-access', 'icon' => 'fas fa-lock', 'is_visible' => 1, 'sort_order' => 5],
+                ]
+            ],
+
+            // 17. PAYROLL MANAGEMENT
+            [
+                'name' => 'Payroll Management',
+                'slug' => 'payroll',
+                'icon' => 'fas fa-money-bill-wave',
+                'parent_id' => null,
+                'is_visible' => 1,
+                'sort_order' => 17,
+                'children' => [
+                    // Employee Payroll
+                    ['name' => 'My Payslips', 'slug' => 'employee/payroll/', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'View Payslip', 'slug' => 'employee/payroll/{payroll}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 2],
+                    ['name' => 'Download Payslip', 'slug' => 'employee/payroll/{payroll}/download', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 3],
+                    // Admin Payroll
+                    ['name' => 'Payroll Index', 'slug' => '/admin/payroll/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 4],
+                    ['name' => 'Create Payroll', 'slug' => '/admin/payroll/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 5],
+                    ['name' => 'Edit Payroll', 'slug' => '/admin/payroll/{payroll}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Process Payroll', 'slug' => '/admin/payroll/{payroll}/process', 'icon' => 'fas fa-cog', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Mark as Paid', 'slug' => '/admin/payroll/{payroll}/mark-as-paid', 'icon' => 'fas fa-check-circle', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Bulk Approve', 'slug' => '/admin/payroll/bulk-approve', 'icon' => 'fas fa-check-double', 'is_visible' => 1, 'sort_order' => 9],
+                    // Settings
+                    ['name' => 'Payroll Settings', 'slug' => '/admin/payroll/settings', 'icon' => 'fas fa-cog', 'is_visible' => 1, 'sort_order' => 10],
+                    // Employee Configurations
+                    ['name' => 'Employee Payroll Config', 'slug' => 'admin/payroll/employee-configurations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 11],
+                    ['name' => 'Edit Config', 'slug' => 'admin/payroll/employee-configurations/{employee}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 12],
+                    // Beneficiary Badges
+                    ['name' => 'Allowances & Deductions', 'slug' => 'admin/payroll/beneficiary-badges/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 13],
+                    ['name' => 'Create Badge', 'slug' => 'admin/payroll/beneficiary-badges/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 14],
+                    ['name' => 'Edit Badge', 'slug' => 'admin/payroll/beneficiary-badges/{badge}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 15],
+                ]
+            ],
+
+
         ];
 
         $childrenCount = 0;

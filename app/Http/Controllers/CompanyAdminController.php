@@ -14,12 +14,34 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
 use App\Models\EmployeeIdPrefix;
 use App\Models\EmploymentType;
 
 class CompanyAdminController extends Controller
 {
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     /**
      * Display module access management page.
      */
@@ -176,8 +198,10 @@ class CompanyAdminController extends Controller
     /**
      * Update employee role.
      */
-    public function updateEmployeeRole(Request $request, Employee $employee)
+    public function updateEmployeeRole(Request $request, $encryptedId)
     {
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
+
         try {
             $user = Auth::user();
             $company = $user->company;
@@ -239,15 +263,17 @@ class CompanyAdminController extends Controller
     /**
      * Show the employee details view page.
      */
-    public function viewEmployee($id)
+    public function viewEmployee($encryptedId)
     {
         $user = Auth::user();
         $company = $user->employee->company;
 
-        $employee = \App\Models\Employee::with(['department', 'designation', 'reportingManager', 'currentSalary'])
-            ->withoutGlobalScopes()
-            ->where('company_id', $company->id)
-            ->findOrFail($id);
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
+
+        // Ensure employee belongs to the same company
+        if ($employee->company_id !== $company->id) {
+            abort(403, 'Unauthorized access.');
+        }
 
         $departments = \App\Models\Department::where('company_id', $company->id)->get();
         $designations = \App\Models\Designation::where('company_id', $company->id)->get();
@@ -263,15 +289,17 @@ class CompanyAdminController extends Controller
     /**
      * Show the form for editing an employee.
      */
-    public function editEmployee($id)
+    public function editEmployee($encryptedId)
     {
         $user = Auth::user();
         $company = $user->employee->company;
 
-        $employee = \App\Models\Employee::with(['currentSalary'])
-            ->withoutGlobalScopes()
-            ->where('company_id', $company->id)
-            ->findOrFail($id);
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
+
+        // Ensure employee belongs to the same company
+        if ($employee->company_id !== $company->id) {
+            abort(403, 'Unauthorized access.');
+        }
 
         $departments = \App\Models\Department::where('company_id', $company->id)->get();
 
@@ -301,12 +329,17 @@ class CompanyAdminController extends Controller
     /**
      * Update the specified employee in storage.
      */
-    public function updateEmployee(Request $request, $id)
+    public function updateEmployee(Request $request, $encryptedId)
     {
         $user = Auth::user();
         $company = $user->employee->company;
 
-        $employee = \App\Models\Employee::withoutGlobalScopes()->where('company_id', $company->id)->findOrFail($id);
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
+
+        // Ensure employee belongs to the same company
+        if ($employee->company_id !== $company->id) {
+            abort(403, 'Unauthorized access.');
+        }
 
         $validator = Validator::make($request->all(), [
             // Basic Information
@@ -954,10 +987,10 @@ class CompanyAdminController extends Controller
      /*
        Employee Status Toggle (Activate/Deactivate)
      */
-    public function toggleStatus( Request $request, $id)
+    public function toggleStatus(Request $request, $encryptedId)
     {
         // Find employee and related user
-        $employee = Employee::withoutGlobalScopes()->findOrFail($id);
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
         $user = $employee->user; // use user_id if Employee linked to User
 
         // Get the desired status from request

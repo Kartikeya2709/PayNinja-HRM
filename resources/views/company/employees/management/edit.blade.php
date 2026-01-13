@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(\App\Models\User::hasAccess('employees-management/{encryptedId}/edit', true))
 <div class="section container">
      <div class="section-header">
             <h1>Edit Employee</h1>
@@ -34,7 +35,7 @@
                             <button class="nav-link" id="other-tab" data-bs-toggle="tab" data-bs-target="#other" type="button" role="tab">Other Details</button>
                         </li>
                     </ul>
-                    <form method="POST" action="{{ route('employees.management.update', $employee->id) }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('employees.management.update', Crypt::encrypt($employee->id)) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="tab-content pt-3" id="employeeTabContent">
@@ -659,4 +660,5 @@
     });
 </script>
 @endpush
+@endif
 @endsection

@@ -83,12 +83,14 @@
                                 </span>
                             </td>
                             <td>
+                                @if(\App\Models\User::hasAccess('reimbursements/{encryptedId}', true))
                                 <button class="btn btn-sm btn-success"
-                                    onclick="window.location.href='{{ route('reimbursements.show', $reimbursement->id) }}'"
+                                    onclick="window.location.href='{{ route('reimbursements.show', Crypt::encrypt($reimbursement->id)) }}'"
                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                     title="View Details">
                                     View
                                 </button>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

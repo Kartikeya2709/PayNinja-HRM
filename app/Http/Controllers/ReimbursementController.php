@@ -7,12 +7,35 @@ use App\Models\Employee;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 use App\Models\TeamMember;
 use Illuminate\Http\Request;
 
 
 class ReimbursementController extends Controller
 {
+
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+    
     public function index(Request $request)
 {
     try {
@@ -91,34 +114,35 @@ class ReimbursementController extends Controller
         return view('reimbursements.create');
     }
 
-    public function pending()
-    {
-        $user = Auth::user();
-        $employee = Employee::where('user_id', $user->id)->first();
+    // public function pending()
+    // {
+    //     $user = Auth::user();
+    //     $employee = Employee::where('user_id', $user->id)->first();
         
-        if (!$employee) {
-            return redirect()->back()->with('error', 'Employee record not found.');
-        }
+    //     if (!$employee) {
+    //         return redirect()->back()->with('error', 'Employee record not found.');
+    //     }
 
-        // Get pending and reporter-approved reimbursements for this employee
-        $reimbursements = Reimbursement::where('employee_id', $employee->id)
-            ->whereIn('status', ['pending', 'reporter_approved'])
-            ->with(['employee', 'company'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+    //     // Get pending and reporter-approved reimbursements for this employee
+    //     $reimbursements = Reimbursement::where('employee_id', $employee->id)
+    //         ->whereIn('status', ['pending', 'reporter_approved'])
+    //         ->with(['employee', 'company'])
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
 
-        // Get pending reimbursements for which this employee is reporter
-        $reporterReimbursements = Reimbursement::where('reporter_id', $employee->id)
-            ->whereIn('status', ['pending', 'reporter_approved'])
-            ->with(['employee', 'company'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+    //     // Get pending reimbursements for which this employee is reporter
+    //     $reporterReimbursements = Reimbursement::where('reporter_id', $employee->id)
+    //         ->whereIn('status', ['pending', 'reporter_approved'])
+    //         ->with(['employee', 'company'])
+    //         ->orderBy('created_at', 'desc')
+    //         ->get();
 
-        return view('reimbursements.pending', compact('reimbursements', 'reporterReimbursements'));
-    }
+    //     return view('reimbursements.index', compact('reimbursements', 'reporterReimbursements'));
+    // }
 
-    public function approve(Request $request, Reimbursement $reimbursement)
+    public function approve(Request $request, $encryptedId)
     {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
         try {
             Log::info('Starting reimbursement approval', [
                 'reimbursement_id' => $reimbursement->id,
@@ -295,8 +319,9 @@ class ReimbursementController extends Controller
         }
     }
 
-    public function approveReporter(Request $request, Reimbursement $reimbursement)
+    public function approveReporter(Request $request, $encryptedId)
     {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
         try {
             // Get authenticated user
             $user = Auth::user();
@@ -482,8 +507,9 @@ class ReimbursementController extends Controller
         }
     }
 
-    public function show(Reimbursement $reimbursement)
+    public function show($encryptedId)
     { 
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
         // No auth check, everyone can view any reimbursement
         return view('reimbursements.show', compact('reimbursement'));
     }
@@ -495,8 +521,9 @@ class ReimbursementController extends Controller
      * @param  \App\Models\Reimbursement  $reimbursement
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function reject(Request $request, Reimbursement $reimbursement)
+    public function reject(Request $request, $encryptedId)
     {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
         try {
             Log::info('Starting reimbursement rejection', [
                 'reimbursement_id' => $reimbursement->id,
@@ -674,7 +701,7 @@ class ReimbursementController extends Controller
                     'team_member_id' => $teamMember ? $teamMember->id : null
                 ]);
                 
-                return redirect()->route('reimbursements.show', $reimbursement->id)
+                return redirect()->route('reimbursements.show', $this->encryptId($reimbursement->id))
                     ->with('success', 'Reimbursement has been rejected successfully.');
                 
             } catch (\Exception $e) {
@@ -691,7 +718,7 @@ class ReimbursementController extends Controller
                 'trace' => $e->getTraceAsString()
             ]);
             
-            return redirect()->route('reimbursements.show', $reimbursement->id)
+            return redirect()->route('reimbursements.show', $this->encryptId($reimbursement->id))
                 ->with('error', 'An error occurred while rejecting the reimbursement. Please try again.');
         }
     }

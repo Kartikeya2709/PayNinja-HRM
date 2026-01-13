@@ -25,9 +25,11 @@
                     <div class="card-header">
                         <h5>Field Visits List</h5>
                         <div class="card-header-action">
+                            @if(\App\Models\User::hasAccess('field-visit-create', true))
                             <a href="{{ route('field-visits.create') }}" class="btn btn-primary">
                                 <i class="fas fa-plus"></i> Schedule New Visit
                             </a>
+                            @endif
                         </div>
                     </div>
 
@@ -48,8 +50,10 @@
                             <div class="alert alert-warning">
                                 <h5><i class="fas fa-exclamation-triangle"></i> Pending Approvals</h5>
                                 <p>You have field visit requests waiting for your approval.
+                                    @if(\App\Models\User::hasAccess('field-visits/pending', true))
                                     <a class="text-decoration-underline" href="{{ route('field-visits.pending') }}">View
                                         Pending Approvals</a>
+                                    @endif
                                 </p>
                             </div>
                         @endif
@@ -90,7 +94,9 @@
                                         <th>Scheduled Date</th>
                                         <th>Status</th>
                                         <th>Approval</th>
+                                        @if(\App\Models\User::hasAccess('field-visit-show/{encryptedId}', true) || \App\Models\User::hasAccess('field-visit-edit/{encryptedId}', true) || \App\Models\User::hasAccess('field-visits/{encryptedId}/approve', true) || \App\Models\User::hasAccess('field-visits/{encryptedId}/reject', true))
                                         <th>Actions</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -121,9 +127,11 @@
                                                     {{ ucfirst($visit->approval_status) }}
                                                 </span>
                                             </td>
+                                            @if(\App\Models\User::hasAccess('field-visit-show/{encryptedId}', true) || \App\Models\User::hasAccess('field-visit-edit/{encryptedId}', true) || \App\Models\User::hasAccess('field-visits/{encryptedId}/approve', true) || \App\Models\User::hasAccess('field-visits/{encryptedId}/reject', true))
                                             <td>
                                                 <div class="btn-group btn-group-sm">
-                                                    <a href="{{ route('field-visits.show', $visit) }}"
+                                                    @if(\App\Models\User::hasAccess('field-visit-show/{encryptedId}', true))
+                                                    <a href="{{ route('field-visits.show', Crypt::encrypt($visit->id)) }}"
                                                         class="btn btn-outline-info action-btn" data-id="{{ $visit->id }}"
                                                         data-bs-toggle="tooltip" data-bs-placement="top"
                                                         title="View Field Visit" aria-label="View">
@@ -133,6 +141,7 @@
                                                         <span class="spinner-border spinner-border-sm d-none" role="status"
                                                             aria-hidden="true"></span>
                                                     </a>
+                                                    @endif
 
                                                     @php
                                                         $user = auth()->user();
@@ -140,8 +149,8 @@
                                                         $canApprove = ($user->hasRole(['admin', 'company_admin']) || $visit->reporting_manager_id === $user->employee->id) && $visit->isPendingApproval();
                                                     @endphp
 
-                                                    @if($canEdit)
-                                                        <a href="{{ route('field-visits.edit', $visit) }}"
+                                                    @if($canEdit && \App\Models\User::hasAccess('field-visit-edit/{encryptedId}', true))
+                                                        <a href="{{ route('field-visits.edit', Crypt::encrypt($visit->id)) }}"
                                                             class="btn btn-outline-warning action-btn"
                                                             data-id="{{ $visit->id }}" data-bs-toggle="tooltip"
                                                             data-bs-placement="top" title="Edit Field Visit" aria-label="Edit">
@@ -154,7 +163,8 @@
                                                     @endif
 
                                                     @if($canApprove)
-                                                        <form action="{{ route('field-visits.approve', $visit) }}" method="POST"
+                                                        @if(\App\Models\User::hasAccess('field-visits/{encryptedId}/approve', true))
+                                                        <form action="{{ route('field-visits.approve', Crypt::encrypt($visit->id)) }}" method="POST"
                                                             style="display: inline;">
                                                             @csrf
                                                             <button type="submit" class="btn btn-outline-success btn-sm action-btn rounded-0"
@@ -168,7 +178,9 @@
                                                                     aria-hidden="true"></span>
                                                             </button>
                                                         </form>
-                                                        <form action="{{ route('field-visits.reject', $visit) }}" method="POST"
+                                                        @endif
+                                                        @if(\App\Models\User::hasAccess('field-visits/{encryptedId}/reject', true))
+                                                        <form action="{{ route('field-visits.reject', Crypt::encrypt($visit->id)) }}" method="POST"
                                                             style="display: inline;">
                                                             @csrf
                                                             <button type="submit" class="btn btn-outline-danger btn-sm action-btn rounded-start-0"
@@ -181,12 +193,14 @@
                                                                     aria-hidden="true"></span>
                                                             </button>
                                                         </form>
+                                                        @endif
                                                     @endif
                                                 </div>
                                             </td>
+                                            @endif
                                         </tr>
                                     @empty
-                                        <tr><td colspan="6" class="text-center">No field visits found.</td></tr>
+                                        <tr><td colspan="{{ (\App\Models\User::hasAccess('field-visit-show/{encryptedId}', true) || \App\Models\User::hasAccess('field-visit-edit/{encryptedId}', true) || \App\Models\User::hasAccess('field-visits/{encryptedId}/approve', true) || \App\Models\User::hasAccess('field-visits/{encryptedId}/reject', true)) ? 6 : 5 }}" class="text-center">No field visits found.</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>

@@ -25,22 +25,26 @@
                                     $canApprove = ($user->hasRole(['admin', 'company_admin']) || $fieldVisit->reporting_manager_id === $user->employee->id) && $fieldVisit->isPendingApproval();
                                 @endphp
 
-                                @if($canEdit && $fieldVisit->isScheduled() && $fieldVisit->isPendingApproval())
-                                    <a href="{{ route('field-visits.edit', $fieldVisit) }}" class="btn btn-warning btn-sm">
+                                @if($canEdit && $fieldVisit->isScheduled() && $fieldVisit->isPendingApproval() && \App\Models\User::hasAccess('field-visit-edit/{encryptedId}', true))
+                                    <a href="{{ route('field-visits.edit', Crypt::encrypt($fieldVisit->id)) }}" class="btn btn-warning btn-sm">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
                                 @endif
 
                                 @if($canApprove)
-                                    <form action="{{ route('field-visits.approve', $fieldVisit) }}" method="POST" style="display: inline;">
+                                    @if(\App\Models\User::hasAccess('field-visits/{encryptedId}/approve', true))
+                                    <form action="{{ route('field-visits.approve', Crypt::encrypt($fieldVisit->id)) }}" method="POST" style="display: inline;">
                                         @csrf
                                         <button type="submit" class="btn btn-success btn-sm">
                                             <i class="fas fa-check"></i> Approve
                                         </button>
                                     </form>
-                                    <button class="btn btn-danger btn-sm reject-btn" data-id="{{ $fieldVisit->id }}">
+                                    @endif
+                                    @if(\App\Models\User::hasAccess('field-visits/{encryptedId}/reject', true))
+                                    <button class="btn btn-danger btn-sm reject-btn" data-id="{{ Crypt::encrypt($fieldVisit->id) }}">
                                         <i class="fas fa-times"></i> Reject
                                     </button>
+                                    @endif
                                 @endif
                             </div>
                         </div>

@@ -1,4 +1,4 @@
-<form action="{{ route('superadmin.setting.slug.edit', $slug->id) }}" method="POST" id="editSlugForm">
+<form action="{{ route('superadmin.setting.slug.edit.post', $slug->id) }}" method="POST" id="editSlugForm">
     @csrf
     <div class="modal-body">
         <div class="row">

@@ -2,6 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(\App\Models\User::hasAccess('employees-management/create', true))
 <div class="section container">
      <div class="section-header">
             <h1>New Employee</h1>
@@ -105,10 +106,10 @@
                                 <div class="row">
                                     <!-- <div class="col-md-6 mb-3">
                                         <label for="personal_email" class="form-label">Personal Email ID <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" id="personal_email" name="personal_email" value="{{ old('personal_email') }}" required>
-                                            @error('personal_email')
-                                               <span class="text-danger">{{ $message }}</span>
-                                              @enderror
+                                        {{-- <input type="email" class="form-control" id="personal_email" name="personal_email" value="{{ old('personal_email') }}" required>
+                                            {{-- @error('personal_email')
+                                               <span class="text-danger">{{ $message }}</span> --}}
+                                              {{-- @enderror --}} --}}
                                     </div> -->
 
 
@@ -728,4 +729,5 @@
     });
 </script>
 @endpush
+@endif
 @endsection

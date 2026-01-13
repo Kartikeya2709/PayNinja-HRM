@@ -17,10 +17,12 @@
              class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Employee Management</h5>
+                    @if(\App\Models\User::hasAccess('employees-management/create', true))
                     <a href="{{ route('employees.management.create') }}" class="btn btn-primary d-flex align-items-center justify-content-center">
 
                         <i class="fas fa-plus me-1"></i> Create Employee
                     </a>
+                    @endif
                 </div>
 
                 <!-- Filters and Search -->
@@ -347,6 +349,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const id = employeeIdInput.value;
         const isActive = employeeActiveInput.checked ? 1 : 0;
         const remark = employeeRemarkInput.value.trim();
+        const link = `/employees-management/${id}/toggle-status`;
+        console.log(link);
 
         fetch(`/employees-management/${id}/toggle-status`, {
             method: 'POST',

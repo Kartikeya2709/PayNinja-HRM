@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(\App\Models\User::hasAccess('employees-management/{encryptedId}/view', true))
 <div class="section container">
      <div class="section-header">
             <h1>Employee Details</h1>
@@ -244,5 +245,5 @@
     </div>
 </div>
 </div>
-
+@endif
 @endsection

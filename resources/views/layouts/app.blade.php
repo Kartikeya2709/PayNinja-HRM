@@ -69,7 +69,7 @@
 
             <!-- Sidebar -->
             @if(auth()->user() && auth()->user()->role == 'superadmin')
-                @include('components.sidebar')
+                @include('components.sidebar2')
             @else
                 @include('components.menu')
                 {{-- @include('components.sidebar') --}}

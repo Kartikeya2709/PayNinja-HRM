@@ -7,8 +7,8 @@
         <div class="section-header">
             <h1>Edit Field Visit</h1>
             <div class="section-header-breadcrumb">
-                <div class="breadcrumb-item"><a href="{{ route('field-visits.index') }}">Field Visits</a></div>
-                <div class="breadcrumb-item"><a href="{{ route('field-visits.show', $fieldVisit) }}">{{ $fieldVisit->visit_title }}</a></div>
+                <div class="breadcrumb-item"><a href="{{ route('field-visits.index') }}">Field Visits</a></div>           
+                <div class="breadcrumb-item"><a href="{{ route('field-visits.show', Crypt::encrypt($fieldVisit->id)) }}">{{ $fieldVisit->visit_title }}</a></div>
                 <div class="breadcrumb-item active">Edit</div>
             </div>
         </div>
@@ -22,7 +22,7 @@
                         </div>
 
                         <div class="card-body">
-                            <form action="{{ route('field-visits.update', $fieldVisit) }}" method="POST" id="fieldVisitForm" enctype="multipart/form-data">
+                            <form action="{{ route('field-visits.update', Crypt::encrypt($fieldVisit->id)) }}" method="POST" id="fieldVisitForm" enctype="multipart/form-data">
                                 @csrf
                                 @method('PUT')
 

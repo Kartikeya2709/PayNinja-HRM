@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+@if(\App\Models\User::hasAccess('reimbursements/create', true))
 <div class="container">
     <section class="section">
             <div class="section-header">
@@ -75,4 +76,5 @@
         </div>
     </div>
 </div>
+@endif
 @endsection

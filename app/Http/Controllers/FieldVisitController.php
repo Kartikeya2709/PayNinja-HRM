@@ -6,10 +6,33 @@ use Carbon\Carbon;
 use App\Models\FieldVisit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\URL;
 
 class FieldVisitController extends Controller
 {
+
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     /**
      * Store a new field visit (employee creates it with all details).
      */
@@ -76,14 +99,15 @@ class FieldVisitController extends Controller
             'status' => 'scheduled'
         ]);
 
-        return redirect()->to('/field-visits')->with('success', 'Field visit request submitted with details and sent for approval.');
+        return redirect()->route('field-visits.index')->with('success', 'Field visit request submitted with details and sent for approval.');
     }
 
     /**
      * Reporting Manager approves visit.
      */
-    public function approve(FieldVisit $fieldVisit)
+    public function approve($encryptedId)
     {
+        $fieldVisit = $this->getModelFromEncryptedId($encryptedId, FieldVisit::class);
         $manager = Auth::user()->employee;
 
         if ($manager->id !== $fieldVisit->reporting_manager_id && !Auth::user()->hasRole(['admin', 'company_admin'])) {
@@ -98,8 +122,9 @@ class FieldVisitController extends Controller
     /**
      * Reporting Manager rejects visit.
      */
-    public function reject(FieldVisit $fieldVisit)
+    public function reject($encryptedId)
     {
+        $fieldVisit = $this->getModelFromEncryptedId($encryptedId, FieldVisit::class);
         $manager = Auth::user()->employee;
 
         if ($manager->id !== $fieldVisit->reporting_manager_id && !Auth::user()->hasRole(['admin', 'company_admin'])) {
@@ -175,23 +200,28 @@ class FieldVisitController extends Controller
     /**
      * Display the specified field visit.
      */
-    public function show(FieldVisit $fieldVisit)
+    public function show($encryptedId)
     {
+        $fieldVisit = $this->getModelFromEncryptedId($encryptedId, FieldVisit::class);
         $user = Auth::user();
+
         if ($user->hasRole(['admin', 'company_admin']) ||
             $fieldVisit->employee_id === $user->employee->id ||
             $fieldVisit->reporting_manager_id === $user->employee->id) {
             return view('field_visits.show', compact('fieldVisit'));
         }
+        
         abort(403);
     }
 
     /**
      * Show the form for editing the specified field visit.
      */
-    public function edit(FieldVisit $fieldVisit)
+    public function edit($encryptedId)
     {
+        $fieldVisit = $this->getModelFromEncryptedId($encryptedId, FieldVisit::class);
         $user = Auth::user();
+
         if (($fieldVisit->employee_id === $user->employee->id && $fieldVisit->isPendingApproval()) ||
             $user->hasRole(['admin', 'company_admin'])) {
             return view('field_visits.edit', compact('fieldVisit'));
@@ -202,8 +232,9 @@ class FieldVisitController extends Controller
     /**
      * Update the specified field visit in storage.
      */
-    public function update(Request $request, FieldVisit $fieldVisit)
+    public function update(Request $request, $encryptedId)
     {
+        $fieldVisit = $this->getModelFromEncryptedId($encryptedId, FieldVisit::class);
         $user = Auth::user();
         if (! (($fieldVisit->employee_id === $user->employee->id && $fieldVisit->isPendingApproval()) ||
             $user->hasRole(['admin', 'company_admin']))) {
@@ -246,14 +277,15 @@ class FieldVisitController extends Controller
             'scheduled_end_datetime' => $request->scheduled_end_datetime ?? null,
         ]);
 
-        return redirect()->route('field-visits.show', $fieldVisit)->with('success', 'Field visit updated successfully.');
+        return redirect()->route('field-visits.show', $this->encryptId($fieldVisit->id))->with('success', 'Field visit updated successfully.');
     }
 
     /**
      * Remove the specified field visit from storage.
      */
-    public function destroy(FieldVisit $fieldVisit)
+    public function destroy($encryptedId)
     {
+        $fieldVisit = $this->getModelFromEncryptedId($encryptedId, FieldVisit::class);
         $user = Auth::user();
         if (! (($fieldVisit->employee_id === $user->employee->id && $fieldVisit->isPendingApproval()) ||
             $user->hasRole(['admin', 'company_admin']))) {

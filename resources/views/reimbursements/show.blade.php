@@ -63,7 +63,6 @@
                   <div><span>Rejection Reason:</span> {{ $reimbursement->remarks }}</div>
                     @endif
                </div>
-
                    @if($reimbursement->receipt_path)
                  <div class="mt-4">
                    <h6 class="fw-bold text-dark mb-2"><i class="fas fa-receipt me-2 text-primary"></i>Receipt</h6>
@@ -110,14 +109,14 @@
                                         in_array($reimbursement->status, ['pending', 'reporter_approved']);
                         @endphp
 
-                        @if($canApprove)
+                        @if($canApprove && \App\Models\User::hasAccess($isReporter ? 'reimbursements/{encryptedId}/approve/reporter' : 'reimbursements/{encryptedId}/approve', true))
                             <button type="button" class="btn btn-success mb-2" data-bs-toggle="modal" data-bs-target="#approveModal">
                                 <i class="fas fa-check-circle me-1"></i>
                                 {{ $isAdmin ? 'Approve as Admin' : 'Approve as Reporting Manager' }}
                             </button>
                         @endif
                         
-                        @if($canReject)
+                        @if($canReject && \App\Models\User::hasAccess('reimbursements/{encryptedId}/reject', true))
                             <button type="button" class="btn btn-danger mb-2" data-bs-toggle="modal" data-bs-target="#rejectModal">
                                 <i class="fas fa-ban me-1"></i> Reject
                             </button>
@@ -140,8 +139,7 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="approveForm" action="{{ route($isReporter ? 'reimbursements.approve-reporter' : 'reimbursements.approve', 
-                          ['reimbursement' => $reimbursement->id]) }}" 
+                <form id="approveForm" action="{{ route($isReporter ? 'reimbursements.approve.reporter' : 'reimbursements.approve', Crypt::encrypt($reimbursement->id)) }}" 
                       method="POST">
                     @csrf
                     <div class="modal-body">
@@ -178,7 +176,7 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form id="rejectForm" action="{{ route('reimbursements.reject', ['reimbursement' => $reimbursement->id]) }}" method="POST">
+                <form id="rejectForm" action="{{ route('reimbursements.reject', Crypt::encrypt($reimbursement->id)) }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         {{-- <div class="alert alert-warning">

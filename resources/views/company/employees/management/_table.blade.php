@@ -42,7 +42,8 @@
     </td>
     <td>
         <div class="btn-group btn-group-sm">
-            <a href="{{ route('employees.management.view', $employee->id) }}"
+            @if(\App\Models\User::hasAccess('employees-management/{encryptedId}/view', true))
+            <a href="{{ route('employees.management.view', Crypt::encrypt($employee->id)) }}"
                 class="btn btn-outline-info btn-sm action-btn" data-id="{{ $employee->id }}" data-bs-toggle="tooltip"
                 data-bs-placement="top" title="View Employee" aria-label="View">
                 <span class="btn-content">
@@ -50,8 +51,10 @@
                 </span>
                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
             </a>
+            @endif
 
-            <a href="{{ route('employees.management.edit', $employee->id) }}"
+            @if(\App\Models\User::hasAccess('employees-management/{encryptedId}/edit', true))
+            <a href="{{ route('employees.management.edit', Crypt::encrypt($employee->id)) }}"
                 class="btn btn-outline-warning btn-sm action-btn" data-id="{{ $employee->id }}"
                 data-bs-toggle="tooltip" data-bs-placement="top" title="Edit Employee" aria-label="Edit">
                 <span class="btn-content">
@@ -59,19 +62,22 @@
                 </span>
                 <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
             </a>
+            @endif
 
-            @if($employee->user->role !== 'company_admin')
+            @if($employee->user->role !== 'company_admin' && \App\Models\User::hasAccess('employees-management/{encryptedId}/role', true))
             <button type="button" class="btn btn-outline-primary btn-sm change-role-btn action-btn" data-bs-toggle="modal"
                 data-bs-target="#roleModal" data-employee-id="{{ $employee->id }}"
                 data-employee-name="{{ $employee->user->name }}" data-current-roleId="{{ $employee->user->role_id }}"
-                data-update-url="{{ route('employees.management.update-role', $employee->id) }}" title="Change Role">
+                data-update-url="{{ route('employees.management.update-role', Crypt::encrypt($employee->id)) }}" title="Change Role">
                 <i class="fas fa-user-edit"></i>
             </button>
-             <!-- Active/Inactive Toggle Button -->
+             @endif
+            <!-- Active/Inactive Toggle Button -->
+            @if($employee->user->role !== 'company_admin' && \App\Models\User::hasAccess('employees-management/{encryptedId}/toggle-status', true))
             <button
                 type="button"
                 class="btn btn-sm btn-outline-{{ $employee->is_active ? 'success' : 'danger' }} toggle-status-btn"
-                data-id="{{ $employee->id }}"
+                data-id="{{ Crypt::encrypt($employee->id) }}"
                 data-status="{{ $employee->is_active ? 'active' : 'inactive' }}"
                 data-name="{{ $employee->name }}"
                 title="Toggle Status">

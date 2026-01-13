@@ -1,4 +1,4 @@
-{{-- @auth
+@auth
     @php
         // Get role directly from users table
         $user = Auth::user();
@@ -142,6 +142,7 @@
                             @endif
                         </ul>
                     </li>
+                @endif
 
                 <!-- End Asset Management -->
 
@@ -931,4 +932,4 @@
             </ul>
         </aside>
     </div>
-@endauth --}}
+@endauth
