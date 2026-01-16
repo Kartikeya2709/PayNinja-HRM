@@ -125,18 +125,18 @@
                                 <td>{{ $payroll->processor->name ?? 'System' }}</td>
                                 <td>
                                     <div class="btn-group" role="group">
-                                        @if(\App\Models\User::hasAccess('admin/payroll/{payroll}', true))
-                                        <a href="{{ route('show', $payroll->id) }}" class="btn btn-info btn-sm" title="View">
+                                        @if(\App\Models\User::hasAccess('admin/payroll/{encryptedId}', true))
+                                        <a href="{{ route('show', \Crypt::encrypt($payroll->id)) }}" class="btn btn-info btn-sm" title="View">
                                             <i class="fas fa-eye"></i>
                                         </a>
                                         @endif
-                                        @if($payroll->status !== 'paid' && \App\Models\User::hasAccess('admin/payroll/{payroll}/edit', true))
-                                        <a href="{{ route('edit', $payroll->id) }}" class="btn btn-warning btn-sm" title="Edit">
+                                        @if($payroll->status !== 'paid' && \App\Models\User::hasAccess('admin/payroll/{encryptedId}/edit', true))
+                                        <a href="{{ route('edit', \Crypt::encrypt($payroll->id)) }}" class="btn btn-warning btn-sm" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         @endif
-                                        @if($payroll->status !== 'paid' && \App\Models\User::hasAccess('admin/payroll/{payroll}/destroy', true))
-                                        <form action="{{ route('destroy', $payroll->id)  }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this payroll record?')">
+                                        @if($payroll->status !== 'paid' && \App\Models\User::hasAccess('admin/payroll/{encryptedId}/destroy', true))
+                                        <form action="{{ route('destroy', \Crypt::encrypt($payroll->id))  }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this payroll record?')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-danger btn-sm" title="Delete">
@@ -144,9 +144,9 @@
                                             </button>
                                         </form>
                                         @endif
-                                        @if(\App\Models\User::hasAccess('admin/payroll/{payroll}/mark-as-paid', true))
+                                        @if(\App\Models\User::hasAccess('admin/payroll/{encryptedId}/mark-as-paid', true))
                                         @if(($payroll->status === 'pending' || $payroll->status === 'processed') )
-                                        <form action="{{ route('markAsPaid', $payroll->id) }}" method="POST" class="d-inline">
+                                        <form action="{{ route('markAsPaid', \Crypt::encrypt($payroll->id)) }}" method="POST" class="d-inline">
                                             @csrf
                                             @method('PATCH')
                                             <button type="submit" class="btn btn-success btn-sm" title="Mark as Paid">

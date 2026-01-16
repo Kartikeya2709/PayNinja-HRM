@@ -3,6 +3,7 @@
 @section('title', 'Submit Resignation Request')
 
 @section('content')
+@if(\App\Models\User::hasAccess('resignations/my-resignations/create', true))
 <div class="container">
     <section class="section">
         <div class="section-header">
@@ -136,6 +137,7 @@
         </div>
     </div>
 </section>
+@endif
 @endsection
 
 @push('scripts')

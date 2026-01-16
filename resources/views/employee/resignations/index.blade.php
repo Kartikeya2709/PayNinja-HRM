@@ -17,9 +17,11 @@
             <div class="card-header">
                 <h5 class="mb-0">My Resignation Requests</h5>
                 <div class="card-header-action">
+                    @if(\App\Models\User::hasAccess('resignations/my-resignations/create', true))
                     <a href="{{ route('resignations.my-resignations.create') }}" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Submit Resignation
                     </a>
+                    @endif
                 </div>
             </div>
             <div class="card-body">
@@ -77,7 +79,8 @@
                                 </td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                    <a href="{{ route('resignations.my-resignations.show', $resignation) }}"
+                                    @if(\App\Models\User::hasAccess('resignations/my-resignations/{encryptedId}', true))
+                                    <a href="{{ route('resignations.my-resignations.show', Crypt::encrypt($resignation->id)) }}"
                                         class="btn btn-outline-info action-btn" data-id="{{ $resignation->id }}"
                                         data-bs-toggle="tooltip" data-bs-placement="top" title="View Resignation"
                                         aria-label="View">
@@ -87,11 +90,13 @@
                                         <span class="spinner-border spinner-border-sm d-none" role="status"
                                             aria-hidden="true"></span>
                                     </a>
+                                    @endif
 
-                                    @if($resignation->canBeWithdrawn())
+                                    @if($resignation->canBeWithdrawn() && \App\Models\User::hasAccess('resignations/my-resignations/{encryptedId}/withdraw', true))
                                     <button type="button"
                                     class="btn btn-outline-danger withdraw-resignation btn-sm"
-                                    data-id="{{ $resignation->id }}"
+                                    data-id="{{ Crypt::encrypt($resignation->id) }}"
+                                    data-route="{{ route('resignations.my-resignations.withdraw', Crypt::encrypt($resignation->id)) }}"
                                     data-bs-toggle="tooltip"
                                     data-bs-placement="top"
                                     title="Withdraw Resignation"
@@ -139,7 +144,8 @@ $(document).ready(function() {
     });
 });
 
-function withdrawResignation(resignationId) {
+function withdrawResignation(button) {
+    const route = button.getAttribute('data-route');
     Swal.fire({
         title: 'Are you sure?',
         text: "You want to withdraw this resignation request?",
@@ -153,7 +159,7 @@ function withdrawResignation(resignationId) {
             // Create a form and submit it
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/resignations/my-resignations/${resignationId}/withdraw`;
+            form.action = route;
 
             // Add CSRF token
             const csrfToken = document.createElement('input');

@@ -10,11 +10,33 @@ use App\Services\PayrollService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class PayrollController extends Controller
 {
+      /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     protected PayrollService $payrollService;
 
     public function __construct(PayrollService $payrollService)
@@ -121,7 +143,7 @@ class PayrollController extends Controller
                     $employee->company ?? $company
                 );
 
-                return redirect()->route('show', $payroll->id)
+                return redirect()->route('show', \Crypt::encrypt($payroll->id))
                     ->with('success', 'Payroll generated successfully for ' . $employee->name);
             }
             // For bulk payroll generation
@@ -215,32 +237,16 @@ class PayrollController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($payrollId)
+    public function show(string $encryptedId)
     {
-        // Debug: Log the incoming parameter
-        Log::info('Show payroll called with ID:', ['payroll_id' => $payrollId]);
-
-        // Try to find the payroll manually first
-        $payroll = Payroll::find($payrollId);
-
-        if (!$payroll) {
-            Log::warning('Payroll not found for ID:', ['payroll_id' => $payrollId]);
-            return redirect()->route('index')->with('error', 'Payroll record not found.');
-        }
-
-        Log::info('Payroll found:', ['payroll_id' => $payroll->id, 'employee_id' => $payroll->employee_id]);
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
 
         // Optional: Add company authorization check
         $company = Auth::user()->company;
         if ($company && $payroll->company_id !== $company->id && !Auth::user()->hasRole('superadmin')) {
-            Log::warning('Company authorization failed:', [
-                'payroll_company_id' => $payroll->company_id,
-                'user_company_id' => $company->id
-            ]);
             return redirect()->route('index')->with('error', 'You are not authorized to view this payroll.');
         }
 
-        // $this->authorize('view', $payroll);
         $payroll->load([
             'items',
             'employee.user',
@@ -250,34 +256,21 @@ class PayrollController extends Controller
             'company'
         ]);
 
-        Log::info('Payroll loaded successfully:', [
-            'payroll_id' => $payroll->id,
-            'has_items' => $payroll->items->count(),
-            'has_employee' => $payroll->employee ? true : false
-        ]);
-
         return view('admin.payroll.show', compact('payroll'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit($payrollId)
+    public function edit(string $encryptedId)
     {
-        // Try to find the payroll manually first
-        $payroll = Payroll::find($payrollId);
-
-        if (!$payroll) {
-            return redirect()->route('index')->with('error', 'Payroll record not found.');
-        }
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
 
         // Optional: Add company authorization check
         $company = Auth::user()->company;
         if ($company && $payroll->company_id !== $company->id && !Auth::user()->hasRole('superadmin')) {
             return redirect()->route('index')->with('error', 'You are not authorized to edit this payroll.');
         }
-
-        // $this->authorize('update', $payroll);
 
         if ($payroll->status === 'paid') {
             return redirect()->route('index')->with('error', 'Cannot edit a paid payroll record.');
@@ -298,16 +291,9 @@ class PayrollController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $payrollId)
+    public function update(Request $request, string $encryptedId)
     {
-        // Try to find the payroll manually first
-        $payroll = Payroll::find($payrollId);
-
-        if (!$payroll) {
-            return redirect()->route('index')->with('error', 'Payroll record not found.');
-        }
-
-        // $this->authorize('update', $payroll);
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
 
         if ($payroll->status === 'paid') {
             return redirect()->route('index')->with('error', 'Cannot update a paid payroll record.');
@@ -356,7 +342,7 @@ class PayrollController extends Controller
 
             DB::commit();
 
-            return redirect()->route('show', $payroll->id)
+            return redirect()->route('show', $this->encryptId($payroll->id))
                 ->with('success', 'Payroll updated successfully.');
 
         } catch (\Exception $e) {
@@ -371,22 +357,11 @@ class PayrollController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($payrollId)
+    public function destroy(string $encryptedId)
     {
-        // Find the payroll manually due to route model binding issues with /destroy pattern
-        $payroll = Payroll::find($payrollId);
-
-        if (!$payroll) {
-            Log::error('Payroll not found for deletion', ['payroll_id' => $payrollId]);
-            return redirect()->route('index')->with('error', 'Payroll record not found.');
-        }
-
-        // $this->authorize('delete', $payroll);
-
-        Log::info('Payroll deletion started', ['payroll_id' => $payroll->id, 'status' => $payroll->status]);
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
 
         if ($payroll->status === 'paid') {
-            Log::warning('Attempted to delete paid payroll', ['payroll_id' => $payroll->id]);
             return redirect()->route('index')->with('error', 'Cannot delete a paid payroll record. Please cancel it first if necessary.');
         }
 
@@ -394,18 +369,11 @@ class PayrollController extends Controller
             DB::beginTransaction();
 
             // Delete associated payroll items first
-            $itemsCount = $payroll->items()->count();
-            Log::info('Deleting payroll items', ['payroll_id' => $payroll->id, 'items_count' => $itemsCount]);
             $payroll->items()->delete();
 
-            // Note: Using soft delete (delete() method) because the Payroll model uses SoftDeletes trait
-            // If you want to permanently remove records, use: $payroll->forceDelete()
-            Log::info('Soft deleting payroll record', ['payroll_id' => $payroll->id]);
             $payroll->delete();
 
             DB::commit();
-
-            Log::info('Payroll deleted successfully', ['payroll_id' => $payroll->id]);
 
             return redirect()->route('index')->with('success', 'Payroll record deleted successfully.');
         } catch (\Exception $e) {
@@ -420,11 +388,10 @@ class PayrollController extends Controller
     /**
      * Mark the specified payroll as paid.
      */
-    public function markAsPaid($payrollId)
+    public function markAsPaid(string $encryptedId)
     {
-         $payroll = Payroll::find($payrollId);
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
 
-        // $this->authorize('update', $payroll); // Or a more specific permission like 'markAsPaid'
         if (!in_array($payroll->status, ['pending', 'processed', 'generated'])) {
             return redirect()->route('index')->with('error', "Payroll record is already {$payroll->status} and cannot be marked as paid.");
         }
@@ -444,9 +411,9 @@ class PayrollController extends Controller
     /**
      * Cancel the specified payroll.
      */
-    public function cancel(Payroll $payroll)
+    public function cancel(string $encryptedId)
     {
-        // $this->authorize('update', $payroll); // Or a more specific permission like 'cancelPayroll'
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
 
         if ($payroll->status === 'paid') {
             return redirect()->route('index')->with('error', 'Cannot cancel a paid payroll record.');

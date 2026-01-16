@@ -38,18 +38,18 @@
                         {{-- Action buttons like Print, Process, Mark as Paid --}}
                         @if ($payroll->status === 'pending' || $payroll->status === 'processing')
                             {{-- @if(\App\Models\User::hasAccess('Payroll Edit')) --}}
-                            <a href="{{ route('edit', $payroll->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <a href="{{ route('edit', \Crypt::encrypt($payroll->id)) }}" class="btn btn-warning btn-sm">Edit</a>
                             {{-- @endif --}}
                             {{-- @if(\App\Models\User::hasAccess('Payroll Process'))
-                            <form action="{{ route('admin.payroll.process', $payroll->id) }}" method="POST" style="display: inline-block;">
+                            <form action="{{ route('admin.payroll.process', \Crypt::encrypt($payroll->id)) }}" method="POST" style="display: inline-block;">
                                 @csrf
                                 <button type="submit" class="btn btn-info btn-sm">Process Payroll</button>
                             </form>
                             @endif --}}
                         @endif
-                        @if ($payroll->status === 'processed' && \App\Models\User::hasAccess('admin/payroll/mark-as-paid', true))
+                        @if ($payroll->status === 'processed' && \App\Models\User::hasAccess('admin/payroll/{encryptedId}/mark-as-paid', true))
                             {{-- @if(\App\Models\User::hasAccess('admin/payroll/mark-as-paid', true)) --}}
-                            <form action="{{ route('markAsPaid', $payroll->id) }}" method="POST" style="display: inline-block;">
+                            <form action="{{ route('markAsPaid', \Crypt::encrypt($payroll->id)) }}" method="POST" style="display: inline-block;">
                                 @csrf
                                 <button type="submit" class="btn btn-success btn-sm">Mark as Paid</button>
                             </form>

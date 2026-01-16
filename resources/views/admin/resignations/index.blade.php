@@ -230,7 +230,7 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <a href="{{ route('resignations.show', $resignation) }}"
+                                    <a href="{{ route('resignations.show', Crypt::encrypt($resignation->id)) }}"
                                         class="btn btn-outline-info btn-sm action-btn"
                                         data-id="{{ $resignation->id }}" data-bs-toggle="tooltip"
                                         data-bs-placement="top" title="View Resignation" aria-label="View">
@@ -243,14 +243,18 @@
 
                                     @if(in_array($resignation->status, ['pending', 'hr_approved', 'manager_approved']))
                                     <div class="btn-group" role="group">
+                                        @if(\App\Models\User::hasAccess('resignations/{resignation}/approve', true))
                                         <button type="button" class="btn btn-success btn-sm"
-                                            onclick="approveResignation({{ $resignation->id }})">
+                                            onclick="approveResignation('{{ Crypt::encrypt($resignation->id) }}')">
                                             <i class="fas fa-check"></i>
                                         </button>
+                                        @endif
+                                        @if(\App\Models\User::hasAccess('resignations/{resignation}/reject', true))
                                         <button type="button" class="btn btn-danger btn-sm"
-                                            onclick="rejectResignation({{ $resignation->id }})">
+                                            onclick="rejectResignation('{{ Crypt::encrypt($resignation->id) }}')">
                                             <i class="fas fa-times"></i>
                                         </button>
+                                        @endif
                                     </div>
                                     @endif
                                 </td>

@@ -21,9 +21,11 @@
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <h4>Roles List</h4>
                                 <div class="d-flex gap-2">
+                                    @if(\App\Models\User::hasAccess('company/company-role-create' , true))
                                     <a href="{{ route('company.roles.create') }}" class="btn btn-primary">
                                         <i class="fas fa-plus"></i> Create New Role
                                     </a>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -95,11 +97,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="{{ route('company.roles.destroy', $role->id) }}" method="POST" class="d-inline">
+                @if(\App\Models\User::hasAccess('company/company-role-delete/{encryptedId}' , true))
+                <form action="{{ route('company.roles.destroy', Crypt::encrypt($role->id)) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
+                @endif
             </div>
         </div>
     </div>

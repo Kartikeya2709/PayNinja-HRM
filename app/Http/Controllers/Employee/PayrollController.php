@@ -6,9 +6,31 @@ use App\Http\Controllers\Controller;
 use App\Models\Payroll;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 
 class PayrollController extends Controller
 {
+      /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -47,8 +69,9 @@ class PayrollController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Payroll $payroll)
+    public function show(string $encryptedId)
     {
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
         $employee = Auth::user()->employee;
 
         if (!$employee) {
@@ -96,10 +119,6 @@ class PayrollController extends Controller
                 ];
             });
 
-        // Debug: Log the items to check what's being loaded
-        \Log::info('Payroll Items:', $payroll->items->toArray());
-        \Log::info('Beneficiary Badges:', $beneficiaryBadges->toArray());
-
         return view('employee.payroll.show', compact('payroll', 'beneficiaryBadges'));
     }
 
@@ -130,11 +149,12 @@ class PayrollController extends Controller
     /**
      * Download the payslip as PDF
      *
-     * @param  \App\Models\Payroll  $payroll
+     * @param  string  $encryptedId
      * @return \Illuminate\Http\Response
      */
-    public function downloadPayslip(Payroll $payroll)
+    public function downloadPayslip(string $encryptedId)
     {
+        $payroll = $this->getModelFromEncryptedId($encryptedId, Payroll::class);
         $employee = Auth::user()->employee;
 
         if (!$employee) {

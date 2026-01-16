@@ -30,9 +30,9 @@
                 </div>
                 <div class="card-body">
                     <p><strong>Employee Code:</strong> {{ $employee->employee_code }}</p>
-                    <p><strong>Date of Joining:</strong> {{ $employee->joining_date->format('Y-m-d') }} </p>
-                    <p><strong>Department:</strong> {{ $department->name }}</p>
-                    <p><strong>Designation:</strong> {{ $designation->title }}</p>
+                    <p><strong>Date of Joining:</strong> {{ $employee->joining_date ? $employee->joining_date->format('Y-m-d') : 'Not Available' }} </p>
+                    <p><strong>Department:</strong> {{ $department->name ?? 'Not Assigned' }}</p>
+                    <p><strong>Designation:</strong> {{ $designation->title ?? 'Not Assigned' }}</p>
                     <p><strong>Location / Branch:</strong> {{ $employee->location }}</p>
                     <p><strong>Employment Type:</strong> {{ $employee->employment_type }}</p>
                     <p><strong>Probation Period (Months):</strong> {{ $employee->probation_period }}</p>
@@ -96,12 +96,12 @@
                     <h5 class="mb-0">Salary & Payroll Details</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>CTC (Cost to Company):</strong> {{ $employeeSalary->ctc }}</p>
-                    <p><strong>Basic Salary:</strong> {{ $employeeSalary->basic_salary }}</p>
-                    <p><strong>Bank Name:</strong> {{ $employeeSalary->bank_name }}</p>
-                    <p><strong>Account Number:</strong> {{ $employeeSalary->account_number }}</p>
-                    <p><strong>IFSC Code:</strong> {{ $employeeSalary->ifsc_code }}</p>
-                    <p><strong>PAN Card Number:</strong> {{ $employeeSalary->pan_number }}</p>
+                    <p><strong>CTC (Cost to Company):</strong> {{ $employeeSalary->ctc ?? 'Not Available' }}</p>
+                    <p><strong>Basic Salary:</strong> {{ $employeeSalary->basic_salary ?? 'Not Available' }}</p>
+                    <p><strong>Bank Name:</strong> {{ $employeeSalary->bank_name ?? 'Not Available' }}</p>
+                    <p><strong>Account Number:</strong> {{ $employeeSalary->account_number ?? 'Not Available' }}</p>
+                    <p><strong>IFSC Code:</strong> {{ $employeeSalary->ifsc_code ?? 'Not Available' }}</p>
+                    <p><strong>PAN Card Number:</strong> {{ $employeeSalary->pan_number ?? 'Not Available' }}</p>
                 </div>
             </div>
 

@@ -8,9 +8,32 @@ use App\Models\Slug;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class RoleController extends Controller
 {
+
+      /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -170,11 +193,12 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $encryptedId)
     {
         $user = Auth::user();
         $companyId = $user->company_id;
 
+        $id = Crypt::decrypt($encryptedId);
         $role = Role::where('company_id', $companyId)->findOrFail($id);
         return view('company.roles.show', compact('role'));
     }
@@ -182,11 +206,12 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(string $encryptedId)
     {
         $user = Auth::user();
         $companyId = $user->company_id;
 
+        $id = Crypt::decrypt($encryptedId);
         $role = Role::where('company_id', $companyId)->findOrFail($id);
         
         // Get available slugs based on user permissions
@@ -239,7 +264,7 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $encryptedId)
     {
         $user = Auth::user();
         $companyId = $user->company_id;
@@ -256,6 +281,7 @@ class RoleController extends Controller
             $availablePermissions = [];
         }
 
+        $id = Crypt::decrypt($encryptedId);
         $role = Role::where('company_id', $companyId)->findOrFail($id);
 
         $validator = Validator::make($request->all(), [
@@ -308,13 +334,12 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $encryptedId)
     {
         try {
             $user = Auth::user();
             $companyId = $user->company_id;
-
-            $role = Role::where('company_id', $companyId)->findOrFail($id);
+            $id = Crypt::decrypt($encryptedId);            $role = Role::where('company_id', $companyId)->findOrFail($id);
             
             // Check if this is the only role or if it's a default role
             $companyRolesCount = Role::where('company_id', $companyId)->count();

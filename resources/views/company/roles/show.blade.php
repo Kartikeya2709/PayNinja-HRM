@@ -22,9 +22,11 @@
                             <div class="d-flex justify-content-between align-items-center w-100">
                                 <h4>{{ $role->name }}</h4>
                                 <div class="d-flex gap-2">
-                                    <a href="{{ route('company.roles.edit', $role->id) }}" class="btn btn-primary">
+                                    @if(\App\Models\User::hasAccess('company/company-role-edit/{encryptedId}' , true))
+                                    <a href="{{ route('company.roles.edit', Crypt::encrypt($role->id)) }}" class="btn btn-primary">
                                         <i class="fas fa-edit"></i> Edit Role
                                     </a>
+                                    @endif
                                     <a href="{{ route('company.roles.index') }}" class="btn btn-secondary">
                                         <i class="fas fa-arrow-left"></i> Back to List
                                     </a>

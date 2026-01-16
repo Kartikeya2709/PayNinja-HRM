@@ -12,9 +12,31 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB; // For potential transaction
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Crypt;
 
 class EmployeePayrollConfigController extends Controller
 {
+      /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     /**
      * Display a listing of employees to configure their payroll.
      */
@@ -32,9 +54,9 @@ class EmployeePayrollConfigController extends Controller
     /**
      * Show the form for editing the specified employee's payroll configuration.
      */
-    public function edit(Employee $employee)
+    public function edit(string $encryptedId)
     {
-
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
         $companyId = Auth::user()->company_id;
         // dd($employeeId,$companyId);
         if ($employee->company_id !== $companyId) {
@@ -88,8 +110,9 @@ class EmployeePayrollConfigController extends Controller
     /**
      * Update the specified employee's payroll configuration in storage.
      */
-    public function update(Request $request, Employee $employee)
+    public function update(Request $request, string $encryptedId)
     {
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
         \Log::info('🚀 Starting employee payroll config update', [
             'employee_id' => $employee->id,
             'user_id' => Auth::id(),
@@ -283,7 +306,7 @@ class EmployeePayrollConfigController extends Controller
             ]);
     
             return redirect()
-                ->route('admin.payroll.employee-configurations.edit', $employee->id)
+                ->route('admin.payroll.employee-configurations.edit', \Crypt::encrypt($employee->id))
                 ->with('success', 'Employee payroll configuration updated successfully.');
     
         } catch (\Exception $e) {
@@ -304,12 +327,19 @@ class EmployeePayrollConfigController extends Controller
     /**
      * Set a salary as the current active salary for an employee
      *
-     * @param Employee $employee
-     * @param EmployeeSalary|null $employeeSalary
+     * @param string $encryptedId
+     * @param string|null $employeeSalaryId
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function setCurrent(Employee $employee, EmployeeSalary $employeeSalary = null)
+    public function setCurrent(string $encryptedId, $employeeSalaryId = null)
     {
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
+        $employeeSalary = null;
+        
+        if ($employeeSalaryId) {
+            $employeeSalary = EmployeeSalary::findOrFail($employeeSalaryId);
+        }
+        
         try {
             $companyId = Auth::user()->company_id;
             
@@ -374,7 +404,7 @@ class EmployeePayrollConfigController extends Controller
 
             return redirect()
                 ->route('admin.payroll.employee-configurations.edit', [
-                    'employee' => $employee->id,
+                    'encryptedId' => \Crypt::encrypt($employee->id),
                     'salary_id' => $employeeSalary->id
                 ])
                 ->with('success', $message);
@@ -556,11 +586,12 @@ class EmployeePayrollConfigController extends Controller
      * Create a new salary record for an employee
      *
      * @param Request $request
-     * @param Employee $employee
+     * @param string $encryptedId
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\RedirectResponse
      */
-    public function createSalary(Request $request, Employee $employee)
+    public function createSalary(Request $request, string $encryptedId)
     {
+        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
         try {
             $companyId = Auth::user()->company_id;
             
@@ -630,7 +661,7 @@ class EmployeePayrollConfigController extends Controller
             
             return redirect()
                 ->route('admin.payroll.employee-configurations.edit', [
-                    'employee' => $employee->id,
+                    'encryptedId' => \Crypt::encrypt($employee->id),
                     'salary_id' => $salary->id
                 ])
                 ->with('success', 'Salary record created successfully.');

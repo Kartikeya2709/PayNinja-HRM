@@ -49,16 +49,20 @@
                                             </td>
                                             <td>{{ $lead->created_at->format('M d, Y') }}</td>
                                             <td>
-                                                <a href="{{ route('company-admin.leads.show', $lead) }}"
-                                                    class="btn btn-info btn-sm">
-                                                    <i class="fas fa-eye"></i>
-                                                </a>
-                                                <a href="{{ route('company-admin.leads.edit', $lead) }}"
-                                                    class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                @if (Auth::user()->hasRole('company_admin'))
-                                                    <form action="{{ route('company-admin.leads.destroy', $lead) }}" method="POST"
+                                @if(\App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
+                                <a href="{{ route('company-admin.leads.show', Crypt::encrypt($lead->id)) }}"
+                                    class="btn btn-info btn-sm">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                @endif
+                                @if(\App\Models\User::hasAccess('company-admin/lead-edit/{encryptedId}', true))
+                                <a href="{{ route('company-admin.leads.edit', Crypt::encrypt($lead->id)) }}"
+                                    class="btn btn-primary btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @endif
+                                @if (Auth::user()->hasRole('company_admin') && \App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
+                                    <form action="{{ route('company-admin.leads.destroy', Crypt::encrypt($lead->id)) }}" method="POST"
                                                         class="d-inline">
                                                         @csrf
                                                         @method('DELETE')

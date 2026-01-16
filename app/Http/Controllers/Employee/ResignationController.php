@@ -8,10 +8,34 @@ use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
 class ResignationController extends Controller
 {
+
+      /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
+
     /**
      * Display a listing of the employee's resignation requests.
      */
@@ -117,9 +141,10 @@ class ResignationController extends Controller
     /**
      * Display the specified resignation request.
      */
-    public function show(EmployeeResignation $my_resignation)
+    public function show(string $encryptedId)
     {
-        $resignation = $my_resignation;
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // \Log::info('Show resignation called with : ' . $resignation->id);
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
 
@@ -137,8 +162,9 @@ class ResignationController extends Controller
     /**
      * Withdraw the resignation request.
      */
-    public function withdraw(EmployeeResignation $resignation)
+    public function withdraw(string $encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
 
         // Check if the resignation belongs to the authenticated employee
@@ -166,9 +192,9 @@ class ResignationController extends Controller
     /**
      * Show the form for editing the specified resignation request.
      */
-    public function edit(EmployeeResignation $my_resignation)
+    public function edit(string $encryptedId)
     {
-        $resignation = $my_resignation;
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
 
         // Check if the resignation belongs to the authenticated employee
@@ -188,9 +214,9 @@ class ResignationController extends Controller
     /**
      * Update the specified resignation request in storage.
      */
-    public function update(Request $request, EmployeeResignation $my_resignation)
+    public function update(Request $request, string $encryptedId)
     {
-        $resignation = $my_resignation;
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
         $employee = Employee::where('user_id', Auth::id())->firstOrFail();
 
         // Check if the resignation belongs to the authenticated employee

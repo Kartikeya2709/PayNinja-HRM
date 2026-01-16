@@ -8,9 +8,11 @@
                     <div class="card-header">
                         <h3 class="card-title">Lead Details</h3>
                         <div class="card-tools">
-                            <a href="{{ route('company-admin.leads.edit', $lead) }}" class="btn btn-primary btn-sm">
+                            @if(\App\Models\User::hasAccess('company-admin/leads/{encryptedId}/edit', true))
+                            <a href="{{ route('company-admin.leads.edit', Crypt::encrypt($lead->id)) }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-edit"></i> Edit Lead
                             </a>
+                            @endif
                             <a href="{{ route('company-admin.leads.index') }}" class="btn btn-secondary btn-sm">
                                 <i class="fas fa-arrow-left"></i> Back to List
                             </a>
@@ -87,10 +89,10 @@
                             </div>
                         </div>
 
-                        @if (Auth::user()->hasRole('company_admin'))
+                        @if (Auth::user()->hasRole('company_admin') && \App\Models\User::hasAccess('leads/{encryptedId}/delete', true))
                             <div class="row mt-4">
                                 <div class="col-12">
-                                    <form action="{{ route('company-admin.leads.destroy', $lead) }}" method="POST"
+                                    <form action="{{ route('company-admin.leads.destroy', Crypt::encrypt($lead->id)) }}" method="POST"
                                         class="d-inline"
                                         onsubmit="return confirm('Are you sure you want to delete this lead? This action cannot be undone.');">
                                         @csrf

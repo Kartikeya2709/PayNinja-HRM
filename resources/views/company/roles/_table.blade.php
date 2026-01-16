@@ -33,19 +33,26 @@
                 <td>{{ $role->created_at->format('M d, Y') }}</td>
                 <td class="text-center">
                     <div class="btn-group btn-group-sm" role="group">
-                        <a href="{{ route('company.roles.show', $role->id) }}" 
+                        {{-- @dd(auth()->user()) --}}
+                        @if(\App\Models\User::hasAccess('company/company-role-show/{encryptedId}' , true))
+                        <a href="{{ route('company.roles.show', Crypt::encrypt($role->id)) }}" 
                            class="btn btn-sm btn-outline-info" title="View">
                             <i class="fas fa-eye"></i>
                         </a>
-                        <a href="{{ route('company.roles.edit', $role->id) }}" 
+                        @endif
+                        @if(\App\Models\User::hasAccess('company/company-role-edit/{encryptedId}' , true))
+                        <a href="{{ route('company.roles.edit', Crypt::encrypt($role->id)) }}" 
                            class="btn btn-sm btn-outline-primary" title="Edit">
                             <i class="fas fa-edit"></i>
                         </a>
+                        @endif
+                        @if(\App\Models\User::hasAccess('company/company-role-delete/{encryptedId}' , true))
                         <button type="button" class="btn btn-sm btn-outline-danger" 
                                 title="Delete" data-bs-toggle="modal" 
                                 data-bs-target="#deleteModal{{ $role->id }}">
                             <i class="fas fa-trash"></i>
                         </button>
+                        @endif
                     </div>
                 </td>
             </tr>

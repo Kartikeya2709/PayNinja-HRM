@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Payroll - ID: {{ $payroll->id }}')
+@section('title', 'Edit Payroll')
 
 @section('content')
 <div class="container">
@@ -60,7 +60,7 @@
                                 </div>
                             </div>
                         </div>
-                        <form id="payroll-edit-form" action="{{ route('update', $payroll->id) }}" method="POST">
+                        <form id="payroll-edit-form" action="{{ route('update', \Crypt::encrypt($payroll->id)) }}" method="POST">
 
                             @csrf
                             @method('PUT')
@@ -144,7 +144,7 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fas fa-save"></i> Update Payroll
                                 </button>
-                                <a href="{{ route('show', $payroll) }}" class="btn btn-secondary">Cancel</a>
+                                <a href="{{ route('show', \Crypt::encrypt($payroll->id)) }}" class="btn btn-secondary">Cancel</a>
                             </div>
                         </form>
                     </div>

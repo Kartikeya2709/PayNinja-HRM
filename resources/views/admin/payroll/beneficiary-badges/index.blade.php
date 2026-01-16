@@ -84,8 +84,8 @@
                                     @foreach ($beneficiaryBadges as $badge)
                                         <tr>
                                             <td>
-                                                @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/' . $badge->id, true))
-                                                <a href="{{ route('admin.payroll.beneficiary-badges.show', $badge->id) }}" class="text-primary">
+                                                @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}', true))
+                                                <a href="{{ route('admin.payroll.beneficiary-badges.show', \Crypt::encrypt($badge->id)) }}" class="text-primary">
                                                     {{ $badge->name }}
                                                 </a>
                                                 @else
@@ -119,20 +119,20 @@
                                             </td>
                                             <td>
                                                 <div class="d-flex">
-                                                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}', true))
-                                                    <a href="{{ route('admin.payroll.beneficiary-badges.show', $badge->id) }}" class="btn btn-sm btn-soft-info me-1" title="View Details">
+                                                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}', true))
+                                                    <a href="{{ route('admin.payroll.beneficiary-badges.show', \Crypt::encrypt($badge->id)) }}" class="btn btn-sm btn-soft-info me-1" title="View Details">
                                                         <i class="fa-solid fa-eye"></i>
                                                     </a>
                                                     @endif
                                                     
-                                                    @if(\App\Models\User::hasAccess('Beneficiary Badges edit'))
-                                                    <a href="{{ route('admin.payroll.beneficiary-badges.edit', $badge->id) }}" class="btn btn-sm btn-soft-primary me-1" title="Edit">
+                                                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}/edit', true))
+                                                    <a href="{{ route('admin.payroll.beneficiary-badges.edit', \Crypt::encrypt($badge->id)) }}" class="btn btn-sm btn-soft-primary me-1" title="Edit">
                                                         <i class="fa-solid fa-pen-to-square"></i>
                                                     </a>
                                                     @endif
                                                     
-                                                    @if(\App\Models\User::hasAccess('Beneficiary Badges edit'))
-                                                    <form action="{{ route('admin.payroll.beneficiary-badges.destroy', $badge->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this badge? This action cannot be undone.');">
+                                                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}/destroy', true))
+                                                    <form action="{{ route('admin.payroll.beneficiary-badges.destroy', \Crypt::encrypt($badge->id)) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this badge? This action cannot be undone.');">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn btn-sm btn-soft-danger" title="Delete">

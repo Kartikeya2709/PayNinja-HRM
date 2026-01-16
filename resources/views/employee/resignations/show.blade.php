@@ -3,6 +3,7 @@
 @section('title', 'Resignation Details')
 
 @section('content')
+@if(\App\Models\User::hasAccess('resignations/my-resignations/{encryptedId}', true))
 <div class="container">
     <section class="section">
         <div class="section-header">
@@ -167,14 +168,14 @@
 
     <!-- Action Buttons -->
     <div class="action-buttons">
-        @if($resignation->canBeWithdrawn())
-            <button type="button" class="btn btn-danger" onclick="withdrawResignation({{ $resignation->id }})">
+        @if($resignation->canBeWithdrawn() && \App\Models\User::hasAccess('resignations/my-resignations/{encryptedId}/withdraw', true))
+            <button type="button" class="btn btn-danger" onclick="withdrawResignation('{{ Crypt::encrypt($resignation->id) }}')">
                 <i class="fas fa-times"></i> Withdraw Resignation
             </button>
         @endif
 
-        @if($resignation->status === 'pending')
-            <a href="{{ route('resignations.my-resignations.edit', $resignation) }}" class="btn btn-warning">
+        @if($resignation->status === 'pending' && \App\Models\User::hasAccess('resignations/my-resignations/{encryptedId}/edit', true))
+            <a href="{{ route('resignations.my-resignations.edit', Crypt::encrypt($resignation->id)) }}" class="btn btn-warning">
                 <i class="fas fa-edit"></i> Edit Request
             </a>
         @endif
@@ -185,11 +186,12 @@
     </div>
 </div>
 </section>
+@endif      
 @endsection
 
 @push('scripts')
 <script>
-function withdrawResignation(resignationId) {
+function withdrawResignation(encryptedId) {
     Swal.fire({
         title: 'Are you sure?',
         text: "You want to withdraw this resignation request? This action cannot be undone.",
@@ -203,7 +205,7 @@ function withdrawResignation(resignationId) {
             // Create a form and submit it
             const form = document.createElement('form');
             form.method = 'POST';
-            form.action = `/resignations/my-resignations/${resignationId}/withdraw`;
+            form.action = '{{ route("resignations.my-resignations.withdraw", ":encryptedId") }}'.replace(':encryptedId', encryptedId);
 
             // Add CSRF token
             const csrfToken = document.createElement('input');

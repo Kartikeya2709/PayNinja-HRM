@@ -139,6 +139,7 @@
                             {{-- 🔹 Employee ID Prefix Tab --}}
                             <div class="tab-pane fade" id="emp-id-prefix" role="tabpanel" aria-labelledby="emp-id-prefix-tab">
                                 <h5>Employee ID Prefix Settings</h5>
+                                @if(\App\Models\User::hasAccess('company/settings/save-employee-id-prefix' , true))
                                 <form id="empIdPrefixForm" method="POST"
                                     action="{{ route('company.settings.save-employee-id-prefix') }}">
                                     @csrf
@@ -288,6 +289,12 @@
                                         </div>
                                     </div>
                                 </form>
+                                @else
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    You don't have permission to modify employee ID prefix settings.
+                                </div>
+                                @endif
                             </div>
                         </div>
 

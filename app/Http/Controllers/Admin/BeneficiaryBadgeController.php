@@ -9,9 +9,31 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Crypt;
 
 class BeneficiaryBadgeController extends Controller
 {
+      /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -29,12 +51,12 @@ class BeneficiaryBadgeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $encryptedId
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(string $encryptedId)
     {
-        $beneficiaryBadge = BeneficiaryBadge::findOrFail($id);
+        $beneficiaryBadge = $this->getModelFromEncryptedId($encryptedId, BeneficiaryBadge::class);
         
         // Ensure the badge belongs to the user's company
         if ($beneficiaryBadge->company_id !== Auth::user()->company_id) {
@@ -162,12 +184,12 @@ class BeneficiaryBadgeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  string  $encryptedId
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(string $encryptedId)
     {
-        $beneficiaryBadge = BeneficiaryBadge::findOrFail($id);
+        $beneficiaryBadge = $this->getModelFromEncryptedId($encryptedId, BeneficiaryBadge::class);
         
         // Ensure the badge belongs to the user's company
         if ($beneficiaryBadge->company_id !== Auth::user()->company_id) {
@@ -180,9 +202,9 @@ class BeneficiaryBadgeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, string $encryptedId)
     {
-        $beneficiaryBadge = BeneficiaryBadge::findOrFail($id);
+        $beneficiaryBadge = $this->getModelFromEncryptedId($encryptedId, BeneficiaryBadge::class);
         
         if ($beneficiaryBadge->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -222,7 +244,7 @@ class BeneficiaryBadgeController extends Controller
             $beneficiaryBadge->applyToAllEmployees();
         }
 
-        return redirect()->route('index')
+        return redirect()->route('admin.payroll.beneficiary-badges.index')
                          ->with('success', 'Beneficiary badge updated successfully.');
     }
     
@@ -259,9 +281,9 @@ class BeneficiaryBadgeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id)
+    public function destroy(string $encryptedId)
     {
-        $beneficiaryBadge = BeneficiaryBadge::findOrFail($id);
+        $beneficiaryBadge = $this->getModelFromEncryptedId($encryptedId, BeneficiaryBadge::class);
         
         if ($beneficiaryBadge->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -279,15 +301,12 @@ class BeneficiaryBadgeController extends Controller
     /**
      * Apply a company-wide badge to all employees
      *
-     * @param \App\Models\BeneficiaryBadge $badge
+     * @param string $encryptedId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function applyToAllEmployees(BeneficiaryBadge $badge)
+    public function applyToAllEmployees(string $encryptedId)
     {
-        // if ($badge->company_id !== Auth::user()->company_id) {
-        //     abort(403, 'Unauthorized action.');
-        // }
-
+        $badge = $this->getModelFromEncryptedId($encryptedId, BeneficiaryBadge::class);
 
         // Ensure the badge has a company ID
         $companyId = $badge->company_id;
@@ -318,15 +337,12 @@ class BeneficiaryBadgeController extends Controller
     /**
      * Apply badge to all employees via AJAX
      *
-     * @param BeneficiaryBadge $badge
+     * @param string $encryptedId
      * @return \Illuminate\Http\JsonResponse
      */
-    public function apiApplyToAllEmployees(BeneficiaryBadge $badge)
+    public function apiApplyToAllEmployees(string $encryptedId)
     {
-        // dd($badge->company_id, Auth::user()->company_id);
-        // if ($badge->company_id !== Auth::user()->company_id) {
-        //     return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
-        // }
+        $badge = $this->getModelFromEncryptedId($encryptedId, BeneficiaryBadge::class);
 
         // Ensure the badge has a company ID
         $companyId = $badge->company_id;

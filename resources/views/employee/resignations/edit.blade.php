@@ -3,6 +3,7 @@
 @section('title', 'Edit Resignation Request')
 
 @section('content')
+@if(\App\Models\User::hasAccess('resignations/my-resignations/{encryptedId}/edit', true))
 <div class="container">
     <section class="section">
         <div class="section-header">
@@ -35,7 +36,7 @@
                     </div>
                 @endif
 
-                <form action="{{ route('resignations.my-resignations.update', $resignation) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('resignations.my-resignations.update', Crypt::encrypt($resignation->id)) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -157,7 +158,7 @@
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-save"></i> Update Resignation
                         </button>
-                        <a href="{{ route('resignations.my-resignations.show', $resignation) }}" class="btn btn-secondary">
+                        <a href="{{ route('resignations.my-resignations.show', Crypt::encrypt($resignation->id)) }}" class="btn btn-secondary">
                             <i class="fas fa-times"></i> Cancel
                         </a>
                         <a href="{{ route('resignations.my-resignations.index') }}" class="btn btn-outline-secondary">
@@ -210,6 +211,7 @@
         </div>
     </div>
 </section>
+@endif
 @endsection
 
 @push('scripts')

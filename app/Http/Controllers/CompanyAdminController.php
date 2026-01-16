@@ -990,8 +990,7 @@ class CompanyAdminController extends Controller
     public function toggleStatus(Request $request, $encryptedId)
     {
         // Find employee and related user
-        $employee = $this->getModelFromEncryptedId($encryptedId, Employee::class);
-        $user = $employee->user; // use user_id if Employee linked to User
+$employee = Employee::withoutGlobalScopes()->findOrFail(Crypt::decrypt($encryptedId));        $user = $employee->user; // use user_id if Employee linked to User
 
         // Get the desired status from request
         $newStatus = $request->is_active ? 1 : 0;

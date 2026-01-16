@@ -170,7 +170,7 @@
                         <!--<p><strong>HRA:</strong> {{ $currentSalary->hra ? number_format($currentSalary->hra, 2) : 'Not set' }}</p>
                         <p><strong>DA:</strong> {{ $currentSalary->da ? number_format($currentSalary->da, 2) : 'Not set' }}</p>-->
                         <div class="status-toggle">
-                            <form id="statusForm" action="{{ route('admin.payroll.employee-configurations.set-current', ['employee' => $employee->id, 'employeeSalary' => $currentSalary->id]) }}" method="POST">
+                            <form id="statusForm" action="{{ route('admin.payroll.employee-configurations.set-current', ['encryptedId' => \Crypt::encrypt($employee->id), 'employeeSalaryId' => $currentSalary->id]) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <div class="form-group mb-0">
@@ -206,7 +206,7 @@
                 <h4>Salary Configuration</h4>
             </div>
             <div class="card-body">
-                <form id="salaryUpdateForm" action="{{ route('admin.employee-payroll-configurations.update-salary', $employee) }}" method="POST">
+                <form id="salaryUpdateForm" action="{{ route('admin.employee-payroll-configurations.update-salary', \Crypt::encrypt($employee->id)) }}" method="POST">
                     @csrf
                     @method('PUT')
                     
@@ -244,7 +244,7 @@
 
         <!-- Beneficiary Badges Form -->
         <div class="card mt-4">
-            <form action="{{ route('admin.employee-payroll-configurations.update', $employee) }}" method="POST" id="beneficiaryBadgesForm">
+            <form action="{{ route('admin.employee-payroll-configurations.update', \Crypt::encrypt($employee->id)) }}" method="POST" id="beneficiaryBadgesForm">
                 @csrf
                 @method('PUT')
                 <input type="hidden" name="_method" value="PUT">

@@ -90,8 +90,8 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if(\App\Models\User::hasAccess('admin/payroll/employee-configurations/{employee}/edit', true))
-                                            <a href="{{ route('admin.payroll.employee-configurations.edit', $employee->id) }}"
+                                            @if(\App\Models\User::hasAccess('admin/payroll/employee-configurations/{encryptedId}/edit', true))
+                                            <a href="{{ route('admin.payroll.employee-configurations.edit', \Crypt::encrypt($employee->id)) }}"
                                                 class="btn btn-sm btn-soft-primary"><i
                                                     class="fa-solid fa-gear me-1"></i> Configure Payroll</a>
                                             @endif

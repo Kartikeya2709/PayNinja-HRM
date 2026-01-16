@@ -9,10 +9,31 @@ use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Crypt;
 use Carbon\Carbon;
 
 class ResignationController extends Controller
 {
+    /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
     /**
      * Display a listing of resignation requests for admin.
      */
@@ -74,8 +95,10 @@ class ResignationController extends Controller
     /**
      * Display the specified resignation request.
      */
-    public function show(EmployeeResignation $resignation)
+    public function show($encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -95,8 +118,10 @@ class ResignationController extends Controller
     /**
      * Approve the resignation request.
      */
-    public function approve(Request $request, EmployeeResignation $resignation)
+    public function approve(Request $request, $encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -154,8 +179,10 @@ class ResignationController extends Controller
     /**
      * Reject the resignation request.
      */
-    public function reject(Request $request, EmployeeResignation $resignation)
+    public function reject(Request $request, $encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -197,8 +224,10 @@ class ResignationController extends Controller
     /**
      * Complete exit interview.
      */
-    public function completeExitInterview(Request $request, EmployeeResignation $resignation)
+    public function completeExitInterview(Request $request, $encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -228,8 +257,10 @@ class ResignationController extends Controller
     /**
      * Complete handover process.
      */
-    public function completeHandover(Request $request, EmployeeResignation $resignation)
+    public function completeHandover(Request $request, $encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -268,8 +299,10 @@ class ResignationController extends Controller
     /**
      * Mark assets as returned.
      */
-    public function markAssetsReturned(Request $request, EmployeeResignation $resignation)
+    public function markAssetsReturned(Request $request, $encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -343,8 +376,10 @@ class ResignationController extends Controller
     /**
      * Get assigned assets for an employee (for AJAX).
      */
-    public function getAssignedAssets(EmployeeResignation $resignation)
+    public function getAssignedAssets($encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');
@@ -370,8 +405,10 @@ class ResignationController extends Controller
     /**
      * Complete final settlement.
      */
-    public function completeFinalSettlement(Request $request, EmployeeResignation $resignation)
+    public function completeFinalSettlement(Request $request, $encryptedId)
     {
+        $resignation = $this->getModelFromEncryptedId($encryptedId, EmployeeResignation::class);
+
         // Check if resignation belongs to the admin's company
         if ($resignation->company_id !== Auth::user()->company_id) {
             abort(403, 'Unauthorized action.');

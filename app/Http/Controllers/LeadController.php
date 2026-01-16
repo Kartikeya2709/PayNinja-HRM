@@ -5,9 +5,32 @@ namespace App\Http\Controllers;
 use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 
 class LeadController extends Controller
 {
+
+  /**
+     * Get model from encrypted ID
+     */
+    private function getModelFromEncryptedId(string $encryptedId, string $model)
+    {
+        try {
+            $id = Crypt::decrypt($encryptedId);
+            return $model::findOrFail($id);
+        } catch (\Exception $e) {
+            abort(404);
+        }
+    }
+
+    /**
+     * Encrypt ID
+     */
+    private function encryptId(int $id): string
+    {
+        return Crypt::encrypt($id);
+    }
+
     public function __construct()
     {
         $this->middleware(['role:admin,company_admin']);
@@ -68,9 +91,11 @@ class LeadController extends Controller
     /**
      * Display the specified lead.
      */
-    public function show(Lead $lead)
+    public function show(string $encryptedId)
     {
         $user = Auth::user();
+        $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
+        
         if (!$user->hasRole('company_admin') && !$user->hasRole('admin')) {
             abort(403);
         }
@@ -86,9 +111,11 @@ class LeadController extends Controller
     /**
      * Show the form for editing the specified lead.
      */
-    public function edit(Lead $lead)
+    public function edit(string $encryptedId)
     {
         $user = Auth::user();
+        $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
+        
         if (!$user->hasRole('company_admin') && !$user->hasRole('admin')) {
             abort(403);
         }
@@ -104,9 +131,11 @@ class LeadController extends Controller
     /**
      * Update the specified lead in storage.
      */
-    public function update(Request $request, Lead $lead)
+    public function update(Request $request, string $encryptedId)
     {
         $user = Auth::user();
+        $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
+        
         if (!$user->hasRole('company_admin') && !$user->hasRole('admin')) {
             abort(403);
         }
@@ -129,15 +158,16 @@ class LeadController extends Controller
             'name', 'email', 'phone', 'status', 'source', 'notes'
         ]));
 
-        return redirect()->route('company-admin.leads.show', $lead)->with('success', 'Lead updated successfully.');
+        return redirect()->route('company-admin.leads.show', $this->encryptId($lead->id))->with('success', 'Lead updated successfully.');
     }
 
     /**
      * Remove the specified lead from storage.
      */
-    public function destroy(Lead $lead)
+    public function destroy(string $encryptedId)
     {
         $user = Auth::user();
+        $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
 
         // Only company_admin can delete leads, admin cannot
         if (!$user->hasRole('company_admin')) {
@@ -151,6 +181,6 @@ class LeadController extends Controller
 
         $lead->delete();
 
-        return redirect()->route('leads.index')->with('success', 'Lead deleted successfully.');
+        return redirect()->route('company-admin.leads.index')->with('success', 'Lead deleted successfully.');
     }
 }

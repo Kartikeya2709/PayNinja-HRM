@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Employee;
 use App\Models\Designation;
 use App\Models\Department;
-use App\Models\EmployeeSalary;
 class ProfileController extends Controller
 {
     /**
@@ -20,25 +19,19 @@ class ProfileController extends Controller
     public function show()
     {
         $user = Auth::user();
-        $employee = $user->employee;
-
-        // dd($employee);
-        
-      $designation = $employee->designation;
-      
-      $department = $employee->department;
-        // Employee::with('employeeSalaries')->where('id')
-
-        $employeeSalary = EmployeeSalary::where('employee_id', $employee->id)->first();
-        
-        // Fetch employee documents
-        $documents = \App\Models\EmployeeDocument::where('employee_id', $employee->id)->get()->groupBy('type');
-
-        // dd($documents);
+        $employee = $user->employee; 
 
         if (!$employee) {
             return redirect()->route('home')->with('error', 'Employee record not found.');
         }
+
+        // Load relationships
+        $employee->load(['designation', 'department', 'reportingManager', 'currentSalary', 'documents']);
+        
+        $designation = $employee->designation;
+        $department = $employee->department;
+        $employeeSalary = $employee->currentSalary;
+        $documents = $employee->documents->groupBy('type');
 
         return view('employee.profile', compact('employee', 'designation', 'department', 'employeeSalary', 'documents'));
     }

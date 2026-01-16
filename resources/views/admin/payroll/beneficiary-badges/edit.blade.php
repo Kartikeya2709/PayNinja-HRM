@@ -18,7 +18,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('admin.payroll.beneficiary-badges.update', $beneficiaryBadge->id) }}" method="POST">
+                    <form action="{{ route('admin.payroll.beneficiary-badges.update', \Crypt::encrypt($beneficiaryBadge->id)) }}" method="POST">
                         @csrf
                         @method('PUT')
                         

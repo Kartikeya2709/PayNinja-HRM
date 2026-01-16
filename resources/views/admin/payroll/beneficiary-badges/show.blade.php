@@ -17,8 +17,8 @@
                     </nav>
                 </div>
                 <div>
-                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/edit', true))
-                    <a href="{{ route('admin.payroll.beneficiary-badges.edit', $beneficiaryBadge) }}" class="btn btn-primary me-2">
+                    @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}/edit', true))
+                    <a href="{{ route('admin.payroll.beneficiary-badges.edit', \Crypt::encrypt($beneficiaryBadge->id)) }}" class="btn btn-primary me-2">
                         <i class="fa-solid fa-pen-to-square me-1"></i> Edit
                     </a>
                     @endif
@@ -140,7 +140,7 @@
                                 This is a company-wide badge and will be automatically applied to all employees.
                             </div> -->
                         @elseif($beneficiaryBadge->is_active)
-                            @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/apply-to-all', true))
+                            @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}/apply-to-all', true))
                             <button type="button" class="btn btn-outline-info mb-2" id="applyToAllBtn">
                                 <i class="fa-solid fa-users me-2"></i> Apply to All Employees
                             </button>
@@ -159,14 +159,14 @@
                             </div>
                         @endif
 
-                        @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/edit', true))
-                        <a href="{{ route('admin.payroll.beneficiary-badges.edit', $beneficiaryBadge->id) }}" class="btn btn-primary mb-2">
+                        @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}/edit', true))
+                        <a href="{{ route('admin.payroll.beneficiary-badges.edit', \Crypt::encrypt($beneficiaryBadge->id)) }}" class="btn btn-primary mb-2">
                             <i class="fa-solid fa-pen-to-square me-2"></i> Edit Badge
                         </a>
                         @endif
 
-                        @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{beneficiaryBadge}/destroy', true))
-                        <form action="{{ route('admin.payroll.beneficiary-badges.destroy', $beneficiaryBadge->id) }}" method="POST" class="d-grid">
+                        @if(\App\Models\User::hasAccess('admin/payroll/beneficiary-badges/{encryptedId}/destroy', true))
+                        <form action="{{ route('admin.payroll.beneficiary-badges.destroy', \Crypt::encrypt($beneficiaryBadge->id)) }}" method="POST" class="d-grid">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-danger"
@@ -198,7 +198,7 @@
                     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin me-2"></i> Applying...';
                     
                     // Make AJAX request
-                    fetch(`{{ route('api.apply-to-all', $beneficiaryBadge->id) }}`, {
+                    fetch(`{{ route('api.apply-to-all', \Crypt::encrypt($beneficiaryBadge->id)) }}`, {
                         method: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',

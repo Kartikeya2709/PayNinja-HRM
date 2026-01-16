@@ -39,9 +39,9 @@
                                         <td><span class="badge badge-{{ $payroll->status == 'paid' ? 'success' : 'secondary' }}">{{ ucfirst($payroll->status) }}</span></td>
                                         <td>{{ $payroll->payment_date ? $payroll->payment_date->format('M d, Y') : 'N/A' }}</td>
                                         <td>
-                                            <a href="{{ route('employee.payroll.show', $payroll->id) }}" class="btn btn-info btn-sm">View</a>
+                                            <a href="{{ route('employee.payroll.show', \Crypt::encrypt($payroll->id)) }}" class="btn btn-info btn-sm">View</a>
                                             @if($payroll->status == 'paid')
-                                                <a href="{{ route('employee.payroll.download', $payroll->id) }}" class="btn btn-primary btn-sm">Download PDF</a>
+                                                <a href="{{ route('employee.payroll.download', \Crypt::encrypt($payroll->id)) }}" class="btn btn-primary btn-sm">Download PDF</a>
                                             @endif
                                         </td>
                                     </tr>

@@ -24,7 +24,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('company-admin.leads.update', $lead) }}" method="POST">
+                    <form action="{{ route('company-admin.leads.update', Crypt::encrypt($lead->id)) }}" method="POST">
                         @csrf
                         @method('PUT')
 

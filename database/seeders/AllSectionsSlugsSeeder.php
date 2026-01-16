@@ -393,15 +393,21 @@ class AllSectionsSlugsSeeder extends Seeder
                     // Employee Resignations
                     ['name' => 'My Resignations', 'slug' => 'resignations/my-resignations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
                     ['name' => 'Submit Resignation', 'slug' => 'resignations/my-resignations/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 2],
-                    ['name' => 'Show Resignation', 'slug' => 'resignations/my-resignations/{id}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Store Resignation', 'slug' => 'resignations/my-resignations', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Show Resignation', 'slug' => 'resignations/my-resignations/{encryptedId}/show', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Edit Resignation', 'slug' => 'resignations/my-resignations/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Update Resignation', 'slug' => 'resignations/my-resignations/{encryptedId}', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Withdraw Resignation', 'slug' => 'resignations/my-resignations/{encryptedId}/withdraw', 'icon' => 'fas fa-undo', 'is_visible' => 0, 'sort_order' => 7],
                     // Admin Resignations
-                    ['name' => 'All Resignations', 'slug' => 'resignations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 4],
-                    ['name' => 'Show All Resignations', 'slug' => 'resignations/{resignation}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 5],
-                    ['name' => 'Approve Resignation', 'slug' => 'resignations/{resignation}/approve', 'icon' => 'fas fa-check', 'is_visible' => 0, 'sort_order' => 6],
-                    ['name' => 'Exit Interview', 'slug' => 'resignations/{resignation}/complete-exit-interview', 'icon' => 'fas fa-comments', 'is_visible' => 0, 'sort_order' => 7],
-                    ['name' => 'Handover', 'slug' => 'resignations/{resignation}/complete-handover', 'icon' => 'fas fa-exchange-alt', 'is_visible' => 0, 'sort_order' => 8],
-                    ['name' => 'Assets Return', 'slug' => 'resignations/{resignation}/assigned-assets', 'icon' => 'fas fa-boxes', 'is_visible' => 0, 'sort_order' => 9],
-                    ['name' => 'Final Settlement', 'slug' => 'resignations/{resignation}/complete-final-settlement', 'icon' => 'fas fa-file-invoice-dollar', 'is_visible' => 0, 'sort_order' => 10],
+                    ['name' => 'All Resignations', 'slug' => 'resignations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 8],
+                    ['name' => 'Show All Resignations', 'slug' => 'resignations/{resignation}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 9],
+                    ['name' => 'Approve Resignation', 'slug' => 'resignations/{resignation}/approve', 'icon' => 'fas fa-check', 'is_visible' => 0, 'sort_order' => 10],
+                    ['name' => 'Reject Resignation', 'slug' => 'resignations/{resignation}/reject', 'icon' => 'fas fa-times', 'is_visible' => 0, 'sort_order' => 11],
+                    ['name' => 'Exit Interview', 'slug' => 'resignations/{resignation}/complete-exit-interview', 'icon' => 'fas fa-comments', 'is_visible' => 0, 'sort_order' => 12],
+                    ['name' => 'Handover', 'slug' => 'resignations/{resignation}/complete-handover', 'icon' => 'fas fa-exchange-alt', 'is_visible' => 0, 'sort_order' => 13],
+                    ['name' => 'Assets Return', 'slug' => 'resignations/{resignation}/assigned-assets', 'icon' => 'fas fa-boxes', 'is_visible' => 0, 'sort_order' => 14],
+                    ['name' => 'Mark Assets Returned', 'slug' => 'resignations/{resignation}/mark-assets-returned', 'icon' => 'fas fa-check-circle', 'is_visible' => 0, 'sort_order' => 15],
+                    ['name' => 'Final Settlement', 'slug' => 'resignations/{resignation}/complete-final-settlement', 'icon' => 'fas fa-file-invoice-dollar', 'is_visible' => 0, 'sort_order' => 16],
                 ]
             ],
 
@@ -415,9 +421,15 @@ class AllSectionsSlugsSeeder extends Seeder
                 'sort_order' => 15,
                 'children' => [
                     ['name' => 'Company Settings', 'slug' => 'company/settings', 'icon' => 'fas fa-cog', 'is_visible' => 1, 'sort_order' => 1],
-                    ['name' => 'Company Roles', 'slug' => 'company/company-roles-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 2],
-                    ['name' => 'Create Role', 'slug' => 'company/company-role-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 3],
-                    ['name' => 'Edit Role', 'slug' => 'company/company-role-edit/{role}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Update Company Settings', 'slug' => 'company/settings/update', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 2],
+                    ['name' => 'Save Employee ID Prefix', 'slug' => 'company/settings/save-employee-id-prefix', 'icon' => 'fas fa-id-card', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Company Roles', 'slug' => 'company/company-roles-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 4],
+                    ['name' => 'Create Role', 'slug' => 'company/company-role-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 5],
+                    ['name' => 'Store Role', 'slug' => 'company/company-role-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 6],
+                    ['name' => 'Show Role', 'slug' => 'company/company-role-show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 7],
+                    ['name' => 'Edit Role', 'slug' => 'company/company-role-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Update Role', 'slug' => 'company/company-role-update/{encryptedId}', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 9],
+                    ['name' => 'Delete Role', 'slug' => 'company/company-role-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 10],
                 ]
             ],
 
@@ -432,9 +444,15 @@ class AllSectionsSlugsSeeder extends Seeder
                 'children' => [
                     ['name' => 'Leads', 'slug' => 'company-admin/leads-list', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
                     ['name' => 'Create Lead', 'slug' => 'company-admin/lead-create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 2],
-                    ['name' => 'Show Lead', 'slug' => 'company-admin/lead-show/{lead}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 3],
-                    ['name' => 'Edit Lead', 'slug' => 'company-admin/lead-edit/{lead}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 4],
-                    ['name' => 'Module Access', 'slug' => 'company-admin/module-access', 'icon' => 'fas fa-lock', 'is_visible' => 1, 'sort_order' => 5],
+                    ['name' => 'Store Lead', 'slug' => 'company-admin/lead-store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Show Lead', 'slug' => 'company-admin/lead-show/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 3],
+                    ['name' => 'Edit Lead', 'slug' => 'company-admin/lead-edit/{encryptedId}', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Update Lead', 'slug' => 'company-admin/lead-update/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 5],
+                    ['name' => 'Delete Lead', 'slug' => 'company-admin/lead-delete/{encryptedId}', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 6],
+
+                    //Module Access
+                    ['name' => 'Module Access', 'slug' => 'company-admin/module-access', 'icon' => 'fas fa-key', 'is_visible' => 1, 'sort_order' => 1],
+                    ['name' => 'Update Module Access', 'slug' => 'company-admin/module-access-update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 2],
                 ]
             ],
 
@@ -447,26 +465,56 @@ class AllSectionsSlugsSeeder extends Seeder
                 'is_visible' => 1,
                 'sort_order' => 17,
                 'children' => [
+
                     // Employee Payroll
                     ['name' => 'My Payslips', 'slug' => 'employee/payroll/', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 1],
-                    ['name' => 'View Payslip', 'slug' => 'employee/payroll/{payroll}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 2],
-                    ['name' => 'Download Payslip', 'slug' => 'employee/payroll/{payroll}/download', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 3],
-                    // Admin Payroll
-                    ['name' => 'Payroll Index', 'slug' => '/admin/payroll/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 4],
-                    ['name' => 'Create Payroll', 'slug' => '/admin/payroll/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 5],
-                    ['name' => 'Edit Payroll', 'slug' => '/admin/payroll/{payroll}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 6],
-                    ['name' => 'Process Payroll', 'slug' => '/admin/payroll/{payroll}/process', 'icon' => 'fas fa-cog', 'is_visible' => 0, 'sort_order' => 7],
-                    ['name' => 'Mark as Paid', 'slug' => '/admin/payroll/{payroll}/mark-as-paid', 'icon' => 'fas fa-check-circle', 'is_visible' => 0, 'sort_order' => 8],
-                    ['name' => 'Bulk Approve', 'slug' => '/admin/payroll/bulk-approve', 'icon' => 'fas fa-check-double', 'is_visible' => 1, 'sort_order' => 9],
-                    // Settings
-                    ['name' => 'Payroll Settings', 'slug' => '/admin/payroll/settings', 'icon' => 'fas fa-cog', 'is_visible' => 1, 'sort_order' => 10],
-                    // Employee Configurations
-                    ['name' => 'Employee Payroll Config', 'slug' => 'admin/payroll/employee-configurations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 11],
-                    ['name' => 'Edit Config', 'slug' => 'admin/payroll/employee-configurations/{employee}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 12],
-                    // Beneficiary Badges
-                    ['name' => 'Allowances & Deductions', 'slug' => 'admin/payroll/beneficiary-badges/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 13],
-                    ['name' => 'Create Badge', 'slug' => 'admin/payroll/beneficiary-badges/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 14],
-                    ['name' => 'Edit Badge', 'slug' => 'admin/payroll/beneficiary-badges/{badge}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 15],
+                    ['name' => 'View Payslip', 'slug' => 'employee/payroll/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 2],
+                    ['name' => 'Download Payslip', 'slug' => 'employee/payroll/{encryptedId}/download', 'icon' => 'fas fa-download', 'is_visible' => 0, 'sort_order' => 3],
+
+                    // Admin Payroll - Index and Create
+                    ['name' => 'Store Payroll Data', 'slug' => 'admin/payroll', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 4],
+                    ['name' => 'Payroll Index', 'slug' => 'admin/payroll/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 5],
+                    ['name' => 'Create Payroll', 'slug' => 'admin/payroll/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 6],
+
+                    // Payroll Settings - MUST be before {payroll} wildcard route
+                    ['name' => 'Payroll Settings', 'slug' => 'admin/payroll/settings', 'icon' => 'fas fa-cog', 'is_visible' => 1, 'sort_order' => 7],
+                    ['name' => 'Update Payroll Settings', 'slug' => 'admin/payroll/settings-update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 8],
+                    ['name' => 'Bulk Approve Payroll', 'slug' => 'admin/payroll/bulk-approve', 'icon' => 'fas fa-check-double', 'is_visible' => 1, 'sort_order' => 9],
+
+                    // Payroll CRUD - Wildcard routes
+                    ['name' => 'Show Payroll', 'slug' => 'admin/payroll/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 10],
+                    ['name' => 'Edit Payroll', 'slug' => 'admin/payroll/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 11],
+                    ['name' => 'Update Payroll', 'slug' => 'admin/payroll/{encryptedId}/update', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 12],
+                    ['name' => 'Process Payroll', 'slug' => 'admin/payroll/{encryptedId}/process', 'icon' => 'fas fa-cog', 'is_visible' => 0, 'sort_order' => 13],
+                    ['name' => 'Mark as Paid', 'slug' => 'admin/payroll/{encryptedId}/mark-as-paid', 'icon' => 'fas fa-check-circle', 'is_visible' => 0, 'sort_order' => 14],
+                    ['name' => 'Cancel Payroll', 'slug' => 'admin/payroll/{encryptedId}/cancel', 'icon' => 'fas fa-ban', 'is_visible' => 0, 'sort_order' => 15],
+                    ['name' => 'Delete Payroll', 'slug' => 'admin/payroll/{encryptedId}/destroy', 'icon' => '', 'is_visible' => false, 'sort_order' => 16],
+
+                    // Employee Payroll Configurations
+                    ['name' => 'Employee Payroll Config Index', 'slug' => 'admin/payroll/employee-configurations', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 17],
+                    ['name' => 'Edit Employee Config', 'slug' => 'admin/payroll/employee-configurations/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 18],
+                    ['name' => 'Update Employee Config', 'slug' => 'admin/payroll/employee-configurations/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 19],
+                    ['name' => 'Set Current Salary', 'slug' => 'admin/payroll/employee-configurations/{encryptedId}/set-current/{employeeSalary?}', 'icon' => 'fas fa-dollar-sign', 'is_visible' => 0, 'sort_order' => 20],
+                    ['name' => 'Create Employee Salary', 'slug' => 'admin/payroll/employee-configurations/{encryptedId}/create-salary', 'icon' => 'fas fa-plus-circle', 'is_visible' => 0, 'sort_order' => 21],
+
+                    // Alternative Employee Payroll Configurations Route
+                    ['name' => 'Edit Alt Employee Config', 'slug' => 'admin/employee-payroll-configurations/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 22],
+                    ['name' => 'Update Alt Employee Config', 'slug' => 'admin/employee-payroll-configurations/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 23],
+                    ['name' => 'Update Employee Salary', 'slug' => 'admin/employee-payroll-configurations/{encryptedId}/update-salary', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 24],
+
+                    // Beneficiary Badges (Allowances/Deductions)
+                    ['name' => 'Allowances & Deductions', 'slug' => 'admin/payroll/beneficiary-badges/index', 'icon' => 'fas fa-list', 'is_visible' => 1, 'sort_order' => 25],
+                    ['name' => 'Create Badge', 'slug' => 'admin/payroll/beneficiary-badges/create', 'icon' => 'fas fa-plus-circle', 'is_visible' => 1, 'sort_order' => 26],
+                    ['name' => 'Store Badge', 'slug' => 'admin/payroll/beneficiary-badges/store', 'icon' => 'fas fa-save', 'is_visible' => 0, 'sort_order' => 27],
+                    ['name' => 'Show Badge', 'slug' => 'admin/payroll/beneficiary-badges/{encryptedId}', 'icon' => 'fas fa-eye', 'is_visible' => 0, 'sort_order' => 28],
+                    ['name' => 'Edit Badge', 'slug' => 'admin/payroll/beneficiary-badges/{encryptedId}/edit', 'icon' => 'fas fa-edit', 'is_visible' => 0, 'sort_order' => 29],
+                    ['name' => 'Update Badge', 'slug' => 'admin/payroll/beneficiary-badges/{encryptedId}', 'icon' => 'fas fa-sync', 'is_visible' => 0, 'sort_order' => 30],
+                    ['name' => 'Delete Badge', 'slug' => 'admin/payroll/beneficiary-badges/{encryptedId}/destroy', 'icon' => 'fas fa-trash', 'is_visible' => 0, 'sort_order' => 31],
+                    ['name' => 'Apply Badge to All', 'slug' => 'admin/payroll/beneficiary-badges/{encryptedId}/apply-to-all', 'icon' => 'fas fa-check-double', 'is_visible' => 0, 'sort_order' => 32],
+                    ['name' => 'API Apply Badge to All', 'slug' => 'admin/payroll/beneficiary-badges/{encryptedId}/api/apply-to-all', 'icon' => 'fas fa-check-double', 'is_visible' => 0, 'sort_order' => 33],
+
+                    // PDF Payslip Routes
+                    ['name' => 'List Payslips', 'slug' => 'employee/salary/payslips', 'icon' => 'fas fa-file-pdf', 'is_visible' => 1, 'sort_order' => 34],
                 ]
             ],
 

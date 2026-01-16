@@ -246,10 +246,12 @@
                                             @else
                                                 <span class="badge badge-warning">Pending</span>
                                                 <br>
+                                                @if(\App\Models\User::hasAccess('resignations/{resignation}/complete-exit-interview', true))
                                                 <button type="button" class="btn btn-sm btn-success mt-2"
-                                                        onclick="completeExitInterview({{ $resignation->id }})">
+                                                        onclick="completeExitInterview('{{ Crypt::encrypt($resignation->id) }}')">
                                                     <i class="fas fa-check"></i> Complete
                                                 </button>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
@@ -266,10 +268,12 @@
                                             @else
                                                 <span class="badge badge-warning">Pending</span>
                                                 <br>
+                                                @if(\App\Models\User::hasAccess('resignations/{resignation}/complete-handover', true))
                                                 <button type="button" class="btn btn-sm btn-success mt-2"
-                                                        onclick="completeHandover({{ $resignation->id }})">
+                                                        onclick="completeHandover('{{ Crypt::encrypt($resignation->id) }}')">
                                                     <i class="fas fa-check"></i> Complete
                                                 </button>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
@@ -286,10 +290,12 @@
                                             @else
                                                 <span class="badge badge-warning">Pending</span>
                                                 <br>
+                                                @if(\App\Models\User::hasAccess('resignations/{resignation}/mark-assets-returned', true))
                                                 <button type="button" class="btn btn-sm btn-success mt-2"
-                                                        onclick="markAssetsReturned({{ $resignation->id }})">
+                                                        onclick="markAssetsReturned('{{ Crypt::encrypt($resignation->id) }}')">
                                                     <i class="fas fa-check"></i> Complete
                                                 </button>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
@@ -306,10 +312,12 @@
                                             @else
                                                 <span class="badge badge-warning">Pending</span>
                                                 <br>
+                                                @if(\App\Models\User::hasAccess('resignations/{resignation}/complete-final-settlement', true))
                                                 <button type="button" class="btn btn-sm btn-success mt-2"
-                                                        onclick="completeFinalSettlement({{ $resignation->id }})">
+                                                        onclick="completeFinalSettlement('{{ Crypt::encrypt($resignation->id) }}')">
                                                     <i class="fas fa-check"></i> Complete
                                                 </button>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>
@@ -334,14 +342,18 @@
                             <div class="col-12">
                                 @if(in_array($resignation->status, ['pending', 'hr_approved', 'manager_approved']))
                                     <div class="btn-group" role="group" aria-label="Approval Actions">
+                                        @if(\App\Models\User::hasAccess('resignations/{resignation}/approve', true))
                                         <button type="button" class="btn btn-success"
-                                                onclick="approveResignation({{ $resignation->id }})">
+                                                onclick="approveResignation('{{ Crypt::encrypt($resignation->id) }}')">
                                             <i class="fas fa-check"></i> Approve
                                         </button>
+                                        @endif
+                                        @if(\App\Models\User::hasAccess('resignations/{resignation}/reject', true))
                                         <button type="button" class="btn btn-danger"
-                                                onclick="rejectResignation({{ $resignation->id }})">
+                                                onclick="rejectResignation('{{ Crypt::encrypt($resignation->id) }}')">
                                             <i class="fas fa-times"></i> Reject
                                         </button>
+                                        @endif
                                     </div>
                                 @endif
                             </div>

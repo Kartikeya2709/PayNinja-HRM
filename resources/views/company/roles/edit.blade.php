@@ -30,7 +30,8 @@
                     <h4>Role Information</h4>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('company.roles.update', $role->id) }}" method="POST">
+                    @if(\App\Models\User::hasAccess('company/company-role-update/{encryptedId}' , true))
+                    <form action="{{ route('company.roles.update', Crypt::encrypt($role->id)) }}" method="POST">
                         @csrf
                         @method('PUT')
 
@@ -91,6 +92,12 @@
                             </a>
                         </div>
                     </form>
+                    @else
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        You don't have permission to update this role.
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

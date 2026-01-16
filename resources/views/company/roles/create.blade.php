@@ -30,6 +30,7 @@
                     <h4>Role Information</h4>
                 </div>
                 <div class="card-body">
+                    @if(\App\Models\User::hasAccess('company/company-role-store' , true))
                     <form action="{{ route('company.roles.store') }}" method="POST">
                         @csrf
 
@@ -90,6 +91,12 @@
                             </a>
                         </div>
                     </form>
+                    @else
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        You don't have permission to create roles.
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

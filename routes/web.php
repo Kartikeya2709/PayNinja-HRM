@@ -534,7 +534,7 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Employee Profile
-        Route::middleware(['auth'])->prefix('employee')->name('employee.')->group(function () {
+        Route::middleware(['checkAccess'])->prefix('employee')->name('employee.')->group(function () {
             Route::get('profile', [\App\Http\Controllers\Employee\ProfileController::class, 'show'])->name('profile');
             Route::post('profile/update', [\App\Http\Controllers\Employee\ProfileController::class, 'update'])->name('profile.update');
             Route::post('profile/update-image', [\App\Http\Controllers\Employee\ProfileController::class, 'updateImage'])->name('profile.update-image');
@@ -550,10 +550,10 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/my-resignations', [ResignationController::class, 'index'])->name('my-resignations.index');
             Route::get('/my-resignations/create', [ResignationController::class, 'create'])->name('my-resignations.create');
             Route::post('/my-resignations', [ResignationController::class, 'store'])->name('my-resignations.store');
-            Route::get('/my-resignations/{my_resignation}', [ResignationController::class, 'show'])->name('my-resignations.show');
-            Route::get('/my-resignations/{my_resignation}/edit', [ResignationController::class, 'edit'])->name('my-resignations.edit');
-            Route::put('/my-resignations/{my_resignation}', [ResignationController::class, 'update'])->name('my-resignations.update');
-            Route::post('/my-resignations/{resignation}/withdraw', [ResignationController::class, 'withdraw'])->name('my-resignations.withdraw');
+            Route::get('/my-resignations/{encryptedId}/show', [ResignationController::class, 'show'])->name('my-resignations.show');
+            Route::get('/my-resignations/{encryptedId}/edit', [ResignationController::class, 'edit'])->name('my-resignations.edit');
+            Route::put('/my-resignations/{encryptedId}', [ResignationController::class, 'update'])->name('my-resignations.update');
+            Route::post('/my-resignations/{encryptedId}/withdraw', [ResignationController::class, 'withdraw'])->name('my-resignations.withdraw');
 
             // Admin Resignation Management
             Route::get('', [App\Http\Controllers\Admin\ResignationController::class, 'index'])->name('index');
@@ -578,32 +578,15 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
             Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
             Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
-            // Exit Process Management
-            Route::post('/{resignation}/complete-exit-interview', [App\Http\Controllers\Admin\ResignationController::class, 'completeExitInterview'])->name('complete-exit-interview');
-            Route::post('/{resignation}/complete-handover', [App\Http\Controllers\Admin\ResignationController::class, 'completeHandover'])->name('complete-handover');
-            Route::get('/{resignation}/assigned-assets', [App\Http\Controllers\Admin\ResignationController::class, 'getAssignedAssets'])->name('assigned-assets');
-            Route::post('/{resignation}/mark-assets-returned', [App\Http\Controllers\Admin\ResignationController::class, 'markAssetsReturned'])->name('mark-assets-returned');
-            Route::post('/{resignation}/complete-final-settlement', [App\Http\Controllers\Admin\ResignationController::class, 'completeFinalSettlement'])->name('complete-final-settlement');
-        });
-
-        // =============================================
-        // COMPANY SETTINGS & MANAGEMENT
-        // =============================================
-        Route::prefix('company')->name('company.')->group(function () {
-
-            // Company Settings
-            Route::get('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'settings'])->name('settings.index');
-            Route::put('/settings', [\App\Http\Controllers\CompanyAdminController::class, 'updateSettings'])->name('settings.update');
-            Route::post('/settings/save-employee-id-prefix', [\App\Http\Controllers\CompanyAdminController::class, 'saveEmployeeIdPrefix'])->name('settings.save-employee-id-prefix');
 
             // Company Role Management
             Route::get('company-roles-list', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'index'])->name('roles.index');
             Route::get('company-role-create', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'create'])->name('roles.create');
             Route::post('company-role-store', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'store'])->name('roles.store');
-            Route::get('company-role-show/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'show'])->name('roles.show');
-            Route::get('company-role-edit/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'edit'])->name('roles.edit');
-            Route::put('company-role-update/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'update'])->name('roles.update');
-            Route::delete('company-role-delete/{role}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'destroy'])->name('roles.destroy');
+            Route::get('company-role-show/{encryptedId}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'show'])->name('roles.show');
+            Route::get('company-role-edit/{encryptedId}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'edit'])->name('roles.edit');
+            Route::put('company-role-update/{encryptedId}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'update'])->name('roles.update');
+            Route::delete('company-role-delete/{encryptedId}', [\App\Http\Controllers\CompanyAdmin\RoleController::class, 'destroy'])->name('roles.destroy');
         });
 
         // =============================================
@@ -613,14 +596,14 @@ Route::middleware(['auth'])->group(function () {
             Route::get('leads-list', [LeadController::class, 'index'])->name('leads.index');
             Route::get('lead-create', [LeadController::class, 'create'])->name('leads.create');
             Route::post('lead-store', [LeadController::class, 'store'])->name('leads.store');
-            Route::get('lead-show/{lead}', [LeadController::class, 'show'])->name('leads.show');
-            Route::get('lead-edit/{lead}', [LeadController::class, 'edit'])->name('leads.edit');
-            Route::put('lead-update/{lead}', [LeadController::class, 'update'])->name('leads.update');
-            Route::delete('lead-delete/{lead}', [LeadController::class, 'destroy'])->name('leads.destroy');
+            Route::get('lead-show/{encryptedId}', [LeadController::class, 'show'])->name('leads.show');
+            Route::get('lead-edit/{encryptedId}', [LeadController::class, 'edit'])->name('leads.edit');
+            Route::put('lead-update/{encryptedId}', [LeadController::class, 'update'])->name('leads.update');
+            Route::delete('lead-delete/{encryptedId}', [LeadController::class, 'destroy'])->name('leads.destroy');
 
             // Module Access Management
             Route::get('/module-access', [\App\Http\Controllers\CompanyAdminController::class, 'moduleAccess'])->name('module-access.index');
-            Route::put('/module-access', [\App\Http\Controllers\CompanyAdminController::class, 'updateModuleAccess'])->name('module-access.update');
+            Route::put('/module-access-update', [\App\Http\Controllers\CompanyAdminController::class, 'updateModuleAccess'])->name('module-access.update');
         });
 
     });
@@ -640,8 +623,8 @@ Route::middleware(['auth'])->group(function () {
 
             // Employee Payroll Management
             Route::get('employee/payroll/', [EmployeePayrollController::class, 'index'])->name('employee.payroll.index'); // List my payslips
-            Route::get('employee/payroll/{payroll}', [EmployeePayrollController::class, 'show'])->name('employee.payroll.show'); // View a specific payslip
-            Route::get('employee/payroll/{payroll}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('employee.payroll.download'); // Download payslip PDF
+            Route::get('employee/payroll/{encryptedId}', [EmployeePayrollController::class, 'show'])->name('employee.payroll.show'); // View a specific payslip
+            Route::get('employee/payroll/{encryptedId}/download', [EmployeePayrollController::class, 'downloadPayslip'])->name('employee.payroll.download'); // Download payslip PDF
 
             Route::get('/admin/payroll/index', [AdminPayrollController::class, 'index'])->name('index');
             Route::post('/admin/payroll', [AdminPayrollController::class, 'store'])->name('store');
@@ -649,42 +632,42 @@ Route::middleware(['auth'])->group(function () {
 
             // Payroll Settings - MUST be before {payroll} wildcard route
             Route::get('/admin/payroll/settings', [App\Http\Controllers\Admin\PayrollSettingsController::class, 'edit'])->name('settings.edit');
-            Route::put('/admin/payroll/settings', [App\Http\Controllers\Admin\PayrollSettingsController::class, 'update'])->name('settings.update');
+            Route::put('/admin/payroll/settings-update', [App\Http\Controllers\Admin\PayrollSettingsController::class, 'update'])->name('settings.update');
             Route::post('/admin/payroll/bulk-approve', [AdminPayrollController::class, 'bulkApprove'])->name('bulkApprove');
 
             // Employee Payroll Configurations - standalone routes
             Route::get('admin/payroll/employee-configurations', [EmployeePayrollConfigController::class, 'index'])->name('admin.payroll.employee-configurations.index');
-            Route::get('admin/payroll/employee-configurations/{employee}/edit', [EmployeePayrollConfigController::class, 'edit'])->name('admin.payroll.employee-configurations.edit');
-            Route::put('admin/payroll/employee-configurations/{employee}', [EmployeePayrollConfigController::class, 'update'])->name('admin.payroll.employee-configurations.update');
-            Route::put('admin/payroll/employee-configurations/{employee}/set-current/{employeeSalary?}', [EmployeePayrollConfigController::class, 'setCurrent'])->name('admin.payroll.employee-configurations.set-current');
-            Route::post('admin/payroll/employee-configurations/{employee}/create-salary', [EmployeePayrollConfigController::class, 'createSalary'])->name('admin.payroll.employee-configurations.create-salary');
+            Route::get('admin/payroll/employee-configurations/{encryptedId}/edit', [EmployeePayrollConfigController::class, 'edit'])->name('admin.payroll.employee-configurations.edit');
+            Route::put('admin/payroll/employee-configurations/{encryptedId}', [EmployeePayrollConfigController::class, 'update'])->name('admin.payroll.employee-configurations.update');
+            Route::put('admin/payroll/employee-configurations/{encryptedId}/set-current/{employeeSalaryId?}', [EmployeePayrollConfigController::class, 'setCurrent'])->name('admin.payroll.employee-configurations.set-current');
+            Route::post('admin/payroll/employee-configurations/{encryptedId}/create-salary', [EmployeePayrollConfigController::class, 'createSalary'])->name('admin.payroll.employee-configurations.create-salary');
 
 
-            Route::get('admin/employee-payroll-configurations/{employee}/edit', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'edit'])->name('admin.employee-payroll-configurations.edit');
-            Route::put('admin/employee-payroll-configurations/{employee}', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'update'])->name('admin.employee-payroll-configurations.update');
-            Route::put('admin/employee-payroll-configurations/{employee}/update-salary', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'updateSalary'])->name('admin.employee-payroll-configurations.update-salary');
+            Route::get('admin/employee-payroll-configurations/{encryptedId}/edit', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'edit'])->name('admin.employee-payroll-configurations.edit');
+            Route::put('admin/employee-payroll-configurations/{encryptedId}', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'update'])->name('admin.employee-payroll-configurations.update');
+            Route::put('admin/employee-payroll-configurations/{encryptedId}/update-salary', [App\Http\Controllers\Admin\EmployeePayrollConfigController::class, 'updateSalary'])->name('admin.employee-payroll-configurations.update-salary');
 
 
             // Beneficiary Badges (Allowances/Deductions) - standalone routes
             Route::get('admin/payroll/beneficiary-badges/index', [BeneficiaryBadgeController::class, 'index'])->name('admin.payroll.beneficiary-badges.index');
             Route::post('admin/payroll/beneficiary-badges/store', [BeneficiaryBadgeController::class, 'store'])->name('admin.payroll.beneficiary-badges.store');
             Route::get('admin/payroll/beneficiary-badges/create', [BeneficiaryBadgeController::class, 'create'])->name('admin.payroll.beneficiary-badges.create');
-            Route::get('admin/payroll/beneficiary-badges/{beneficiaryBadge}', [BeneficiaryBadgeController::class, 'show'])->name('admin.payroll.beneficiary-badges.show');
-            Route::get('admin/payroll/beneficiary-badges/{beneficiaryBadge}/edit', [BeneficiaryBadgeController::class, 'edit'])->name('admin.payroll.beneficiary-badges.edit');
-            Route::put('admin/payroll/beneficiary-badges/{beneficiaryBadge}', [BeneficiaryBadgeController::class, 'update'])->name('admin.payroll.beneficiary-badges.update');
-            Route::delete('admin/payroll/beneficiary-badges/{beneficiaryBadge}/destroy', [BeneficiaryBadgeController::class, 'destroy'])->name('admin.payroll.beneficiary-badges.destroy');
-            Route::post('admin/payroll/beneficiary-badges/{beneficiaryBadge}/apply-to-all', [BeneficiaryBadgeController::class, 'applyToAllEmployees'])->name('apply-to-all');
-            Route::post('admin/payroll/beneficiary-badges/{beneficiaryBadge}/api/apply-to-all', [BeneficiaryBadgeController::class, 'apiApplyToAllEmployees'])->name('api.apply-to-all');
+            Route::get('admin/payroll/beneficiary-badges/{encryptedId}', [BeneficiaryBadgeController::class, 'show'])->name('admin.payroll.beneficiary-badges.show');
+            Route::get('admin/payroll/beneficiary-badges/{encryptedId}/edit', [BeneficiaryBadgeController::class, 'edit'])->name('admin.payroll.beneficiary-badges.edit');
+            Route::put('admin/payroll/beneficiary-badges/{encryptedId}', [BeneficiaryBadgeController::class, 'update'])->name('admin.payroll.beneficiary-badges.update');
+            Route::delete('admin/payroll/beneficiary-badges/{encryptedId}/destroy', [BeneficiaryBadgeController::class, 'destroy'])->name('admin.payroll.beneficiary-badges.destroy');
+            Route::post('admin/payroll/beneficiary-badges/{encryptedId}/apply-to-all', [BeneficiaryBadgeController::class, 'applyToAllEmployees'])->name('apply-to-all');
+            Route::post('admin/payroll/beneficiary-badges/{encryptedId}/api/apply-to-all', [BeneficiaryBadgeController::class, 'apiApplyToAllEmployees'])->name('api.apply-to-all');
 
 
             // Wildcard routes must come after specific routes
-            Route::get('admin/payroll/{payroll}', [AdminPayrollController::class, 'show'])->name('show');
-            Route::get('/admin/payroll/{payroll}/edit', [AdminPayrollController::class, 'edit'])->name('edit');
-            Route::put('/admin/payroll/{payroll}/update', [AdminPayrollController::class, 'update'])->name('update');
-            Route::patch('/admin/payroll/{payroll}/process', [AdminPayrollController::class, 'processPayroll'])->name('process');
-            Route::patch('/admin/payroll/{payroll}/mark-as-paid', [AdminPayrollController::class, 'markAsPaid'])->name('markAsPaid');
-            Route::patch('/admin/payroll/{payroll}/cancel', [AdminPayrollController::class, 'cancel'])->name('cancel');
-            Route::delete('/admin/payroll/{payroll}/destroy', [AdminPayrollController::class, 'destroy'])->name('destroy');
+            Route::get('admin/payroll/{encryptedId}', [AdminPayrollController::class, 'show'])->name('show');
+            Route::get('/admin/payroll/{encryptedId}/edit', [AdminPayrollController::class, 'edit'])->name('edit');
+            Route::put('/admin/payroll/{encryptedId}/update', [AdminPayrollController::class, 'update'])->name('update');
+            Route::patch('/admin/payroll/{encryptedId}/process', [AdminPayrollController::class, 'processPayroll'])->name('process');
+            Route::patch('/admin/payroll/{encryptedId}/mark-as-paid', [AdminPayrollController::class, 'markAsPaid'])->name('markAsPaid');
+            Route::patch('/admin/payroll/{encryptedId}/cancel', [AdminPayrollController::class, 'cancel'])->name('cancel');
+            Route::delete('/admin/payroll/{encryptedId}/destroy', [AdminPayrollController::class, 'destroy'])->name('destroy');
         });
 
 
