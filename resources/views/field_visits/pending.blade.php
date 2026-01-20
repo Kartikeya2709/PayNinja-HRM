@@ -9,6 +9,7 @@
                     <h5>Pending Field Visit Approvals</h5>
                 </div>
                 <div class="card-body">
+                    {{-- @dd($visits) --}}
                     @if($visits->count() > 0)
                     <div class="table-responsive">
                         <table class="table table-striped">

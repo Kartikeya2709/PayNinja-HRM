@@ -31,11 +31,6 @@ class LeadController extends Controller
         return Crypt::encrypt($id);
     }
 
-    public function __construct()
-    {
-        $this->middleware(['role:admin,company_admin']);
-    }
-
     /**
      * Display a listing of the leads.
      */
@@ -95,10 +90,6 @@ class LeadController extends Controller
     {
         $user = Auth::user();
         $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
-        
-        if (!$user->hasRole('company_admin') && !$user->hasRole('admin')) {
-            abort(403);
-        }
 
         // Ensure the lead belongs to the user's company
         if ($lead->company_id !== $user->company_id) {
@@ -116,10 +107,6 @@ class LeadController extends Controller
         $user = Auth::user();
         $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
         
-        if (!$user->hasRole('company_admin') && !$user->hasRole('admin')) {
-            abort(403);
-        }
-
         // Ensure the lead belongs to the user's company
         if ($lead->company_id !== $user->company_id) {
             abort(403);
@@ -135,10 +122,6 @@ class LeadController extends Controller
     {
         $user = Auth::user();
         $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
-        
-        if (!$user->hasRole('company_admin') && !$user->hasRole('admin')) {
-            abort(403);
-        }
 
         // Ensure the lead belongs to the user's company
         if ($lead->company_id !== $user->company_id) {
@@ -168,11 +151,6 @@ class LeadController extends Controller
     {
         $user = Auth::user();
         $lead = $this->getModelFromEncryptedId($encryptedId, Lead::class);
-
-        // Only company_admin can delete leads, admin cannot
-        if (!$user->hasRole('company_admin')) {
-            abort(403, 'Only company admin can delete leads.');
-        }
 
         // Ensure the lead belongs to the user's company
         if ($lead->company_id !== $user->company_id) {

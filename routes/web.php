@@ -493,8 +493,10 @@ Route::middleware(['auth'])->group(function () {
         // =============================================
         // FIELD VISIT MANAGEMENT
         // =============================================
-        Route::get('/field-visits/pending', [FieldVisitController::class, 'pendingApprovals'])->name('field-visits.pending');
+        Route::get('field-visits/pending-own', [FieldVisitController::class, 'pendingApprovalsOwn'])->name('field-visits.pending');
+        Route::get('field-visits/pending-all', [FieldVisitController::class, 'pendingApprovalsAll'])->name('field-visits.pending-all');
         Route::get('field-visits-list', [FieldVisitController::class, 'index'])->name('field-visits.index');
+        Route::get('field-visits-my-list', [FieldVisitController::class, 'myFieldVisits'])->name('field-visits.my-index');
         Route::get('field-visit-create', [FieldVisitController::class, 'create'])->name('field-visits.create');
         Route::get('field-visit-show/{encryptedId}', [FieldVisitController::class, 'show'])->name('field-visits.show');
         Route::get('field-visit-edit/{encryptedId}', [FieldVisitController::class, 'edit'])->name('field-visits.edit');
@@ -510,14 +512,16 @@ Route::middleware(['auth'])->group(function () {
         // REIMBURSEMENT MANAGEMENT 
         // =============================================
         Route::get('/reimbursements/index', [ReimbursementController::class, 'index'])->name('reimbursements.index');
+        Route::get('/reimbursements/my-reimbursements', [ReimbursementController::class, 'myReimbursements'])->name('reimbursements.my-reimbursements');
         Route::get('/reimbursements/create', [ReimbursementController::class, 'create'])->name('reimbursements.create');
         Route::post('/reimbursements', [ReimbursementController::class, 'store'])->name('reimbursements.store');
         Route::get('/reimbursements/{encryptedId}', [ReimbursementController::class, 'show'])->name('reimbursements.show');
         Route::post('/reimbursements/{encryptedId}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
         Route::post('/reimbursements/{encryptedId}/approve/reporter', [ReimbursementController::class, 'approveReporter'])->name('reimbursements.approve.reporter');
         Route::post('/reimbursements/{encryptedId}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
-        // Route::get('/reimbursements/pending', [ReimbursementController::class, 'pending'])->name('reimbursements.pending');
-
+        Route::get('/reimbursements/pending-all', [ReimbursementController::class, 'pendingApprovalsOwn'])->name('reimbursements.pending');
+        Route::get('/reimbursements/pending-own', [ReimbursementController::class, 'pendingApprovalsAll'])->name('reimbursements.pending-own');
+       
         // =============================================
         // EMPLOYEE MANAGEMENT
         // =============================================
@@ -669,7 +673,6 @@ Route::middleware(['auth'])->group(function () {
             Route::patch('/admin/payroll/{encryptedId}/cancel', [AdminPayrollController::class, 'cancel'])->name('cancel');
             Route::delete('/admin/payroll/{encryptedId}/destroy', [AdminPayrollController::class, 'destroy'])->name('destroy');
         });
-
 
         // PDF Payslip Routes
         Route::get('employee/salary/payslips', [\App\Http\Controllers\PayslipController::class, 'listPayslips'])->name('employee.salary.payslips');

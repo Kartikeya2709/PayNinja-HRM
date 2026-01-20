@@ -36,77 +36,105 @@ class ReimbursementController extends Controller
         return Crypt::encrypt($id);
     }
     
-    public function index(Request $request)
-{
-    try {
+//     public function index(Request $request)
+// {
+//     try {
+//         $user = Auth::user();
+
+//         // Start building the query with relationships
+//         $query = Reimbursement::with([
+//             'employee',
+//             'company',
+//             'reporter',
+//             'admin',
+//             'employee.user'
+//         ]);
+
+//         // Treat both admin and company_admin as privileged roles
+//         $isPrivileged = in_array($user->role, ['admin', 'company_admin']);
+
+//         if (!$isPrivileged) {
+//             // For regular users, only show their own reimbursements
+//             $employee = Employee::where('user_id', $user->id)->first();
+
+//             if ($employee) {
+//                 $query->where('employee_id', $employee->id);
+//             } else {
+//                 // No employee record means no reimbursements to show
+//                 return view('reimbursements.index', ['reimbursements' => collect()]);
+//             }
+//         } else {
+//             // For admin/company_admin, only show reimbursements from their company
+//             if ($user->company_id) {
+//                 $query->where('company_id', $user->company_id);
+//             } else {
+//                 return view('reimbursements.index', ['reimbursements' => collect()])
+//                     ->with('warning', 'Your account is not associated with any company.');
+//             }
+//         }
+
+//         // Apply filters
+//         if ($request->filled('status')) {
+//             $query->where('status', $request->status);
+//         }
+
+//         if ($request->filled('date_from')) {
+//             $query->where('expense_date', '>=', $request->date_from);
+//         }
+
+//         if ($request->filled('date_to')) {
+//             $query->where('expense_date', '<=', $request->date_to);
+//         }
+
+//         if ($request->filled('min_amount')) {
+//             $query->where('amount', '>=', $request->min_amount);
+//         }
+
+//         if ($request->filled('max_amount')) {
+//             $query->where('amount', '<=', $request->max_amount);
+//         }
+
+//         // Order by created date (newest first)
+//         $query->orderBy('created_at', 'desc');
+
+//         // Get paginated results
+//         $reimbursements = $query->paginate(15)->withQueryString();
+
+//         return view('reimbursements.index', compact('reimbursements'));
+
+//     } catch (\Exception $e) {
+//         Log::error('Error fetching reimbursements: ' . $e->getMessage());
+//         return redirect()->back()->with('error', 'Error loading reimbursements: ' . $e->getMessage());
+//     }
+// }
+
+    public function index(){
         $user = Auth::user();
+        $companyId = $user->company_id;
 
-        // Start building the query with relationships
-        $query = Reimbursement::with([
-            'employee',
-            'company',
-            'reporter',
-            'admin',
-            'employee.user'
-        ]);
-
-        // Treat both admin and company_admin as privileged roles
-        $isPrivileged = in_array($user->role, ['admin', 'company_admin']);
-
-        if (!$isPrivileged) {
-            // For regular users, only show their own reimbursements
-            $employee = Employee::where('user_id', $user->id)->first();
-
-            if ($employee) {
-                $query->where('employee_id', $employee->id);
-            } else {
-                // No employee record means no reimbursements to show
-                return view('reimbursements.index', ['reimbursements' => collect()]);
-            }
-        } else {
-            // For admin/company_admin, only show reimbursements from their company
-            if ($user->company_id) {
-                $query->where('company_id', $user->company_id);
-            } else {
-                return view('reimbursements.index', ['reimbursements' => collect()])
-                    ->with('warning', 'Your account is not associated with any company.');
-            }
-        }
-
-        // Apply filters
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('date_from')) {
-            $query->where('expense_date', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->where('expense_date', '<=', $request->date_to);
-        }
-
-        if ($request->filled('min_amount')) {
-            $query->where('amount', '>=', $request->min_amount);
-        }
-
-        if ($request->filled('max_amount')) {
-            $query->where('amount', '<=', $request->max_amount);
-        }
-
-        // Order by created date (newest first)
-        $query->orderBy('created_at', 'desc');
-
-        // Get paginated results
-        $reimbursements = $query->paginate(15)->withQueryString();
+        $reimbursements = Reimbursement::where('company_id', $companyId)
+            ->orderBy('created_at', 'desc')
+            ->paginate(15); 
 
         return view('reimbursements.index', compact('reimbursements'));
-
-    } catch (\Exception $e) {
-        Log::error('Error fetching reimbursements: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Error loading reimbursements: ' . $e->getMessage());
     }
-}
+
+    public function MyReimbursements(Request $request)
+    {
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
+        if (!$employee) {
+            return redirect()->back()->with('error', 'Employee record not found.');
+        }
+
+        $reimbursements = Reimbursement::where('employee_id', $employee->id)
+            ->with(['employee', 'company', 'reporter', 'admin'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('reimbursements.index', compact('reimbursements'));
+    }
 
 
     public function create()
@@ -720,6 +748,306 @@ class ReimbursementController extends Controller
             
             return redirect()->route('reimbursements.show', $this->encryptId($reimbursement->id))
                 ->with('error', 'An error occurred while rejecting the reimbursement. Please try again.');
+        }
+    }
+
+    public function pendingApprovalsAll(){
+        $user = Auth::user();
+        $companyId = $user->company_id;
+
+        $reimbursements = Reimbursement::where('company_id', $companyId)
+            ->whereIn('status', ['pending', 'reporter_approved'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('reimbursements.pending', compact('reimbursements'));
+    }
+
+    public function pendingApprovalsOwn(){
+        $user = Auth::user();
+        $employee = Employee::where('user_id', $user->id)->first();
+
+        if (!$employee) {
+            return redirect()->back()->with('error', 'Employee record not found.');
+        }
+
+        $reimbursements = Reimbursement::where('reporter_id', $employee->id)
+            ->whereIn('status', ['pending', 'reporter_approved'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        return view('reimbursements.pending', compact('reimbursements'));
+    }
+
+    /**
+     * Alternative: Show reimbursement details (no role check)
+     */
+    public function showAny($encryptedId)
+    {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
+        return view('reimbursements.show', compact('reimbursement'));
+    }
+
+    /**
+     * Alternative: Edit reimbursement (no role check)
+     */
+    public function editAny($encryptedId)
+    {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
+        return view('reimbursements.edit', compact('reimbursement'));
+    }
+
+    /**
+     * Alternative: Update reimbursement (no role check)
+     */
+    public function updateAny(Request $request, $encryptedId)
+    {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
+        
+        try {
+            Log::info('Starting reimbursement update (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'user_id' => Auth::id()
+            ]);
+
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'required|string',
+                'amount' => 'required|numeric',
+                'expense_date' => 'required|date',
+                'receipt' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ]);
+
+            $receiptPath = $reimbursement->receipt_path;
+            if ($request->hasFile('receipt')) {
+                try {
+                    $file = $request->file('receipt');
+                    $extension = $file->getClientOriginalExtension();
+                    $employeeName = str_replace(' ', '-', strtolower($reimbursement->employee->name));
+                    $fileName = $employeeName . '-reimbursement-receipt-' . now()->format('YmdHis') . '.' . $extension;
+                    $receiptPath = $file->storeAs('receipts', $fileName, 'public');
+                } catch (\Exception $e) {
+                    Log::error('Error uploading receipt: ' . $e->getMessage());
+                    return redirect()->back()->with('error', 'Error uploading receipt file.');
+                }
+            }
+
+            $reimbursement->update([
+                'title' => $validated['title'],
+                'description' => $validated['description'],
+                'amount' => $validated['amount'],
+                'expense_date' => $validated['expense_date'],
+                'receipt_path' => $receiptPath
+            ]);
+
+            Log::info('Reimbursement updated (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'updated_by' => Auth::id()
+            ]);
+
+            return redirect()->route('reimbursements.show', $this->encryptId($reimbursement->id))
+                ->with('success', 'Reimbursement updated successfully.');
+
+        } catch (\Exception $e) {
+            Log::error('Error updating reimbursement', [
+                'reimbursement_id' => $reimbursement->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()->with('error', 'Error updating reimbursement: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Alternative: Delete reimbursement (no role check)
+     */
+    public function destroyAny($encryptedId)
+    {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
+        
+        try {
+            Log::info('Starting reimbursement destruction (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'user_id' => Auth::id(),
+                'status' => $reimbursement->status
+            ]);
+
+            $id = $reimbursement->id;
+            $reimbursement->delete();
+
+            Log::info('Reimbursement deleted (any)', [
+                'reimbursement_id' => $id,
+                'deleted_by' => Auth::id()
+            ]);
+
+            return redirect()->route('reimbursements.index')
+                ->with('success', 'Reimbursement deleted successfully.');
+
+        } catch (\Exception $e) {
+            Log::error('Error deleting reimbursement', [
+                'reimbursement_id' => $reimbursement->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()->with('error', 'Error deleting reimbursement: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Alternative: Approve reimbursement (no role check)
+     */
+    public function approveAny(Request $request, $encryptedId)
+    {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
+        
+        try {
+            Log::info('Starting reimbursement approval (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'user_id' => Auth::id(),
+                'payload' => $request->all()
+            ]);
+
+            $user = Auth::user();
+            if (!$user) {
+                $error = 'Please login to continue.';
+                
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $error
+                    ], 401);
+                }
+                return redirect()->route('login')->with('error', $error);
+            }
+
+            $validated = $request->validate([
+                'remarks' => 'required|string|max:1000',
+            ]);
+
+            // Determine approval level based on current status
+            if ($reimbursement->status === 'pending') {
+                $reimbursement->update([
+                    'status' => 'reporter_approved',
+                    'reporter_remarks' => $validated['remarks'],
+                    'reporter_approved_at' => now(),
+                    'reporter_id' => $user->id
+                ]);
+                $message = 'Reimbursement approved (reporter level).';
+            } elseif ($reimbursement->status === 'reporter_approved') {
+                $reimbursement->update([
+                    'status' => 'admin_approved',
+                    'admin_remarks' => $validated['remarks'],
+                    'admin_approved_at' => now()
+                ]);
+                $message = 'Reimbursement approved (admin level).';
+            } else {
+                return redirect()->back()->with('error', 'This reimbursement cannot be approved at this stage.');
+            }
+
+            Log::info('Reimbursement approved (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'approved_by' => $user->id,
+                'status' => $reimbursement->status,
+                'remarks' => $validated['remarks']
+            ]);
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'redirect' => route('reimbursements.index')
+                ]);
+            }
+
+            return redirect()->route('reimbursements.index')->with('success', $message);
+
+        } catch (\Exception $e) {
+            Log::error('Error approving reimbursement (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()->with('error', 'Error approving reimbursement: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Alternative: Reject reimbursement (no role check)
+     */
+    public function rejectAny(Request $request, $encryptedId)
+    {
+        $reimbursement = $this->getModelFromEncryptedId($encryptedId, Reimbursement::class);
+        
+        try {
+            Log::info('Starting reimbursement rejection (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'user_id' => Auth::id(),
+                'payload' => $request->all()
+            ]);
+
+            $user = Auth::user();
+            if (!$user) {
+                $error = 'Please login to continue.';
+                
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => $error
+                    ], 401);
+                }
+                return redirect()->route('login')->with('error', $error);
+            }
+
+            // Check status
+            if (!in_array($reimbursement->status, ['pending', 'reporter_approved'])) {
+                return redirect()->back()->with('error', 'This reimbursement cannot be rejected at this stage.');
+            }
+
+            $validated = $request->validate([
+                'remarks' => 'required|string|max:1000',
+            ]);
+
+            DB::beginTransaction();
+            
+            try {
+                $reimbursement->update([
+                    'status' => 'rejected',
+                    'remarks' => $validated['remarks'],
+                    'rejected_at' => now(),
+                    'rejected_by' => $user->id,
+                    'reporter_approved_at' => null,
+                    'admin_approved_at' => null
+                ]);
+
+                DB::commit();
+
+                Log::info('Reimbursement rejected (any)', [
+                    'reimbursement_id' => $reimbursement->id,
+                    'rejected_by' => $user->id,
+                    'status' => $reimbursement->status,
+                    'remarks' => $validated['remarks']
+                ]);
+
+                return redirect()->route('reimbursements.show', $this->encryptId($reimbursement->id))
+                    ->with('success', 'Reimbursement rejected successfully.');
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+
+        } catch (\Exception $e) {
+            Log::error('Error rejecting reimbursement (any)', [
+                'reimbursement_id' => $reimbursement->id,
+                'user_id' => Auth::id(),
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->back()->with('error', 'Error rejecting reimbursement: ' . $e->getMessage());
         }
     }
 }

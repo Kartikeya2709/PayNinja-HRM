@@ -75,7 +75,7 @@ class PayrollController extends Controller
     {
         $company = Auth::user()->company;
         $companyId = $company?->id;
-        if (!$companyId && !Auth::user()->hasRole('superadmin')) {
+        if (!$companyId) {
             return redirect()->route('home')->with('error', 'Company context not found. Please ensure your user is associated with a company.');
         }
 
@@ -96,7 +96,7 @@ class PayrollController extends Controller
             $employees = Employee::where('status', 'active')->orderBy('name')->get();
         }
 
-        if ($employees->isEmpty() && !$companyId && !Auth::user()->hasRole('superadmin')) {
+        if ($employees->isEmpty() && !$companyId) {
              return redirect()->route('index')->with('info', 'No active employees found in your company to generate payroll for.');
         }
         // If superadmin and no employees at all, that's a different state.
@@ -118,7 +118,7 @@ class PayrollController extends Controller
             ]);
 
             $company = auth()->user()->company;
-            if (!$company && !auth()->user()->hasRole('superadmin')) {
+            if (!$company) {
                 return redirect()->route('home')->with('error', 'Company context not found.');
             }
 
@@ -127,7 +127,7 @@ class PayrollController extends Controller
                 $employee = Employee::with('company')->findOrFail($request->employee_id);
 
                 // Authorization check
-                if (!auth()->user()->hasRole('superadmin') && $company->id !== $employee->company_id) {
+                if ($company->id !== $employee->company_id) {
                     return back()->with('error', 'You are not authorized to generate payroll for this employee.');
                 }
 
@@ -243,7 +243,7 @@ class PayrollController extends Controller
 
         // Optional: Add company authorization check
         $company = Auth::user()->company;
-        if ($company && $payroll->company_id !== $company->id && !Auth::user()->hasRole('superadmin')) {
+        if ($company && $payroll->company_id !== $company->id) {
             return redirect()->route('index')->with('error', 'You are not authorized to view this payroll.');
         }
 
@@ -268,7 +268,7 @@ class PayrollController extends Controller
 
         // Optional: Add company authorization check
         $company = Auth::user()->company;
-        if ($company && $payroll->company_id !== $company->id && !Auth::user()->hasRole('superadmin')) {
+        if ($company && $payroll->company_id !== $company->id) {
             return redirect()->route('index')->with('error', 'You are not authorized to edit this payroll.');
         }
 
