@@ -1804,7 +1804,6 @@ color: #fff;
     flex-wrap: wrap;
 }
 .Reimburs-table{
-      display: flex;
     overflow-x: auto;
 }
 .dataTables_length label{

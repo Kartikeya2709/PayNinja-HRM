@@ -57,13 +57,17 @@
                                 <th>Expense Date</th>
                                 <th>Status</th>
                                 <th>Submitted</th>
-                                <th class="text-center">Actions</th>
+                                 @if (\App\Models\User::hasAccess('reimbursements/{encryptedId}', true) ||
+                                      \App\Models\User::hasAccess('reimbursements/{encryptedId}/approve', true) ||
+                                      \App\Models\User::hasAccess('reimbursements/{encryptedId}/reject', true))
+                                <th>Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($reimbursements as $reimbursement)
                                 <tr>
-                                    <td class="ps-4">
+                                    <td>
                                         <strong>{{ $reimbursement->title }}</strong>
                                         <br>
                                         <small class="text-muted">{{ Str::limit($reimbursement->description, 50) }}</small>
@@ -109,18 +113,21 @@
                                         <br>
                                         <small class="text-muted">{{ $reimbursement->created_at->format('d M, Y H:i') }}</small>
                                     </td>
-                                    <td class="text-center">
+                                     @if (\App\Models\User::hasAccess('reimbursements/{encryptedId}', true) ||
+                                      \App\Models\User::hasAccess('reimbursements/{encryptedId}/approve', true) ||
+                                      \App\Models\User::hasAccess('reimbursements/{encryptedId}/reject', true))
+                                    <td>
                                         <div class="btn-group btn-group-sm" role="group">
                                             @if (\App\Models\User::hasAccess('reimbursements/{encryptedId}', true))      
                                             <a href="{{ route('reimbursements.show', Crypt::encrypt($reimbursement->id)) }}" 
-                                               class="btn btn-info btn-sm" 
+                                               class="btn btn-outline-info btn-sm action-btn" 
                                                title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             @endif
                                             @if ( \App\Models\User::hasAccess('reimbursements/{encryptedId}/approve', true))
                                             <button type="button" 
-                                                    class="btn btn-success btn-sm" 
+                                                    class="btn btn-outline-success btn-sm action-btn" 
                                                     title="Approve" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#approveModal"
@@ -130,7 +137,7 @@
                                             @endif
                                             @if (\App\Models\User::hasAccess('reimbursements/{encryptedId}/reject', true))
                                             <button type="button" 
-                                                    class="btn btn-danger btn-sm" 
+                                                    class="btn btn-outline-danger btn-sm action-btn" 
                                                     title="Reject" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#rejectModal"
@@ -140,6 +147,7 @@
                                             @endif
                                         </div>
                                     </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>

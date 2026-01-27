@@ -1,95 +1,116 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">Leads Management</h3>
-                        <div class="card-tools">
-                            <a href="{{ route('company-admin.leads.create') }}" class="btn btn-primary btn-sm">
-                                <i class="fas fa-plus"></i> Add New Lead
-                            </a>
-                        </div>
+    <div class="container">
+        <section class="section">
+            <div class="section-header">
+                <h1>Leads Management</h1>
+                <div class="section-header-breadcrumb">
+                    <div class="breadcrumb-item active">
+                        <a href="{{ route('home') }}">Dashboard</a>
                     </div>
-                    <div class="card-body">
-                        @if(session('success'))
+                    <div class="breadcrumb-item">Leads Management</div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Leads Management</h3>
+                            <div class="card-tools">
+                                <a href="{{ route('company-admin.leads.create') }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-plus"></i> Add New Lead
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            @if(session('success'))
                             <div class="alert alert-success alert-dismissible fade show" role="alert">
                                 {{ session('success') }}
                                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-                        @endif
-
-                        <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Status</th>
-                                        <th>Created At</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($leads as $lead)
+                            @endif
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Phone</th>
+                                            <th>Status</th>
+                                            <th>Created At</th>
+                                            @if(\App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('company-admin/lead-edit/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
+                                            <th>Actions</th>
+                                            @endif
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($leads as $lead)
                                         <tr>
                                             <td>{{ $lead->name }}</td>
                                             <td>{{ $lead->email }}</td>
                                             <td>{{ $lead->phone ?? 'N/A' }}</td>
                                             <td>
-                                                <span
-                                                    class="badge badge-{{ $lead->status === 'qualified' ? 'success' : ($lead->status === 'lost' ? 'danger' : 'info') }}">
+                                                <span class="badge badge-{{ $lead->status === 'qualified' ? 'success' : ($lead->status === 'lost' ? 'danger' : 'info') }}">
                                                     {{ ucfirst($lead->status) }}
                                                 </span>
                                             </td>
                                             <td>{{ $lead->created_at->format('M d, Y') }}</td>
+                                            @if(\App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('company-admin/lead-edit/{encryptedId}', true) ||
+                                            \App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
                                             <td>
-                                @if(\App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
-                                <a href="{{ route('company-admin.leads.show', Crypt::encrypt($lead->id)) }}"
-                                    class="btn btn-info btn-sm">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                @endif
-                                @if(\App\Models\User::hasAccess('company-admin/lead-edit/{encryptedId}', true))
-                                <a href="{{ route('company-admin.leads.edit', Crypt::encrypt($lead->id)) }}"
-                                    class="btn btn-primary btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                @endif
-                                @if (Auth::user()->hasRole('company_admin') && \App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
-                                    <form action="{{ route('company-admin.leads.destroy', Crypt::encrypt($lead->id)) }}" method="POST"
-                                                        class="d-inline">
-                                                        @csrf
-                                                        @method('DELETE')
-                                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                <div class="btn-group btn-group-sm">
+                                                    @if(\App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
+                                                    <a href="{{ route('company-admin.leads.show', Crypt::encrypt($lead->id)) }}" class="btn btn-outline-info btn-sm action-btn">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    @endif
+                                                    
+                                                    @if(\App\Models\User::hasAccess('company-admin/lead-edit/{encryptedId}', true))
+                                                    <a href="{{ route('company-admin.leads.edit', Crypt::encrypt($lead->id)) }}"
+                                                    class="btn btn-outline-primary btn-sm action-btn">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    @endif
+                                                    @if (Auth::user()->hasRole('company_admin') && \App\Models\User::hasAccess('company-admin/lead-show/{encryptedId}', true))
+                                                    <form action="{{ route('company-admin.leads.destroy', Crypt::encrypt($lead->id)) }}" method="POST"
+                                                    class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm action-btn"
                                                             onclick="return confirm('Are you sure you want to delete this lead?')">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
-                                                @endif
-
+                                                    @endif
+                                                </div>
                                             </td>
+                                            @endif
                                         </tr>
-                                    @empty
+                                        @empty
                                         <tr>
                                             <td colspan="6" class="text-center">No leads found.</td>
                                         </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="mt-3">
-                            {{ $leads->links() }}
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div>
+                                {{ $leads->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 @endsection

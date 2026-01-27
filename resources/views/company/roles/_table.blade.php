@@ -11,7 +11,11 @@
                 <th>Role Name</th>
                 <th>Status</th>
                 <th>Created</th>
-                <th class="text-center">Actions</th>
+                @if(\App\Models\User::hasAccess('company/company-role-show/{encryptedId}' , true) ||
+                    \App\Models\User::hasAccess('company/company-role-edit/{encryptedId}' , true) ||
+                    \App\Models\User::hasAccess('company/company-role-delete/{encryptedId}' , true))
+                <th>Actions</th>
+                @endif
             </tr>
         </thead>
         <tbody>
@@ -31,7 +35,10 @@
                     @endif
                 </td>
                 <td>{{ $role->created_at->format('M d, Y') }}</td>
-                <td class="text-center">
+                @if(\App\Models\User::hasAccess('company/company-role-show/{encryptedId}' , true) ||
+                    \App\Models\User::hasAccess('company/company-role-edit/{encryptedId}' , true) ||
+                    \App\Models\User::hasAccess('company/company-role-delete/{encryptedId}' , true))
+                <td>
                     <div class="btn-group btn-group-sm" role="group">
                         {{-- @dd(auth()->user()) --}}
                         @if(\App\Models\User::hasAccess('company/company-role-show/{encryptedId}' , true))
@@ -55,6 +62,7 @@
                         @endif
                     </div>
                 </td>
+                @endif
             </tr>
             @empty
             <tr>

@@ -127,7 +127,7 @@ use Illuminate\Support\Facades\Crypt;
                                         <form action="{{ route('assets.destroy', ['encryptedId' => Crypt::encrypt($asset->id)]) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this asset?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Asset">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm action-btn" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Asset">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </form>

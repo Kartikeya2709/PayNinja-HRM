@@ -90,7 +90,12 @@
                                     <th>Department</th>
                                     <th>Designation</th>
                                     <th>Current Role</th>
-                                    <th style="min-width: 160px;">Actions</th>
+                                     @if(\App\Models\User::hasAccess('employees-management/{encryptedId}/view', true) ||
+                                         \App\Models\User::hasAccess('employees-management/{encryptedId}/edit', true) ||
+                                         \App\Models\User::hasAccess('employees-management/{encryptedId}/role', true) ||
+                                         \App\Models\User::hasAccess('employees-management/{encryptedId}/toggle-status', true))
+                                    <th>Actions</th>
+                                    @endif
                                 </tr>
                             </thead>
                             <tbody id="employeesTableBody">

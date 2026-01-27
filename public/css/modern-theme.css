@@ -68,10 +68,9 @@ position:fixed;
 }
 
 .sidebar-menu li.active > a {
-     background: #ff9705;
+  background: #ff9705;
   color: white !important;
-  box-shadow: 0 4px 12px rgba(255, 151, 5, 0.6); 
-      margin-bottom: 10px !important;
+  margin-bottom: 10px !important;
 }
 
 .sidebar-menu a {
@@ -119,10 +118,10 @@ position:fixed;
   transition: all 0.2s;
 }
 .action-btn{
-padding: .25rem .5rem;
-    font-size: .875rem;
-    border-radius: .2rem;
-    align-content: center;
+  padding: .25rem .5rem;
+  font-size: .875rem;
+  border-radius: .2rem;
+  align-content: center;
 }
 .btn-primary {
   background: #4361ee;
@@ -138,7 +137,7 @@ padding: .25rem .5rem;
 
 }
 .table thead{
-      background: #f0f2f8;
+  background: #f0f2f8;
 }
 .form-control:focus {
   border-color: #4044D5;

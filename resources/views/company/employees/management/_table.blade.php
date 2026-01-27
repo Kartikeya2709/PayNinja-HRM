@@ -40,6 +40,10 @@
             {{ ucfirst($employee->user->role_name) }}
         </span>
     </td>
+    @if(\App\Models\User::hasAccess('employees-management/{encryptedId}/view', true) ||
+        \App\Models\User::hasAccess('employees-management/{encryptedId}/edit', true) ||
+        \App\Models\User::hasAccess('employees-management/{encryptedId}/role', true) ||
+        \App\Models\User::hasAccess('employees-management/{encryptedId}/toggle-status', true))
     <td>
         <div class="btn-group btn-group-sm">
             @if(\App\Models\User::hasAccess('employees-management/{encryptedId}/view', true))
@@ -82,13 +86,14 @@
                 data-name="{{ $employee->name }}"
                 title="Toggle Status">
                 @if($employee->is_active)
-                    <i class="fas fa-check-circle me-1"></i>
+                    <i class="fas fa-check-circle"></i>
                 @else
-                    <i class="fas fa-times-circle me-1"></i>
+                    <i class="fas fa-times-circle"></i>
                 @endif
             </button>
             @endif
         </div>
     </td>
+    @endif
 </tr>
 @endforeach

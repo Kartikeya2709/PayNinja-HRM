@@ -64,7 +64,9 @@
                             <th>Company</th>
                             <th>Amount</th>
                             <th>Status</th>
+                            @if(\App\Models\User::hasAccess('reimbursements/{encryptedId}', true))
                             <th>Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody id="reimbursementTable">
@@ -82,16 +84,20 @@
                                     {{ ucfirst($reimbursement->status) }}
                                 </span>
                             </td>
+                            @if(\App\Models\User::hasAccess('reimbursements/{encryptedId}', true))
                             <td>
-                                @if(\App\Models\User::hasAccess('reimbursements/{encryptedId}', true))
-                                <button class="btn btn-sm btn-success"
+                                <div class="btn-group btn-group-sm">
+                                
+                                <button class="btn btn-outline-info btn-sm action-btn"
                                     onclick="window.location.href='{{ route('reimbursements.show', Crypt::encrypt($reimbursement->id)) }}'"
                                     data-bs-toggle="tooltip" data-bs-placement="top"
                                     title="View Details">
-                                    View
+                                    <i class="fas fa-eye"></i>
                                 </button>
-                                @endif
+                                
+                                </div>
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>

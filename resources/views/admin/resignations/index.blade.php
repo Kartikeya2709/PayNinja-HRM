@@ -190,7 +190,11 @@
                                 <th>Resignation Date</th>
                                 <th>Last Working Date</th>
                                 <th>Status</th>
+                                @if(\App\Models\User::hasAccess('resignations/{resignation}', true) ||
+                                     \App\Models\User::hasAccess('resignations/{resignation}/approve', true) ||
+                                     \App\Models\User::hasAccess('resignations/{resignation}/reject', true))
                                 <th>Actions</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -229,7 +233,11 @@
                                         left</small>
                                     @endif
                                 </td>
+                                @if(\App\Models\User::hasAccess('resignations/{resignation}', true) ||
+                                     \App\Models\User::hasAccess('resignations/{resignation}/approve', true) ||
+                                     \App\Models\User::hasAccess('resignations/{resignation}/reject', true))
                                 <td>
+                                    <div class="btn-group btn-group-sm">
                                     @if (\App\Models\User::hasAccess('resignations/{resignation}', true))
                                     <a href="{{ route('resignations.show', Crypt::encrypt($resignation->id)) }}"
                                         class="btn btn-outline-info btn-sm action-btn"
@@ -245,20 +253,22 @@
                                     @if(in_array($resignation->status, ['pending', 'hr_approved', 'manager_approved']))
                                     <div class="btn-group" role="group">
                                         @if(\App\Models\User::hasAccess('resignations/{resignation}/approve', true))
-                                        <button type="button" class="btn btn-success btn-sm"
+                                        <button type="button" class="btn btn-outline-success btn-sm action-btn"
                                             onclick="approveResignation('{{ Crypt::encrypt($resignation->id) }}')">
                                             <i class="fas fa-check"></i>
                                         </button>
                                         @endif
                                         @if(\App\Models\User::hasAccess('resignations/{resignation}/reject', true))
-                                        <button type="button" class="btn btn-danger btn-sm"
+                                        <button type="button" class="btn btn-outline-danger btn-sm action-btn"
                                             onclick="rejectResignation('{{ Crypt::encrypt($resignation->id) }}')">
                                             <i class="fas fa-times"></i>
                                         </button>
                                         @endif
                                     </div>
                                     @endif
+                                    </div>
                                 </td>
+                                @endif
                             </tr>
                             @empty
                             <tr>
