@@ -511,6 +511,8 @@ Route::middleware(['auth'])->group(function () {
         // =============================================
         // REIMBURSEMENT MANAGEMENT 
         // =============================================
+         Route::get('/reimbursements/pending-all', [ReimbursementController::class, 'pendingApprovalsAll'])->name('reimbursements.pending');
+        Route::get('/reimbursements/pending-own', [ReimbursementController::class, 'pendingApprovalsOwn'])->name('reimbursements.pending-own');
         Route::get('/reimbursements/index', [ReimbursementController::class, 'index'])->name('reimbursements.index');
         Route::get('/reimbursements/my-reimbursements', [ReimbursementController::class, 'myReimbursements'])->name('reimbursements.my-reimbursements');
         Route::get('/reimbursements/create', [ReimbursementController::class, 'create'])->name('reimbursements.create');
@@ -519,8 +521,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/reimbursements/{encryptedId}/approve', [ReimbursementController::class, 'approve'])->name('reimbursements.approve');
         Route::post('/reimbursements/{encryptedId}/approve/reporter', [ReimbursementController::class, 'approveReporter'])->name('reimbursements.approve.reporter');
         Route::post('/reimbursements/{encryptedId}/reject', [ReimbursementController::class, 'reject'])->name('reimbursements.reject');
-        Route::get('/reimbursements/pending-all', [ReimbursementController::class, 'pendingApprovalsOwn'])->name('reimbursements.pending');
-        Route::get('/reimbursements/pending-own', [ReimbursementController::class, 'pendingApprovalsAll'])->name('reimbursements.pending-own');
+       
        
         // =============================================
         // EMPLOYEE MANAGEMENT
