@@ -111,11 +111,14 @@
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group btn-group-sm" role="group">
+                                            @if (\App\Models\User::hasAccess('reimbursements/{encryptedId}', true))      
                                             <a href="{{ route('reimbursements.show', Crypt::encrypt($reimbursement->id)) }}" 
                                                class="btn btn-info btn-sm" 
                                                title="View Details">
                                                 <i class="fas fa-eye"></i>
                                             </a>
+                                            @endif
+                                            @if ( \App\Models\User::hasAccess('reimbursements/{encryptedId}/approve', true))
                                             <button type="button" 
                                                     class="btn btn-success btn-sm" 
                                                     title="Approve" 
@@ -124,6 +127,8 @@
                                                     data-reimbursement-id="{{ Crypt::encrypt($reimbursement->id) }}">
                                                 <i class="fas fa-check"></i>
                                             </button>
+                                            @endif
+                                            @if (\App\Models\User::hasAccess('reimbursements/{encryptedId}/reject', true))
                                             <button type="button" 
                                                     class="btn btn-danger btn-sm" 
                                                     title="Reject" 
@@ -132,6 +137,7 @@
                                                     data-reimbursement-id="{{ Crypt::encrypt($reimbursement->id) }}">
                                                 <i class="fas fa-times"></i>
                                             </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -179,9 +185,11 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                @if( \App\Models\User::hasAccess('reimbursements/{encryptedId}/approve', true))
                     <button type="submit" class="btn btn-success">
                         <i class="fas fa-check"></i> Approve
                     </button>
+                @endif
                 </div>
             </form>
         </div>
@@ -214,9 +222,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-danger">
+                    @if (\App\Models\User::hasAccess('reimbursements/{encryptedId}/reject', true))
+                           <button type="submit" class="btn btn-danger">
                         <i class="fas fa-times"></i> Reject
                     </button>
+                    @endif
+                 
                 </div>
             </form>
         </div>

@@ -230,6 +230,7 @@
                                     @endif
                                 </td>
                                 <td>
+                                    @if (\App\Models\User::hasAccess('resignations/{resignation}', true))
                                     <a href="{{ route('resignations.show', Crypt::encrypt($resignation->id)) }}"
                                         class="btn btn-outline-info btn-sm action-btn"
                                         data-id="{{ $resignation->id }}" data-bs-toggle="tooltip"
@@ -240,7 +241,7 @@
                                         <span class="spinner-border spinner-border-sm d-none" role="status"
                                             aria-hidden="true"></span>
                                     </a>
-
+@endif
                                     @if(in_array($resignation->status, ['pending', 'hr_approved', 'manager_approved']))
                                     <div class="btn-group" role="group">
                                         @if(\App\Models\User::hasAccess('resignations/{resignation}/approve', true))
